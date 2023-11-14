@@ -9,10 +9,10 @@ import {
 	isUsingSaveAsPolyfill,
 } from '../FileSystem/Polyfill'
 import { download } from '../FileSystem/saveOrDownload'
-import { writableToUint8Array } from '/@/utils/file/writableToUint8Array'
+import { writableToUint8Array } from '/@/libs/file/writableToUint8Array'
 import { settingsState } from '../Windows/Settings/SettingsState'
 import { debounce } from 'lodash-es'
-import { setRichPresence } from '/@/utils/setRichPresence'
+import { setRichPresence } from '/@/libs/setRichPresence'
 import { translate } from '../Locales/Manager'
 
 export type TReadOnlyMode = 'forced' | 'manual' | 'off'

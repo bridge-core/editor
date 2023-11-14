@@ -3,7 +3,7 @@
 		class="w-screen h-app flex justify-center items-center absolute top-toolbar left-0"
 	>
 		<div
-			class="max-w-2xl bg-background drop-shadow-lg rounded-md overflow-hidden"
+			class="max-w-2xl bg-background shadow-window rounded-md overflow-hidden"
 		>
 			<div class="w-full flex justify-between align-center p-2">
 				<span>What's New?</span>
@@ -18,7 +18,7 @@
 
 <script lang="ts" setup>
 import { onMounted, ref } from 'vue'
-import { baseUrl } from '/@/utils/baseUrl'
+import { baseUrl } from '/@/libs/baseUrl'
 
 const content = ref('')
 

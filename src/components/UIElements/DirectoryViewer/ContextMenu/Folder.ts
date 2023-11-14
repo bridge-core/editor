@@ -12,8 +12,8 @@ import {
 	TActionConfig,
 } from '/@/components/ContextMenu/showContextMenu'
 import { InputWindow } from '/@/components/Windows/Common/Input/InputWindow'
-import { tryCreateFile } from '/@/utils/file/tryCreateFile'
-import { tryCreateFolder } from '/@/utils/file/tryCreateFolder'
+import { tryCreateFile } from '/@/libs/file/tryCreateFile'
+import { tryCreateFolder } from '/@/libs/file/tryCreateFolder'
 
 interface IFolderOptions {
 	hideDelete?: boolean

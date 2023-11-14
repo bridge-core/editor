@@ -1,7 +1,7 @@
 import { IModuleConfig } from '../types'
-import { version } from '/@/utils/app/version'
+import { version } from '/@/libs/app/version'
 import { App } from '/@/App'
-import { isNightly } from '/@/utils/app/isNightly'
+import { isNightly } from '/@/libs/app/isNightly'
 import { TPackTypeId } from 'mc-project-core'
 
 export const ContextEnv: { value: any } = { value: {} }

@@ -5,7 +5,7 @@ import type { FileWrapper } from './FileView/FileWrapper'
 import type { IFileDiagnostic } from '/@/components/PackIndexer/Worker/PackSpider/PackSpider'
 import { VirtualHandle } from '/@/components/FileSystem/Virtual/Handle'
 import { TActionConfig } from '../../ContextMenu/showContextMenu'
-import { isSameEntry } from '/@/utils/file/isSameEntry'
+import { isSameEntry } from '/@/libs/file/isSameEntry'
 
 export interface IDirectoryViewerOptions {
 	startPath?: string

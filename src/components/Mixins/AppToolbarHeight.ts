@@ -2,7 +2,7 @@
 
 import { WindowControlsOverlayMixin } from './WindowControlsOverlay'
 import { isInFullScreen } from '/@/components/TabSystem/TabContextMenu/Fullscreen'
-import { platform } from '/@/utils/os'
+import { platform } from '/@/libs/os'
 
 export const AppToolbarHeightMixin = {
 	mixins: [WindowControlsOverlayMixin],

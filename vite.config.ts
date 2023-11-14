@@ -24,7 +24,7 @@ export default defineConfig({
 	resolve: {
 		alias: {
 			'/@': join(__dirname, 'src'),
-			molangjs: join(__dirname, './src/utils/MoLangJS.ts'),
+			molangjs: join(__dirname, './src/libs/MoLangJS.ts'),
 		},
 	},
 	build: {

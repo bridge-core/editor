@@ -4,7 +4,7 @@ import {
 	AnyHandle,
 } from '/@/components/FileSystem/Types'
 import { App } from '/@/App'
-import { extname } from '/@/utils/path'
+import { extname } from '/@/libs/path'
 
 export class FileDropper {
 	protected fileHandlers = new Map<

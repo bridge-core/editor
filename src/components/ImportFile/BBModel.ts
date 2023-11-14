@@ -3,9 +3,9 @@ import { FileImporter } from '/@/components/ImportFile/Importer'
 import { FileDropper } from '/@/components/FileDropper/FileDropper'
 import { AnyFileHandle } from '/@/components/FileSystem/Types'
 import { ConfirmationWindow } from '/@/components/Windows/Common/Confirm/ConfirmWindow'
-import { extname, join } from '/@/utils/path'
+import { extname, join } from '/@/libs/path'
 import { DropdownWindow } from '../Windows/Common/Dropdown/DropdownWindow'
-import { clamp } from '/@/utils/math/clamp'
+import { clamp } from '/@/libs/math/clamp'
 
 type Vector3D = [number, number, number]
 type Vector2D = [number, number]

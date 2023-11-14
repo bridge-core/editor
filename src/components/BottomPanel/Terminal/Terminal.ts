@@ -6,7 +6,7 @@ import { isAbsolute, join, sep } from '@tauri-apps/api/path'
 import { exists } from '@tauri-apps/api/fs'
 import { listen, Event } from '@tauri-apps/api/event'
 import './Terminal.css'
-import { getBridgeFolderPath } from '/@/utils/getBridgeFolderPath'
+import { getBridgeFolderPath } from '/@/libs/getBridgeFolderPath'
 
 type TMessageKind = 'stdout' | 'stderr' | 'stdin'
 

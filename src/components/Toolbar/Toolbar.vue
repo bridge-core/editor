@@ -11,5 +11,5 @@
 <script setup lang="ts">
 import Logo from '/@/components/Common/Logo.vue'
 
-import { version } from '/@/utils/app/version'
+import { version } from '/@/libs/app/version'
 </script>

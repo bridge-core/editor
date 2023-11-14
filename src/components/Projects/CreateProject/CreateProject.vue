@@ -280,7 +280,7 @@ import PackTypeViewer from '/@/components/Data/PackTypeViewer.vue'
 import ExperimentalGameplay from './ExperimentalGameplay.vue'
 import CreateFile from './CreateFile.vue'
 import BridgeSheet from '/@/components/UIElements/Sheet.vue'
-import { isFileAccepted } from '/@/utils/file/isAccepted'
+import { isFileAccepted } from '/@/libs/file/isAccepted'
 import { useTranslations } from '../../Composables/useTranslations'
 import { computed } from 'vue'
 

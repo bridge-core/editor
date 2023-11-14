@@ -1,5 +1,5 @@
 import { DirectoryWrapper } from '../../DirectoryView/DirectoryWrapper'
-import { moveHandle } from '/@/utils/file/moveHandle'
+import { moveHandle } from '/@/libs/file/moveHandle'
 
 export const ImportFileAction = (baseWrapper: DirectoryWrapper) => ({
 	icon: 'mdi-import',

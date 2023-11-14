@@ -1,4 +1,4 @@
-import { getLocation } from '/@/utils/monaco/getLocation'
+import { getLocation } from '/@/libs/monaco/getLocation'
 import type {
 	Uri,
 	Range,
@@ -8,15 +8,15 @@ import type {
 } from 'monaco-editor'
 import { App } from '/@/App'
 import { IDefinition } from '/@/components/Data/FileType'
-import { getJsonWordAtPosition } from '/@/utils/monaco/getJsonWord'
+import { getJsonWordAtPosition } from '/@/libs/monaco/getJsonWord'
 import { ILightningInstruction } from '/@/components/PackIndexer/Worker/Main'
 import { run } from '/@/components/Extensions/Scripts/run'
 import { findFileExtension } from '/@/components/FileSystem/FindFile'
-import { findAsync } from '/@/utils/array/findAsync'
+import { findAsync } from '/@/libs/array/findAsync'
 import { AnyFileHandle } from '../FileSystem/Types'
 import { isMatch } from 'bridge-common-utils'
 import { getCacheScriptEnv } from '../PackIndexer/Worker/LightningCache/CacheEnv'
-import { useMonaco } from '../../utils/libs/useMonaco'
+import { useMonaco } from '../../libs/libs/useMonaco'
 
 export class DefinitionProvider {
 	async provideDefinition(

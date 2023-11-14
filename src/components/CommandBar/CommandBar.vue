@@ -56,7 +56,7 @@ import { SimpleAction } from '../Actions/SimpleAction'
 import { App } from '/@/App'
 import { useTranslations } from '/@/components/Composables/useTranslations.ts'
 import { CommandBarExtensionItems } from '../Extensions/Scripts/Modules/CommandBar'
-import { getDefaultFileIcon } from '/@/utils/file/getIcon'
+import { getDefaultFileIcon } from '/@/libs/file/getIcon'
 import { devActions } from '../Developer/Actions'
 import { getCommandBarActions } from './State'
 

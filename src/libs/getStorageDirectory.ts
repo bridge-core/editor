@@ -23,7 +23,7 @@ export async function getStorageDirectory() {
 			'/@/components/FileSystem/Virtual/Stores/TauriFs'
 		)
 		const { getBridgeFolderPath } = await import(
-			'/@/utils/getBridgeFolderPath'
+			'/@/libs/getBridgeFolderPath'
 		)
 
 		const directoryHandle = new VirtualDirectoryHandle(

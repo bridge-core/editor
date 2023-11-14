@@ -9,7 +9,7 @@ import {
 	TStoreType,
 } from './BaseStore'
 import { GlobalMutex } from '/@/components/Common/GlobalMutex'
-import { basename, dirname } from '/@/utils/path'
+import { basename, dirname } from '/@/libs/path'
 
 export interface IIndexedDbSerializedData {
 	storeName?: string

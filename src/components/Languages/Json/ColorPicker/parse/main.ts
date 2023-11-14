@@ -1,7 +1,7 @@
 import { Color } from '../Color'
 import { parseAHex, parseHex, parseHexA } from './hex'
 import { parseRgbDec, parseRgb, parseRgbaDec, parseRgba } from './rgb'
-import { getLocation } from '/@/utils/monaco/getLocation'
+import { getLocation } from '/@/libs/monaco/getLocation'
 import type { editor, Position } from 'monaco-editor'
 import { isMatch } from 'bridge-common-utils'
 import { App } from '/@/App'

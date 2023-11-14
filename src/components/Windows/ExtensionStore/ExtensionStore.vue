@@ -43,7 +43,7 @@
 <script lang="ts" setup>
 import SidebarWindow from '/@/components/Windows/Layout/SidebarWindow.vue'
 import ExtensionCard from './ExtensionCard.vue'
-import { pointerDevice } from '/@/utils/pointerDevice'
+import { pointerDevice } from '/@/libs/pointerDevice'
 import { useTranslations } from '../../Composables/useTranslations'
 import { computed } from 'vue'
 

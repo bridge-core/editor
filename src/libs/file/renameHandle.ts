@@ -11,7 +11,7 @@ import { dirExists } from './dirExists'
 import { ConfirmationWindow } from '/@/components/Windows/Common/Confirm/ConfirmWindow'
 import { iterateDir } from '../iterateDir'
 import { moveFileHandle } from './moveHandle'
-import { dirname } from '/@/utils/path'
+import { dirname } from '/@/libs/path'
 
 interface IRenameOptions<T = FileSystemHandle | VirtualHandle> {
 	newName: string

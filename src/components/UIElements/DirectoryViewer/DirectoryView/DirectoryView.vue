@@ -64,7 +64,7 @@ import Name from '../Common/Name.vue'
 import { clipboard } from '../ContextMenu/Actions/Edit/Copy'
 import { PasteAction } from '../ContextMenu/Actions/Edit/Paste'
 import { isDraggingWrapper } from '../Common/DraggingWrapper'
-import { pointerDevice } from '/@/utils/pointerDevice'
+import { pointerDevice } from '/@/libs/pointerDevice'
 import { settingsState } from '/@/components/Windows/Settings/SettingsState'
 // import { VDirectoryView } from '/@/components/Solid/DirectoryViewer/DirectoryView.tsx'
 

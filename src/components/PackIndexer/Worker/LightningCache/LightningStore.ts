@@ -3,7 +3,7 @@ import {
 	IMonacoSchemaArrayEntry,
 } from '/@/components/Data/FileType'
 import type { FileSystem } from '/@/components/FileSystem/FileSystem'
-import { join } from '/@/utils/path'
+import { join } from '/@/libs/path'
 
 type TStore = Record<string, Record<string, IStoreEntry>>
 interface IStoreEntry {

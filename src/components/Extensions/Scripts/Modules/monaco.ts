@@ -1,5 +1,5 @@
 import { IModuleConfig } from '../types'
-import { useMonaco } from '../../../../utils/libs/useMonaco'
+import { useMonaco } from '../../../../libs/libs/useMonaco'
 import type { languages } from 'monaco-editor'
 
 export const MonacoModule = ({ disposables }: IModuleConfig) => ({

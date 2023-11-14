@@ -1,5 +1,5 @@
 import { ICompletionItem, Schema } from './Schema'
-import { getTypeOf } from '/@/utils/typeof'
+import { getTypeOf } from '/@/libs/typeof'
 
 export class TypeSchema extends Schema {
 	get values() {

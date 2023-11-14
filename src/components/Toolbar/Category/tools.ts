@@ -1,7 +1,7 @@
 import { App } from '/@/App'
 import { ToolbarCategory } from '../ToolbarCategory'
 import { Divider } from '../Divider'
-import { platform } from '/@/utils/os'
+import { platform } from '/@/libs/os'
 import { clearAllNotifications } from '/@/components/Notifications/create'
 import { IframeTab } from '/@/components/Editors/IframeTab/IframeTab'
 import { BlockbenchTab } from '../../Editors/Blockbench/BlockbenchTab'

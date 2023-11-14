@@ -1,6 +1,6 @@
 import type { Model } from 'bridge-model-viewer'
 import { App } from '/@/App'
-import { loadAsDataURL } from '/@/utils/loadAsDataUrl'
+import { loadAsDataURL } from '/@/libs/loadAsDataUrl'
 import { ThreePreviewTab } from '../ThreePreview/ThreePreviewTab'
 import { SimpleAction } from '/@/components/Actions/SimpleAction'
 import { RenderDataContainer } from './Data/RenderContainer'
@@ -14,10 +14,10 @@ import { IOutlineBox } from './Data/EntityData'
 import { markRaw } from 'vue'
 import { Box3, Vector3, Color } from 'three'
 import { saveOrDownload } from '/@/components/FileSystem/saveOrDownload'
-import { wait } from '/@/utils/wait'
+import { wait } from '/@/libs/wait'
 import { AssetPreviewWindow } from './AssetPreview/Window'
-import { useWintersky } from '/@/utils/libs/useWintersky'
-import { useBridgeModelViewer } from '/@/utils/libs/useModelViewer'
+import { useWintersky } from '/@/libs/libs/useWintersky'
+import { useBridgeModelViewer } from '/@/libs/libs/useModelViewer'
 
 export abstract class GeometryPreviewTab extends ThreePreviewTab {
 	protected winterskyScene!: Wintersky.Scene

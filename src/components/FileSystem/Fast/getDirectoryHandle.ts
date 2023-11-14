@@ -3,7 +3,7 @@ import { IGetHandleConfig } from '../Common'
 import { VirtualDirectoryHandle } from '../Virtual/DirectoryHandle'
 import { pathFromHandle } from '../Virtual/pathFromHandle'
 import { IndexedDbStore } from '../Virtual/Stores/IndexedDb'
-import { join } from '/@/utils/path'
+import { join } from '/@/libs/path'
 
 export async function getDirectoryHandleTauri(
 	baseDirectory: VirtualDirectoryHandle,

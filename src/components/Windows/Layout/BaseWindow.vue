@@ -103,7 +103,7 @@
 </template>
 
 <script>
-import { platform } from '/@/utils/os.ts'
+import { platform } from '/@/libs/os.ts'
 import { useTranslations } from '/@/components/Composables/useTranslations.ts'
 import WindowsToolbar from './Toolbar/Windows.vue'
 import MacToolbar from './Toolbar/Mac.vue'

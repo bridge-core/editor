@@ -3,7 +3,7 @@ import { transformString } from './TransformString'
 import { App } from '/@/App'
 import { CombinedFileSystem } from '/@/components/FileSystem/CombinedFs'
 import { AnyFileHandle } from '/@/components/FileSystem/Types'
-import { extname, dirname } from '/@/utils/path'
+import { extname, dirname } from '/@/libs/path'
 
 export type TCreateFile = [string, string, IPresetFileOpts?]
 

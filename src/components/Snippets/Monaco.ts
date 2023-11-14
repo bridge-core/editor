@@ -1,10 +1,10 @@
 import type { languages, editor, Position } from 'monaco-editor'
-import { getLocation } from '/@/utils/monaco/getLocation'
+import { getLocation } from '/@/libs/monaco/getLocation'
 import { App } from '/@/App'
 import { FileTab } from '../TabSystem/FileTab'
 import json5 from 'json5'
 import { getLatestFormatVersion } from '../Data/FormatVersions'
-import { useMonaco } from '../../utils/libs/useMonaco'
+import { useMonaco } from '../../libs/libs/useMonaco'
 
 export async function registerJsonSnippetProvider() {
 	const { languages } = await useMonaco()

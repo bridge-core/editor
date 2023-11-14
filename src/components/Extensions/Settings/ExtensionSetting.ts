@@ -1,7 +1,7 @@
 import json5 from 'json5'
 import { AnyDirectoryHandle } from '../../FileSystem/Types'
 import { IPresetFieldOpts } from '/@/components/Windows/Project/CreatePreset/PresetWindow'
-import { iterateDir } from '/@/utils/iterateDir'
+import { iterateDir } from '/@/libs/iterateDir'
 
 export interface ISettingDef {
 	name: string

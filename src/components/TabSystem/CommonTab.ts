@@ -7,7 +7,7 @@ import { SimpleAction } from '/@/components/Actions/SimpleAction'
 import { EventDispatcher } from '../Common/Event/EventDispatcher'
 import { AnyFileHandle } from '../FileSystem/Types'
 import { shareFile } from '../StartParams/Action/openRawFile'
-import { getDefaultFileIcon } from '/@/utils/file/getIcon'
+import { getDefaultFileIcon } from '/@/libs/file/getIcon'
 import { settingsState } from '../Windows/Settings/SettingsState'
 import { fullScreenAction } from './TabContextMenu/Fullscreen'
 

@@ -5,7 +5,7 @@ import {
 } from 'bridge-common-utils'
 import { CommandData, ICommandArgument } from './Data'
 import type { editor } from 'monaco-editor'
-import { useMonaco } from '/@/utils/libs/useMonaco'
+import { useMonaco } from '/@/libs/libs/useMonaco'
 import { RefSchema } from '/@/components/JSONSchema/Schema/Ref'
 import {
 	translateWithInsertions as twi,

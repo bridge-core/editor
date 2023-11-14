@@ -1,7 +1,7 @@
 import { IDisposable } from '/@/types/disposable'
 import { debounce } from 'lodash-es'
 import type { languages, editor } from 'monaco-editor'
-import { useMonaco } from '../../utils/libs/useMonaco'
+import { useMonaco } from '../../libs/libs/useMonaco'
 
 export interface IAddLanguageOptions {
 	id: string

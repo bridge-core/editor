@@ -1,11 +1,11 @@
 // @ts-ignore Make "path" work on this worker
-import '/@/utils/worker/inject'
+import '/@/libs/worker/inject'
 
 import '/@/components/FileSystem/Virtual/Comlink'
 import { expose } from 'comlink'
 import { FileSystem } from '../../FileSystem/FileSystem'
-import { iterateDir } from '/@/utils/iterateDir'
-import { extname, join, relative } from '/@/utils/path'
+import { iterateDir } from '/@/libs/iterateDir'
+import { extname, join, relative } from '/@/libs/path'
 
 import { createRegExp, processFileText } from '../Utils'
 import { AnyDirectoryHandle, AnyFileHandle } from '../../FileSystem/Types'

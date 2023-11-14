@@ -5,8 +5,8 @@ import { FileTab } from '../TabSystem/FileTab'
 import { fullScreenAction } from '../TabSystem/TabContextMenu/Fullscreen'
 import { ViewCompilerOutput } from '../UIElements/DirectoryViewer/ContextMenu/Actions/ViewCompilerOutput'
 import { App } from '/@/App'
-import { platformRedoBinding } from '/@/utils/constants'
-import { platform } from '/@/utils/os'
+import { platformRedoBinding } from '/@/libs/constants'
+import { platform } from '/@/libs/os'
 
 export function setupActions(app: App) {
 	addViewActions(app)

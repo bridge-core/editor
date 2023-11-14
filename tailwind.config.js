@@ -50,6 +50,9 @@ module.exports = {
 			spacing: {
 				toolbar: '1.5rem',
 			},
+			boxShadow: {
+				window: '0 0 16px -2px rgb(0, 0, 0, 0.4)',
+			},
 		},
 	},
 	plugins: [],

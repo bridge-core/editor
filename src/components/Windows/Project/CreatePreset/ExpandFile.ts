@@ -4,7 +4,7 @@ import { App } from '/@/App'
 import { CombinedFileSystem } from '/@/components/FileSystem/CombinedFs'
 import { AnyFileHandle } from '/@/components/FileSystem/Types'
 import { deepMerge } from 'bridge-common-utils'
-import { extname, dirname } from '/@/utils/path'
+import { extname, dirname } from '/@/libs/path'
 
 export type TExpandFile = [string, string, IPresetFileOpts?]
 

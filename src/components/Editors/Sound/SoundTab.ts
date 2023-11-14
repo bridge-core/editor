@@ -1,8 +1,8 @@
 import { FileTab, TReadOnlyMode } from '/@/components/TabSystem/FileTab'
-import { loadHandleAsDataURL } from '/@/utils/loadAsDataUrl'
+import { loadHandleAsDataURL } from '/@/libs/loadAsDataUrl'
 import SoundTabComponent from './SoundTab.vue'
 import { AnyFileHandle } from '../../FileSystem/Types'
-import { addDisposableEventListener } from '/@/utils/disposableListener'
+import { addDisposableEventListener } from '/@/libs/disposableListener'
 import { IDisposable } from '/@/types/disposable'
 
 export class SoundTab extends FileTab {

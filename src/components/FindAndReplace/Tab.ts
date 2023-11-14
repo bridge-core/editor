@@ -14,7 +14,7 @@ import { TabSystem } from '../TabSystem/TabSystem'
 import { Mutex } from '../Common/Mutex'
 import { AnyFileHandle } from '../FileSystem/Types'
 import { translate } from '../Locales/Manager'
-import { setupWorker } from '/@/utils/worker/setup'
+import { setupWorker } from '/@/libs/worker/setup'
 
 const worker = new Worker()
 const FindAndReplaceClass = wrap<typeof FindAndReplace>(worker)

@@ -4,7 +4,7 @@ import type { ThemeManager } from '/@/components/Extensions/Themes/ThemeManager'
 import { IframeTab } from '../IframeTab/IframeTab'
 import { Tab } from '../../TabSystem/CommonTab'
 import { AnyFileHandle } from '../../FileSystem/Types'
-import { iframeApiVersion } from '/@/utils/app/iframeApiVersion'
+import { iframeApiVersion } from '/@/libs/app/iframeApiVersion'
 import { translate } from '../../Locales/Manager'
 import { VirtualFile } from '../../FileSystem/Virtual/File'
 

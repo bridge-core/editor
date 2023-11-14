@@ -3,7 +3,7 @@ import { SolidIconButton } from '../../Solid/Inputs/IconButton/IconButton'
 import { SolidBridgeLogo } from '../../Solid/Logo'
 import { SolidWindow } from '../../Solid/Window/Window'
 import { App } from '/@/App'
-import { version } from '/@/utils/app/version'
+import { version } from '/@/libs/app/version'
 
 const AboutWindow = () => {
 	const socialLinks = [

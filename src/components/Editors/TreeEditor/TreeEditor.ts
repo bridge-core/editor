@@ -24,10 +24,10 @@ import { debounce } from 'lodash-es'
 import { showContextMenu } from '/@/components/ContextMenu/showContextMenu'
 import { IActionConfig } from '/@/components/Actions/SimpleAction'
 import { viewDocumentation } from '/@/components/Documentation/view'
-import { platformRedoBinding } from '/@/utils/constants'
+import { platformRedoBinding } from '/@/libs/constants'
 import { getLatestFormatVersion } from '/@/components/Data/FormatVersions'
 import { filterDuplicates } from './CompletionItems/FilterDuplicates'
-import { inferType } from '/@/utils/inferType'
+import { inferType } from '/@/libs/inferType'
 
 export class TreeEditor {
 	public type = 'treeEditor'

@@ -7,7 +7,7 @@ import { ExtensionTag } from './ExtensionTag'
 import { extensionActions } from './ExtensionActions'
 import { ConfirmationWindow } from '../Common/Confirm/ConfirmWindow'
 import { compareVersions } from 'bridge-common-utils'
-import { version as appVersion } from '/@/utils/app/version'
+import { version as appVersion } from '/@/libs/app/version'
 
 export class ExtensionViewer {
 	protected tags: ExtensionTag[]

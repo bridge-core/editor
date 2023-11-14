@@ -43,7 +43,7 @@
 import TabSystemTab from './Tab.vue'
 import ActionBar from './TabActions/ActionBar.vue'
 import Draggable from 'vuedraggable'
-import { pointerDevice } from '/@/utils/pointerDevice'
+import { pointerDevice } from '/@/libs/pointerDevice'
 import { useTabSystem } from '../Composables/UseTabSystem'
 import { toRefs } from 'vue'
 import { useSidebarState } from '../Composables/Sidebar/useSidebarState'

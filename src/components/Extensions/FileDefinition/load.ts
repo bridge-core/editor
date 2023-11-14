@@ -2,7 +2,7 @@ import json5 from 'json5'
 import { AnyDirectoryHandle } from '../../FileSystem/Types'
 import { App } from '/@/App'
 import { IDisposable } from '/@/types/disposable'
-import { iterateDir } from '/@/utils/iterateDir'
+import { iterateDir } from '/@/libs/iterateDir'
 
 export function loadFileDefinitions(
 	baseDirectory: AnyDirectoryHandle,

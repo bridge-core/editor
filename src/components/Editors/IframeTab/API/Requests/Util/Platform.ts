@@ -1,6 +1,6 @@
 import { IframeApi } from '../../IframeApi'
 import { GenericRequest } from '../GenericRequest'
-import { platform } from '/@/utils/os'
+import { platform } from '/@/libs/os'
 
 export class PlatformRequest extends GenericRequest<undefined, string> {
 	constructor(api: IframeApi) {

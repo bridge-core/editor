@@ -1,4 +1,4 @@
-import { useMonaco } from '/@/utils/libs/useMonaco'
+import { useMonaco } from '/@/libs/libs/useMonaco'
 import type { editor, CancellationToken, languages } from 'monaco-editor'
 import { Color } from './Color'
 import { findColors } from './findColors'

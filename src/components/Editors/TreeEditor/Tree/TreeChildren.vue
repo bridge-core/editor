@@ -36,7 +36,7 @@
 <script>
 import Highlight from '../Highlight.vue'
 import { ArrayTree } from './ArrayTree.ts'
-import { pointerDevice } from '/@/utils/pointerDevice.ts'
+import { pointerDevice } from '/@/libs/pointerDevice.ts'
 import Draggable from 'vuedraggable'
 import { settingsState } from '/@/components/Windows/Settings/SettingsState.ts'
 import { MoveEntry } from '../History/MoveEntry.ts'

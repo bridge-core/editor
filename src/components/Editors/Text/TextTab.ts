@@ -9,8 +9,8 @@ import { debounce } from 'lodash-es'
 import { Signal } from '/@/components/Common/Event/Signal'
 import { AnyFileHandle } from '/@/components/FileSystem/Types'
 import { markRaw } from 'vue'
-import { loadMonaco, useMonaco } from '../../../utils/libs/useMonaco'
-import { wait } from '/@/utils/wait'
+import { loadMonaco, useMonaco } from '../../../libs/libs/useMonaco'
+import { wait } from '/@/libs/wait'
 
 const throttledCacheUpdate = debounce<(tab: TextTab) => Promise<void> | void>(
 	async (tab) => {

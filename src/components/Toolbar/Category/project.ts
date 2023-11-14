@@ -5,8 +5,8 @@ import { isUsingFileSystemPolyfill } from '/@/components/FileSystem/Polyfill'
 import { createVirtualProjectWindow } from '/@/components/FileSystem/Virtual/ProjectWindow'
 import { importNewProject } from '/@/components/Projects/Import/ImportNew'
 import { virtualProjectName } from '/@/components/Projects/Project/Project'
-import { revealInFileExplorer } from '/@/utils/revealInFileExplorer'
-import { getBridgeFolderPath } from '/@/utils/getBridgeFolderPath'
+import { revealInFileExplorer } from '/@/libs/revealInFileExplorer'
+import { getBridgeFolderPath } from '/@/libs/getBridgeFolderPath'
 
 export function setupProjectCategory(app: App) {
 	const project = new ToolbarCategory(

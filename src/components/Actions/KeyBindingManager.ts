@@ -1,4 +1,4 @@
-import { platform } from '/@/utils/os'
+import { platform } from '/@/libs/os'
 import { IKeyBindingConfig, KeyBinding } from './KeyBinding'
 import { toStrKeyCode } from './Utils'
 import { del, set, shallowReactive } from 'vue'

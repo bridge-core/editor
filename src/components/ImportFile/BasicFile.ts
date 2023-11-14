@@ -5,7 +5,7 @@ import { InformedChoiceWindow } from '/@/components/Windows/InformedChoice/Infor
 import { FilePathWindow } from '/@/components/Windows/Common/FilePath/Window'
 import { ConfirmationWindow } from '/@/components/Windows/Common/Confirm/ConfirmWindow'
 import { AnyFileHandle } from '../FileSystem/Types'
-import { join } from '/@/utils/path'
+import { join } from '/@/libs/path'
 import { translate } from '../Locales/Manager'
 
 export class BasicFileImporter extends FileImporter {

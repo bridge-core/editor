@@ -2,7 +2,7 @@ import { Command, DefaultConsole } from 'dash-compiler'
 import { App } from '/@/App'
 import { JsRuntime } from '/@/components/Extensions/Scripts/JsRuntime'
 import { AnyDirectoryHandle } from '/@/components/FileSystem/Types'
-import { iterateDir, iterateDirParallel } from '/@/utils/iterateDir'
+import { iterateDir, iterateDirParallel } from '/@/libs/iterateDir'
 
 // TODO: Rewrite this to properly cache evaluated scripts until they are changed by the user
 // See how it's done for custom components already!

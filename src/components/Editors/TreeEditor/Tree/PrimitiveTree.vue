@@ -82,7 +82,7 @@ import Highlight from '../Highlight.vue'
 import { DevModeMixin } from '/@/components/Mixins/DevMode'
 import { HighlighterMixin } from '/@/components/Mixins/Highlighter'
 import { useLongPress } from '/@/components/Composables/LongPress'
-import { pointerDevice } from '/@/utils/pointerDevice'
+import { pointerDevice } from '/@/libs/pointerDevice'
 
 export default {
 	components: { Highlight },

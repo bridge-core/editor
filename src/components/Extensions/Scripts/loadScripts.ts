@@ -3,7 +3,7 @@ import { TUIStore } from '../UI/store'
 
 import { AnyDirectoryHandle } from '../../FileSystem/Types'
 import { JsRuntime } from './JsRuntime'
-import { iterateDir } from '/@/utils/iterateDir'
+import { iterateDir } from '/@/libs/iterateDir'
 
 export async function loadScripts(
 	jsRuntime: JsRuntime,

@@ -7,7 +7,7 @@ import {
 	IRequirements,
 	RequiresMatcher,
 } from './RequiresMatcher/RequiresMatcher'
-import { useMonaco } from '/@/utils/libs/useMonaco'
+import { useMonaco } from '/@/libs/libs/useMonaco'
 import { v4 as uuid } from 'uuid'
 
 /**

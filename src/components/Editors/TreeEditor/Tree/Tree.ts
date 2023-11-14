@@ -2,10 +2,10 @@ import { set } from 'vue'
 import { v4 as uuid } from 'uuid'
 import type { ArrayTree } from './ArrayTree'
 import type { ObjectTree } from './ObjectTree'
-import { pointerDevice } from '/@/utils/pointerDevice'
+import { pointerDevice } from '/@/libs/pointerDevice'
 import type { TreeEditor } from '../TreeEditor'
 import { IDiagnostic } from '/@/components/JSONSchema/Schema/Schema'
-import { whenIdle } from '/@/utils/whenIdle'
+import { whenIdle } from '/@/libs/whenIdle'
 export type TPrimitiveTree = string | number | boolean | null
 export type TTree = TPrimitiveTree | Object | Array<unknown>
 

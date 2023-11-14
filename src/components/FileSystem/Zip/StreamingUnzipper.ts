@@ -1,7 +1,7 @@
 import { AsyncUnzipInflate, Unzip, UnzipFile } from 'fflate'
 import { GenericUnzipper } from './GenericUnzipper'
 import { FileSystem } from '../FileSystem'
-import { wait } from '/@/utils/wait'
+import { wait } from '/@/libs/wait'
 import { invoke } from '@tauri-apps/api/tauri'
 
 /**

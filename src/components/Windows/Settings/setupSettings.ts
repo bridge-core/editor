@@ -13,7 +13,7 @@ import {
 	isUsingFileSystemPolyfill,
 	isUsingOriginPrivateFs,
 } from '/@/components/FileSystem/Polyfill'
-import { platform } from '/@/utils/os'
+import { platform } from '/@/libs/os'
 import { TextField } from './Controls/TextField/TextField'
 import { devActions } from '/@/components/Developer/Actions'
 import { FontSelection } from './Controls/FontSelection'

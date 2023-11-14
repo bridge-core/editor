@@ -1,7 +1,7 @@
 import type { Project } from './Project'
 import { FileSystem } from '/@/components/FileSystem/FileSystem'
-import { loadAsDataURL } from '/@/utils/loadAsDataUrl'
-import { join } from '/@/utils/path'
+import { loadAsDataURL } from '/@/libs/loadAsDataUrl'
+import { join } from '/@/libs/path'
 
 export async function loadIcon(project: Project, fileSystem: FileSystem) {
 	const config = project.config

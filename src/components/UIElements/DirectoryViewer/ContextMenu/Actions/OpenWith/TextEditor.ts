@@ -1,6 +1,6 @@
 import { FileWrapper } from '/@/components/UIElements/DirectoryViewer/FileView/FileWrapper'
 import { App } from '/@/App'
-import { extname } from '/@/utils/path'
+import { extname } from '/@/libs/path'
 import { TextTab } from '/@/components/Editors/Text/TextTab'
 
 const textEditorNotAllowed = [

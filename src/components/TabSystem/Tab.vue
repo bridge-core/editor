@@ -123,7 +123,7 @@
 <script>
 import { settingsState } from '../Windows/Settings/SettingsState'
 import { Tab } from './CommonTab'
-import { pointerDevice } from '/@/utils/pointerDevice'
+import { pointerDevice } from '/@/libs/pointerDevice'
 
 export default {
 	name: 'TabSystemTab',

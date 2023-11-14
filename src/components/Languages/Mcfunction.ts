@@ -13,7 +13,7 @@ import { tokenProvider } from './Mcfunction/TokenProvider'
 import type { Project } from '/@/components/Projects/Project/Project'
 import { isWithinTargetSelector } from './Mcfunction/TargetSelector/isWithin'
 import { proxy } from 'comlink'
-import { useMonaco } from '../../utils/libs/useMonaco'
+import { useMonaco } from '../../libs/libs/useMonaco'
 import { CommandValidator } from './Mcfunction/Validator'
 
 export const config: languages.LanguageConfiguration = {

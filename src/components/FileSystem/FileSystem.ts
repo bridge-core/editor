@@ -2,10 +2,10 @@
 import { Signal } from '../Common/Event/Signal'
 import json5 from 'json5'
 import type { IGetHandleConfig, IMkdirConfig } from './Common'
-import { iterateDirParallel } from '/@/utils/iterateDir'
-import { join, dirname, basename } from '/@/utils/path'
+import { iterateDirParallel } from '/@/libs/iterateDir'
+import { join, dirname, basename } from '/@/libs/path'
 import { AnyDirectoryHandle, AnyFileHandle, AnyHandle } from './Types'
-import { getStorageDirectory } from '/@/utils/getStorageDirectory'
+import { getStorageDirectory } from '/@/libs/getStorageDirectory'
 import { VirtualFileHandle } from './Virtual/FileHandle'
 import { VirtualDirectoryHandle } from './Virtual/DirectoryHandle'
 import {

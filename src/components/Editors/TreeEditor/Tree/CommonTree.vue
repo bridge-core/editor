@@ -101,7 +101,7 @@ import { useLongPress } from '/@/components/Composables/LongPress'
 import { DevModeMixin } from '/@/components/Mixins/DevMode'
 import { TranslationMixin } from '/@/components/Mixins/TranslationMixin'
 import { settingsState } from '/@/components/Windows/Settings/SettingsState'
-import { pointerDevice } from '/@/utils/pointerDevice'
+import { pointerDevice } from '/@/libs/pointerDevice'
 
 const brackets = {
 	array: '[]',

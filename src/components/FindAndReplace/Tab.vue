@@ -143,7 +143,7 @@ import {
 	watch,
 	watchEffect,
 } from 'vue'
-import { pointerDevice } from '/@/utils/pointerDevice'
+import { pointerDevice } from '/@/libs/pointerDevice'
 import { useTranslations } from '../Composables/useTranslations'
 import { Component } from 'vue/types/umd'
 import { Event } from 'three'

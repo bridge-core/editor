@@ -105,7 +105,7 @@ import { tasks } from '/@/components/TaskManager/TaskManager.ts'
 import { NotificationStore } from '/@/components/Notifications/state.ts'
 import { AppToolbarHeightMixin } from '/@/components/Mixins/AppToolbarHeight.ts'
 import { App } from '/@/App'
-import { version as appVersion } from '/@/utils/app/version'
+import { version as appVersion } from '/@/libs/app/version'
 import { openAboutWindow } from '../Windows/About/AboutWindow'
 
 export default {

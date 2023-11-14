@@ -1,7 +1,7 @@
 import { settingsState } from '../../Windows/Settings/SettingsState'
 import { App } from '/@/App'
-import { dashVersion } from '/@/utils/app/dashVersion'
-import { version as appVersion } from '/@/utils/app/version'
+import { dashVersion } from '/@/libs/app/dashVersion'
+import { version as appVersion } from '/@/libs/app/version'
 
 export async function loadManifest(app: App, manifestPath: string) {
 	let manifest = await app.fileSystem.readJSON(manifestPath)
@@ -46,9 +46,12 @@ export async function loadManifest(app: App, manifestPath: string) {
 				...(manifest?.metadata ?? {}),
 				generated_with: addGeneratedWith
 					? {
-						...(manifest?.metadata?.generated_with ?? {}),
-						...{ bridge: generatedWithBridge, dash: generatedWithDash },
-					}
+							...(manifest?.metadata?.generated_with ?? {}),
+							...{
+								bridge: generatedWithBridge,
+								dash: generatedWithDash,
+							},
+					  }
 					: undefined,
 			},
 		}

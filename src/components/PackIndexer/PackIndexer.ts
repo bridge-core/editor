@@ -8,7 +8,7 @@ import type { Project } from '/@/components/Projects/Project/Project'
 import { Mutex } from '../Common/Mutex'
 import { Signal } from '../Common/Event/Signal'
 import { Task } from '../TaskManager/Task'
-import { setupWorker } from '/@/utils/worker/setup'
+import { setupWorker } from '/@/libs/worker/setup'
 
 const worker = new PackIndexerWorker()
 const PackIndexerService = wrap<typeof TPackIndexerService>(worker)

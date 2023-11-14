@@ -1,7 +1,7 @@
 import { IframeApi } from '../../IframeApi'
 import { GenericRequest } from '../GenericRequest'
 import { resolveFileReference } from './ResolveFileReference'
-import { loadHandleAsDataURL } from '/@/utils/loadAsDataUrl'
+import { loadHandleAsDataURL } from '/@/libs/loadAsDataUrl'
 
 export class ReadAsDataUrlRequest extends GenericRequest<string, string> {
 	constructor(api: IframeApi) {

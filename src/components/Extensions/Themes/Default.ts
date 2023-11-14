@@ -1,5 +1,5 @@
 import { colorCodes } from './DefaultTheme/ColorCodes'
-import { isNightly } from '/@/utils/app/isNightly'
+import { isNightly } from '/@/libs/app/isNightly'
 
 export const bridgeDark = <const>{
 	id: 'bridge.default.dark',

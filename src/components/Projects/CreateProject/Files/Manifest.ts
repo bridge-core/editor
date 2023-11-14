@@ -3,9 +3,9 @@ import { ICreateProjectOptions } from '/@/components/Projects/CreateProject/Crea
 import { TPackType } from '/@/components/Projects/CreateProject/Packs/Pack'
 import { CreateFile } from './CreateFile'
 import { v4 as uuid } from 'uuid'
-import { version as appVersion } from '/@/utils/app/version'
+import { version as appVersion } from '/@/libs/app/version'
 import { App } from '/@/App'
-import { dashVersion } from '/@/utils/app/dashVersion'
+import { dashVersion } from '/@/libs/app/dashVersion'
 import { compareVersions } from 'bridge-common-utils'
 
 export class CreateManifest extends CreateFile {

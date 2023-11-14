@@ -1,5 +1,5 @@
 import FilePathWindowComponent from './Window.vue'
-import { basename, extname } from '/@/utils/path'
+import { basename, extname } from '/@/libs/path'
 import { NewBaseWindow } from '../../NewBaseWindow'
 import { reactive } from 'vue'
 

@@ -1,4 +1,4 @@
-import { basename } from '/@/utils/path'
+import { basename } from '/@/libs/path'
 import type { IStartAction } from '../Manager'
 import { VirtualFileHandle } from '/@/components/FileSystem/Virtual/FileHandle'
 import { App } from '/@/App'

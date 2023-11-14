@@ -1,4 +1,4 @@
-import '/@/utils/worker/inject'
+import '/@/libs/worker/inject'
 
 import '/@/components/FileSystem/Virtual/Comlink'
 import { FileTypeLibrary, IFileType } from '/@/components/Data/FileType'

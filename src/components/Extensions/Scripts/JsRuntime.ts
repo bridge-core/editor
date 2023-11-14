@@ -1,6 +1,6 @@
 import { Runtime } from 'bridge-js-runtime'
 import { App } from '/@/App'
-import { dirname } from '/@/utils/path'
+import { dirname } from '/@/libs/path'
 
 export class JsRuntime extends Runtime {
 	async readFile(filePath: string) {

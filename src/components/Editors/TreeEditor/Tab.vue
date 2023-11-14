@@ -221,7 +221,7 @@ import { TranslationMixin } from '/@/components/Mixins/TranslationMixin'
 import { settingsState } from '/@/components/Windows/Settings/SettingsState'
 import { TreeValueSelection } from './TreeSelection'
 import { PrimitiveTree } from './Tree/PrimitiveTree'
-import { inferType } from '/@/utils/inferType'
+import { inferType } from '/@/libs/inferType'
 import { mayCastTo } from './mayCastTo'
 import Highlight from './Highlight.vue'
 

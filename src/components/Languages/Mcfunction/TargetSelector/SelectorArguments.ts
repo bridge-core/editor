@@ -1,5 +1,5 @@
 import type { CommandData, ICompletionItem } from '../Data'
-import { useMonaco } from '../../../../utils/libs/useMonaco'
+import { useMonaco } from '../../../../libs/libs/useMonaco'
 
 export class SelectorArguments {
 	constructor(protected commandData: CommandData) {}

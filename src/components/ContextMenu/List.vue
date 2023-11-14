@@ -117,7 +117,7 @@
 <script setup>
 import { computed, ref } from 'vue'
 import { useTranslations } from '../Composables/useTranslations'
-import { pointerDevice } from '/@/utils/pointerDevice'
+import { pointerDevice } from '/@/libs/pointerDevice'
 
 const { t } = useTranslations()
 

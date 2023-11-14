@@ -1,5 +1,5 @@
 import { Component } from 'solid-js'
-import { isNightly } from '/@/utils/app/isNightly'
+import { isNightly } from '/@/libs/app/isNightly'
 
 export const SolidBridgeLogo: Component<{
 	class: string

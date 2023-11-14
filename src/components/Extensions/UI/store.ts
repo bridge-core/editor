@@ -1,6 +1,6 @@
 import { v4 as uuid } from 'uuid'
 import { Signal } from '../../Common/Event/Signal'
-import { basename, extname } from '/@/utils/path'
+import { basename, extname } from '/@/libs/path'
 
 export type TUIStore = ReturnType<typeof createUIStore>
 export function createUIStore() {

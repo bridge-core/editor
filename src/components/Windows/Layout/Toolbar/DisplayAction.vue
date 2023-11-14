@@ -30,7 +30,7 @@
 
 <script setup>
 import { SimpleAction } from '/@/components/Actions/SimpleAction'
-import { platform } from '/@/utils/os'
+import { platform } from '/@/libs/os'
 import { useDarkMode } from '/@/components/Composables/useDarkMode'
 import { useTranslations } from '/@/components/Composables/useTranslations.ts'
 import { useDisplay } from '/@/components/Composables/Display/useDisplay.ts'

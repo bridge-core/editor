@@ -1,7 +1,7 @@
 import { SchemaManager } from '../Manager'
 import { RootSchema } from './Root'
 import { Schema } from './Schema'
-import { dirname, join } from '/@/utils/path'
+import { dirname, join } from '/@/libs/path'
 
 export class RefSchema extends Schema {
 	public readonly schemaType = 'refSchema'

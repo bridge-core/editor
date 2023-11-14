@@ -1,5 +1,5 @@
 import { unzip } from 'fflate'
-import { basename } from '/@/utils/path'
+import { basename } from '/@/libs/path'
 import { GenericUnzipper } from './GenericUnzipper'
 import { FileSystem } from '../FileSystem'
 

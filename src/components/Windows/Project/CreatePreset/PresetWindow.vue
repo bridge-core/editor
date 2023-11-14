@@ -151,7 +151,7 @@
 <script lang="ts" setup>
 import SidebarWindow from '/@/components/Windows/Layout/SidebarWindow.vue'
 import PresetPath from './PresetPath.vue'
-import { isFileAccepted } from '/@/utils/file/isAccepted'
+import { isFileAccepted } from '/@/libs/file/isAccepted'
 import { computed, toRefs } from 'vue'
 import { useTranslations } from '/@/components/Composables/useTranslations'
 import type { CreatePresetWindow } from './PresetWindow'

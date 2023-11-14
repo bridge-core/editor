@@ -2,7 +2,7 @@ import { FileWrapper } from '../../FileView/FileWrapper'
 import { ViewCompilerOutput } from './ViewCompilerOutput'
 import { App } from '/@/App'
 import { ISubmenuConfig } from '/@/components/ContextMenu/showContextMenu'
-import { basename } from '/@/utils/path'
+import { basename } from '/@/libs/path'
 
 export const ViewConnectedFiles = async (fileWrapper: FileWrapper) => {
 	if (!fileWrapper.path) return null

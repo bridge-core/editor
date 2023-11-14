@@ -7,10 +7,10 @@ import { AnyDirectoryHandle } from '/@/components/FileSystem/Types'
 import { VirtualFile } from '/@/components/FileSystem/Virtual/File'
 import { Project } from '/@/components/Projects/Project/Project'
 import { IDisposable } from '/@/types/disposable'
-import { iterateDir, iterateDirParallel } from '/@/utils/iterateDir'
+import { iterateDir, iterateDirParallel } from '/@/libs/iterateDir'
 
 export const supportsCustomComponents = <const>['block', 'item', 'entity']
-export type TComponentFileType = typeof supportsCustomComponents[number]
+export type TComponentFileType = (typeof supportsCustomComponents)[number]
 export class ComponentSchemas {
 	protected schemas: Record<TComponentFileType, Record<string, unknown>> = {
 		block: {},

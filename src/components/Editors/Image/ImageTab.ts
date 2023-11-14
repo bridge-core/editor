@@ -1,5 +1,5 @@
 import { FileTab, TReadOnlyMode } from '/@/components/TabSystem/FileTab'
-import { loadHandleAsDataURL } from '/@/utils/loadAsDataUrl'
+import { loadHandleAsDataURL } from '/@/libs/loadAsDataUrl'
 import ImageTabComponent from './ImageTab.vue'
 import { AnyFileHandle } from '../../FileSystem/Types'
 

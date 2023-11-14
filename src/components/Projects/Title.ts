@@ -1,6 +1,6 @@
 import { ref } from 'vue'
 import { virtualProjectName } from './Project/Project'
-import { isNightly } from '/@/utils/app/isNightly'
+import { isNightly } from '/@/libs/app/isNightly'
 
 const appName = isNightly ? 'bridge. Nightly' : 'bridge. v2'
 export class Title {

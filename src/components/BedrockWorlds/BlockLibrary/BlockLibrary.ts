@@ -2,7 +2,7 @@ import { AnyDirectoryHandle } from '../../FileSystem/Types'
 import { FileSystem } from '../../FileSystem/FileSystem'
 import { DataLoader } from '../../Data/DataLoader'
 import { loadImage } from './loadImage'
-import { toBlob } from '/@/utils/canvasToBlob'
+import { toBlob } from '/@/libs/canvasToBlob'
 
 export type TDirection =
 	| 'up'

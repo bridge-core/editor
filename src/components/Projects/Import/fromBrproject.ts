@@ -4,10 +4,10 @@ import { ConfirmationWindow } from '/@/components/Windows/Common/Confirm/Confirm
 import { SettingsWindow } from '/@/components/Windows/Settings/SettingsWindow'
 import { exportAsBrproject } from '../Export/AsBrproject'
 import { App } from '/@/App'
-import { basename } from '/@/utils/path'
+import { basename } from '/@/libs/path'
 import { Project } from '../Project/Project'
 import { LocaleManager } from '../../Locales/Manager'
-import { findSuitableFolderName } from '/@/utils/directory/findSuitableName'
+import { findSuitableFolderName } from '/@/libs/directory/findSuitableName'
 import { StreamingUnzipper } from '../../FileSystem/Zip/StreamingUnzipper'
 
 export async function importFromBrproject(

@@ -5,7 +5,7 @@ import { IDisposable } from '/@/types/disposable'
 import { EventDispatcher } from '/@/components/Common/Event/EventDispatcher'
 import { TreeTab } from '/@/components/Editors/TreeEditor/Tab'
 import type { Tab } from '/@/components/TabSystem/CommonTab'
-import { useMonaco } from '../../../utils/libs/useMonaco'
+import { useMonaco } from '../../../libs/libs/useMonaco'
 import { supportsLookbehind } from './supportsLookbehind'
 
 export interface IKnownWords {
@@ -79,8 +79,11 @@ export class ConfiguredJsonHighlighter extends EventDispatcher<IKnownWords> {
 		const tab = tabArg ?? app.project.tabSystem?.selectedTab
 		if (!(tab instanceof TextTab) && !(tab instanceof TreeTab)) return
 
-		const { id, highlighterConfiguration = {}, type } =
-			App.fileType.get(tab.getPath()) ?? {}
+		const {
+			id,
+			highlighterConfiguration = {},
+			type,
+		} = App.fileType.get(tab.getPath()) ?? {}
 
 		// We have already loaded the needed file type
 		if (!id) return this.resetWords()
@@ -126,7 +129,8 @@ export class ConfiguredJsonHighlighter extends EventDispatcher<IKnownWords> {
 
 			// we include these common regular expressions
 			symbols: /[=><!~?:&|+\-*\/\^%]+/,
-			escapes: /\\(?:[abfnrtv\\"']|x[0-9A-Fa-f]{1,4}|u[0-9A-Fa-f]{4}|U[0-9A-Fa-f]{8})/,
+			escapes:
+				/\\(?:[abfnrtv\\"']|x[0-9A-Fa-f]{1,4}|u[0-9A-Fa-f]{4}|U[0-9A-Fa-f]{8})/,
 			digits: /\d+(_+\d+)*/,
 
 			// The main tokenizer for our languages

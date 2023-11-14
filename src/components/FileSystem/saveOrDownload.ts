@@ -4,8 +4,8 @@ import { InformationWindow } from '../Windows/Common/Information/InformationWind
 import { FileSystem } from './FileSystem'
 import { isUsingFileSystemPolyfill, isUsingOriginPrivateFs } from './Polyfill'
 import { App } from '/@/App'
-import { basename, extname } from '/@/utils/path'
-import { revealInFileExplorer } from '/@/utils/revealInFileExplorer'
+import { basename, extname } from '/@/libs/path'
+import { revealInFileExplorer } from '/@/libs/revealInFileExplorer'
 
 export async function saveOrDownload(
 	filePath: string,
@@ -32,7 +32,7 @@ export async function saveOrDownload(
 			if (import.meta.env.VITE_IS_TAURI_APP) {
 				const { join } = await import('@tauri-apps/api/path')
 				const { getBridgeFolderPath } = await import(
-					'/@/utils/getBridgeFolderPath'
+					'/@/libs/getBridgeFolderPath'
 				)
 
 				revealInFileExplorer(

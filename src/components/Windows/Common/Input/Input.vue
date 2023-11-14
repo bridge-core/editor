@@ -47,7 +47,7 @@
 <script lang="ts" setup>
 import BaseWindow from '../../Layout/BaseWindow.vue'
 import { useTranslations } from '/@/components/Composables/useTranslations'
-import { pointerDevice } from '/@/utils/pointerDevice'
+import { pointerDevice } from '/@/libs/pointerDevice'
 
 const { t } = useTranslations()
 const props = defineProps(['window'])

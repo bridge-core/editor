@@ -3,7 +3,7 @@ import { AnyDirectoryHandle, AnyFileHandle } from '../FileSystem/Types'
 import { addCommandBarAction } from './State'
 import { App } from '/@/App'
 import { IDisposable } from '/@/types/disposable'
-import { loadAllFiles } from '/@/utils/file/loadAllFiles'
+import { loadAllFiles } from '/@/libs/file/loadAllFiles'
 
 export async function addFilesToCommandBar(
 	directoryHandle: AnyDirectoryHandle,

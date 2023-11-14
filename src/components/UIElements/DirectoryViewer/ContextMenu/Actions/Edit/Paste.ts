@@ -3,7 +3,7 @@ import { clipboard } from './Copy'
 import {
 	findSuitableFileName,
 	findSuitableFolderName,
-} from '/@/utils/directory/findSuitableName'
+} from '/@/libs/directory/findSuitableName'
 import { App } from '/@/App'
 import { AnyHandle } from '/@/components/FileSystem/Types'
 

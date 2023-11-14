@@ -1,8 +1,8 @@
 import { TPackTypeId } from '../Data/PackType'
 import { App } from '/@/App'
 import { FileSystem } from '/@/components/FileSystem/FileSystem'
-import { iterateDir, iterateDirParallel } from '/@/utils/iterateDir'
-import { join } from '/@/utils/path'
+import { iterateDir, iterateDirParallel } from '/@/libs/iterateDir'
+import { join } from '/@/libs/path'
 
 export class InstallFiles {
 	constructor(

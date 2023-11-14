@@ -2,7 +2,7 @@ import AssetPreviewWindowComponent from './Window.vue'
 import type { StandaloneModelViewer } from 'bridge-model-viewer'
 import { markRaw, reactive } from 'vue'
 import { Color } from 'three'
-import { useBridgeModelViewer } from '/@/utils/libs/useModelViewer'
+import { useBridgeModelViewer } from '/@/libs/libs/useModelViewer'
 import { NewBaseWindow } from '/@/components/Windows/NewBaseWindow'
 
 export interface IAssetPreviewWindowConfig {

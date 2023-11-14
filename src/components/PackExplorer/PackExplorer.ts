@@ -24,7 +24,7 @@ import { IHandleMovedOptions } from '../UIElements/DirectoryViewer/DirectoryStor
 import { ViewConnectedFiles } from '../UIElements/DirectoryViewer/ContextMenu/Actions/ConnectedFiles'
 import { ToLocalProjectAction } from './Actions/ToLocalProject'
 import { ToBridgeFolderProjectAction } from './Actions/ToBridgeFolderProject'
-import { revealInFileExplorer } from '/@/utils/revealInFileExplorer'
+import { revealInFileExplorer } from '/@/libs/revealInFileExplorer'
 import { pathFromHandle } from '../FileSystem/Virtual/pathFromHandle'
 
 export class PackExplorer extends SidebarContent {

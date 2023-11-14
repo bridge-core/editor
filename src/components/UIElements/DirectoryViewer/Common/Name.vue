@@ -94,9 +94,9 @@ import { BaseWrapper } from './BaseWrapper'
 import BasicIconName from './BasicIconName.vue'
 import { useDoubleClick } from '/@/components/Composables/DoubleClick'
 import { TranslationMixin } from '/@/components/Mixins/TranslationMixin'
-import { platform } from '/@/utils/os'
-import { pointerDevice } from '/@/utils/pointerDevice'
-import { extname } from '/@/utils/path'
+import { platform } from '/@/libs/os'
+import { pointerDevice } from '/@/libs/pointerDevice'
+import { extname } from '/@/libs/path'
 
 export default {
 	components: { BasicIconName },

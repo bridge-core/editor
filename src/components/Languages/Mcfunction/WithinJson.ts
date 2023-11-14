@@ -1,12 +1,12 @@
 import { App } from '/@/App'
-import { getLocation } from '/@/utils/monaco/getLocation'
+import { getLocation } from '/@/libs/monaco/getLocation'
 import type { editor, Position, Range } from 'monaco-editor'
-import { getJsonWordAtPosition } from '/@/utils/monaco/getJsonWord'
+import { getJsonWordAtPosition } from '/@/libs/monaco/getJsonWord'
 import { tokenizeCommand } from 'bridge-common-utils'
 import { BedrockProject } from '/@/components/Projects/Project/BedrockProject'
-import { isWithinQuotes } from '/@/utils/monaco/withinQuotes'
+import { isWithinQuotes } from '/@/libs/monaco/withinQuotes'
 import { isMatch } from 'bridge-common-utils'
-import { useMonaco } from '../../../utils/libs/useMonaco'
+import { useMonaco } from '../../../libs/libs/useMonaco'
 
 export async function registerEmbeddedMcfunctionProvider() {
 	const { languages, Range } = await useMonaco()
@@ -25,12 +25,10 @@ export async function registerEmbeddedMcfunctionProvider() {
 			const currentTab = app.project.tabSystem?.selectedTab
 			if (!currentTab) return
 
-			const validCommands: Record<
-				string,
-				string[]
-			> = await app.dataLoader.readJSON(
-				`data/packages/minecraftBedrock/location/validCommand.json`
-			)
+			const validCommands: Record<string, string[]> =
+				await app.dataLoader.readJSON(
+					`data/packages/minecraftBedrock/location/validCommand.json`
+				)
 			const {
 				id,
 				meta: { commandsUseSlash } = { commandsUseSlash: false },

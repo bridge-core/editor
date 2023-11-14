@@ -3,7 +3,7 @@ import { computed, Ref, ref } from 'vue'
 import { AnyDirectoryHandle } from '../../FileSystem/Types'
 import { settingsState } from '../../Windows/Settings/SettingsState'
 import { App } from '/@/App'
-import { loadHandleAsDataURL } from '/@/utils/loadAsDataUrl'
+import { loadHandleAsDataURL } from '/@/libs/loadAsDataUrl'
 
 export interface IComMojangPack {
 	type: 'behaviorPack' | 'resourcePack'

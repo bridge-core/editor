@@ -4,7 +4,7 @@ import type { IDirectoryViewerOptions } from '../DirectoryStore'
 import type { DirectoryWrapper } from '../DirectoryView/DirectoryWrapper'
 import { App } from '/@/App'
 import { showFileContextMenu } from '../ContextMenu/File'
-import { getDefaultFileIcon } from '/@/utils/file/getIcon'
+import { getDefaultFileIcon } from '/@/libs/file/getIcon'
 
 export class FileWrapper extends BaseWrapper<AnyFileHandle> {
 	public readonly kind = 'file'

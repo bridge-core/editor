@@ -1,4 +1,4 @@
-import { pointerDevice } from '/@/utils/pointerDevice'
+import { pointerDevice } from '/@/libs/pointerDevice'
 
 export function useDoubleClick<T>(
 	onClick: (isDoubleClick: boolean, ...args: T[]) => void,

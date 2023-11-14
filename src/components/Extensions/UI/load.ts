@@ -1,4 +1,4 @@
-import { extname, basename } from '/@/utils/path'
+import { extname, basename } from '/@/libs/path'
 import { createErrorNotification } from '/@/components/Notifications/Errors'
 import { TUIStore } from './store'
 import { IDisposable } from '/@/types/disposable'
@@ -18,8 +18,8 @@ import {
 	VTooltip,
 } from 'vuetify/lib'
 import { AnyDirectoryHandle } from '../../FileSystem/Types'
-import { useVueTemplateCompiler } from '/@/utils/libs/useVueTemplateCompiler'
-import { iterateDir } from '/@/utils/iterateDir'
+import { useVueTemplateCompiler } from '/@/libs/libs/useVueTemplateCompiler'
+import { iterateDir } from '/@/libs/iterateDir'
 import { JsRuntime } from '../Scripts/JsRuntime'
 
 const VuetifyComponents = {

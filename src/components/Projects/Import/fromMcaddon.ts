@@ -11,9 +11,9 @@ import { CreateConfig } from '../CreateProject/Files/Config'
 import { FileSystem } from '/@/components/FileSystem/FileSystem'
 import { defaultPackPaths } from '../Project/Config'
 import { InformationWindow } from '../../Windows/Common/Information/InformationWindow'
-import { basename, join } from '/@/utils/path'
-import { getPackId, IManifestModule } from '/@/utils/manifest/getPackId'
-import { findSuitableFolderName } from '/@/utils/directory/findSuitableName'
+import { basename, join } from '/@/libs/path'
+import { getPackId, IManifestModule } from '/@/libs/manifest/getPackId'
+import { findSuitableFolderName } from '/@/libs/directory/findSuitableName'
 
 export async function importFromMcaddon(
 	fileHandle: AnyFileHandle,

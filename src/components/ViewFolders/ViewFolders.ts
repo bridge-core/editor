@@ -9,7 +9,7 @@ import { IDirectoryViewerOptions } from '../UIElements/DirectoryViewer/Directory
 import ViewFolderComponent from './ViewFolders.vue'
 import { App } from '/@/App'
 import { IDisposable } from '/@/types/disposable'
-import { isSameEntry } from '/@/utils/file/isSameEntry'
+import { isSameEntry } from '/@/libs/file/isSameEntry'
 
 export interface IViewHandleOptions extends IDirectoryViewerOptions {
 	directoryHandle: AnyDirectoryHandle

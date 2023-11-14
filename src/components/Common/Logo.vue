@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import { isNightly } from '/@/utils/app/isNightly'
+import { isNightly } from '/@/libs/app/isNightly'
 
 export default {
 	setup() {

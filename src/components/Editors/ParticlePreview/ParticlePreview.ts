@@ -7,12 +7,12 @@ import { AxesHelper } from 'three'
 import { FileWatcher } from '/@/components/FileSystem/FileWatcher'
 import { ParticleWatcher } from './ParticleWatcher'
 import { TabSystem } from '/@/components/TabSystem/TabSystem'
-import { loadAsDataURL } from '/@/utils/loadAsDataUrl'
+import { loadAsDataURL } from '/@/libs/loadAsDataUrl'
 import { App } from '/@/App'
 import { Signal } from '/@/components/Common/Event/Signal'
 import { FileTab } from '../../TabSystem/FileTab'
 import { markRaw } from 'vue'
-import { useWintersky } from '/@/utils/libs/useWintersky'
+import { useWintersky } from '/@/libs/libs/useWintersky'
 
 export class ParticlePreviewTab extends ThreePreviewTab {
 	protected emitter?: Emitter

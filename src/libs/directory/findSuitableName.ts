@@ -1,6 +1,6 @@
 import { AnyDirectoryHandle } from '/@/components/FileSystem/Types'
-import { getEntries } from '/@/utils/directory/getEntries'
-import { basename, extname } from '/@/utils/path'
+import { getEntries } from '/@/libs/directory/getEntries'
+import { basename, extname } from '/@/libs/path'
 
 export async function findSuitableFileName(
 	name: string,

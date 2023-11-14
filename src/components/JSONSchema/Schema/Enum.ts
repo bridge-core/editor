@@ -1,5 +1,5 @@
 import { Schema } from './Schema'
-import { closestMatch } from '/@/utils/string/closestMatch'
+import { closestMatch } from '/@/libs/string/closestMatch'
 
 export class EnumSchema extends Schema {
 	public readonly types = []

@@ -6,8 +6,8 @@ import { InformationWindow } from '/@/components/Windows/Common/Information/Info
 import { AnyDirectoryHandle } from '/@/components/FileSystem/Types'
 import { VirtualDirectoryHandle } from '../../FileSystem/Virtual/DirectoryHandle'
 import { TauriFsStore } from '../../FileSystem/Virtual/Stores/TauriFs'
-import { basename, join } from '/@/utils/path'
-import { platform } from '/@/utils/os'
+import { basename, join } from '/@/libs/path'
+import { platform } from '/@/libs/os'
 
 export const comMojangKey = 'comMojangDirectory'
 

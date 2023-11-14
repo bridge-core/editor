@@ -2,7 +2,7 @@ import { App } from '/@/App'
 import { Signal } from './Event/Signal'
 import { Queue } from './Queue'
 import { set, markRaw } from 'vue'
-import { dirname } from '/@/utils/path'
+import { dirname } from '/@/libs/path'
 
 export class PersistentQueue<T> extends Signal<Queue<T>> {
 	protected queue!: Queue<T>

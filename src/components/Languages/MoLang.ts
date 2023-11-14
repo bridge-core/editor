@@ -1,7 +1,7 @@
 import type { editor, languages } from 'monaco-editor'
 import { Language } from './Language'
 import { CustomMoLang } from 'molang'
-import { useMonaco } from '../../utils/libs/useMonaco'
+import { useMonaco } from '../../libs/libs/useMonaco'
 
 export const config: languages.LanguageConfiguration = {
 	comments: {
