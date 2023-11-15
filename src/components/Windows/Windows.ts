@@ -1,4 +1,4 @@
-import { Ref, ref } from 'vue'
+import { Ref, ref, computed } from 'vue'
 
 export class Windows {
 	public openWindows: Ref<string[]> = ref([])
@@ -11,5 +11,9 @@ export class Windows {
 	public close(name: string) {
 		this.openWindows.value.splice(this.openWindows.value.indexOf(name), 1)
 		this.openWindows.value = this.openWindows.value
+	}
+
+	public opened(name: string) {
+		return computed(() => this.openWindows.value.includes(name))
 	}
 }
