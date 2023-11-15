@@ -1,7 +1,7 @@
 import { EventSystem } from '/@/libs/event/EventSystem'
 import { App } from '/@/App'
 import { ProjectData, getData, validProject } from './Project'
-import pathBrowserify from 'path-browserify'
+import { join } from '/@/libs/path'
 
 export class ProjectManager {
 	public projects: ProjectData[] = []
@@ -22,7 +22,7 @@ export class ProjectManager {
 		this.projects = []
 
 		for (const folderName of foldersToLoad) {
-			const projectPath = pathBrowserify.join('projects', folderName)
+			const projectPath = join('projects', folderName)
 			if (!(await validProject(projectPath))) continue
 
 			this.projects.push(await getData(projectPath))

@@ -1,5 +1,5 @@
+import { sep, parse, basename } from '/@/libs/path'
 import { BaseEntry, BaseFileSystem } from './BaseFileSystem'
-import pathBrowserify from 'path-browserify'
 
 export class PWAFileSystem extends BaseFileSystem {
 	protected baseHandle: FileSystemDirectoryHandle | null = null
@@ -16,9 +16,7 @@ export class PWAFileSystem extends BaseFileSystem {
 	protected async traverse(path: string): Promise<FileSystemDirectoryHandle> {
 		if (!this.baseHandle) throw new Error('Base handle not set!')
 
-		const directoryNames = pathBrowserify
-			.parse(path)
-			.dir.split(pathBrowserify.sep)
+		const directoryNames = parse(path).dir.split(sep)
 		if (directoryNames[0] === '') directoryNames.shift()
 
 		let currentHandle = this.baseHandle
@@ -39,7 +37,7 @@ export class PWAFileSystem extends BaseFileSystem {
 
 		const handle = await (
 			await this.traverse(path)
-		).getFileHandle(pathBrowserify.basename(path))
+		).getFileHandle(basename(path))
 		const file = await handle.getFile()
 
 		const reader = new FileReader()
@@ -58,7 +56,7 @@ export class PWAFileSystem extends BaseFileSystem {
 
 		const handle = await (
 			await this.traverse(path)
-		).getFileHandle(pathBrowserify.basename(path), {
+		).getFileHandle(basename(path), {
 			create: true,
 		})
 
@@ -76,7 +74,7 @@ export class PWAFileSystem extends BaseFileSystem {
 
 		const handle = await (
 			await this.traverse(path)
-		).getDirectoryHandle(pathBrowserify.basename(path))
+		).getDirectoryHandle(basename(path))
 		const handleEntries = handle.entries()
 
 		const entries = []
@@ -95,7 +93,7 @@ export class PWAFileSystem extends BaseFileSystem {
 
 		const rootHandle = await await this.traverse(path)
 
-		await rootHandle.getDirectoryHandle(pathBrowserify.basename(path), {
+		await rootHandle.getDirectoryHandle(basename(path), {
 			create: true,
 		})
 	}
@@ -103,7 +101,7 @@ export class PWAFileSystem extends BaseFileSystem {
 	public async exists(path: string): Promise<boolean> {
 		if (this.baseHandle === null) return false
 
-		const itemNames = path.split(pathBrowserify.sep)
+		const itemNames = path.split(sep)
 		if (itemNames[0] === '') itemNames.shift()
 
 		let currentHandle = this.baseHandle
