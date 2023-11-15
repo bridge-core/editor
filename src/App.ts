@@ -6,6 +6,7 @@ import { Ref, createApp, ref } from 'vue'
 import { ProjectData } from '/@/libs/projects/Project'
 import { PWAFileSystem } from '/@/libs/fileSystem/PWAFileSystem'
 import { Windows } from '/@/components/Windows/Windows'
+import { Data } from '/@/libs/data/Data'
 
 export class App {
 	public static instance: App
@@ -13,6 +14,7 @@ export class App {
 	public fileSystem = getFileSystem()
 	public projectManager = new ProjectManager()
 	public windows = new Windows()
+	public data = new Data()
 
 	protected themeManager = new ThemeManager()
 
@@ -35,6 +37,7 @@ export class App {
 		})
 
 		await this.projectManager.loadProjects()
+		await this.data.load()
 
 		createApp(AppComponent).mount('#app')
 	}

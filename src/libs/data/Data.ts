@@ -7,6 +7,10 @@ import { LocalFileSystem } from '/@/libs/fileSystem/LocalFileSystem'
 export class Data {
 	private fileSystem = new LocalFileSystem()
 
+	constructor() {
+		this.fileSystem.setRootName('data')
+	}
+
 	public async load() {
 		const rawData = await fetch(baseUrl + 'packages.zip').then((response) =>
 			response.arrayBuffer()

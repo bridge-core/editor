@@ -1,4 +1,4 @@
-import { join } from 'path'
+import { join } from '/@/libs/path'
 import { BaseFileSystem } from '/@/libs/fileSystem/BaseFileSystem'
 
 export async function createBridgePack(
