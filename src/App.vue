@@ -2,7 +2,7 @@
 	<main class="w-screen h-screen bg-background">
 		<Toolbar />
 		<Greet />
-		<!-- <Changelog /> -->
+		<Changelog />
 	</main>
 </template>
 

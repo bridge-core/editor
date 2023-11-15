@@ -1,16 +1,18 @@
 import AppComponent from './App.vue'
 import { ProjectManager } from '/@/libs/projects/ProjectManager'
 import { ThemeManager } from '/@/components/Extensions/Themes/ThemeManager'
-import { getFileSystem } from './libs/fileSystem/FileSystem'
+import { getFileSystem } from '/@/libs/fileSystem/FileSystem'
 import { Ref, createApp, ref } from 'vue'
-import { ProjectData } from './libs/projects/Project'
-import { PWAFileSystem } from './libs/fileSystem/PWAFileSystem'
+import { ProjectData } from '/@/libs/projects/Project'
+import { PWAFileSystem } from '/@/libs/fileSystem/PWAFileSystem'
+import { Windows } from '/@/components/Windows/Windows'
 
 export class App {
 	public static instance: App
 
 	public fileSystem = getFileSystem()
 	public projectManager = new ProjectManager()
+	public windows = new Windows()
 
 	protected themeManager = new ThemeManager()
 
@@ -36,37 +38,36 @@ export class App {
 
 		createApp(AppComponent).mount('#app')
 	}
-}
 
-//TODO: Remove listeners on unmount
-export function useProjects(): Ref<ProjectData[]> {
-	const projects: Ref<ProjectData[]> = ref([])
+	//TODO: Remove listeners on unmount
+	public useProjects(): Ref<ProjectData[]> {
+		const projects: Ref<ProjectData[]> = ref([])
 
-	function updateProjects() {
-		projects.value = App.instance.projectManager.projects
+		const projectManager = this.projectManager
+
+		function updateProjects() {
+			projects.value = projectManager.projects
+		}
+
+		projectManager.eventSystem.on('updatedProjects', updateProjects)
+
+		return projects
 	}
 
-	App.instance.projectManager.eventSystem.on(
-		'updatedProjects',
-		updateProjects
-	)
+	public useBridgeFolderSelected(): Ref<boolean> {
+		const bridgeFolderSelected = ref(false)
 
-	return projects
-}
+		const fileSystem = this.fileSystem
 
-export function useBridgeFolderSelected(): Ref<boolean> {
-	const bridgeFolderSelected = ref(false)
+		function updatedFileSystem() {
+			bridgeFolderSelected.value = false
 
-	function updatedFileSystem() {
-		bridgeFolderSelected.value = false
+			if (fileSystem instanceof PWAFileSystem)
+				bridgeFolderSelected.value = fileSystem.setup
+		}
 
-		const fileSystem = App.instance.fileSystem
+		fileSystem.eventSystem.on('reloaded', updatedFileSystem)
 
-		if (fileSystem instanceof PWAFileSystem)
-			bridgeFolderSelected.value = fileSystem.setup
+		return bridgeFolderSelected
 	}
-
-	App.instance.fileSystem.eventSystem.on('reloaded', updatedFileSystem)
-
-	return bridgeFolderSelected
 }

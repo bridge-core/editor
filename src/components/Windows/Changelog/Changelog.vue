@@ -1,13 +1,14 @@
 <template>
 	<div
 		class="w-screen h-app flex justify-center items-center absolute top-toolbar left-0"
+		v-if="App.instance.windows.openWindows.value.includes('changelog')"
 	>
 		<div
 			class="max-w-2xl bg-background shadow-window rounded-md overflow-hidden"
 		>
 			<div class="w-full flex justify-between align-center p-2">
 				<span>What's New?</span>
-				<span class="material-symbols-rounded text-sm">close</span>
+				<IconButton icon="close" class="text-sm" @click="close" />
 			</div>
 			<div class="overflow-auto h-[42rem] p-8">
 				<div v-html="content" class="changelog" />
@@ -17,10 +18,17 @@
 </template>
 
 <script lang="ts" setup>
+import IconButton from '/@/components/Common/IconButton.vue'
+
 import { onMounted, ref } from 'vue'
 import { baseUrl } from '/@/libs/baseUrl'
+import { App } from '/@/App'
 
 const content = ref('')
+
+function close() {
+	App.instance.windows.close('changelog')
+}
 
 onMounted(async () => {
 	const response = await fetch(baseUrl + 'changelog.html')

@@ -7,12 +7,8 @@
 				<p class="mb-1 text-lg text-text">Projects</p>
 
 				<div>
-					<span class="material-symbols-rounded text-text mr-1">
-						folder
-					</span>
-					<span class="material-symbols-rounded text-text">
-						add
-					</span>
+					<IconButton icon="folder" class="mr-1" />
+					<IconButton icon="add" />
 				</div>
 			</div>
 
@@ -41,10 +37,25 @@
 			</div>
 
 			<div
-				class="flex items-center flex-col mt-8"
+				class="flex items-center flex-col mt-6"
+				v-if="!suggestSelectBridgeFolder && projects.length === 0"
+			>
+				<p class="opacity-30 text-text mb-2">
+					You have no projects yet.
+				</p>
+				<p
+					class="text-primary cursor-pointer hover:underline"
+					@click="createProject"
+				>
+					{{ 'Create one' }}
+				</p>
+			</div>
+
+			<div
+				class="flex items-center flex-col mt-6"
 				v-if="suggestSelectBridgeFolder"
 			>
-				<p class="opacity-30 text-text">
+				<p class="opacity-30 text-text mb-2">
 					You need to select a bridge. folder.
 				</p>
 				<p
@@ -60,13 +71,14 @@
 
 <script setup lang="ts">
 import Logo from '/@/components/Common/Logo.vue'
+import IconButton from '/@/components/Common/IconButton.vue'
 
-import { App, useProjects, useBridgeFolderSelected } from '/@/App'
+import { App } from '/@/App'
 import { PWAFileSystem } from '/@/libs/fileSystem/PWAFileSystem'
 import { computed } from 'vue'
 
-const projects = useProjects()
-const brigeFolderSelected = useBridgeFolderSelected()
+const projects = App.instance.useProjects()
+const brigeFolderSelected = App.instance.useBridgeFolderSelected()
 
 const suggestSelectBridgeFolder = computed(
 	() =>
@@ -85,4 +97,6 @@ async function selectBridgeFolder() {
 		})) ?? null
 	)
 }
+
+async function createProject() {}
 </script>
