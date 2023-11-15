@@ -15,6 +15,6 @@ import Logo from '/@/components/Common/Logo.vue'
 import { version } from '/@/libs/app/version'
 
 function openChangelog() {
-	App.instance.windows.openWindows.value.push('changelog')
+	App.instance.windows.openWindows.value.push('Changelog')
 }
 </script>

@@ -92,6 +92,12 @@ export class PWAFileSystem extends BaseFileSystem {
 		if (this.baseHandle === null) {
 			return
 		}
+
+		const rootHandle = await await this.traverse(path)
+
+		await rootHandle.getDirectoryHandle(pathBrowserify.basename(path), {
+			create: true,
+		})
 	}
 
 	public async exists(path: string): Promise<boolean> {

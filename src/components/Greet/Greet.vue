@@ -8,7 +8,7 @@
 
 				<div>
 					<IconButton icon="folder" class="mr-1" />
-					<IconButton icon="add" />
+					<IconButton icon="add" @click="createProject" />
 				</div>
 			</div>
 
@@ -98,5 +98,7 @@ async function selectBridgeFolder() {
 	)
 }
 
-async function createProject() {}
+async function createProject() {
+	App.instance.windows.open('Create Project')
+}
 </script>
