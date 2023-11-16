@@ -13,6 +13,7 @@ export class PWAFileSystem extends BaseFileSystem {
 
 		this.eventSystem.dispatch('reloaded', null)
 	}
+
 	protected async traverse(path: string): Promise<FileSystemDirectoryHandle> {
 		if (!this.baseHandle) throw new Error('Base handle not set!')
 
@@ -32,8 +33,28 @@ export class PWAFileSystem extends BaseFileSystem {
 		return currentHandle
 	}
 
+	public async readFile(path: string): Promise<ArrayBuffer> {
+		if (this.baseHandle === null) throw new Error('Base handle not set!')
+
+		const handle = await (
+			await this.traverse(path)
+		).getFileHandle(basename(path))
+
+		const file = await handle.getFile()
+
+		const reader = new FileReader()
+
+		return new Promise((resolve) => {
+			reader.onload = () => {
+				resolve(reader.result as ArrayBuffer)
+			}
+
+			reader.readAsArrayBuffer(file)
+		})
+	}
+
 	public async readFileDataUrl(path: string): Promise<string> {
-		if (this.baseHandle === null) return ''
+		if (this.baseHandle === null) throw new Error('Base handle not set!')
 
 		const handle = await (
 			await this.traverse(path)
@@ -52,7 +73,7 @@ export class PWAFileSystem extends BaseFileSystem {
 	}
 
 	public async writeFile(path: string, content: FileSystemWriteChunkType) {
-		if (this.baseHandle === null) return
+		if (this.baseHandle === null) throw new Error('Base handle not set!')
 
 		const handle = await (
 			await this.traverse(path)
@@ -68,9 +89,7 @@ export class PWAFileSystem extends BaseFileSystem {
 	}
 
 	public async readDirectoryEntries(path: string): Promise<BaseEntry[]> {
-		if (this.baseHandle === null) {
-			return []
-		}
+		if (this.baseHandle === null) throw new Error('Base handle not set!')
 
 		const handle = await (
 			await this.traverse(path)
@@ -87,9 +106,7 @@ export class PWAFileSystem extends BaseFileSystem {
 	}
 
 	public async makeDirectory(path: string) {
-		if (this.baseHandle === null) {
-			return
-		}
+		if (this.baseHandle === null) throw new Error('Base handle not set!')
 
 		const rootHandle = await await this.traverse(path)
 
@@ -99,7 +116,7 @@ export class PWAFileSystem extends BaseFileSystem {
 	}
 
 	public async exists(path: string): Promise<boolean> {
-		if (this.baseHandle === null) return false
+		if (this.baseHandle === null) throw new Error('Base handle not set!')
 
 		const itemNames = path.split(sep)
 		if (itemNames[0] === '') itemNames.shift()

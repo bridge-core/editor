@@ -2,6 +2,7 @@ import { EventSystem } from '/@/libs/event/EventSystem'
 import { App } from '/@/App'
 import { ProjectData, getData, validProject } from './Project'
 import { join } from '/@/libs/path'
+import { PWAFileSystem } from '../fileSystem/PWAFileSystem'
 
 export class ProjectManager {
 	public projects: ProjectData[] = []
@@ -9,6 +10,14 @@ export class ProjectManager {
 
 	public async loadProjects() {
 		const fileSystem = App.instance.fileSystem
+
+		if (fileSystem instanceof PWAFileSystem && !fileSystem.setup) {
+			this.projects = []
+
+			this.eventSystem.dispatch('updatedProjects', null)
+
+			return
+		}
 
 		if (!(await fileSystem.exists('projects')))
 			await fileSystem.makeDirectory('projects')

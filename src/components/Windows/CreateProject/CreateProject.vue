@@ -3,7 +3,7 @@
 		<div class="p-8 pt-2 flex flex-col">
 			<div class="flex gap-3 mb-4">
 				<PackType
-					v-for="(packType, i) in packTypes"
+					v-for="packType in packTypes"
 					:pack-type="packType"
 					:selected="selectedPackTypes.includes(packType)"
 					@click="selectPackType(packType)"
@@ -119,10 +119,7 @@ import PackType from './PackType.vue'
 
 import { Ref, onMounted, ref } from 'vue'
 import { App } from '/@/App'
-import { join } from '/@/libs/path'
-import { createBridgePack } from './Packs/Bridge'
-import { createBehaviourPack } from './Packs/BehaviourPack'
-import { createResourcePack } from './Packs/ResourcePack'
+import { createProject } from '/@/libs/projects/create/Create'
 
 const projectIconInput: Ref<HTMLInputElement | null> = ref(null)
 const window = ref<Window | null>(null)
@@ -140,17 +137,22 @@ const selectedPackTypes: Ref<any> = ref([])
 async function create() {
 	const fileSystem = App.instance.fileSystem
 
-	const projectPath = join('projects', projectName.value)
-
-	await fileSystem.makeDirectory(projectPath)
-
-	await createBridgePack(fileSystem, projectPath)
-
-	if (selectedPackTypes.value.find((pack: any) => pack.id === 'behaviorPack'))
-		await createBehaviourPack(fileSystem, projectPath)
-
-	if (selectedPackTypes.value.find((pack: any) => pack.id === 'resourcePack'))
-		await createResourcePack(fileSystem, projectPath)
+	createProject(
+		{
+			name: projectName.value,
+			description: projectDescription.value,
+			namespace: projectNamespace.value,
+			author: projectAuthor.value,
+			targetVersion: projectTargetVersion.value,
+			icon:
+				projectIcon.value ??
+				(await App.instance.data.getRaw(
+					`packages/common/packIcon.png`
+				)),
+			packs: selectedPackTypes.value,
+		},
+		fileSystem
+	)
 
 	window.value?.close()
 }

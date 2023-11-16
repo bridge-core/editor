@@ -10,7 +10,7 @@ export class LocalFileSystem extends BaseFileSystem {
 		this.rootName = name
 	}
 
-	public async readFile(path: string): Promise<string> {
+	public async readFileText(path: string): Promise<string> {
 		if (this.rootName === null) throw new Error('Root name not set')
 
 		const content = (await get(`localFileSystem/${this.rootName}/${path}`))
@@ -22,7 +22,7 @@ export class LocalFileSystem extends BaseFileSystem {
 	}
 
 	public async readFileJSON(path: string): Promise<any> {
-		return JSON.parse(await this.readFile(path))
+		return JSON.parse(await this.readFileText(path))
 	}
 
 	public async writeFile(path: string, content: FileSystemWriteChunkType) {

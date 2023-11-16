@@ -3,7 +3,11 @@ import { EventSystem } from '/@/libs/event/EventSystem'
 export class BaseFileSystem {
 	public eventSystem = new EventSystem(['reloaded'])
 
-	public async readFile(path: string): Promise<string> {
+	public async readFile(path: string): Promise<ArrayBuffer> {
+		throw new Error('Not implemented!')
+	}
+
+	public async readFileText(path: string): Promise<string> {
 		throw new Error('Not implemented!')
 	}
 
