@@ -36,8 +36,13 @@ export class App {
 			this.projectManager.loadProjects()
 		})
 
+		console.time('[App] Projects')
 		await this.projectManager.loadProjects()
+		console.timeEnd('[App] Projects')
+
+		console.time('[App] Data')
 		await this.data.load()
+		console.timeEnd('[App] Data')
 
 		createApp(AppComponent).mount('#app')
 	}

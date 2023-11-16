@@ -12,7 +12,7 @@ export class Data {
 	}
 
 	public async load() {
-		console.time('[App] Data')
+		if (await this.fileSystem.exists('loaded')) return
 
 		const rawData = await fetch(baseUrl + 'packages.zip').then((response) =>
 			response.arrayBuffer()
@@ -40,7 +40,7 @@ export class Data {
 			}
 		}
 
-		console.timeEnd('[App] Data')
+		await this.fileSystem.writeFile('loaded', '')
 	}
 
 	public async get(path: string) {

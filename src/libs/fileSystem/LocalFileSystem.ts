@@ -42,6 +42,15 @@ export class LocalFileSystem extends BaseFileSystem {
 		})
 	}
 
+	public async exists(path: string): Promise<boolean> {
+		if (this.rootName === null) throw new Error('Root name not set')
+
+		return (
+			(await get(`localFileSystem/${this.rootName}/${path}`)) !==
+			undefined
+		)
+	}
+
 	public async allEntries(): Promise<string[]> {
 		if (this.rootName === null) throw new Error('Root name not set')
 
