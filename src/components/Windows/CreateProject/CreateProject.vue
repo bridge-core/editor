@@ -5,9 +5,9 @@
 				<div
 					class="w-32 h-32 bg-menu rounded p-2 transition-colors duration-100 ease-out"
 					:class="{ 'border-2 border-primary': i == 0 }"
-					v-for="(pack, i) in packTypes"
+					v-for="(packType, i) in packTypes"
 				>
-					<p>{{ pack }}</p>
+					<p>{{ t(`packType.${packType.id}.name`) }}</p>
 				</div>
 			</div>
 
@@ -107,23 +107,24 @@ import { App } from '/@/App'
 import { join } from '/@/libs/path'
 import { createBridgePack } from './Packs/Bridge'
 import { createBehaviourPack } from './Packs/BehaviourPack'
-import { ref } from 'vue'
+import { Ref, onMounted, ref } from 'vue'
+import { translate as t } from '/@/libs/Locales/Locales'
 
-const packTypes = ref(['Behaviour Pack', 'Resource Pack'])
+const packTypes: Ref<any> = ref([])
 
 async function create() {
-	console.log(
-		await App.instance.data.get(
-			'packages/minecraftBedrock/packDefinitions.json'
-		)
-	)
+	const fileSystem = App.instance.fileSystem
 
-	// const fileSystem = App.instance.fileSystem
+	const projectPath = join('projects', 'test')
 
-	// const projectPath = join('projects', 'test')
+	await fileSystem.makeDirectory(projectPath)
 
-	// await fileSystem.makeDirectory(projectPath)
-
-	// await createBridgePack(fileSystem, projectPath)
+	await createBridgePack(fileSystem, projectPath)
 }
+
+onMounted(async () => {
+	packTypes.value = await App.instance.data.get(
+		'packages/minecraftBedrock/packDefinitions.json'
+	)
+})
 </script>
