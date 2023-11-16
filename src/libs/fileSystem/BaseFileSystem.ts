@@ -11,6 +11,10 @@ export class BaseFileSystem {
 		throw new Error('Not implemented!')
 	}
 
+	public async readFileJSON(path: string): Promise<string> {
+		throw new Error('Not implemented!')
+	}
+
 	public async writeFile(path: string, content: FileSystemWriteChunkType) {
 		throw new Error('Not implemented!')
 	}

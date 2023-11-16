@@ -1,11 +1,28 @@
-import { BaseEntry, BaseFileSystem } from './BaseFileSystem'
+import { BaseFileSystem } from './BaseFileSystem'
 import { get, keys, set } from 'idb-keyval'
 
 export class LocalFileSystem extends BaseFileSystem {
+	private textDecoder = new TextDecoder()
+
 	private rootName: string | null = null
 
 	public setRootName(name: string) {
 		this.rootName = name
+	}
+
+	public async readFile(path: string): Promise<string> {
+		if (this.rootName === null) throw new Error('Root name not set')
+
+		const content = (await get(`localFileSystem/${this.rootName}/${path}`))
+			.content
+
+		if (typeof content === 'string') return content
+
+		return this.textDecoder.decode(new Uint8Array(content))
+	}
+
+	public async readFileJSON(path: string): Promise<any> {
+		return JSON.parse(await this.readFile(path))
 	}
 
 	public async writeFile(path: string, content: FileSystemWriteChunkType) {

@@ -12,6 +12,8 @@ export class Data {
 	}
 
 	public async load() {
+		console.time('[App] Data')
+
 		const rawData = await fetch(baseUrl + 'packages.zip').then((response) =>
 			response.arrayBuffer()
 		)
@@ -37,5 +39,11 @@ export class Data {
 				this.fileSystem.writeFile(path, unzipped[path])
 			}
 		}
+
+		console.timeEnd('[App] Data')
+	}
+
+	public async get(path: string) {
+		return await this.fileSystem.readFileJSON(path)
 	}
 }

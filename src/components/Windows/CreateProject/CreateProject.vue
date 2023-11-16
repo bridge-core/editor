@@ -112,12 +112,18 @@ import { ref } from 'vue'
 const packTypes = ref(['Behaviour Pack', 'Resource Pack'])
 
 async function create() {
-	const fileSystem = App.instance.fileSystem
+	console.log(
+		await App.instance.data.get(
+			'packages/minecraftBedrock/packDefinitions.json'
+		)
+	)
 
-	const projectPath = join('projects', 'test')
+	// const fileSystem = App.instance.fileSystem
 
-	await fileSystem.makeDirectory(projectPath)
+	// const projectPath = join('projects', 'test')
 
-	await createBridgePack(fileSystem, projectPath)
+	// await fileSystem.makeDirectory(projectPath)
+
+	// await createBridgePack(fileSystem, projectPath)
 }
 </script>
