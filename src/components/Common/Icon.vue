@@ -1,5 +1,5 @@
 <template>
-	<span class="material-symbols-rounded text-text">
+	<span class="material-symbols-rounded text-text select-none">
 		{{ icon }}
 	</span>
 </template>
