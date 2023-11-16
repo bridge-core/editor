@@ -119,6 +119,7 @@ import PackType from './PackType.vue'
 
 import { Ref, onMounted, ref } from 'vue'
 import { App } from '/@/App'
+import { IPackType } from 'mc-project-core'
 
 const projectIconInput: Ref<HTMLInputElement | null> = ref(null)
 const window = ref<Window | null>(null)
@@ -130,8 +131,8 @@ const projectAuthor: Ref<string> = ref('')
 const projectTargetVersion: Ref<string> = ref('1.20.50')
 const projectIcon: Ref<File | null> = ref(null)
 
-const packTypes: Ref<any> = ref([])
-const selectedPackTypes: Ref<any> = ref([])
+const packTypes: Ref<IPackType[]> = ref([])
+const selectedPackTypes: Ref<IPackType[]> = ref([])
 
 async function create() {
 	const fileSystem = App.instance.fileSystem
