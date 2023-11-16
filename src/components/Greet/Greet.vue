@@ -1,6 +1,6 @@
 <template>
 	<main class="w-full h-full flex justify-center items-center">
-		<div class="flex flex-col max-w-[28rem]">
+		<div class="flex flex-col max-w-[28rem] w-full">
 			<Logo class="ml-auto mr-auto mb-24 -mt-24 w-48" />
 
 			<div class="flex justify-between">
@@ -99,6 +99,11 @@ async function selectBridgeFolder() {
 }
 
 async function createProject() {
+	const fileSystem = App.instance.fileSystem
+
+	if (fileSystem instanceof PWAFileSystem && !fileSystem.setup)
+		await selectBridgeFolder()
+
 	App.instance.windows.open('Create Project')
 }
 </script>

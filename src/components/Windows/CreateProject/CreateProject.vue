@@ -1,7 +1,7 @@
 <template>
 	<Window name="Create Project" ref="window">
-		<div class="p-8 flex flex-col">
-			<div class="flex gap-3 mb-2">
+		<div class="p-8 pt-2 flex flex-col">
+			<div class="flex gap-3 mb-4">
 				<PackType
 					v-for="(packType, i) in packTypes"
 					:pack-type="packType"
@@ -17,10 +17,11 @@
 					v-slot="{ focus, blur }"
 				>
 					<input
-						class="bg-background outline-none max-w-none w-full"
+						class="bg-background outline-none max-w-none w-full placeholder:italic placeholder:text-menu placeholder:opacity-100"
 						@focus="focus"
 						@blur="blur"
 						v-model="projectName"
+						placeholder="Name"
 					/>
 				</LabeledInput>
 
@@ -30,7 +31,7 @@
 					v-slot="{ focus, blur }"
 				>
 					<input
-						class="bg-background outline-none max-w-none"
+						class="bg-background outline-none max-w-none placeholder:italic placeholder:text-menu placeholder:opacity-100"
 						value="Test"
 						@focus="focus"
 						@blur="blur"
@@ -44,10 +45,11 @@
 				v-slot="{ focus, blur }"
 			>
 				<input
-					class="bg-background outline-none max-w-none"
-					value="Test"
+					class="bg-background outline-none max-w-none placeholder:italic placeholder:text-menu placeholder:opacity-100"
 					@focus="focus"
 					@blur="blur"
+					v-model="projectDescription"
+					placeholder="Description"
 				/>
 			</LabeledInput>
 
@@ -58,10 +60,11 @@
 					v-slot="{ focus, blur }"
 				>
 					<input
-						class="bg-background outline-none"
-						value="Test"
+						class="bg-background outline-none placeholder:italic placeholder:text-menu placeholder:opacity-100"
 						@focus="focus"
 						@blur="blur"
+						v-model="projectNamespace"
+						placeholder="Namespace"
 					/>
 				</LabeledInput>
 
@@ -71,10 +74,11 @@
 					v-slot="{ focus, blur }"
 				>
 					<input
-						class="bg-background outline-none"
-						value="Test"
+						class="bg-background outline-none placeholder:italic placeholder:text-menu placeholder:opacity-100"
 						@focus="focus"
 						@blur="blur"
+						v-model="projectAuthor"
+						placeholder="Author"
 					/>
 				</LabeledInput>
 
@@ -84,15 +88,15 @@
 					v-slot="{ focus, blur }"
 				>
 					<input
-						class="bg-background outline-none"
-						value="Test"
+						class="bg-background outline-none placeholder:italic placeholder:text-menu placeholder:opacity-100"
 						@focus="focus"
 						@blur="blur"
+						v-model="projectTargetVersion"
 					/>
 				</LabeledInput>
 			</div>
 
-			<Button text="Create" @click="create" class="self-center" />
+			<Button text="Create" @click="create" class="self-center mt-4" />
 		</div>
 	</Window>
 </template>
@@ -111,6 +115,10 @@ import { createBehaviourPack } from './Packs/BehaviourPack'
 import { createResourcePack } from './Packs/ResourcePack'
 
 const projectName: Ref<string> = ref('New Project')
+const projectDescription: Ref<string> = ref('')
+const projectNamespace: Ref<string> = ref('bridge')
+const projectAuthor: Ref<string> = ref('')
+const projectTargetVersion: Ref<string> = ref('1.20.50')
 
 const packTypes: Ref<any> = ref([])
 const selectedPackTypes: Ref<any> = ref([])

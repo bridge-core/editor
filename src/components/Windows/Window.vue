@@ -5,7 +5,7 @@
 	>
 		<div class="bg-background shadow-window rounded-md overflow-hidden">
 			<div class="w-full flex justify-between align-center p-2">
-				<span class="select-none"> {{ name }} </span>
+				<span class="select-none ml-1"> {{ name }} </span>
 				<IconButton icon="close" class="text-sm" @click="close" />
 			</div>
 			<slot />
