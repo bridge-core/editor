@@ -40,5 +40,11 @@
 		"name": "Nederlands",
 		"file": "nl.json",
 		"codes": ["nl-NL"]
+	},
+	{
+		"id": "russian",
+		"name": "Русский",
+		"file": "ru.json",
+		"codes": ["ru-RU"]
 	}
 ]
