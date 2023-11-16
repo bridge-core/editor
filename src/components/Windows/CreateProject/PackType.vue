@@ -1,13 +1,20 @@
 <template>
 	<div
-		class="w-32 h-32 bg-menu rounded p-2 border-2 border-menu transition-colors duration-100 ease-out"
+		class="w-48 h-36 bg-menu rounded p-2 border-2 border-menu transition-colors duration-100 ease-out"
 		:class="{ 'border-primary': selected }"
 	>
-		<p class="select-none">{{ t(`packType.${packType.id}.name`) }}</p>
+		<div class="flex gap-1 mb-4">
+			<Icon :icon="packType.icon" />
+			<p class="select-none">{{ t(`packType.${packType.id}.name`) }}</p>
+		</div>
+
+		<p class="text-sm">{{ t(`packType.${packType.id}.description`) }}</p>
 	</div>
 </template>
 
 <script setup lang="ts">
+import Icon from '/@/components/Common/Icon.vue'
+
 import { translate as t } from '/@/libs/Locales/Locales'
 
 defineProps({
