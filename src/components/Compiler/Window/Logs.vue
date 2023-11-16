@@ -1,7 +1,7 @@
 <template>
 	<div v-if="data.length > 0" ref="scrollElement">
 		<Sheet
-			v-for="([msg, { type }], i) in getReversedData()"
+			v-for="([msg, { type }], i) in data"
 			:key="`${type}//${msg}//${i}`"
 			class="pa-2 mb-2 d-flex"
 			style="overflow: auto"
@@ -65,9 +65,6 @@ export default {
 		},
 		getMessageParts(msg) {
 			return msg.split('\n')
-		},
-		getReversedData() {
-			return this.data.slice().reverse()
 		},
 	},
 	watch: {

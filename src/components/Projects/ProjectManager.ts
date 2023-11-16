@@ -372,7 +372,7 @@ export class ProjectManager extends Signal<void> {
 		// Sometimes a the writer await will resolve before the poller actually detects the change so we need to wait a tiny bit before unlocking to catch the delay
 		setTimeout(() => {
 			this.projectBeingModified--
-		}, 1)
+		}, 10)
 	}
 	async handleWatchEvent(event: any) {
 		if (this.selectedProject === null) return
@@ -392,8 +392,8 @@ export class ProjectManager extends Signal<void> {
 
 		if (this.projectBeingModified > 0) return
 
-		const app = await App.getApp()
+		// const app = await App.getApp()
 
-		app.actionManager.trigger('bridge.action.refreshProject')
+		// app.actionManager.trigger('bridge.action.refreshProject')
 	}
 }
