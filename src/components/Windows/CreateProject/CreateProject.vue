@@ -119,7 +119,6 @@ import PackType from './PackType.vue'
 
 import { Ref, onMounted, ref } from 'vue'
 import { App } from '/@/App'
-import { createProject } from '/@/libs/projects/create/Create'
 
 const projectIconInput: Ref<HTMLInputElement | null> = ref(null)
 const window = ref<Window | null>(null)
@@ -137,7 +136,7 @@ const selectedPackTypes: Ref<any> = ref([])
 async function create() {
 	const fileSystem = App.instance.fileSystem
 
-	createProject(
+	App.instance.projectManager.createProject(
 		{
 			name: projectName.value,
 			description: projectDescription.value,

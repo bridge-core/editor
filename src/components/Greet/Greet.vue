@@ -7,7 +7,11 @@
 				<p class="mb-1 text-lg text-text">Projects</p>
 
 				<div>
-					<IconButton icon="folder" class="mr-1" />
+					<IconButton
+						icon="folder"
+						class="mr-1"
+						@click="selectBridgeFolder"
+					/>
 					<IconButton icon="add" @click="createProject" />
 				</div>
 			</div>
