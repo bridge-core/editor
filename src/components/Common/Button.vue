@@ -1,6 +1,6 @@
 <template>
 	<button
-		class="bg-menu px-2 py-1 rounded hover:bg-primary transition-colors duration-100 ease-out"
+		class="bg-menu px-2 py-1 rounded hover:bg-primary transition-colors duration-100 ease-out select-none"
 	>
 		{{ text }}
 	</button>

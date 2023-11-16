@@ -5,7 +5,7 @@
 	>
 		<div class="bg-background shadow-window rounded-md overflow-hidden">
 			<div class="w-full flex justify-between align-center p-2">
-				<span> {{ name }} </span>
+				<span class="select-none"> {{ name }} </span>
 				<IconButton icon="close" class="text-sm" @click="close" />
 			</div>
 			<slot />
@@ -28,4 +28,8 @@ const props = defineProps({
 function close() {
 	App.instance.windows.close(props.name)
 }
+
+defineExpose({
+	close,
+})
 </script>
