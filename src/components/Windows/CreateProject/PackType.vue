@@ -4,7 +4,7 @@
 		:class="{ '!border-primary': selected }"
 	>
 		<div class="flex gap-1 mb-4">
-			<Icon :icon="packType.icon" />
+			<Icon :icon="packType.icon" :color="packType.color" />
 			<p class="select-none">{{ t(`packType.${packType.id}.name`) }}</p>
 		</div>
 
@@ -19,7 +19,7 @@ import Icon from '/@/components/Common/Icon.vue'
 
 import { translate as t } from '/@/libs/Locales/Locales'
 
-defineProps({
+const { packType } = defineProps({
 	packType: {
 		type: Object as any,
 		required: true,

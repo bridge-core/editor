@@ -1,5 +1,9 @@
 <template>
-	<span class="material-symbols-rounded text-text select-none">
+	<span
+		class="material-symbols-rounded select-none text-background"
+		ref="element"
+		:style="style"
+	>
 		{{ mdiMap[icon] ?? icon }}
 	</span>
 </template>
@@ -12,10 +16,18 @@ const mdiMap: { [key: string]: string | undefined } = {
 	'mdi-wrench': 'build',
 }
 
-defineProps({
+const { color } = defineProps({
 	icon: {
 		type: String,
 		required: true,
 	},
+	color: {
+		type: String,
+		default: 'text-text',
+	},
 })
+
+const style = {
+	color: `var(--theme-color-${color})`,
+}
 </script>

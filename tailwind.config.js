@@ -42,6 +42,10 @@ module.exports = {
 				menu: 'var(--theme-color-menu)',
 				text: 'var(--theme-color-text)',
 				toolbar: 'var(--theme-color-toolbar)',
+				behaviorPack: 'var(--theme-color-behaviorPack)',
+				resourcePack: 'var(--theme-color-resourcePack)',
+				skinPack: 'var(--theme-color-skinPack)',
+				worldTemplate: 'var(--theme-color-worldTemplate)',
 			},
 			height: {
 				toolbar: '1.5rem',
