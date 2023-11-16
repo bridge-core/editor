@@ -1,9 +1,14 @@
 import { join } from '/@/libs/path'
 import { BaseFileSystem } from '/@/libs/fileSystem/BaseFileSystem'
+import { Pack } from './Pack'
+import { CreateProjectConfig } from '../../CreateProjectConfig'
 
-export async function createBridgePack(
-	fileSystem: BaseFileSystem,
-	projectPath: string
-) {
-	await fileSystem.makeDirectory(join(projectPath, '.bridge'))
+export class BridgePack extends Pack {
+	public async create(
+		fileSystem: BaseFileSystem,
+		projectPath: string,
+		config: CreateProjectConfig
+	) {
+		await fileSystem.makeDirectory(join(projectPath, '.bridge'))
+	}
 }

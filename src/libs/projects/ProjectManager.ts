@@ -4,12 +4,21 @@ import { ProjectData, getData, validProject } from './Project'
 import { join } from '/@/libs/path'
 import { PWAFileSystem } from '../fileSystem/PWAFileSystem'
 import { BaseFileSystem } from '/@/libs/fileSystem/BaseFileSystem'
-import { createBehaviourPack } from './create/packs/BehaviourPack'
-import { createBridgePack } from './create/packs/Bridge'
-import { createResourcePack } from './create/packs/ResourcePack'
 import { createConfig } from './create/files/Config'
 import { CreateProjectConfig } from './CreateProjectConfig'
 import { Ref, ref } from 'vue'
+import { BehaviourPack } from './create/packs/BehaviourPack'
+import { BridgePack } from './create/packs/Bridge'
+import { IPackType } from 'mc-project-core'
+import { Pack } from './create/packs/Pack'
+
+const packs: {
+	[key: string]: Pack | undefined
+} = {
+	'.bridge': new BridgePack(),
+	behaviorPack: new BehaviourPack(),
+	resourcePack: new BehaviourPack(),
+}
 
 export class ProjectManager {
 	public projects: ProjectData[] = []
@@ -63,13 +72,15 @@ export class ProjectManager {
 
 		await createConfig(fileSystem, join(projectPath, 'config.json'), config)
 
-		await createBridgePack(fileSystem, projectPath)
+		await Promise.all(
+			config.packs.map(async (packId: string) => {
+				const pack = packs[packId]
 
-		if (config.packs.find((pack: any) => pack.id === 'behaviorPack'))
-			await createBehaviourPack(fileSystem, projectPath, config)
+				if (pack === undefined) return
 
-		if (config.packs.find((pack: any) => pack.id === 'resourcePack'))
-			await createResourcePack(fileSystem, projectPath, config)
+				await pack.create(fileSystem, projectPath, config)
+			})
+		)
 
 		this.addProject(await getData(projectPath))
 	}

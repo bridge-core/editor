@@ -10,6 +10,14 @@ export class LocalFileSystem extends BaseFileSystem {
 		this.rootName = name
 	}
 
+	public async readFile(path: string): Promise<ArrayBuffer> {
+		if (this.rootName === null) throw new Error('Root name not set')
+
+		return new Uint8Array(
+			(await get(`localFileSystem/${this.rootName}/${path}`)).content
+		)
+	}
+
 	public async readFileText(path: string): Promise<string> {
 		if (this.rootName === null) throw new Error('Root name not set')
 

@@ -7,5 +7,5 @@ export interface CreateProjectConfig {
 	author: string
 	targetVersion: string
 	icon: FileSystemWriteChunkType
-	packs: IPackType[]
+	packs: string[]
 }

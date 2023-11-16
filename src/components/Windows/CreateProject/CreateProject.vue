@@ -149,7 +149,10 @@ async function create() {
 				(await App.instance.data.getRaw(
 					`packages/common/packIcon.png`
 				)),
-			packs: selectedPackTypes.value,
+			packs: [
+				'bridge.',
+				...selectedPackTypes.value.map((pack) => pack.id),
+			],
 		},
 		fileSystem
 	)

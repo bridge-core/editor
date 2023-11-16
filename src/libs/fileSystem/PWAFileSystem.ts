@@ -75,17 +75,21 @@ export class PWAFileSystem extends BaseFileSystem {
 	public async writeFile(path: string, content: FileSystemWriteChunkType) {
 		if (this.baseHandle === null) throw new Error('Base handle not set!')
 
-		const handle = await (
-			await this.traverse(path)
-		).getFileHandle(basename(path), {
-			create: true,
-		})
+		try {
+			const handle = await (
+				await this.traverse(path)
+			).getFileHandle(basename(path), {
+				create: true,
+			})
 
-		const writable: FileSystemWritableFileStream =
-			await handle.createWritable()
+			const writable: FileSystemWritableFileStream =
+				await handle.createWritable()
 
-		await writable.write(content)
-		await writable.close()
+			await writable.write(content)
+			await writable.close()
+		} catch (error) {
+			console.error(`Failed to write "${path}"`, error)
+		}
 	}
 
 	public async readDirectoryEntries(path: string): Promise<BaseEntry[]> {
