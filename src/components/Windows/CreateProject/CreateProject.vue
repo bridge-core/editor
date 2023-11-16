@@ -27,15 +27,24 @@
 
 				<LabeledInput
 					label="Icon"
-					class="mb-4"
+					class="mb-4 flex"
 					v-slot="{ focus, blur }"
 				>
 					<input
-						class="bg-background outline-none max-w-none placeholder:italic placeholder:text-menu placeholder:opacity-100"
-						value="Test"
-						@focus="focus"
-						@blur="blur"
+						type="file"
+						class="hidden"
+						ref="projectIconInput"
+						v-on:change="chooseProjectIcon"
 					/>
+
+					<button
+						class="flex align-center gap-2"
+						@mouseenter="focus"
+						@mouseleave="blur"
+						@click="projectIconInput?.click()"
+					>
+						<Icon icon="image" />Project Icon (Optional)
+					</button>
 				</LabeledInput>
 			</div>
 
@@ -49,7 +58,7 @@
 					@focus="focus"
 					@blur="blur"
 					v-model="projectDescription"
-					placeholder="Description"
+					placeholder="Description (Optional)"
 				/>
 			</LabeledInput>
 
@@ -78,7 +87,7 @@
 						@focus="focus"
 						@blur="blur"
 						v-model="projectAuthor"
-						placeholder="Author"
+						placeholder="Author (Optional)"
 					/>
 				</LabeledInput>
 
@@ -104,6 +113,7 @@
 <script lang="ts" setup>
 import Window from '/@/components/Windows/Window.vue'
 import Button from '/@/components/Common/Button.vue'
+import Icon from '/@/components/Common/Icon.vue'
 import LabeledInput from '/@/components/Common/LabeledInput.vue'
 import PackType from './PackType.vue'
 
@@ -114,16 +124,18 @@ import { createBridgePack } from './Packs/Bridge'
 import { createBehaviourPack } from './Packs/BehaviourPack'
 import { createResourcePack } from './Packs/ResourcePack'
 
+const projectIconInput: Ref<HTMLInputElement | null> = ref(null)
+const window = ref<Window | null>(null)
+
 const projectName: Ref<string> = ref('New Project')
 const projectDescription: Ref<string> = ref('')
 const projectNamespace: Ref<string> = ref('bridge')
 const projectAuthor: Ref<string> = ref('')
 const projectTargetVersion: Ref<string> = ref('1.20.50')
+const projectIcon: Ref<File | null> = ref(null)
 
 const packTypes: Ref<any> = ref([])
 const selectedPackTypes: Ref<any> = ref([])
-
-const window = ref<Window | null>(null)
 
 async function create() {
 	const fileSystem = App.instance.fileSystem
@@ -154,6 +166,16 @@ function selectPackType(packType: any) {
 		selectedPackTypes.value.push(packType)
 		selectedPackTypes.value = selectedPackTypes.value
 	}
+}
+
+function chooseProjectIcon(event: Event) {
+	if (!projectIconInput.value) return
+
+	if (!projectIconInput.value.files) return
+
+	if (!projectIconInput.value.files[0]) return
+
+	projectIcon.value = projectIconInput.value.files[0]
 }
 
 onMounted(async () => {
