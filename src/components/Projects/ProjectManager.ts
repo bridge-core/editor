@@ -392,8 +392,8 @@ export class ProjectManager extends Signal<void> {
 
 		if (this.projectBeingModified > 0) return
 
-		const app = await App.getApp()
+		// const app = await App.getApp()
 
-		app.actionManager.trigger('bridge.action.refreshProject')
+		// app.actionManager.trigger('bridge.action.refreshProject')
 	}
 }
