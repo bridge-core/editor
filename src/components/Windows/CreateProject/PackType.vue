@@ -1,14 +1,16 @@
 <template>
 	<div
-		class="w-48 h-36 bg-menu rounded p-2 border-2 border-menu transition-colors duration-100 ease-out"
-		:class="{ 'border-primary': selected }"
+		class="cursor-pointer hover:border-text w-48 h-36 bg-menu rounded p-2 border-2 border-menu transition-colors duration-100 ease-out"
+		:class="{ '!border-primary': selected }"
 	>
 		<div class="flex gap-1 mb-4">
 			<Icon :icon="packType.icon" />
 			<p class="select-none">{{ t(`packType.${packType.id}.name`) }}</p>
 		</div>
 
-		<p class="text-sm">{{ t(`packType.${packType.id}.description`) }}</p>
+		<p class="text-sm select-none">
+			{{ t(`packType.${packType.id}.description`) }}
+		</p>
 	</div>
 </template>
 

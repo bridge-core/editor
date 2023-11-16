@@ -65,11 +65,11 @@
 			<div class="flex gap-4">
 				<LabeledInput
 					label="Namespace"
-					class="mb-4"
+					class="mb-4 flex-1"
 					v-slot="{ focus, blur }"
 				>
 					<input
-						class="bg-background outline-none placeholder:italic placeholder:text-menu placeholder:opacity-100"
+						class="bg-background outline-none placeholder:italic placeholder:text-menu placeholder:opacity-100 max-w-none w-full"
 						@focus="focus"
 						@blur="blur"
 						v-model="projectNamespace"
@@ -79,11 +79,11 @@
 
 				<LabeledInput
 					label="Author"
-					class="mb-4"
+					class="mb-4 flex-1"
 					v-slot="{ focus, blur }"
 				>
 					<input
-						class="bg-background outline-none placeholder:italic placeholder:text-menu placeholder:opacity-100"
+						class="bg-background outline-none placeholder:italic placeholder:text-menu placeholder:opacity-100 max-w-none w-full"
 						@focus="focus"
 						@blur="blur"
 						v-model="projectAuthor"
@@ -97,7 +97,7 @@
 					v-slot="{ focus, blur }"
 				>
 					<input
-						class="bg-background outline-none placeholder:italic placeholder:text-menu placeholder:opacity-100"
+						class="bg-background outline-none placeholder:italic placeholder:text-menu placeholder:opacity-100 max-w-none w-full"
 						@focus="focus"
 						@blur="blur"
 						v-model="projectTargetVersion"
