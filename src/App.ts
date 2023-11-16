@@ -48,20 +48,6 @@ export class App {
 	}
 
 	//TODO: Remove listeners on unmount
-	public useProjects(): Ref<ProjectData[]> {
-		const projects: Ref<ProjectData[]> = ref([])
-
-		const projectManager = this.projectManager
-
-		function updateProjects() {
-			projects.value = projectManager.projects
-		}
-
-		projectManager.eventSystem.on('updatedProjects', updateProjects)
-
-		return projects
-	}
-
 	public useBridgeFolderSelected(): Ref<boolean> {
 		const bridgeFolderSelected = ref(false)
 

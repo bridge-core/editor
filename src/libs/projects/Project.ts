@@ -9,10 +9,7 @@ export interface ProjectData {
 export async function validProject(path: string) {
 	const fileSystem = App.instance.fileSystem
 
-	return (
-		(await fileSystem.exists(join(path, 'config.json'))) &&
-		(await fileSystem.exists(join(path, 'BP', 'pack_icon.png')))
-	)
+	return await fileSystem.exists(join(path, 'config.json'))
 }
 
 export async function getData(path: string): Promise<ProjectData> {

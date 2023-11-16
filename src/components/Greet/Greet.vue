@@ -1,6 +1,6 @@
 <template>
 	<main class="w-full h-full flex justify-center items-center">
-		<div class="flex flex-col max-w-[28rem] w-full">
+		<div class="flex flex-col max-w-[28.5rem] w-full">
 			<Logo class="ml-auto mr-auto mb-24 -mt-24 w-48" />
 
 			<div class="flex justify-between">
@@ -19,7 +19,7 @@
 			<div class="h-px w-full bg-menu mb-1" />
 
 			<div
-				class="flex flex-wrap gap-2 max-h-[28.5rem] overflow-x-hidden overflow-y-hidden max-w-[]"
+				class="flex flex-wrap gap-2 overflow-x-hidden overflow-y-hidden"
 			>
 				<div
 					class="flex flex-col bg-menu rounded-md relative w-36 h-36"
@@ -81,7 +81,7 @@ import { App } from '/@/App'
 import { PWAFileSystem } from '/@/libs/fileSystem/PWAFileSystem'
 import { computed } from 'vue'
 
-const projects = App.instance.useProjects()
+const projects = App.instance.projectManager.useProjects()
 const brigeFolderSelected = App.instance.useBridgeFolderSelected()
 
 const suggestSelectBridgeFolder = computed(

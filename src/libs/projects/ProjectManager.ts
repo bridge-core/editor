@@ -9,6 +9,7 @@ import { createBridgePack } from './create/packs/Bridge'
 import { createResourcePack } from './create/packs/ResourcePack'
 import { createConfig } from './create/files/Config'
 import { CreateProjectConfig } from './CreateProjectConfig'
+import { Ref, ref } from 'vue'
 
 export class ProjectManager {
 	public projects: ProjectData[] = []
@@ -71,5 +72,20 @@ export class ProjectManager {
 			await createResourcePack(fileSystem, projectPath, config)
 
 		this.addProject(await getData(projectPath))
+	}
+
+	//TODO: Remove listeners on unmount
+	public useProjects(): Ref<ProjectData[]> {
+		const projects: Ref<ProjectData[]> = ref([])
+
+		const me = this
+
+		function updateProjects() {
+			projects.value = [...me.projects]
+		}
+
+		this.eventSystem.on('updatedProjects', updateProjects)
+
+		return projects
 	}
 }

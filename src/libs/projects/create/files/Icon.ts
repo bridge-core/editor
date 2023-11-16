@@ -1,9 +1,9 @@
 import { BaseFileSystem } from '/@/libs/fileSystem/BaseFileSystem'
 
-export function createIcon(
+export async function createIcon(
 	fileSystem: BaseFileSystem,
 	path: string,
 	icon: FileSystemWriteChunkType
 ) {
-	fileSystem.writeFile(path, icon)
+	await fileSystem.writeFile(path, icon)
 }
