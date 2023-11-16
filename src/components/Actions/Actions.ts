@@ -10,7 +10,7 @@ import { platform } from '/@/utils/os'
 
 export function setupActions(app: App) {
 	addViewActions(app)
-	addToolActions(app)
+	// addToolActions(app)
 	addEditActions(app)
 }
 

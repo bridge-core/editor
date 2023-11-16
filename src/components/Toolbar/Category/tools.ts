@@ -89,5 +89,79 @@ export function setupToolsCategory(app: App) {
 		})
 	)
 
+	tools.addItem(new Divider())
+
+	tools.addItem(
+		app.actionManager.create({
+			icon: 'mdi-folder-refresh-outline',
+			name: 'general.reloadBridge.name',
+			description: 'general.reloadBridge.description',
+			keyBinding: 'Ctrl + R',
+			onTrigger: () => {
+				location.reload()
+			},
+		})
+	)
+	tools.addItem(
+		app.actionManager.create({
+			id: 'bridge.action.refreshProject',
+			icon: 'mdi-folder-refresh-outline',
+			name: 'packExplorer.refresh.name',
+			description: 'packExplorer.refresh.description',
+			keyBinding:
+				platform() === 'win32' ? 'Ctrl + Alt + R' : 'Ctrl + Meta + R',
+			onTrigger: async () => {
+				if (app.isNoProjectSelected) return
+				await app.projectManager.projectReady.fired
+
+				await app.project.refresh()
+			},
+		})
+	)
+	tools.addItem(
+		app.actionManager.create({
+			icon: 'mdi-reload',
+			name: 'actions.reloadAutoCompletions.name',
+			description: 'actions.reloadAutoCompletions.description',
+			keyBinding: 'Ctrl + Shift + R',
+			onTrigger: async () => {
+				if (app.isNoProjectSelected) return
+				await app.projectManager.projectReady.fired
+
+				app.project.jsonDefaults.reload()
+			},
+		})
+	)
+	tools.addItem(
+		app.actionManager.create({
+			icon: 'mdi-puzzle-outline',
+			name: 'actions.reloadExtensions.name',
+			description: 'actions.reloadExtensions.description',
+			onTrigger: async () => {
+				// Global extensions
+				app.extensionLoader.disposeAll()
+				app.extensionLoader.loadExtensions()
+
+				if (app.isNoProjectSelected) return
+				await app.projectManager.projectReady.fired
+
+				// Local extensions
+				app.project.extensionLoader.disposeAll()
+				app.project.extensionLoader.loadExtensions()
+			},
+		})
+	)
+
+	tools.addItem(new Divider())
+
+	tools.addItem(
+		app.actionManager.create({
+			icon: 'mdi-cancel',
+			name: 'actions.clearAllNotifications.name',
+			description: 'actions.clearAllNotifications.description',
+			onTrigger: () => clearAllNotifications(),
+		})
+	)
+
 	App.toolbar.addCategory(tools)
 }
