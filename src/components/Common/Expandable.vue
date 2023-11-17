@@ -8,7 +8,9 @@
 				class="h-10 flex items-center p-3 justify-between cursor-pointer group"
 				@click="() => (expanded = !expanded)"
 			>
-				<span class="group-hover:text-primary">{{ name }}</span>
+				<span class="group-hover:text-primary select-none">{{
+					name
+				}}</span>
 				<Icon
 					icon="arrow_drop_down"
 					class="transition-transform duration-200 ease-out group-hover:text-primary"

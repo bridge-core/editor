@@ -22,7 +22,7 @@ const mdiMap: { [key: string]: string | undefined } = {
 	'mdi-alpha-m': 'help',
 }
 
-const { icon } = defineProps({
+defineProps({
 	icon: {
 		type: String,
 		required: true,
@@ -31,6 +31,4 @@ const { icon } = defineProps({
 		type: String,
 	},
 })
-
-console.log(mdiMap[icon])
 </script>

@@ -1,169 +1,176 @@
 <template>
 	<Window name="Create Project" ref="window">
-		<div class="p-8 pt-2 flex flex-col">
-			<div class="flex gap-3 mb-4">
-				<InformativeToggle
-					v-for="packType in packTypes"
-					:icon="packType.icon"
-					:color="packType.color"
-					:name="t(`packType.${packType.id}.name`)"
-					:description="t(`packType.${packType.id}.description`)"
-					:selected="selectedPackTypes.includes(packType)"
-					@click="selectPackType(packType)"
-				>
-					<div
-						class="flex items-center my-4"
-						v-if="packType.id === 'behaviorPack'"
-					>
-						<Switch class="mr-2" v-model="linkBehaviourPack" />
-						<span class="text-xs text-textAlternate">{{
-							t('windows.createProject.rpAsBpDependency')
-						}}</span>
-					</div>
-
-					<div
-						class="flex items-center my-4"
-						v-if="packType.id === 'resourcePack'"
-					>
-						<Switch class="mr-2" v-model="linkResourcePack" />
-						<span class="text-xs text-textAlternate">{{
-							t('windows.createProject.bpAsRpDependency')
-						}}</span>
-					</div>
-				</InformativeToggle>
-			</div>
-
-			<Expandable :name="t('general.experimentalGameplay')" class="mt-2">
-				<div class="flex flex-wrap justify-center gap-2">
+		<div class="flex flex-col">
+			<div class="max-h-[34.625rem] overflow-y-scroll p-4 pt-2 m-4 mt-0">
+				<div class="flex gap-3 mb-4">
 					<InformativeToggle
-						v-for="toggle in experimentalToggles"
-						:icon="toggle.icon"
+						v-for="packType in packTypes"
+						:icon="packType.icon"
+						:color="packType.color"
+						:name="t(`packType.${packType.id}.name`)"
+						:description="t(`packType.${packType.id}.description`)"
+						:selected="selectedPackTypes.includes(packType)"
+						@click="selectPackType(packType)"
+					>
+						<div
+							class="flex items-center my-4"
+							v-if="packType.id === 'behaviorPack'"
+						>
+							<Switch class="mr-2" v-model="linkBehaviourPack" />
+							<span class="text-xs text-textAlternate">{{
+								t('windows.createProject.rpAsBpDependency')
+							}}</span>
+						</div>
+
+						<div
+							class="flex items-center my-4"
+							v-if="packType.id === 'resourcePack'"
+						>
+							<Switch class="mr-2" v-model="linkResourcePack" />
+							<span class="text-xs text-textAlternate">{{
+								t('windows.createProject.bpAsRpDependency')
+							}}</span>
+						</div>
+					</InformativeToggle>
+				</div>
+
+				<Expandable
+					:name="t('general.experimentalGameplay')"
+					class="mt-2"
+				>
+					<div class="flex flex-wrap justify-center gap-2">
+						<InformativeToggle
+							v-for="toggle in experimentalToggles"
+							:icon="toggle.icon"
+							color="primary"
+							background="background"
+							:name="t(`experimentalGameplay.${toggle.id}.name`)"
+							:description="
+								t(
+									`experimentalGameplay.${toggle.id}.description`
+								)
+							"
+							:selected="false"
+						/>
+					</div>
+				</Expandable>
+
+				<Expandable
+					:name="t('windows.createProject.individualFiles.name')"
+					class="mt-4"
+				>
+					<InformativeToggle
+						icon="draft"
 						color="primary"
 						background="background"
-						:name="t(`experimentalGameplay.${toggle.id}.name`)"
-						:description="
-							t(`experimentalGameplay.${toggle.id}.description`)
-						"
+						name="player.json"
+						description="A Cool file"
 						:selected="false"
 					/>
-				</div>
-			</Expandable>
+				</Expandable>
 
-			<Expandable
-				:name="t('windows.createProject.individualFiles.name')"
-				class="mt-4"
-			>
-				<InformativeToggle
-					icon="draft"
-					color="primary"
-					background="background"
-					name="player.json"
-					description="A Cool file"
-					:selected="false"
-				/>
-			</Expandable>
-
-			<div class="flex gap-4 w-full mt-4">
-				<LabeledInput
-					label="Icon"
-					class="mb-4 flex"
-					v-slot="{ focus, blur }"
-				>
-					<input
-						type="file"
-						class="hidden"
-						ref="projectIconInput"
-						v-on:change="chooseProjectIcon"
-					/>
-
-					<button
-						class="flex align-center gap-2"
-						@mouseenter="focus"
-						@mouseleave="blur"
-						@click="projectIconInput?.click()"
+				<div class="flex gap-4 w-full mt-4">
+					<LabeledInput
+						label="Icon"
+						class="mb-4 flex"
+						v-slot="{ focus, blur }"
 					>
-						<Icon icon="image" class="no-fill" />Project Icon
-						(Optional)
-					</button>
-				</LabeledInput>
+						<input
+							type="file"
+							class="hidden"
+							ref="projectIconInput"
+							v-on:change="chooseProjectIcon"
+						/>
+
+						<button
+							class="flex align-center gap-2"
+							@mouseenter="focus"
+							@mouseleave="blur"
+							@click="projectIconInput?.click()"
+						>
+							<Icon icon="image" class="no-fill" />Project Icon
+							(Optional)
+						</button>
+					</LabeledInput>
+
+					<LabeledInput
+						label="Name"
+						class="mb-4 flex-1"
+						v-slot="{ focus, blur }"
+					>
+						<input
+							class="bg-background outline-none max-w-none w-full placeholder:text-textAlternate"
+							@focus="focus"
+							@blur="blur"
+							v-model="projectName"
+							placeholder="Project Name"
+						/>
+					</LabeledInput>
+				</div>
 
 				<LabeledInput
-					label="Name"
-					class="mb-4 flex-1"
-					v-slot="{ focus, blur }"
-				>
-					<input
-						class="bg-background outline-none max-w-none w-full placeholder:text-textAlternate"
-						@focus="focus"
-						@blur="blur"
-						v-model="projectName"
-						placeholder="Project Name"
-					/>
-				</LabeledInput>
-			</div>
-
-			<LabeledInput
-				label="Description"
-				class="mb-4"
-				v-slot="{ focus, blur }"
-			>
-				<input
-					class="bg-background outline-none max-w-none placeholder:text-textAlternate max-w-none w-full"
-					@focus="focus"
-					@blur="blur"
-					v-model="projectDescription"
-					placeholder="Project Description (Optional)"
-				/>
-			</LabeledInput>
-
-			<div class="flex gap-4">
-				<LabeledInput
-					label="Namespace"
-					class="mb-4 flex-1"
-					v-slot="{ focus, blur }"
-				>
-					<input
-						class="bg-background outline-none placeholder:text-textAlternate max-w-none w-full"
-						@focus="focus"
-						@blur="blur"
-						v-model="projectNamespace"
-						placeholder="Project Namespace"
-					/>
-				</LabeledInput>
-
-				<LabeledInput
-					label="Author"
-					class="mb-4 flex-1"
-					v-slot="{ focus, blur }"
-				>
-					<input
-						class="bg-background outline-none placeholder:text-textAlternate max-w-none w-full"
-						@focus="focus"
-						@blur="blur"
-						v-model="projectAuthor"
-						placeholder="Project Author (Optional)"
-					/>
-				</LabeledInput>
-
-				<LabeledInput
-					label="Target Version"
+					label="Description"
 					class="mb-4"
 					v-slot="{ focus, blur }"
 				>
 					<input
-						class="bg-background outline-none placeholder:text-textAlternate max-w-none w-full"
+						class="bg-background outline-none max-w-none placeholder:text-textAlternate max-w-none w-full"
 						@focus="focus"
 						@blur="blur"
-						v-model="projectTargetVersion"
+						v-model="projectDescription"
+						placeholder="Project Description (Optional)"
 					/>
 				</LabeledInput>
+
+				<div class="flex gap-4">
+					<LabeledInput
+						label="Namespace"
+						class="mb-4 flex-1"
+						v-slot="{ focus, blur }"
+					>
+						<input
+							class="bg-background outline-none placeholder:text-textAlternate max-w-none w-full"
+							@focus="focus"
+							@blur="blur"
+							v-model="projectNamespace"
+							placeholder="Project Namespace"
+						/>
+					</LabeledInput>
+
+					<LabeledInput
+						label="Author"
+						class="mb-4 flex-1"
+						v-slot="{ focus, blur }"
+					>
+						<input
+							class="bg-background outline-none placeholder:text-textAlternate max-w-none w-full"
+							@focus="focus"
+							@blur="blur"
+							v-model="projectAuthor"
+							placeholder="Project Author (Optional)"
+						/>
+					</LabeledInput>
+
+					<LabeledInput
+						label="Target Version"
+						class="mb-4"
+						v-slot="{ focus, blur }"
+					>
+						<input
+							class="bg-background outline-none placeholder:text-textAlternate max-w-none w-full"
+							@focus="focus"
+							@blur="blur"
+							v-model="projectTargetVersion"
+						/>
+					</LabeledInput>
+				</div>
 			</div>
 
 			<Button
 				icon="add"
 				text="Create"
 				@click="create"
-				class="mt-4 self-end"
+				class="mt-4 mr-8 mb-8 self-end"
 			/>
 		</div>
 	</Window>
@@ -260,7 +267,5 @@ onMounted(async () => {
 	experimentalToggles.value = await data.get(
 		'packages/minecraftBedrock/experimentalGameplay.json'
 	)
-
-	console.log(experimentalToggles.value)
 })
 </script>
