@@ -1,8 +1,8 @@
 <template>
 	<span
-		class="material-symbols-rounded select-none text-background"
+		class="material-symbols-rounded select-none text-background text-text"
 		ref="element"
-		:style="{ color: `var(--theme-color-${color})` }"
+		:style="color ? { color: `var(--theme-color-${color})` } : {}"
 	>
 		{{ mdiMap[icon] ?? icon }}
 	</span>
@@ -23,7 +23,6 @@ defineProps({
 	},
 	color: {
 		type: String,
-		default: 'text-text',
 	},
 })
 </script>

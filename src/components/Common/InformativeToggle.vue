@@ -1,12 +1,16 @@
 <template>
 	<div
-		class="cursor-pointer hover:border-text w-60 bg-menuAlternate rounded p-2 border-2 border-menuAlternate transition-colors duration-100 ease-out"
+		class="cursor-pointer hover:border-text w-60 rounded p-2 border-2 transition-colors duration-100 ease-out"
 		:class="{ '!border-primary': selected }"
+		:style="{
+			'border-color': `var(--theme-color-${background})`,
+			'background-color': `var(--theme-color-${background})`,
+		}"
 	>
 		<div class="flex items-center gap-1 mb-2">
-			<Icon :icon="packType.icon" :color="packType.color" />
+			<Icon :icon="icon" :color="color" />
 			<p class="select-none text-lg">
-				{{ t(`packType.${packType.id}.name`) }}
+				{{ name }}
 			</p>
 		</div>
 
@@ -17,11 +21,11 @@
 				class="text-base mr-1"
 				:class="{ 'no-fill': !selected }"
 			/>
-			<span class="text-textAlternate">Active</span>
+			<span class="text-textAlternate select-none">Active</span>
 		</div>
 
 		<p class="text-sm select-none text-textAlternate">
-			{{ t(`packType.${packType.id}.description`) }}
+			{{ description }}
 		</p>
 
 		<slot />
@@ -33,14 +37,30 @@ import Icon from '/@/components/Common/Icon.vue'
 
 import { translate as t } from '/@/libs/locales/Locales'
 
-const { packType } = defineProps({
-	packType: {
-		type: Object as any,
+defineProps({
+	name: {
+		type: String,
+		required: true,
+	},
+	icon: {
+		type: String,
+		required: true,
+	},
+	color: {
+		type: String,
+		required: true,
+	},
+	description: {
+		type: String,
 		required: true,
 	},
 	selected: {
 		type: Boolean,
 		required: true,
+	},
+	background: {
+		type: String,
+		default: 'menuAlternate',
 	},
 })
 </script>

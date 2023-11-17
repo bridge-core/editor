@@ -4,7 +4,7 @@
 		v-if="App.instance.windows.opened(name).value"
 	>
 		<div
-			class="bg-menu w-screen h-app absolute top-toolbar left-0 z-0 opacity-30"
+			class="bg-menu w-screen h-app absolute top-0 left-0 z-0 opacity-30"
 		></div>
 
 		<div

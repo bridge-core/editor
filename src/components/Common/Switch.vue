@@ -1,19 +1,19 @@
 <template>
-	<div class="relative w-24 h-6">
+	<div class="relative w-[4.25rem] h-5">
 		<div
-			class="w-full h-full bg-textAlternate rounded-full transition-colors duration-100 ease-out opacity-20"
+			class="w-full h-full rounded-full transition-colors duration-100 ease-out opacity-20"
 			:class="{
+				'bg-textAlternate': !modelValue,
 				'bg-primary': modelValue,
 			}"
 			@click.stop="$emit('update:modelValue', !modelValue)"
 		/>
 
 		<div
-			class="bg-textAlternate rounded-full w-5 h-5 min-w-[1.25rem] absolute top-0.5 transition-[left] duration-100 ease-out"
+			class="rounded-full w-4 h-4 absolute top-0.5 transition-[left] duration-100 ease-out"
 			:class="{
-				'left-[0.125rem]': !modelValue,
-				'left-[1.5rem]': modelValue,
-				'bg-primary': modelValue,
+				'left-[0.125rem] bg-textAlternate': !modelValue,
+				'left-[1.375rem] bg-primary': modelValue,
 			}"
 			@click.stop="$emit('update:modelValue', !modelValue)"
 		/>

@@ -2,9 +2,12 @@
 	<Window name="Create Project" ref="window">
 		<div class="p-8 pt-2 flex flex-col">
 			<div class="flex gap-3 mb-4">
-				<PackType
+				<InformativeToggle
 					v-for="packType in packTypes"
-					:pack-type="packType"
+					:icon="packType.icon"
+					:color="packType.color"
+					:name="t(`packType.${packType.id}.name`)"
+					:description="t(`packType.${packType.id}.description`)"
 					:selected="selectedPackTypes.includes(packType)"
 					@click="selectPackType(packType)"
 				>
@@ -12,8 +15,8 @@
 						class="flex items-center my-4"
 						v-if="packType.id === 'behaviorPack'"
 					>
-						<Switch class="mr-2" v-model="linkPack" />
-						<span class="text-sm text-textAlternate">{{
+						<Switch class="mr-2" v-model="linkBehaviourPack" />
+						<span class="text-xs text-textAlternate">{{
 							t('windows.createProject.rpAsBpDependency')
 						}}</span>
 					</div>
@@ -22,15 +25,40 @@
 						class="flex items-center my-4"
 						v-if="packType.id === 'resourcePack'"
 					>
-						<Switch class="mr-2" v-model="linkPack" />
-						<span class="text-sm text-textAlternate">{{
+						<Switch class="mr-2" v-model="linkResourcePack" />
+						<span class="text-xs text-textAlternate">{{
 							t('windows.createProject.bpAsRpDependency')
 						}}</span>
 					</div>
-				</PackType>
+				</InformativeToggle>
 			</div>
 
-			<div class="flex gap-4 w-full">
+			<Expandable :name="t('general.experimentalGameplay')" class="mt-2">
+				<InformativeToggle
+					icon="draft"
+					color="primary"
+					background="background"
+					name="player.json"
+					description="A Cool file"
+					:selected="false"
+				/>
+			</Expandable>
+
+			<Expandable
+				:name="t('windows.createProject.individualFiles.name')"
+				class="mt-4"
+			>
+				<InformativeToggle
+					icon="draft"
+					color="primary"
+					background="background"
+					name="player.json"
+					description="A Cool file"
+					:selected="false"
+				/>
+			</Expandable>
+
+			<div class="flex gap-4 w-full mt-4">
 				<LabeledInput
 					label="Icon"
 					class="mb-4 flex"
@@ -142,7 +170,8 @@ import Button from '/@/components/Common/Button.vue'
 import Icon from '/@/components/Common/Icon.vue'
 import Switch from '/@/components/Common/Switch.vue'
 import LabeledInput from '/@/components/Common/LabeledInput.vue'
-import PackType from './PackType.vue'
+import InformativeToggle from '/@/components/Common/InformativeToggle.vue'
+import Expandable from '/@/components/Common/Expandable.vue'
 
 import { Ref, onMounted, ref } from 'vue'
 import { App } from '/@/App'
@@ -152,7 +181,8 @@ import { translate as t } from '/@/libs/locales/Locales'
 const projectIconInput: Ref<HTMLInputElement | null> = ref(null)
 const window = ref<Window | null>(null)
 
-const linkPack = ref(false)
+const linkBehaviourPack = ref(false)
+const linkResourcePack = ref(false)
 
 const projectName: Ref<string> = ref('New Project')
 const projectDescription: Ref<string> = ref('')
