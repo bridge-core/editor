@@ -32,20 +32,6 @@
 
 			<div class="flex gap-4 w-full">
 				<LabeledInput
-					label="Name"
-					class="mb-4 flex-1"
-					v-slot="{ focus, blur }"
-				>
-					<input
-						class="bg-background outline-none max-w-none w-full placeholder:text-textAlternate"
-						@focus="focus"
-						@blur="blur"
-						v-model="projectName"
-						placeholder="Project Name"
-					/>
-				</LabeledInput>
-
-				<LabeledInput
 					label="Icon"
 					class="mb-4 flex"
 					v-slot="{ focus, blur }"
@@ -66,6 +52,20 @@
 						<Icon icon="image" class="no-fill" />Project Icon
 						(Optional)
 					</button>
+				</LabeledInput>
+
+				<LabeledInput
+					label="Name"
+					class="mb-4 flex-1"
+					v-slot="{ focus, blur }"
+				>
+					<input
+						class="bg-background outline-none max-w-none w-full placeholder:text-textAlternate"
+						@focus="focus"
+						@blur="blur"
+						v-model="projectName"
+						placeholder="Project Name"
+					/>
 				</LabeledInput>
 			</div>
 
@@ -126,7 +126,12 @@
 				</LabeledInput>
 			</div>
 
-			<Button text="Create" @click="create" class="self-center mt-4" />
+			<Button
+				icon="add"
+				text="Create"
+				@click="create"
+				class="mt-4 self-end"
+			/>
 		</div>
 	</Window>
 </template>

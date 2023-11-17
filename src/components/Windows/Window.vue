@@ -3,7 +3,13 @@
 		class="w-screen h-app flex justify-center items-center absolute top-toolbar left-0"
 		v-if="App.instance.windows.opened(name).value"
 	>
-		<div class="bg-background shadow-window rounded-md overflow-hidden">
+		<div
+			class="bg-menu w-screen h-app absolute top-toolbar left-0 z-0 opacity-30"
+		></div>
+
+		<div
+			class="bg-background shadow-window rounded-md overflow-hidden z-10"
+		>
 			<div class="w-full flex justify-between align-center p-2">
 				<span class="select-none ml-1 text-textAlternate">
 					{{ name }}
