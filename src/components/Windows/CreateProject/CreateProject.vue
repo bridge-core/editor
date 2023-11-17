@@ -7,7 +7,27 @@
 					:pack-type="packType"
 					:selected="selectedPackTypes.includes(packType)"
 					@click="selectPackType(packType)"
-				/>
+				>
+					<div
+						class="flex items-center my-4"
+						v-if="packType.id === 'behaviorPack'"
+					>
+						<Switch class="mr-2" v-model="linkPack" />
+						<span class="text-sm text-textAlternate">{{
+							t('windows.createProject.rpAsBpDependency')
+						}}</span>
+					</div>
+
+					<div
+						class="flex items-center my-4"
+						v-if="packType.id === 'resourcePack'"
+					>
+						<Switch class="mr-2" v-model="linkPack" />
+						<span class="text-sm text-textAlternate">{{
+							t('windows.createProject.bpAsRpDependency')
+						}}</span>
+					</div>
+				</PackType>
 			</div>
 
 			<div class="flex gap-4 w-full">
@@ -17,11 +37,11 @@
 					v-slot="{ focus, blur }"
 				>
 					<input
-						class="bg-background outline-none max-w-none w-full placeholder:italic placeholder:text-menu placeholder:opacity-100"
+						class="bg-background outline-none max-w-none w-full placeholder:text-textAlternate"
 						@focus="focus"
 						@blur="blur"
 						v-model="projectName"
-						placeholder="Name"
+						placeholder="Project Name"
 					/>
 				</LabeledInput>
 
@@ -43,7 +63,8 @@
 						@mouseleave="blur"
 						@click="projectIconInput?.click()"
 					>
-						<Icon icon="image" />Project Icon (Optional)
+						<Icon icon="image" class="no-fill" />Project Icon
+						(Optional)
 					</button>
 				</LabeledInput>
 			</div>
@@ -54,11 +75,11 @@
 				v-slot="{ focus, blur }"
 			>
 				<input
-					class="bg-background outline-none max-w-none placeholder:italic placeholder:text-menu placeholder:opacity-100"
+					class="bg-background outline-none max-w-none placeholder:text-textAlternate max-w-none w-full"
 					@focus="focus"
 					@blur="blur"
 					v-model="projectDescription"
-					placeholder="Description (Optional)"
+					placeholder="Project Description (Optional)"
 				/>
 			</LabeledInput>
 
@@ -69,11 +90,11 @@
 					v-slot="{ focus, blur }"
 				>
 					<input
-						class="bg-background outline-none placeholder:italic placeholder:text-menu placeholder:opacity-100 max-w-none w-full"
+						class="bg-background outline-none placeholder:text-textAlternate max-w-none w-full"
 						@focus="focus"
 						@blur="blur"
 						v-model="projectNamespace"
-						placeholder="Namespace"
+						placeholder="Project Namespace"
 					/>
 				</LabeledInput>
 
@@ -83,11 +104,11 @@
 					v-slot="{ focus, blur }"
 				>
 					<input
-						class="bg-background outline-none placeholder:italic placeholder:text-menu placeholder:opacity-100 max-w-none w-full"
+						class="bg-background outline-none placeholder:text-textAlternate max-w-none w-full"
 						@focus="focus"
 						@blur="blur"
 						v-model="projectAuthor"
-						placeholder="Author (Optional)"
+						placeholder="Project Author (Optional)"
 					/>
 				</LabeledInput>
 
@@ -97,7 +118,7 @@
 					v-slot="{ focus, blur }"
 				>
 					<input
-						class="bg-background outline-none placeholder:italic placeholder:text-menu placeholder:opacity-100 max-w-none w-full"
+						class="bg-background outline-none placeholder:text-textAlternate max-w-none w-full"
 						@focus="focus"
 						@blur="blur"
 						v-model="projectTargetVersion"
@@ -114,15 +135,19 @@
 import Window from '/@/components/Windows/Window.vue'
 import Button from '/@/components/Common/Button.vue'
 import Icon from '/@/components/Common/Icon.vue'
+import Switch from '/@/components/Common/Switch.vue'
 import LabeledInput from '/@/components/Common/LabeledInput.vue'
 import PackType from './PackType.vue'
 
 import { Ref, onMounted, ref } from 'vue'
 import { App } from '/@/App'
 import { IPackType } from 'mc-project-core'
+import { translate as t } from '/@/libs/locales/Locales'
 
 const projectIconInput: Ref<HTMLInputElement | null> = ref(null)
 const window = ref<Window | null>(null)
+
+const linkPack = ref(false)
 
 const projectName: Ref<string> = ref('New Project')
 const projectDescription: Ref<string> = ref('')

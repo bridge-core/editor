@@ -2,7 +2,7 @@
 	<span
 		class="material-symbols-rounded select-none text-background"
 		ref="element"
-		:style="style"
+		:style="{ color: `var(--theme-color-${color})` }"
 	>
 		{{ mdiMap[icon] ?? icon }}
 	</span>
@@ -16,7 +16,7 @@ const mdiMap: { [key: string]: string | undefined } = {
 	'mdi-wrench': 'build',
 }
 
-const { color } = defineProps({
+defineProps({
 	icon: {
 		type: String,
 		required: true,
@@ -26,8 +26,4 @@ const { color } = defineProps({
 		default: 'text-text',
 	},
 })
-
-const style = {
-	color: `var(--theme-color-${color})`,
-}
 </script>

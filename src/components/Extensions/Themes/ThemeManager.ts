@@ -2,9 +2,8 @@ import { bridgeDark, bridgeLight } from './Default'
 
 const colorNames = [
 	'text',
-	'toolbar',
-	'expandedSidebar',
-	'sidebarNavigation',
+	'textAlternate',
+
 	'primary',
 	'secondary',
 	'accent',
@@ -12,8 +11,14 @@ const colorNames = [
 	'info',
 	'warning',
 	'success',
+
 	'background',
 	'menu',
+	'menuAlternate',
+
+	'expandedSidebar',
+	'sidebarNavigation',
+	'toolbar',
 	'footer',
 	'tooltip',
 	'sidebarSelection',

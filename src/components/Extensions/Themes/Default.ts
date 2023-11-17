@@ -7,6 +7,7 @@ export const bridgeDark = <const>{
 	colorScheme: 'dark',
 	colors: {
 		text: '#f2f2f2',
+		textAlternate: '#f2f2f2AA',
 
 		primary: isNightly ? '#3bb6a3' : '#0073FF',
 		secondary: isNightly ? '#3bb6a3' : '#0073FF',
@@ -17,10 +18,12 @@ export const bridgeDark = <const>{
 		success: '#4caf50',
 
 		background: '#121212',
+		menu: '#252525',
+		menuAlternate: '#1F1F1F',
+
 		sidebarNavigation: '#1F1F1F',
 		expandedSidebar: '#1F1F1F',
 		sidebarSelection: '#151515',
-		menu: '#252525',
 		footer: '#111111',
 		tooltip: '#1F1F1F',
 		toolbar: '#1F1F1F',
