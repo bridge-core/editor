@@ -14,9 +14,15 @@ const mdiMap: { [key: string]: string | undefined } = {
 	'mdi-earth': 'public',
 	'mdi-image': 'image',
 	'mdi-wrench': 'build',
+	'mdi-gift': 'featured_seasonal_and_gifts',
+	'mdi-earth-box': 'public',
+	'mdi-alarm': 'alarm',
+	'mdi-school-outline': 'school',
+	'mdi-ab-testing': 'help',
+	'mdi-alpha-m': 'help',
 }
 
-defineProps({
+const { icon } = defineProps({
 	icon: {
 		type: String,
 		required: true,
@@ -25,4 +31,6 @@ defineProps({
 		type: String,
 	},
 })
+
+console.log(mdiMap[icon])
 </script>

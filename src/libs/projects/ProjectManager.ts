@@ -20,6 +20,13 @@ const packs: {
 	resourcePack: new BehaviourPack(),
 }
 
+export interface IExperimentalToggle {
+	name: string
+	id: string
+	description: string
+	icon: string
+}
+
 export class ProjectManager {
 	public projects: ProjectData[] = []
 	public eventSystem = new EventSystem(['updatedProjects'])

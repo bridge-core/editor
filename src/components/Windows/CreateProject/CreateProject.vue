@@ -34,14 +34,19 @@
 			</div>
 
 			<Expandable :name="t('general.experimentalGameplay')" class="mt-2">
-				<InformativeToggle
-					icon="draft"
-					color="primary"
-					background="background"
-					name="player.json"
-					description="A Cool file"
-					:selected="false"
-				/>
+				<div class="flex flex-wrap justify-center gap-2">
+					<InformativeToggle
+						v-for="toggle in experimentalToggles"
+						:icon="toggle.icon"
+						color="primary"
+						background="background"
+						:name="t(`experimentalGameplay.${toggle.id}.name`)"
+						:description="
+							t(`experimentalGameplay.${toggle.id}.description`)
+						"
+						:selected="false"
+					/>
+				</div>
 			</Expandable>
 
 			<Expandable
@@ -177,6 +182,7 @@ import { Ref, onMounted, ref } from 'vue'
 import { App } from '/@/App'
 import { IPackType } from 'mc-project-core'
 import { translate as t } from '/@/libs/locales/Locales'
+import { IExperimentalToggle } from '/@/libs/projects/ProjectManager'
 
 const projectIconInput: Ref<HTMLInputElement | null> = ref(null)
 const window = ref<Window | null>(null)
@@ -193,6 +199,7 @@ const projectIcon: Ref<File | null> = ref(null)
 
 const packTypes: Ref<IPackType[]> = ref([])
 const selectedPackTypes: Ref<IPackType[]> = ref([])
+const experimentalToggles: Ref<IExperimentalToggle[]> = ref([])
 
 async function create() {
 	const fileSystem = App.instance.fileSystem
@@ -244,8 +251,16 @@ function chooseProjectIcon(event: Event) {
 }
 
 onMounted(async () => {
-	packTypes.value = await App.instance.data.get(
+	const data = App.instance.data
+
+	packTypes.value = await data.get(
 		'packages/minecraftBedrock/packDefinitions.json'
 	)
+
+	experimentalToggles.value = await data.get(
+		'packages/minecraftBedrock/experimentalGameplay.json'
+	)
+
+	console.log(experimentalToggles.value)
 })
 </script>
