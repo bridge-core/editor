@@ -1,5 +1,3 @@
-import { IPackType } from 'mc-project-core'
-
 export interface CreateProjectConfig {
 	name: string
 	description: string
@@ -9,4 +7,8 @@ export interface CreateProjectConfig {
 	icon: FileSystemWriteChunkType
 	packs: string[]
 	configurableFiles: string[]
+	rpAsBpDependency: boolean
+	bpAsRpDependency: boolean
+	uuids: { [key: string]: string }
+	experiments: string[]
 }

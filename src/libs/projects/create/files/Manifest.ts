@@ -1,30 +1,88 @@
 import { v4 as uuid } from 'uuid'
 import { BaseFileSystem } from '/@/libs/fileSystem/BaseFileSystem'
+import { CreateProjectConfig } from '../../CreateProjectConfig'
+import { version } from '/@/libs/app/version'
+import { dashVersion } from '/@/libs/app/dashVersion'
+import { App } from '/@/App'
 
-export async function createManifest(fileSystem: BaseFileSystem, path: string) {
-	const manifest = {
+async function targetVersionToMinEngineVersion(targetVersion: string) {
+	const mineEngineVersions: Record<string, string> =
+		await App.instance.data.get(
+			'packages/minecraftBedrock/minEngineVersionMap.json'
+		)
+
+	return mineEngineVersions[targetVersion] ?? targetVersion
+}
+
+function packTypeToModuleType(packType: string) {
+	switch (packType) {
+		case 'behaviorPack':
+			return 'data'
+		case 'resourcePack':
+			return 'resources'
+		case 'skinPack':
+			return 'skin_pack'
+		default:
+			throw new Error('Invalid pack type ' + packType)
+	}
+}
+
+export async function createManifest(
+	fileSystem: BaseFileSystem,
+	path: string,
+	config: CreateProjectConfig,
+	packType: string
+) {
+	const manifest: { [key: string]: any } = {
 		format_version: 2,
 		metadata: {
-			authors: ['bridge.'],
+			authors: [config.author],
 			generated_with: {
-				bridge: ['2.8.0'],
-				dash: ['0.10.11'],
+				bridge: [version],
+				dash: [dashVersion],
 			},
 		},
 		header: {
-			name: 'test',
-			description: 'test description',
-			min_engine_version: 'idk',
-			uuid: uuid(),
+			name: 'pack.name',
+			description: 'pack.description',
+			min_engine_version:
+				packType === 'behaviorPack' || packType === 'resourcePack'
+					? (
+							await targetVersionToMinEngineVersion(
+								config.targetVersion
+							)
+					  )
+							.split('.')
+							.map((str) => Number(str))
+					: undefined,
+			uuid: config.uuids[packType],
 			version: [1, 0, 0],
 		},
 		modules: [
 			{
-				type: 'idk',
+				type: packTypeToModuleType(packType),
 				uuid: uuid(),
 				version: [1, 0, 0],
 			},
 		],
+	}
+
+	if (config.rpAsBpDependency && packType === 'behaviorPack') {
+		manifest.dependencies = [
+			{
+				uuid: config.uuids.resourcePack,
+				version: [1, 0, 0],
+			},
+		]
+	}
+
+	if (config.bpAsRpDependency && packType === 'resourcePack') {
+		manifest.dependencies = [
+			{
+				uuid: config.uuids.behaviorPack,
+				version: [1, 0, 0],
+			},
+		]
 	}
 
 	await fileSystem.writeFile(path, JSON.stringify(manifest, null, 2))

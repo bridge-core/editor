@@ -21,7 +21,12 @@ export class ResourcePack extends Pack {
 	) {
 		await fileSystem.makeDirectory(join(projectPath, 'RP'))
 
-		await createManifest(fileSystem, join(projectPath, 'RP/manifest.json'))
+		await createManifest(
+			fileSystem,
+			join(projectPath, 'RP/manifest.json'),
+			config,
+			'resourcePack'
+		)
 
 		await createIcon(
 			fileSystem,

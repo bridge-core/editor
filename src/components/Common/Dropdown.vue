@@ -32,8 +32,6 @@ function toggleExpanded() {
 }
 
 onMounted(() => {
-	console.log(container.value, sizing.value)
-
 	if (!container.value) return
 	if (!sizing.value) return
 

@@ -15,7 +15,12 @@ export class SkinPack extends Pack {
 	) {
 		await fileSystem.makeDirectory(join(projectPath, 'SP'))
 
-		await createManifest(fileSystem, join(projectPath, 'SP/manifest.json'))
+		await createManifest(
+			fileSystem,
+			join(projectPath, 'SP/manifest.json'),
+			config,
+			'skinPack'
+		)
 
 		await createIcon(
 			fileSystem,

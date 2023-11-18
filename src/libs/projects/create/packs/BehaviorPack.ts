@@ -4,8 +4,8 @@ import { createManifest } from '../files/Manifest'
 import { createIcon } from '../files/Icon'
 import { CreateProjectConfig } from '../../CreateProjectConfig'
 import { Pack } from './Pack'
-import { PlayerFile } from '../files/configurable/behaviourPack/Player'
-import { TickFile } from '../files/configurable/behaviourPack/Tick'
+import { PlayerFile } from '../files/configurable/behaviorPack/Player'
+import { TickFile } from '../files/configurable/behaviorPack/Tick'
 import { createLang } from '../files/Lang'
 
 export class BehaviourPack extends Pack {
@@ -16,7 +16,12 @@ export class BehaviourPack extends Pack {
 	) {
 		await fileSystem.makeDirectory(join(projectPath, 'BP'))
 
-		await createManifest(fileSystem, join(projectPath, 'BP/manifest.json'))
+		await createManifest(
+			fileSystem,
+			join(projectPath, 'BP/manifest.json'),
+			config,
+			'behaviorPack'
+		)
 		await createIcon(
 			fileSystem,
 			join(projectPath, 'BP/pack_icon.png'),

@@ -21,8 +21,8 @@
 						>
 							<Switch
 								class="mr-2"
-								:model-value="linkBehaviourPack"
-								@update:model-value="setLinkBehaviourPack"
+								:model-value="linkResourcePack"
+								@update:model-value="setLinkResourcePack"
 							/>
 							<span
 								class="text-xs text-textAlternate select-none"
@@ -38,8 +38,8 @@
 						>
 							<Switch
 								class="mr-2"
-								:model-value="linkResourcePack"
-								@update:model-value="setLinkResourcePack"
+								:model-value="linkBehaviourPack"
+								@update:model-value="setLinkBehaviourPack"
 							/>
 							<span
 								class="text-xs text-textAlternate select-none"
@@ -270,6 +270,7 @@ import { translate as t } from '/@/libs/locales/Locales'
 import { Packs } from '/@/libs/projects/ProjectManager'
 import { ConfigurableFile } from '/@/libs/projects/create/files/configurable/ConfigurableFile'
 import { FormatVersionDefinitions, ExperimentalToggle } from '/@/libs/data/Data'
+import { v4 as uuid } from 'uuid'
 
 const projectIconInput: Ref<HTMLInputElement | null> = ref(null)
 const window = ref<Window | null>(null)
@@ -330,10 +331,6 @@ const dataValid = computed(() => {
 		return false
 	if (projectName.value.endsWith('.')) return false
 
-	console.log(
-		projectNamespace.value.toLocaleLowerCase() !== projectNamespace.value
-	)
-
 	if (projectNamespace.value.toLocaleLowerCase() !== projectNamespace.value)
 		return false
 	if (projectNamespace.value.includes(' ')) return false
@@ -365,6 +362,14 @@ async function create() {
 				...selectedPackTypes.value.map((pack) => pack.id),
 			],
 			configurableFiles: selectedFiles.value.map((file) => file.id),
+			rpAsBpDependency: linkResourcePack.value,
+			bpAsRpDependency: linkBehaviourPack.value,
+			uuids: Object.fromEntries(
+				selectedPackTypes.value.map((packType) => [packType.id, uuid()])
+			),
+			experiments: selectedExperimentalToggles.value.map(
+				(toggle) => toggle.id
+			),
 		},
 		fileSystem
 	)
