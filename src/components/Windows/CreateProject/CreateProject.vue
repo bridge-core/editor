@@ -246,7 +246,8 @@
 				icon="add"
 				text="Create"
 				@click="create"
-				class="mt-4 mr-8 mb-8 self-end"
+				class="mt-4 mr-8 mb-8 self-end transition-[color, opacity]"
+				:enabled="dataValid"
 			/>
 		</div>
 	</Window>
@@ -266,9 +267,9 @@ import { Ref, computed, onMounted, ref } from 'vue'
 import { App } from '/@/App'
 import { IPackType } from 'mc-project-core'
 import { translate as t } from '/@/libs/locales/Locales'
-import { ExperimentalToggle, Packs } from '/@/libs/projects/ProjectManager'
+import { Packs } from '/@/libs/projects/ProjectManager'
 import { ConfigurableFile } from '/@/libs/projects/create/files/configurable/ConfigurableFile'
-import { FormatVersionDefinitions } from '/@/libs/data/Data'
+import { FormatVersionDefinitions, ExperimentalToggle } from '/@/libs/data/Data'
 
 const projectIconInput: Ref<HTMLInputElement | null> = ref(null)
 const window = ref<Window | null>(null)
@@ -323,7 +324,28 @@ const availableConfigurableFiles = computed(() => {
 const selectedFiles: Ref<ConfigurableFile[]> = ref([])
 const formatVersionDefinitions: Ref<FormatVersionDefinitions | null> = ref(null)
 
+const dataValid = computed(() => {
+	if (projectName.value === '') return false
+	if (projectName.value.match(/"|\\|\/|:|\||<|>|\*|\?|~/g) !== null)
+		return false
+	if (projectName.value.endsWith('.')) return false
+
+	console.log(
+		projectNamespace.value.toLocaleLowerCase() !== projectNamespace.value
+	)
+
+	if (projectNamespace.value.toLocaleLowerCase() !== projectNamespace.value)
+		return false
+	if (projectNamespace.value.includes(' ')) return false
+	if (projectNamespace.value.includes(':')) return false
+	if (projectNamespace.value === '') return false
+
+	return true
+})
+
 async function create() {
+	if (!dataValid.value) return
+
 	const fileSystem = App.instance.fileSystem
 
 	App.instance.projectManager.createProject(

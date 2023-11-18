@@ -1,6 +1,10 @@
 <template>
 	<button
-		class="bg-menu px-2 py-1 rounded hover:bg-primary transition-colors duration-100 ease-out select-none flex items-center gap-1"
+		class="bg-menu px-2 py-1 rounded transition-[colors, opacity] duration-100 ease-out select-none flex items-center gap-1"
+		:class="{
+			'opacity-100 hover:bg-primary': enabled,
+			'opacity-50 cursor-default': !enabled,
+		}"
 	>
 		<Icon v-if="icon" :icon="icon" class="text-base -ml-0.5" />
 		{{ text }}
@@ -17,6 +21,10 @@ defineProps({
 	},
 	icon: {
 		type: String,
+	},
+	enabled: {
+		type: Boolean,
+		default: true,
 	},
 })
 </script>
