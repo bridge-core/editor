@@ -1,7 +1,9 @@
 <template>
 	<Window name="Create Project" ref="window">
 		<div class="flex flex-col">
-			<div class="max-h-[34.625rem] overflow-y-scroll p-4 pt-2 m-4 mt-0">
+			<div
+				class="max-h-[35.675rem] overflow-y-scroll p-4 pt-2 m-4 mt-0 max-width overflow-x-auto"
+			>
 				<div class="flex gap-3 mb-4">
 					<InformativeToggle
 						v-for="packType in packTypes"
@@ -17,9 +19,12 @@
 							v-if="packType.id === 'behaviorPack'"
 						>
 							<Switch class="mr-2" v-model="linkBehaviourPack" />
-							<span class="text-xs text-textAlternate">{{
-								t('windows.createProject.rpAsBpDependency')
-							}}</span>
+							<span
+								class="text-xs text-textAlternate select-none"
+								>{{
+									t('windows.createProject.rpAsBpDependency')
+								}}</span
+							>
 						</div>
 
 						<div
@@ -27,18 +32,21 @@
 							v-if="packType.id === 'resourcePack'"
 						>
 							<Switch class="mr-2" v-model="linkResourcePack" />
-							<span class="text-xs text-textAlternate">{{
-								t('windows.createProject.bpAsRpDependency')
-							}}</span>
+							<span
+								class="text-xs text-textAlternate select-none"
+								>{{
+									t('windows.createProject.bpAsRpDependency')
+								}}</span
+							>
 						</div>
 					</InformativeToggle>
 				</div>
 
 				<Expandable
 					:name="t('general.experimentalGameplay')"
-					class="mt-2"
+					class="mt-6"
 				>
-					<div class="flex flex-wrap justify-center gap-2">
+					<div class="flex flex-wrap gap-2">
 						<InformativeToggle
 							v-for="toggle in experimentalToggles"
 							:icon="toggle.icon"
@@ -57,16 +65,27 @@
 
 				<Expandable
 					:name="t('windows.createProject.individualFiles.name')"
-					class="mt-4"
+					class="mt-6"
 				>
-					<InformativeToggle
-						icon="draft"
-						color="primary"
-						background="background"
-						name="player.json"
-						description="A Cool file"
-						:selected="false"
-					/>
+					<div class="flex flex-wrap gap-2">
+						<InformativeToggle
+							v-for="file in availableConfigurableFiles"
+							icon="draft"
+							color="primary"
+							background="background"
+							:name="
+								t(
+									`windows.createProject.individualFiles.file.${file.id}.name`
+								)
+							"
+							:description="
+								t(
+									`windows.createProject.individualFiles.file.${file.id}.description`
+								)
+							"
+							:selected="false"
+						/>
+					</div>
 				</Expandable>
 
 				<div class="flex gap-4 w-full mt-4">
@@ -185,11 +204,12 @@ import LabeledInput from '/@/components/Common/LabeledInput.vue'
 import InformativeToggle from '/@/components/Common/InformativeToggle.vue'
 import Expandable from '/@/components/Common/Expandable.vue'
 
-import { Ref, onMounted, ref } from 'vue'
+import { Ref, computed, onMounted, ref } from 'vue'
 import { App } from '/@/App'
 import { IPackType } from 'mc-project-core'
 import { translate as t } from '/@/libs/locales/Locales'
-import { IExperimentalToggle } from '/@/libs/projects/ProjectManager'
+import { IExperimentalToggle, Packs } from '/@/libs/projects/ProjectManager'
+import { ConfigurableFile } from '/@/libs/projects/create/files/ConfigurableFile'
 
 const projectIconInput: Ref<HTMLInputElement | null> = ref(null)
 const window = ref<Window | null>(null)
@@ -207,6 +227,19 @@ const projectIcon: Ref<File | null> = ref(null)
 const packTypes: Ref<IPackType[]> = ref([])
 const selectedPackTypes: Ref<IPackType[]> = ref([])
 const experimentalToggles: Ref<IExperimentalToggle[]> = ref([])
+const availableConfigurableFiles = computed(() => {
+	const files: ConfigurableFile[] = []
+
+	for (const packType of selectedPackTypes.value) {
+		const pack = Packs[packType.id]
+
+		if (!pack) continue
+
+		files.push(...pack.configurableFiles)
+	}
+
+	return files
+})
 
 async function create() {
 	const fileSystem = App.instance.fileSystem
@@ -227,6 +260,7 @@ async function create() {
 				'bridge.',
 				...selectedPackTypes.value.map((pack) => pack.id),
 			],
+			configurableFiles: [],
 		},
 		fileSystem
 	)
@@ -269,3 +303,9 @@ onMounted(async () => {
 	)
 })
 </script>
+
+<style scoped>
+.max-width {
+	max-width: min(90vw, 65.5rem);
+}
+</style>

@@ -25,7 +25,7 @@
 </template>
 
 <script setup lang="ts">
-import { Ref, onMounted, ref, watch } from 'vue'
+import { Ref, onMounted, onUnmounted, ref, watch } from 'vue'
 import Icon from '/@/components/Common/Icon.vue'
 
 defineProps({
@@ -39,20 +39,39 @@ const expanded = ref(false)
 const container: Ref<HTMLElement | null> = ref(null)
 const sizing: Ref<HTMLElement | null> = ref(null)
 
-watch(expanded, (value) => {
+function updateHeight(expanded: boolean) {
 	if (!container.value) return
 	if (!sizing.value) return
 
-	if (value) {
+	if (expanded) {
 		container.value.style.height = `${sizing.value.scrollHeight}px`
 	} else {
 		container.value.style.height = '2.5rem'
 	}
-})
+}
+
+watch(expanded, updateHeight)
+
+const observer = new MutationObserver(
+	function () {
+		updateHeight(expanded.value)
+	}.bind(this)
+)
 
 onMounted(() => {
-	if (!container.value) return
+	updateHeight(expanded.value)
 
-	container.value.style.height = '2.5rem'
+	if (!sizing.value) return
+
+	observer.observe(sizing.value, {
+		childList: true,
+		subtree: true,
+		attributes: true,
+		characterData: true,
+	})
+})
+
+onUnmounted(() => {
+	observer.disconnect()
 })
 </script>

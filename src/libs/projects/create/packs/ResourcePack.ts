@@ -4,6 +4,13 @@ import { createManifest } from '../files/Manifest'
 import { createIcon } from '../files/Icon'
 import { CreateProjectConfig } from '../../CreateProjectConfig'
 import { Pack } from './Pack'
+import { BiomesClientFile } from '../files/resourcePack/BiomesClient'
+import { BlocksFile } from '../files/resourcePack/Blocks'
+import { FlipbookTexturesFile } from '../files/resourcePack/FlipbookTextures'
+import { ItemTextureFile } from '../files/resourcePack/ItemTexture'
+import { SoundDefinitionsFile } from '../files/resourcePack/soundDefinitions'
+import { SoundsFile } from '../files/resourcePack/Sounds'
+import { TerrainTextureFile } from '../files/resourcePack/TerrainTexture'
 
 export class ResourcePack extends Pack {
 	async create(
@@ -20,4 +27,14 @@ export class ResourcePack extends Pack {
 			config.icon
 		)
 	}
+
+	public readonly configurableFiles = [
+		new BiomesClientFile(),
+		new BlocksFile(),
+		new FlipbookTexturesFile(),
+		new ItemTextureFile(),
+		new SoundDefinitionsFile(),
+		new SoundsFile(),
+		new TerrainTextureFile(),
+	]
 }

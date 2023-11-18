@@ -1,13 +1,12 @@
 import { CreateProjectConfig } from '../../CreateProjectConfig'
-import { ConfigurableFile } from '../files/ConfigurableFile'
 import { BaseFileSystem } from '/@/libs/fileSystem/BaseFileSystem'
 
-export class Pack {
+export class ConfigurableFile {
+	public readonly id: string = 'none'
+
 	public async create(
 		fileSystem: BaseFileSystem,
 		projectPath: string,
 		config: CreateProjectConfig
 	) {}
-
-	public readonly configurableFiles: ConfigurableFile[] = []
 }

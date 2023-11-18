@@ -11,13 +11,14 @@ import { BehaviourPack } from './create/packs/BehaviourPack'
 import { BridgePack } from './create/packs/Bridge'
 import { IPackType } from 'mc-project-core'
 import { Pack } from './create/packs/Pack'
+import { ResourcePack } from './create/packs/ResourcePack'
 
-const packs: {
+export const Packs: {
 	[key: string]: Pack | undefined
 } = {
 	'.bridge': new BridgePack(),
 	behaviorPack: new BehaviourPack(),
-	resourcePack: new BehaviourPack(),
+	resourcePack: new ResourcePack(),
 }
 
 export interface IExperimentalToggle {
@@ -81,7 +82,7 @@ export class ProjectManager {
 
 		await Promise.all(
 			config.packs.map(async (packId: string) => {
-				const pack = packs[packId]
+				const pack = Packs[packId]
 
 				if (pack === undefined) return
 

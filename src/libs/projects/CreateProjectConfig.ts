@@ -8,4 +8,5 @@ export interface CreateProjectConfig {
 	targetVersion: string
 	icon: FileSystemWriteChunkType
 	packs: string[]
+	configurableFiles: string[]
 }
