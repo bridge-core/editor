@@ -99,6 +99,18 @@ export class PWAFileSystem extends BaseFileSystem {
 		}
 	}
 
+	public async writeFileJson(
+		path: string,
+		content: object,
+		prettify: boolean
+	) {
+		if (prettify) {
+			await this.writeFile(path, JSON.stringify(content, null, '\t'))
+		} else {
+			await this.writeFile(path, JSON.stringify(content))
+		}
+	}
+
 	public async readDirectoryEntries(path: string): Promise<BaseEntry[]> {
 		if (this.baseHandle === null) throw new Error('Base handle not set!')
 

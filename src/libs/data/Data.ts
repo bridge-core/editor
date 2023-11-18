@@ -44,7 +44,7 @@ export class Data {
 	}
 
 	public async get(path: string): Promise<any> {
-		return await this.fileSystem.readFileJSON(path)
+		return await this.fileSystem.readFileJson(path)
 	}
 
 	public async getRaw(path: string): Promise<ArrayBuffer> {

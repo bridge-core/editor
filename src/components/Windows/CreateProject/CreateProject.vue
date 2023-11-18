@@ -4,6 +4,7 @@
 			<div
 				class="max-h-[35.675rem] overflow-y-scroll p-4 pt-2 m-4 mt-0 max-width overflow-x-auto"
 			>
+				<!-- Pack Types -->
 				<div class="flex gap-3 mb-4">
 					<InformativeToggle
 						v-for="packType in packTypes"
@@ -18,7 +19,11 @@
 							class="flex items-center my-4"
 							v-if="packType.id === 'behaviorPack'"
 						>
-							<Switch class="mr-2" v-model="linkBehaviourPack" />
+							<Switch
+								class="mr-2"
+								:model-value="linkBehaviourPack"
+								@update:model-value="setLinkBehaviourPack"
+							/>
 							<span
 								class="text-xs text-textAlternate select-none"
 								>{{
@@ -31,7 +36,11 @@
 							class="flex items-center my-4"
 							v-if="packType.id === 'resourcePack'"
 						>
-							<Switch class="mr-2" v-model="linkResourcePack" />
+							<Switch
+								class="mr-2"
+								:model-value="linkResourcePack"
+								@update:model-value="setLinkResourcePack"
+							/>
 							<span
 								class="text-xs text-textAlternate select-none"
 								>{{
@@ -42,6 +51,7 @@
 					</InformativeToggle>
 				</div>
 
+				<!-- Experiment Toggles -->
 				<Expandable
 					:name="t('general.experimentalGameplay')"
 					class="mt-6"
@@ -58,11 +68,15 @@
 									`experimentalGameplay.${toggle.id}.description`
 								)
 							"
-							:selected="false"
+							:selected="
+								selectedExperimentalToggles.includes(toggle)
+							"
+							@click="selectExperimentalToggle(toggle)"
 						/>
 					</div>
 				</Expandable>
 
+				<!-- Files -->
 				<Expandable
 					:name="t('windows.createProject.individualFiles.name')"
 					class="mt-6"
@@ -83,7 +97,8 @@
 									`windows.createProject.individualFiles.file.${file.id}.description`
 								)
 							"
-							:selected="false"
+							:selected="selectedFiles.includes(file)"
+							@click="selectFile(file)"
 						/>
 					</div>
 				</Expandable>
@@ -102,13 +117,16 @@
 						/>
 
 						<button
-							class="flex align-center gap-2"
+							class="flex align-center gap-2 text-textAlternate"
 							@mouseenter="focus"
 							@mouseleave="blur"
 							@click="projectIconInput?.click()"
 						>
-							<Icon icon="image" class="no-fill" />Project Icon
-							(Optional)
+							<Icon
+								icon="image"
+								class="no-fill"
+								color="text-textAlternate"
+							/>Project Icon (Optional)
 						</button>
 					</LabeledInput>
 
@@ -208,7 +226,7 @@ import { Ref, computed, onMounted, ref } from 'vue'
 import { App } from '/@/App'
 import { IPackType } from 'mc-project-core'
 import { translate as t } from '/@/libs/locales/Locales'
-import { IExperimentalToggle, Packs } from '/@/libs/projects/ProjectManager'
+import { ExperimentalToggle, Packs } from '/@/libs/projects/ProjectManager'
 import { ConfigurableFile } from '/@/libs/projects/create/files/ConfigurableFile'
 
 const projectIconInput: Ref<HTMLInputElement | null> = ref(null)
@@ -216,6 +234,26 @@ const window = ref<Window | null>(null)
 
 const linkBehaviourPack = ref(false)
 const linkResourcePack = ref(false)
+
+function setLinkBehaviourPack(value: boolean) {
+	if (
+		!selectedPackTypes.value.find((pack) => pack.id === 'behaviorPack') ||
+		!selectedPackTypes.value.find((pack) => pack.id === 'resourcePack')
+	)
+		return
+
+	linkBehaviourPack.value = value
+}
+
+function setLinkResourcePack(value: boolean) {
+	if (
+		!selectedPackTypes.value.find((pack) => pack.id === 'behaviorPack') ||
+		!selectedPackTypes.value.find((pack) => pack.id === 'resourcePack')
+	)
+		return
+
+	linkResourcePack.value = value
+}
 
 const projectName: Ref<string> = ref('New Project')
 const projectDescription: Ref<string> = ref('')
@@ -226,7 +264,8 @@ const projectIcon: Ref<File | null> = ref(null)
 
 const packTypes: Ref<IPackType[]> = ref([])
 const selectedPackTypes: Ref<IPackType[]> = ref([])
-const experimentalToggles: Ref<IExperimentalToggle[]> = ref([])
+const experimentalToggles: Ref<ExperimentalToggle[]> = ref([])
+const selectedExperimentalToggles: Ref<ExperimentalToggle[]> = ref([])
 const availableConfigurableFiles = computed(() => {
 	const files: ConfigurableFile[] = []
 
@@ -240,6 +279,7 @@ const availableConfigurableFiles = computed(() => {
 
 	return files
 })
+const selectedFiles: Ref<ConfigurableFile[]> = ref([])
 
 async function create() {
 	const fileSystem = App.instance.fileSystem
@@ -260,7 +300,7 @@ async function create() {
 				'bridge.',
 				...selectedPackTypes.value.map((pack) => pack.id),
 			],
-			configurableFiles: [],
+			configurableFiles: selectedFiles.value.map((file) => file.id),
 		},
 		fileSystem
 	)
@@ -268,20 +308,59 @@ async function create() {
 	window.value?.close()
 }
 
-function selectPackType(packType: any) {
+function selectPackType(packType: IPackType) {
 	if (selectedPackTypes.value.includes(packType)) {
 		selectedPackTypes.value.splice(
 			selectedPackTypes.value.indexOf(packType),
 			1
 		)
 		selectedPackTypes.value = selectedPackTypes.value
+
+		if (packType.id === 'behaviorPack' || packType.id === 'resourcePack') {
+			linkBehaviourPack.value = false
+			linkResourcePack.value = false
+		}
+
+		const pack = Packs[packType.id]
+
+		if (pack) {
+			for (const file of pack.configurableFiles) {
+				if (!selectedFiles.value.includes(file)) continue
+
+				selectedFiles.value.splice(selectedFiles.value.indexOf(file), 1)
+				selectedFiles.value = selectedFiles.value
+			}
+		}
 	} else {
 		selectedPackTypes.value.push(packType)
 		selectedPackTypes.value = selectedPackTypes.value
 	}
 }
 
-function chooseProjectIcon(event: Event) {
+function selectExperimentalToggle(toggle: ExperimentalToggle) {
+	if (selectedExperimentalToggles.value.includes(toggle)) {
+		selectedExperimentalToggles.value.splice(
+			selectedExperimentalToggles.value.indexOf(toggle),
+			1
+		)
+		selectedExperimentalToggles.value = selectedExperimentalToggles.value
+	} else {
+		selectedExperimentalToggles.value.push(toggle)
+		selectedExperimentalToggles.value = selectedExperimentalToggles.value
+	}
+}
+
+function selectFile(file: ConfigurableFile) {
+	if (selectedFiles.value.includes(file)) {
+		selectedFiles.value.splice(selectedFiles.value.indexOf(file), 1)
+		selectedFiles.value = selectedFiles.value
+	} else {
+		selectedFiles.value.push(file)
+		selectedFiles.value = selectedFiles.value
+	}
+}
+
+function chooseProjectIcon() {
 	if (!projectIconInput.value) return
 
 	if (!projectIconInput.value.files) return

@@ -29,7 +29,7 @@ export class LocalFileSystem extends BaseFileSystem {
 		return this.textDecoder.decode(new Uint8Array(content))
 	}
 
-	public async readFileJSON(path: string): Promise<any> {
+	public async readFileJson(path: string): Promise<any> {
 		return JSON.parse(await this.readFileText(path))
 	}
 

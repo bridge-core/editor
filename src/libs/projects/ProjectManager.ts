@@ -21,7 +21,7 @@ export const Packs: {
 	resourcePack: new ResourcePack(),
 }
 
-export interface IExperimentalToggle {
+export interface ExperimentalToggle {
 	name: string
 	id: string
 	description: string

@@ -21,6 +21,12 @@ export class BehaviourPack extends Pack {
 			join(projectPath, 'BP/pack_icon.png'),
 			config.icon
 		)
+
+		for (const file of this.configurableFiles) {
+			if (!config.configurableFiles.includes(file.id)) continue
+
+			await file.create(fileSystem, projectPath, config)
+		}
 	}
 
 	public readonly configurableFiles = [new PlayerFile(), new TickFile()]
