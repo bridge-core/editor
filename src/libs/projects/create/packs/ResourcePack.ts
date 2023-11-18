@@ -4,13 +4,14 @@ import { createManifest } from '../files/Manifest'
 import { createIcon } from '../files/Icon'
 import { CreateProjectConfig } from '../../CreateProjectConfig'
 import { Pack } from './Pack'
-import { BiomesClientFile } from '../files/resourcePack/BiomesClient'
-import { BlocksFile } from '../files/resourcePack/Blocks'
-import { FlipbookTexturesFile } from '../files/resourcePack/FlipbookTextures'
-import { ItemTextureFile } from '../files/resourcePack/ItemTexture'
-import { SoundDefinitionsFile } from '../files/resourcePack/soundDefinitions'
-import { SoundsFile } from '../files/resourcePack/Sounds'
-import { TerrainTextureFile } from '../files/resourcePack/TerrainTexture'
+import { BiomesClientFile } from '../files/configurable/resourcePack/BiomesClient'
+import { BlocksFile } from '../files/configurable/resourcePack/Blocks'
+import { FlipbookTexturesFile } from '../files/configurable/resourcePack/FlipbookTextures'
+import { ItemTextureFile } from '../files/configurable/resourcePack/ItemTexture'
+import { SoundDefinitionsFile } from '../files/configurable/resourcePack/SoundDefinitions'
+import { SoundsFile } from '../files/configurable/resourcePack/Sounds'
+import { TerrainTextureFile } from '../files/configurable/resourcePack/TerrainTexture'
+import { createLang } from '../files/Lang'
 
 export class ResourcePack extends Pack {
 	async create(
@@ -21,11 +22,14 @@ export class ResourcePack extends Pack {
 		await fileSystem.makeDirectory(join(projectPath, 'RP'))
 
 		await createManifest(fileSystem, join(projectPath, 'RP/manifest.json'))
+
 		await createIcon(
 			fileSystem,
 			join(projectPath, 'RP/pack_icon.png'),
 			config.icon
 		)
+
+		await createLang(fileSystem, join(projectPath, 'RP'), config)
 
 		for (const file of this.configurableFiles) {
 			if (!config.configurableFiles.includes(file.id)) continue

@@ -1,7 +1,7 @@
 import { BaseFileSystem } from '/@/libs/fileSystem/BaseFileSystem'
 import { CreateProjectConfig } from '../../CreateProjectConfig'
 
-export function createConfig(
+export async function createConfig(
 	fileSystem: BaseFileSystem,
 	path: string,
 	config: CreateProjectConfig
@@ -13,11 +13,11 @@ export function createConfig(
 		targetVersion: config.targetVersion,
 		experimentalGameplay: {},
 		namespace: config.namespace,
-		packs: config.packs.map((pack) => pack.id),
+		packs: config.packs,
 		worlds: [],
 		packDefinitions: {},
 		bridge: {},
 	}
 
-	fileSystem.writeFile(path, JSON.stringify(configOutput, null, 2))
+	await fileSystem.writeFile(path, JSON.stringify(configOutput, null, 2))
 }

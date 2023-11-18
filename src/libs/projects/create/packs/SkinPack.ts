@@ -4,26 +4,26 @@ import { createManifest } from '../files/Manifest'
 import { createIcon } from '../files/Icon'
 import { CreateProjectConfig } from '../../CreateProjectConfig'
 import { Pack } from './Pack'
-import { PlayerFile } from '../files/configurable/behaviourPack/Player'
-import { TickFile } from '../files/configurable/behaviourPack/Tick'
+import { SkinsFile } from '../files/configurable/skinPack/Skins'
 import { createLang } from '../files/Lang'
 
-export class BehaviourPack extends Pack {
-	public async create(
+export class SkinPack extends Pack {
+	async create(
 		fileSystem: BaseFileSystem,
 		projectPath: string,
 		config: CreateProjectConfig
 	) {
-		await fileSystem.makeDirectory(join(projectPath, 'BP'))
+		await fileSystem.makeDirectory(join(projectPath, 'SP'))
 
-		await createManifest(fileSystem, join(projectPath, 'BP/manifest.json'))
+		await createManifest(fileSystem, join(projectPath, 'SP/manifest.json'))
+
 		await createIcon(
 			fileSystem,
-			join(projectPath, 'BP/pack_icon.png'),
+			join(projectPath, 'SP/pack_icon.png'),
 			config.icon
 		)
 
-		await createLang(fileSystem, join(projectPath, 'BP'), config)
+		await createLang(fileSystem, join(projectPath, 'SP'), config)
 
 		for (const file of this.configurableFiles) {
 			if (!config.configurableFiles.includes(file.id)) continue
@@ -32,5 +32,5 @@ export class BehaviourPack extends Pack {
 		}
 	}
 
-	public readonly configurableFiles = [new PlayerFile(), new TickFile()]
+	public readonly configurableFiles = [new SkinsFile()]
 }

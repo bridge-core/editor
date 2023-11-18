@@ -1,7 +1,7 @@
 import { v4 as uuid } from 'uuid'
 import { BaseFileSystem } from '/@/libs/fileSystem/BaseFileSystem'
 
-export function createManifest(fileSystem: BaseFileSystem, path: string) {
+export async function createManifest(fileSystem: BaseFileSystem, path: string) {
 	const manifest = {
 		format_version: 2,
 		metadata: {
@@ -27,5 +27,5 @@ export function createManifest(fileSystem: BaseFileSystem, path: string) {
 		],
 	}
 
-	fileSystem.writeFile(path, JSON.stringify(manifest, null, 2))
+	await fileSystem.writeFile(path, JSON.stringify(manifest, null, 2))
 }
