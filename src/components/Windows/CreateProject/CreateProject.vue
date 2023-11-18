@@ -358,7 +358,7 @@ async function create() {
 					`packages/common/packIcon.png`
 				)),
 			packs: [
-				'bridge.',
+				'bridge',
 				...selectedPackTypes.value.map((pack) => pack.id),
 			],
 			configurableFiles: selectedFiles.value.map((file) => file.id),

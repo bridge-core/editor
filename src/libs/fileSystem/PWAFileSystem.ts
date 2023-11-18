@@ -36,21 +36,27 @@ export class PWAFileSystem extends BaseFileSystem {
 	public async readFile(path: string): Promise<ArrayBuffer> {
 		if (this.baseHandle === null) throw new Error('Base handle not set!')
 
-		const handle = await (
-			await this.traverse(path)
-		).getFileHandle(basename(path))
+		try {
+			const handle = await (
+				await this.traverse(path)
+			).getFileHandle(basename(path))
 
-		const file = await handle.getFile()
+			const file = await handle.getFile()
 
-		const reader = new FileReader()
+			const reader = new FileReader()
 
-		return new Promise((resolve) => {
-			reader.onload = () => {
-				resolve(reader.result as ArrayBuffer)
-			}
+			return new Promise((resolve) => {
+				reader.onload = () => {
+					resolve(reader.result as ArrayBuffer)
+				}
 
-			reader.readAsArrayBuffer(file)
-		})
+				reader.readAsArrayBuffer(file)
+			})
+		} catch (error) {
+			console.error(`Failed to read "${path}"`)
+
+			throw error
+		}
 	}
 
 	public async readFileDataUrl(path: string): Promise<string> {
@@ -114,28 +120,40 @@ export class PWAFileSystem extends BaseFileSystem {
 	public async readDirectoryEntries(path: string): Promise<BaseEntry[]> {
 		if (this.baseHandle === null) throw new Error('Base handle not set!')
 
-		const handle = await (
-			await this.traverse(path)
-		).getDirectoryHandle(basename(path))
-		const handleEntries = handle.entries()
+		try {
+			const handle = await (
+				await this.traverse(path)
+			).getDirectoryHandle(basename(path))
+			const handleEntries = handle.entries()
 
-		const entries = []
+			const entries = []
 
-		for await (const handleEntry of handleEntries) {
-			entries.push(new BaseEntry(handleEntry[0], handleEntry[1].kind))
+			for await (const handleEntry of handleEntries) {
+				entries.push(new BaseEntry(handleEntry[0], handleEntry[1].kind))
+			}
+
+			return entries
+		} catch (error) {
+			console.error(`Failed to read directory entries of "${path}"`)
+
+			throw error
 		}
-
-		return entries
 	}
 
 	public async makeDirectory(path: string) {
 		if (this.baseHandle === null) throw new Error('Base handle not set!')
 
-		const rootHandle = await await this.traverse(path)
+		try {
+			const rootHandle = await await this.traverse(path)
 
-		await rootHandle.getDirectoryHandle(basename(path), {
-			create: true,
-		})
+			await rootHandle.getDirectoryHandle(basename(path), {
+				create: true,
+			})
+		} catch (error) {
+			console.error(`Failed to make directory "${path}"`)
+
+			throw error
+		}
 	}
 
 	public async exists(path: string): Promise<boolean> {

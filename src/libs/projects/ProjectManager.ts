@@ -15,7 +15,7 @@ import { SkinPack } from './create/packs/SkinPack'
 export const Packs: {
 	[key: string]: Pack | undefined
 } = {
-	'.bridge': new BridgePack(),
+	bridge: new BridgePack(),
 	behaviorPack: new BehaviourPack(),
 	resourcePack: new ResourcePack(),
 	skinPack: new SkinPack(),

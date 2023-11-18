@@ -11,14 +11,8 @@ export class FlipbookTexturesFile extends ConfigurableFile {
 		projectPath: string,
 		config: CreateProjectConfig
 	) {
-		if (
-			!(await fileSystem.exists(
-				join(projectPath, 'RP/textures/textures')
-			))
-		)
-			await fileSystem.makeDirectory(
-				join(projectPath, 'RP/textures/textures')
-			)
+		if (!(await fileSystem.exists(join(projectPath, 'RP/textures'))))
+			await fileSystem.makeDirectory(join(projectPath, 'RP/textures'))
 
 		await fileSystem.writeFileJson(
 			join(projectPath, 'RP/textures/flipbook_textures.json'),
