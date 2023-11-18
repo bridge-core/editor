@@ -1,30 +1,18 @@
 <template>
 	<div>
-		<div
-			class="flex items-center justify-between cursor-pointer"
-			@click="toggleExpanded"
-			ref="sizing"
-		>
-			<slot name="main" />
-
-			<Icon
-				icon="arrow_drop_down"
-				class="transition-transform duration-200 ease-out"
-				:class="{ '-rotate-180': expanded }"
-			/>
+		<div ref="sizing">
+			<slot name="main" :expanded="expanded" :toggle="toggleExpanded" />
 		</div>
 
 		<div class="absolute" ref="container">
-			<div v-if="expanded" class="mt-4 bg-menu w-full p-2 rounded">
-				<slot name="choices" />
+			<div v-if="expanded">
+				<slot name="choices" :collapse="toggleExpanded" />
 			</div>
 		</div>
 	</div>
 </template>
 
 <script setup lang="ts">
-import Icon from './Icon.vue'
-
 import { Ref, onMounted, ref } from 'vue'
 
 const expanded = ref(false)

@@ -4,6 +4,18 @@ import { baseUrl } from '/@/libs/baseUrl'
 import { unzip, Unzipped } from 'fflate'
 import { LocalFileSystem } from '/@/libs/fileSystem/LocalFileSystem'
 
+export interface FormatVersionDefinitions {
+	currentStable: string
+	formatVersions: string[]
+}
+
+export interface ExperimentalToggle {
+	name: string
+	id: string
+	description: string
+	icon: string
+}
+
 export class Data {
 	private fileSystem = new LocalFileSystem()
 

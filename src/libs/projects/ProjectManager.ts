@@ -21,13 +21,6 @@ export const Packs: {
 	skinPack: new SkinPack(),
 }
 
-export interface ExperimentalToggle {
-	name: string
-	id: string
-	description: string
-	icon: string
-}
-
 export class ProjectManager {
 	public projects: ProjectData[] = []
 	public eventSystem = new EventSystem(['updatedProjects'])

@@ -19,7 +19,7 @@ export const bridgeDark = <const>{
 
 		background: '#121212',
 		menu: '#252525',
-		menuAlternate: '#1F1F1F',
+		menuAlternate: '#1D1D1D',
 
 		sidebarNavigation: '#1F1F1F',
 		expandedSidebar: '#1F1F1F',

@@ -188,25 +188,57 @@
 						/>
 					</LabeledInput>
 
-					<LabeledInput
-						label="Target Version"
-						class="mb-4 flex-1"
-						v-slot="{ focus, blur }"
-					>
-						<Dropdown @expanded="focus" @collapsed="blur">
-							<template #main>
-								<span>1.20.50</span>
-							</template>
+					<Dropdown class="mb-4 flex-1">
+						<template #main="{ expanded, toggle }">
+							<LabeledInput
+								label="Target Version"
+								:focused="expanded"
+							>
+								<div
+									class="flex items-center justify-between cursor-pointer"
+									@click="toggle"
+								>
+									<span>{{ projectTargetVersion }}</span>
 
-							<template #choices>
-								<div>
-									<span>1.20.51</span>
-									<span>1.20.52</span>
-									<span>1.20.53</span>
+									<Icon
+										icon="arrow_drop_down"
+										class="transition-transform duration-200 ease-out"
+										:class="{ '-rotate-180': expanded }"
+									/>
 								</div>
-							</template>
-						</Dropdown>
-					</LabeledInput>
+							</LabeledInput>
+						</template>
+
+						<template #choices="{ collapse }">
+							<div
+								class="mt-2 bg-menuAlternate w-full p-1 rounded"
+							>
+								<div
+									class="flex flex-col max-h-[12rem] overflow-y-auto p-1"
+								>
+									<button
+										v-for="version in formatVersionDefinitions?.formatVersions
+											.slice()
+											.reverse()"
+										@click="
+											() => {
+												projectTargetVersion = version
+												collapse()
+											}
+										"
+										class="hover:bg-primary text-start p-1 rounded transition-colors duration-100 ease-out"
+										:class="{
+											'bg-menu':
+												projectTargetVersion ===
+												version,
+										}"
+									>
+										{{ version }}
+									</button>
+								</div>
+							</div>
+						</template>
+					</Dropdown>
 				</div>
 			</div>
 
@@ -236,6 +268,7 @@ import { IPackType } from 'mc-project-core'
 import { translate as t } from '/@/libs/locales/Locales'
 import { ExperimentalToggle, Packs } from '/@/libs/projects/ProjectManager'
 import { ConfigurableFile } from '/@/libs/projects/create/files/configurable/ConfigurableFile'
+import { FormatVersionDefinitions } from '/@/libs/data/Data'
 
 const projectIconInput: Ref<HTMLInputElement | null> = ref(null)
 const window = ref<Window | null>(null)
@@ -288,6 +321,7 @@ const availableConfigurableFiles = computed(() => {
 	return files
 })
 const selectedFiles: Ref<ConfigurableFile[]> = ref([])
+const formatVersionDefinitions: Ref<FormatVersionDefinitions | null> = ref(null)
 
 async function create() {
 	const fileSystem = App.instance.fileSystem
@@ -388,6 +422,12 @@ onMounted(async () => {
 	experimentalToggles.value = await data.get(
 		'packages/minecraftBedrock/experimentalGameplay.json'
 	)
+
+	formatVersionDefinitions.value = <FormatVersionDefinitions>(
+		await data.get('packages/minecraftBedrock/formatVersions.json')
+	)
+
+	projectTargetVersion.value = formatVersionDefinitions.value.currentStable
 })
 </script>
 
