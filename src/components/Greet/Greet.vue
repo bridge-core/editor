@@ -12,7 +12,11 @@
 						class="mr-1"
 						@click="selectBridgeFolder"
 					/>
-					<IconButton icon="add" @click="createProject" />
+					<IconButton
+						icon="add"
+						@click="createProject"
+						v-if="!suggestSelectBridgeFolder"
+					/>
 				</div>
 			</div>
 
