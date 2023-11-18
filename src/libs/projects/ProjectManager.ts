@@ -4,12 +4,10 @@ import { ProjectData, getData, validProject } from './Project'
 import { join } from '/@/libs/path'
 import { PWAFileSystem } from '../fileSystem/PWAFileSystem'
 import { BaseFileSystem } from '/@/libs/fileSystem/BaseFileSystem'
-import { createConfig } from './create/files/Config'
 import { CreateProjectConfig } from './CreateProjectConfig'
 import { Ref, ref } from 'vue'
 import { BehaviourPack } from './create/packs/BehaviourPack'
 import { BridgePack } from './create/packs/Bridge'
-import { IPackType } from 'mc-project-core'
 import { Pack } from './create/packs/Pack'
 import { ResourcePack } from './create/packs/ResourcePack'
 
@@ -77,8 +75,6 @@ export class ProjectManager {
 		const projectPath = join('projects', config.name)
 
 		await fileSystem.makeDirectory(projectPath)
-
-		await createConfig(fileSystem, join(projectPath, 'config.json'), config)
 
 		await Promise.all(
 			config.packs.map(async (packId: string) => {

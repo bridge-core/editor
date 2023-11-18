@@ -1,4 +1,4 @@
-import { CreateProjectConfig } from '../../CreateProjectConfig'
+import { CreateProjectConfig } from '../../../CreateProjectConfig'
 import { BaseFileSystem } from '/@/libs/fileSystem/BaseFileSystem'
 
 export class ConfigurableFile {

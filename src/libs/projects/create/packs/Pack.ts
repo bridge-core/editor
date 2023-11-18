@@ -1,5 +1,5 @@
 import { CreateProjectConfig } from '../../CreateProjectConfig'
-import { ConfigurableFile } from '../files/ConfigurableFile'
+import { ConfigurableFile } from '../files/configurable/ConfigurableFile'
 import { BaseFileSystem } from '/@/libs/fileSystem/BaseFileSystem'
 
 export class Pack {

@@ -1,5 +1,5 @@
-import { CreateProjectConfig } from '../../../CreateProjectConfig'
-import { ConfigurableFile } from './../ConfigurableFile'
+import { CreateProjectConfig } from '../../../../CreateProjectConfig'
+import { ConfigurableFile } from '../ConfigurableFile'
 import { BaseFileSystem } from '/@/libs/fileSystem/BaseFileSystem'
 import { join } from '/@/libs/path'
 
