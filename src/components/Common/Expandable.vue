@@ -8,12 +8,13 @@
 				class="h-10 flex items-center p-3 justify-between cursor-pointer group"
 				@click="() => (expanded = !expanded)"
 			>
-				<span class="group-hover:text-primary select-none">{{
-					name
-				}}</span>
+				<span
+					class="group-hover:text-primary transition-colors duration-100 ease-out select-none"
+					>{{ name }}</span
+				>
 				<Icon
 					icon="arrow_drop_down"
-					class="transition-transform duration-200 ease-out group-hover:text-primary"
+					class="transition-[transform, color] duration-100 ease-out group-hover:text-primary"
 					:class="{ '-rotate-180': expanded }"
 				/>
 			</div>

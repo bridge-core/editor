@@ -190,15 +190,22 @@
 
 					<LabeledInput
 						label="Target Version"
-						class="mb-4"
+						class="mb-4 flex-1"
 						v-slot="{ focus, blur }"
 					>
-						<input
-							class="bg-background outline-none placeholder:text-textAlternate max-w-none w-full"
-							@focus="focus"
-							@blur="blur"
-							v-model="projectTargetVersion"
-						/>
+						<Dropdown @expanded="focus" @collapsed="blur">
+							<template #main>
+								<span>1.20.50</span>
+							</template>
+
+							<template #choices>
+								<div>
+									<span>1.20.51</span>
+									<span>1.20.52</span>
+									<span>1.20.53</span>
+								</div>
+							</template>
+						</Dropdown>
 					</LabeledInput>
 				</div>
 			</div>
@@ -221,13 +228,14 @@ import Switch from '/@/components/Common/Switch.vue'
 import LabeledInput from '/@/components/Common/LabeledInput.vue'
 import InformativeToggle from '/@/components/Common/InformativeToggle.vue'
 import Expandable from '/@/components/Common/Expandable.vue'
+import Dropdown from '/@/components/Common/Dropdown.vue'
 
 import { Ref, computed, onMounted, ref } from 'vue'
 import { App } from '/@/App'
 import { IPackType } from 'mc-project-core'
 import { translate as t } from '/@/libs/locales/Locales'
 import { ExperimentalToggle, Packs } from '/@/libs/projects/ProjectManager'
-import { ConfigurableFile } from '/@/libs/projects/create/files/ConfigurableFile'
+import { ConfigurableFile } from '/@/libs/projects/create/files/configurable/ConfigurableFile'
 
 const projectIconInput: Ref<HTMLInputElement | null> = ref(null)
 const window = ref<Window | null>(null)

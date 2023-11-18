@@ -10,6 +10,7 @@ import { BehaviourPack } from './create/packs/BehaviourPack'
 import { BridgePack } from './create/packs/Bridge'
 import { Pack } from './create/packs/Pack'
 import { ResourcePack } from './create/packs/ResourcePack'
+import { SkinPack } from './create/packs/SkinPack'
 
 export const Packs: {
 	[key: string]: Pack | undefined
@@ -17,6 +18,7 @@ export const Packs: {
 	'.bridge': new BridgePack(),
 	behaviorPack: new BehaviourPack(),
 	resourcePack: new ResourcePack(),
+	skinPack: new SkinPack(),
 }
 
 export interface ExperimentalToggle {
