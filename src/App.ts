@@ -5,6 +5,8 @@ import { getFileSystem } from '/@/libs/fileSystem/FileSystem'
 import { createApp } from 'vue'
 import { Windows } from '/@/components/Windows/Windows'
 import { Data } from '/@/libs/data/Data'
+import { PWAFileSystem } from './libs/fileSystem/PWAFileSystem'
+import { get, set } from 'idb-keyval'
 
 export class App {
 	public static instance: App
@@ -32,6 +34,10 @@ export class App {
 	protected async setup() {
 		this.fileSystem.eventSystem.on('reloaded', () => {
 			this.projectManager.loadProjects()
+
+			if (this.fileSystem instanceof PWAFileSystem) {
+				set('bridgeFolderHandle', this.fileSystem.baseHandle)
+			}
 		})
 
 		console.time('[App] Projects')
@@ -43,5 +49,13 @@ export class App {
 		console.timeEnd('[App] Data')
 
 		createApp(AppComponent).mount('#app')
+
+		if (this.fileSystem instanceof PWAFileSystem) {
+			const handle: undefined | FileSystemDirectoryHandle = await get(
+				'bridgeFolderHandle'
+			)
+
+			if (handle) this.fileSystem.setBaseHandle(handle)
+		}
 	}
 }
