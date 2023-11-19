@@ -26,9 +26,10 @@
 				class="flex flex-wrap gap-2 overflow-x-hidden overflow-y-hidden"
 			>
 				<div
-					class="flex flex-col bg-menu rounded-md relative w-36 h-36"
+					class="flex flex-col bg-menu rounded-md relative w-36 h-36 cursor-pointer"
 					v-for="(project, index) in projects"
 					:key="index"
+					@click="openProject(project)"
 				>
 					<div class="w-full overflow-hidden">
 						<img
@@ -85,6 +86,7 @@ import { App } from '/@/App'
 import { PWAFileSystem } from '/@/libs/fileSystem/PWAFileSystem'
 import { computed, ref } from 'vue'
 import { translate as t } from '/@/libs/locales/Locales'
+import { ProjectData } from '/@/libs/projects/Project'
 
 const projects = App.instance.projectManager.useProjects()
 let fileSystemSetup = ref(true)
@@ -116,5 +118,9 @@ async function createProject() {
 		await selectBridgeFolder()
 
 	App.instance.windows.open('Create Project')
+}
+
+async function openProject(project: ProjectData) {
+	console.log('Opening', project.name)
 }
 </script>
