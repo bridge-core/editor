@@ -10,26 +10,27 @@ export class PlayerFile extends ConfigurableFile {
 	public async create(
 		fileSystem: BaseFileSystem,
 		projectPath: string,
-		config: CreateProjectConfig
+		config: CreateProjectConfig,
+		packPath: string
 	) {
 		const defaultPlayer = await App.instance.data.get(
 			'packages/minecraftBedrock/vanilla/player.json'
 		)
 
-		if (!(await fileSystem.exists(join(projectPath, 'BP/entities'))))
-			await fileSystem.makeDirectory(join(projectPath, 'BP/entities'))
+		if (!(await fileSystem.exists(join(packPath, 'entities'))))
+			await fileSystem.makeDirectory(join(packPath, 'entities'))
 
 		await fileSystem.writeFileJson(
-			join(projectPath, 'BP/entities/player.json'),
+			join(packPath, 'entities/player.json'),
 			defaultPlayer,
 			true
 		)
 
-		if (!(await fileSystem.exists(join(projectPath, 'BP/loot_tables'))))
-			await fileSystem.makeDirectory(join(projectPath, 'BP/loot_tables'))
+		if (!(await fileSystem.exists(join(packPath, 'loot_tables'))))
+			await fileSystem.makeDirectory(join(packPath, 'loot_tables'))
 
 		await fileSystem.writeFile(
-			join(projectPath, 'BP/loot_tables/empty.json'),
+			join(packPath, 'loot_tables/empty.json'),
 			'{}'
 		)
 	}

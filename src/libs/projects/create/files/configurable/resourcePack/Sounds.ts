@@ -9,12 +9,9 @@ export class SoundsFile extends ConfigurableFile {
 	public async create(
 		fileSystem: BaseFileSystem,
 		projectPath: string,
-		config: CreateProjectConfig
+		config: CreateProjectConfig,
+		packPath: string
 	) {
-		await fileSystem.writeFileJson(
-			join(projectPath, 'RP/sounds.json'),
-			{},
-			true
-		)
+		await fileSystem.writeFileJson(join(packPath, 'sounds.json'), {}, true)
 	}
 }

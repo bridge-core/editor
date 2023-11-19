@@ -17,9 +17,10 @@ export class ResourcePack extends Pack {
 	async create(
 		fileSystem: BaseFileSystem,
 		projectPath: string,
-		config: CreateProjectConfig
+		config: CreateProjectConfig,
+		packPath: string
 	) {
-		await fileSystem.makeDirectory(join(projectPath, 'RP'))
+		await fileSystem.makeDirectory(packPath)
 
 		await createManifest(
 			fileSystem,
@@ -34,12 +35,12 @@ export class ResourcePack extends Pack {
 			config.icon
 		)
 
-		await createLang(fileSystem, join(projectPath, 'RP'), config)
+		await createLang(fileSystem, packPath, config)
 
 		for (const file of this.configurableFiles) {
 			if (!config.configurableFiles.includes(file.id)) continue
 
-			await file.create(fileSystem, projectPath, config)
+			await file.create(fileSystem, projectPath, config, packPath)
 		}
 	}
 

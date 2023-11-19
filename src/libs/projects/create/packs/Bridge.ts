@@ -10,11 +10,12 @@ export class BridgePack extends Pack {
 	public async create(
 		fileSystem: BaseFileSystem,
 		projectPath: string,
-		config: CreateProjectConfig
+		config: CreateProjectConfig,
+		packPath: string
 	) {
-		await fileSystem.makeDirectory(join(projectPath, '.bridge'))
+		await fileSystem.makeDirectory(packPath)
 
-		await fileSystem.makeDirectory(join(projectPath, '.bridge/compiler'))
+		await fileSystem.makeDirectory(join(packPath, 'compiler'))
 
 		await createConfig(fileSystem, join(projectPath, 'config.json'), config)
 

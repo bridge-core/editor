@@ -6,7 +6,8 @@ export class Pack {
 	public async create(
 		fileSystem: BaseFileSystem,
 		projectPath: string,
-		config: CreateProjectConfig
+		config: CreateProjectConfig,
+		packPath: string
 	) {}
 
 	public readonly configurableFiles: ConfigurableFile[] = []

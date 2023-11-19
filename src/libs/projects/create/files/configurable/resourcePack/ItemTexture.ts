@@ -9,19 +9,14 @@ export class ItemTextureFile extends ConfigurableFile {
 	public async create(
 		fileSystem: BaseFileSystem,
 		projectPath: string,
-		config: CreateProjectConfig
+		config: CreateProjectConfig,
+		packPath: string
 	) {
-		if (
-			!(await fileSystem.exists(
-				join(projectPath, 'RP/textures/textures')
-			))
-		)
-			await fileSystem.makeDirectory(
-				join(projectPath, 'RP/textures/textures')
-			)
+		if (!(await fileSystem.exists(join(packPath, 'textures/textures'))))
+			await fileSystem.makeDirectory(join(packPath, 'textures/textures'))
 
 		await fileSystem.writeFileJson(
-			join(projectPath, 'RP/textures/item_texture.json'),
+			join(packPath, 'textures/item_texture.json'),
 			{
 				resource_pack_name: config.name,
 				texture_name: 'atlas.items',

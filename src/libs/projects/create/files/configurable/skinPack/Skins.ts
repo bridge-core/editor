@@ -8,10 +8,11 @@ export class SkinsFile {
 	public async create(
 		fileSystem: BaseFileSystem,
 		projectPath: string,
-		config: CreateProjectConfig
+		config: CreateProjectConfig,
+		packPath: string
 	) {
 		await fileSystem.writeFileJson(
-			join(projectPath, 'SP/skins.json'),
+			join(packPath, 'skins.json'),
 			{
 				geometry: 'skinpacks/skins.json',
 				skins: [],

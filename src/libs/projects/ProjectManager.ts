@@ -11,6 +11,7 @@ import { BridgePack } from './create/packs/Bridge'
 import { Pack } from './create/packs/Pack'
 import { ResourcePack } from './create/packs/ResourcePack'
 import { SkinPack } from './create/packs/SkinPack'
+import { defaultPackPaths } from 'mc-project-core'
 
 export const packs: {
 	[key: string]: Pack | undefined
@@ -77,7 +78,17 @@ export class ProjectManager {
 
 				if (pack === undefined) return
 
-				await pack.create(fileSystem, projectPath, config)
+				await pack.create(
+					fileSystem,
+					projectPath,
+					config,
+					join(
+						projectPath,
+						defaultPackPaths[
+							packId as keyof typeof defaultPackPaths
+						] ?? '.bridge/'
+					)
+				)
 			})
 		)
 

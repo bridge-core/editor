@@ -19,7 +19,8 @@ export class PWAFileSystem extends BaseFileSystem {
 		if (!this.baseHandle) throw new Error('Base handle not set!')
 
 		const directoryNames = parse(path).dir.split(sep)
-		if (directoryNames[0] === '') directoryNames.shift()
+		if (directoryNames[0] === '' || directoryNames[0] === '.')
+			directoryNames.shift()
 
 		let currentHandle = this.baseHandle
 

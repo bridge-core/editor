@@ -9,13 +9,14 @@ export class TerrainTextureFile extends ConfigurableFile {
 	public async create(
 		fileSystem: BaseFileSystem,
 		projectPath: string,
-		config: CreateProjectConfig
+		config: CreateProjectConfig,
+		packPath: string
 	) {
-		if (!(await fileSystem.exists(join(projectPath, 'RP/textures'))))
-			await fileSystem.makeDirectory(join(projectPath, 'RP/textures'))
+		if (!(await fileSystem.exists(join(packPath, 'textures'))))
+			await fileSystem.makeDirectory(join(packPath, 'textures'))
 
 		await fileSystem.writeFileJson(
-			join(projectPath, 'RP/textures/terrain_texture.json'),
+			join(packPath, 'textures/terrain_texture.json'),
 			{
 				num_mip_levels: 4,
 				padding: 8,

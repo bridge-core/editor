@@ -9,10 +9,11 @@ export class BlocksFile extends ConfigurableFile {
 	public async create(
 		fileSystem: BaseFileSystem,
 		projectPath: string,
-		config: CreateProjectConfig
+		config: CreateProjectConfig,
+		packPath: string
 	) {
 		await fileSystem.writeFileJson(
-			join(projectPath, `RP/blocks.json`),
+			join(packPath, `blocks.json`),
 			{
 				format_version: [1, 1, 0],
 			},

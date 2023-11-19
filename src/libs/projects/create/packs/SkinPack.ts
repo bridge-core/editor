@@ -11,9 +11,10 @@ export class SkinPack extends Pack {
 	async create(
 		fileSystem: BaseFileSystem,
 		projectPath: string,
-		config: CreateProjectConfig
+		config: CreateProjectConfig,
+		pathPack: string
 	) {
-		await fileSystem.makeDirectory(join(projectPath, 'SP'))
+		await fileSystem.makeDirectory(pathPack)
 
 		await createManifest(
 			fileSystem,
@@ -28,12 +29,12 @@ export class SkinPack extends Pack {
 			config.icon
 		)
 
-		await createLang(fileSystem, join(projectPath, 'SP'), config)
+		await createLang(fileSystem, pathPack, config)
 
 		for (const file of this.configurableFiles) {
 			if (!config.configurableFiles.includes(file.id)) continue
 
-			await file.create(fileSystem, projectPath, config)
+			await file.create(fileSystem, projectPath, config, pathPack)
 		}
 	}
 

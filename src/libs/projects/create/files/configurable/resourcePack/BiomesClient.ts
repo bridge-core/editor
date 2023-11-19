@@ -9,10 +9,11 @@ export class BiomesClientFile extends ConfigurableFile {
 	public async create(
 		fileSystem: BaseFileSystem,
 		projectPath: string,
-		config: CreateProjectConfig
+		config: CreateProjectConfig,
+		packPath: string
 	) {
 		await fileSystem.writeFileJson(
-			join(projectPath, `RP/biomes_client.json`),
+			join(packPath, `biomes_client.json`),
 			{
 				biomes: {},
 			},

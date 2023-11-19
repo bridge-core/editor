@@ -35,8 +35,6 @@
 <script setup lang="ts">
 import Icon from '/@/components/Common/Icon.vue'
 
-import { translate as t } from '/@/libs/locales/Locales'
-
 defineProps({
 	name: {
 		type: String,
