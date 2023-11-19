@@ -3,7 +3,7 @@ import { BaseEntry, BaseFileSystem } from './BaseFileSystem'
 import { Ref, onMounted, onUnmounted, ref } from 'vue'
 
 export class PWAFileSystem extends BaseFileSystem {
-	protected baseHandle: FileSystemDirectoryHandle | null = null
+	public baseHandle: FileSystemDirectoryHandle | null = null
 
 	public get setup(): boolean {
 		return this.baseHandle !== null
@@ -197,6 +197,23 @@ export class PWAFileSystem extends BaseFileSystem {
 		}
 
 		return true
+	}
+
+	public async ensurePermissions(
+		handle: FileSystemDirectoryHandle | FileSystemFileHandle
+	): Promise<boolean> {
+		if ((await handle.queryPermission({ mode: 'readwrite' })) === 'granted')
+			return true
+
+		try {
+			if (
+				(await handle.requestPermission({ mode: 'readwrite' })) ===
+				'granted'
+			)
+				return true
+		} catch {}
+
+		return false
 	}
 
 	public useSetup(): Ref<boolean> {

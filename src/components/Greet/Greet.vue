@@ -87,6 +87,7 @@ import { PWAFileSystem } from '/@/libs/fileSystem/PWAFileSystem'
 import { computed, ref } from 'vue'
 import { translate as t } from '/@/libs/locales/Locales'
 import { ProjectData } from '/@/libs/projects/Project'
+import { get, set } from 'idb-keyval'
 
 const projects = App.instance.projectManager.useProjects()
 let fileSystemSetup = ref(true)
@@ -104,11 +105,23 @@ async function selectBridgeFolder() {
 
 	if (!(fileSystem instanceof PWAFileSystem)) return
 
+	const savedHandle: undefined | FileSystemDirectoryHandle = await get(
+		'bridgeFolderHandle'
+	)
+
+	if (savedHandle && (await fileSystem.ensurePermissions(savedHandle))) {
+		fileSystem.setBaseHandle(savedHandle)
+
+		return
+	}
+
 	fileSystem.setBaseHandle(
 		(await window.showDirectoryPicker({
 			mode: 'readwrite',
 		})) ?? null
 	)
+
+	set('bridgeFolderHandle', fileSystem.baseHandle)
 }
 
 async function createProject() {
