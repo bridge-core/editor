@@ -3,7 +3,7 @@ import { BaseEntry, BaseFileSystem } from './BaseFileSystem'
 import { Ref, onMounted, onUnmounted, ref } from 'vue'
 
 export class PWAFileSystem extends BaseFileSystem {
-	public baseHandle: FileSystemDirectoryHandle | null = null
+	protected baseHandle: FileSystemDirectoryHandle | null = null
 
 	public get setup(): boolean {
 		return this.baseHandle !== null
@@ -17,8 +17,6 @@ export class PWAFileSystem extends BaseFileSystem {
 
 	protected async traverse(path: string): Promise<FileSystemDirectoryHandle> {
 		if (!this.baseHandle) throw new Error('Base handle not set!')
-		if (!(await this.verifyPermissions(this.baseHandle)))
-			throw new Error('No permissions!')
 
 		const directoryNames = parse(path).dir.split(sep)
 		if (directoryNames[0] === '' || directoryNames[0] === '.')
@@ -39,8 +37,6 @@ export class PWAFileSystem extends BaseFileSystem {
 
 	public async readFile(path: string): Promise<ArrayBuffer> {
 		if (this.baseHandle === null) throw new Error('Base handle not set!')
-		if (!(await this.verifyPermissions(this.baseHandle)))
-			throw new Error('No permissions!')
 
 		try {
 			const handle = await (
@@ -67,8 +63,6 @@ export class PWAFileSystem extends BaseFileSystem {
 
 	public async readFileDataUrl(path: string): Promise<string> {
 		if (this.baseHandle === null) throw new Error('Base handle not set!')
-		if (!(await this.verifyPermissions(this.baseHandle)))
-			throw new Error('No permissions!')
 
 		try {
 			const handle = await (
@@ -95,8 +89,6 @@ export class PWAFileSystem extends BaseFileSystem {
 
 	public async writeFile(path: string, content: FileSystemWriteChunkType) {
 		if (this.baseHandle === null) throw new Error('Base handle not set!')
-		if (!(await this.verifyPermissions(this.baseHandle)))
-			throw new Error('No permissions!')
 
 		try {
 			const handle = await (
@@ -129,8 +121,6 @@ export class PWAFileSystem extends BaseFileSystem {
 
 	public async readDirectoryEntries(path: string): Promise<BaseEntry[]> {
 		if (this.baseHandle === null) throw new Error('Base handle not set!')
-		if (!(await this.verifyPermissions(this.baseHandle)))
-			throw new Error('No permissions!')
 
 		try {
 			const handle = await (
@@ -154,8 +144,6 @@ export class PWAFileSystem extends BaseFileSystem {
 
 	public async makeDirectory(path: string) {
 		if (this.baseHandle === null) throw new Error('Base handle not set!')
-		if (!(await this.verifyPermissions(this.baseHandle)))
-			throw new Error('No permissions!')
 
 		try {
 			const rootHandle = await await this.traverse(path)
@@ -172,8 +160,6 @@ export class PWAFileSystem extends BaseFileSystem {
 
 	public async exists(path: string): Promise<boolean> {
 		if (this.baseHandle === null) throw new Error('Base handle not set!')
-		if (!(await this.verifyPermissions(this.baseHandle)))
-			throw new Error('No permissions!')
 
 		const itemNames = path.split(sep)
 		if (itemNames[0] === '') itemNames.shift()
@@ -208,24 +194,6 @@ export class PWAFileSystem extends BaseFileSystem {
 			if (nameIndex === itemNames.length - 1) return true
 
 			currentHandle = <FileSystemDirectoryHandle>newHandle
-		}
-
-		return true
-	}
-
-	protected async verifyPermissions(
-		fileHandle: FileSystemDirectoryHandle
-	): Promise<boolean> {
-		const options = { writable: true, mode: 'readwrite' } as const
-
-		try {
-			if ((await fileHandle.requestPermission(options)) !== 'granted') {
-				await this.verifyPermissions(fileHandle)
-			}
-		} catch (error) {
-			console.warn(error)
-
-			return false
 		}
 
 		return true
