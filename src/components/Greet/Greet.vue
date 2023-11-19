@@ -4,7 +4,7 @@
 			<Logo class="ml-auto mr-auto mb-24 -mt-24 w-48" />
 
 			<div class="flex justify-between">
-				<p class="mb-1 text-lg text-text">Projects</p>
+				<p class="mb-1 text-lg text-text">{{ t('greet.projects') }}</p>
 
 				<div>
 					<IconButton
@@ -49,13 +49,13 @@
 				v-if="!suggestSelectBridgeFolder && projects.length === 0"
 			>
 				<p class="opacity-30 text-text mb-2">
-					You have no projects yet.
+					{{ t('greet.noProjects') }}
 				</p>
 				<p
 					class="text-primary cursor-pointer hover:underline"
 					@click="createProject"
 				>
-					{{ 'Create one' }}
+					{{ t('greet.createOne') }}
 				</p>
 			</div>
 
@@ -64,13 +64,13 @@
 				v-if="suggestSelectBridgeFolder"
 			>
 				<p class="opacity-30 text-text mb-2">
-					You need to select a bridge. folder.
+					{{ t('greet.noBridgeFolderSelected') }}
 				</p>
 				<p
 					class="text-primary cursor-pointer hover:underline"
 					@click="selectBridgeFolder"
 				>
-					{{ 'Select a bridge. folder' }}
+					{{ t('greet.selectBridgeFolder') }}
 				</p>
 			</div>
 		</div>
@@ -84,6 +84,7 @@ import IconButton from '/@/components/Common/IconButton.vue'
 import { App } from '/@/App'
 import { PWAFileSystem } from '/@/libs/fileSystem/PWAFileSystem'
 import { computed, ref } from 'vue'
+import { translate as t } from '/@/libs/locales/Locales'
 
 const projects = App.instance.projectManager.useProjects()
 let fileSystemSetup = ref(true)

@@ -1,5 +1,5 @@
 <template>
-	<Window name="Changelog">
+	<Window :name="t('windows.changelogWindow.title')">
 		<div class="max-w-2xl overflow-auto h-[42rem] p-8">
 			<div v-html="content" class="changelog" />
 		</div>
@@ -11,6 +11,7 @@ import Window from '/@/components/Windows/Window.vue'
 
 import { onMounted, ref } from 'vue'
 import { baseUrl } from '/@/libs/baseUrl'
+import { translate as t } from '/@/libs/locales/Locales'
 
 const content = ref('')
 

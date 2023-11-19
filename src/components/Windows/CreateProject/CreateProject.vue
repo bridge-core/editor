@@ -105,7 +105,7 @@
 
 				<div class="flex gap-4 w-full mt-4">
 					<LabeledInput
-						label="Icon"
+						:label="t('windows.createProject.icon.label')"
 						class="mb-4 flex"
 						v-slot="{ focus, blur }"
 					>
@@ -126,12 +126,13 @@
 								icon="image"
 								class="no-fill"
 								color="text-textAlternate"
-							/>Project Icon (Optional)
+							/>
+							{{ t('windows.createProject.icon.placeholder') }}
 						</button>
 					</LabeledInput>
 
 					<LabeledInput
-						label="Name"
+						:label="t('windows.createProject.name.label')"
 						class="mb-4 flex-1"
 						v-slot="{ focus, blur }"
 					>
@@ -140,13 +141,15 @@
 							@focus="focus"
 							@blur="blur"
 							v-model="projectName"
-							placeholder="Project Name"
+							:placeholder="
+								t('windows.createProject.name.placeholder')
+							"
 						/>
 					</LabeledInput>
 				</div>
 
 				<LabeledInput
-					label="Description"
+					:label="t('windows.createProject.description.label')"
 					class="mb-4"
 					v-slot="{ focus, blur }"
 				>
@@ -155,13 +158,15 @@
 						@focus="focus"
 						@blur="blur"
 						v-model="projectDescription"
-						placeholder="Project Description (Optional)"
+						:placeholder="
+							t('windows.createProject.description.placeholder')
+						"
 					/>
 				</LabeledInput>
 
 				<div class="flex gap-4">
 					<LabeledInput
-						label="Namespace"
+						:label="t('windows.createProject.namespace.label')"
 						class="mb-4 flex-1"
 						v-slot="{ focus, blur }"
 					>
@@ -170,12 +175,14 @@
 							@focus="focus"
 							@blur="blur"
 							v-model="projectNamespace"
-							placeholder="Project Namespace"
+							:placeholder="
+								t('windows.createProject.namespace.placeholder')
+							"
 						/>
 					</LabeledInput>
 
 					<LabeledInput
-						label="Author"
+						:label="t('windows.createProject.author.label')"
 						class="mb-4 flex-1"
 						v-slot="{ focus, blur }"
 					>
@@ -184,14 +191,20 @@
 							@focus="focus"
 							@blur="blur"
 							v-model="projectAuthor"
-							placeholder="Project Author (Optional)"
+							:placeholder="
+								t('windows.createProject.author.placeholder')
+							"
 						/>
 					</LabeledInput>
 
 					<Dropdown class="mb-4 flex-1">
 						<template #main="{ expanded, toggle }">
 							<LabeledInput
-								label="Target Version"
+								:label="
+									t(
+										'windows.createProject.targetVersion.label'
+									)
+								"
 								:focused="expanded"
 							>
 								<div

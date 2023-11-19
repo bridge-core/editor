@@ -652,17 +652,34 @@
 			"omitPack": "Omit",
 			"selectedPack": "Selected",
 			"title": "Create Project",
-			"packIcon": "Project Icon (optional)",
-			"projectName": {
-				"name": "Project Name",
+			"icon": {
+				"label": "Icon",
+				"placeholder": "Project Icon (optional)"
+			},
+			"name": {
+				"label": "Name",
+				"placeholder": "Project Name",
 				"invalidLetters": "Project name must not contain the following characters: \"  \\ / : | < >  * ? ~",
 				"mustNotBeEmpty": "You must enter a project name",
 				"endsInPeriod": "Project name cannot end with a period"
 			},
-			"projectDescription": "Project Description (optional)",
-			"projectPrefix": "Project Prefix",
-			"projectAuthor": "Project Author",
-			"projectTargetVersion": "Project Target Version",
+			"description": {
+				"label": "Description",
+				"placeholder": "Project Description (optional)"
+			},
+			"namespace": {
+				"label": "Namespace",
+				"placeholder": "Project Namespace",
+				"invalidCharacters": "Project namespace must only contain alphanumeric characters and underscores",
+				"mustNotBeEmpty": "You must enter a project namespace"
+			},
+			"author": {
+				"label": "Author",
+				"placeholder": "Project Author (optional)"
+			},
+			"targetVersion": {
+				"label": "Target Version"
+			},
 			"rpAsBpDependency": "Register resource pack as behavior pack dependency",
 			"bpAsRpDependency": "Register behavior pack as a resource pack dependency",
 			"useLangForManifest": "Add pack name/description directly to the manifest",
@@ -1284,7 +1301,12 @@
 		}
 	},
 	"greet": {
+		"projects": "Projects",
+		"noProjects": "You have no projects yet.",
+		"createOne": "Create one",
 		"pin": "Pin",
-		"unpin": "Unpin"
+		"unpin": "Unpin",
+		"noBridgeFolderSelected": "You need to select a bridge. folder.",
+		"selectBridgeFolder": "Select a bridge. folder"
 	}
 }
