@@ -2,8 +2,7 @@ import AppComponent from './App.vue'
 import { ProjectManager } from '/@/libs/projects/ProjectManager'
 import { ThemeManager } from '/@/components/Extensions/Themes/ThemeManager'
 import { getFileSystem } from '/@/libs/fileSystem/FileSystem'
-import { Ref, createApp, ref } from 'vue'
-import { ProjectData } from '/@/libs/projects/Project'
+import { Ref, createApp, onMounted, onUnmounted, ref } from 'vue'
 import { PWAFileSystem } from '/@/libs/fileSystem/PWAFileSystem'
 import { Windows } from '/@/components/Windows/Windows'
 import { Data } from '/@/libs/data/Data'
@@ -45,23 +44,5 @@ export class App {
 		console.timeEnd('[App] Data')
 
 		createApp(AppComponent).mount('#app')
-	}
-
-	//TODO: Remove listeners on unmount
-	public useBridgeFolderSelected(): Ref<boolean> {
-		const bridgeFolderSelected = ref(false)
-
-		const fileSystem = this.fileSystem
-
-		function updatedFileSystem() {
-			bridgeFolderSelected.value = false
-
-			if (fileSystem instanceof PWAFileSystem)
-				bridgeFolderSelected.value = fileSystem.setup
-		}
-
-		fileSystem.eventSystem.on('reloaded', updatedFileSystem)
-
-		return bridgeFolderSelected
 	}
 }

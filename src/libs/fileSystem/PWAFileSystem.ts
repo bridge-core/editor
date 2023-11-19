@@ -1,5 +1,6 @@
 import { sep, parse, basename } from '/@/libs/path'
 import { BaseEntry, BaseFileSystem } from './BaseFileSystem'
+import { Ref, onMounted, onUnmounted, ref } from 'vue'
 
 export class PWAFileSystem extends BaseFileSystem {
 	protected baseHandle: FileSystemDirectoryHandle | null = null
@@ -195,5 +196,20 @@ export class PWAFileSystem extends BaseFileSystem {
 		}
 
 		return true
+	}
+
+	public useSetup(): Ref<boolean> {
+		const setup = ref(false)
+
+		const me = this
+
+		function updatedFileSystem() {
+			setup.value = me.setup
+		}
+
+		onMounted(() => me.eventSystem.on('reloaded', updatedFileSystem))
+		onUnmounted(() => me.eventSystem.off('reloaded', updatedFileSystem))
+
+		return setup
 	}
 }

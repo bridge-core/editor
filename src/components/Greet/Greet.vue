@@ -83,15 +83,17 @@ import IconButton from '/@/components/Common/IconButton.vue'
 
 import { App } from '/@/App'
 import { PWAFileSystem } from '/@/libs/fileSystem/PWAFileSystem'
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 
 const projects = App.instance.projectManager.useProjects()
-const brigeFolderSelected = App.instance.useBridgeFolderSelected()
+let fileSystemSetup = ref(true)
+if (App.instance.fileSystem instanceof PWAFileSystem)
+	fileSystemSetup = App.instance.fileSystem.useSetup()
 
 const suggestSelectBridgeFolder = computed(
 	() =>
 		App.instance.fileSystem instanceof PWAFileSystem &&
-		!brigeFolderSelected.value
+		!fileSystemSetup.value
 )
 
 async function selectBridgeFolder() {

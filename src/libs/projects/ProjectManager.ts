@@ -5,7 +5,7 @@ import { join } from '/@/libs/path'
 import { PWAFileSystem } from '../fileSystem/PWAFileSystem'
 import { BaseFileSystem } from '/@/libs/fileSystem/BaseFileSystem'
 import { CreateProjectConfig } from './CreateProjectConfig'
-import { Ref, ref } from 'vue'
+import { Ref, onMounted, onUnmounted, ref } from 'vue'
 import { BehaviourPack } from './create/packs/BehaviorPack'
 import { BridgePack } from './create/packs/Bridge'
 import { Pack } from './create/packs/Pack'
@@ -84,7 +84,6 @@ export class ProjectManager {
 		this.addProject(await getData(projectPath))
 	}
 
-	//TODO: Remove listeners on unmount
 	public useProjects(): Ref<ProjectData[]> {
 		const projects: Ref<ProjectData[]> = ref([])
 
@@ -94,7 +93,8 @@ export class ProjectManager {
 			projects.value = [...me.projects]
 		}
 
-		this.eventSystem.on('updatedProjects', updateProjects)
+		onMounted(() => me.eventSystem.on('updatedProjects', updateProjects))
+		onUnmounted(() => me.eventSystem.off('updatedProjects', updateProjects))
 
 		return projects
 	}
