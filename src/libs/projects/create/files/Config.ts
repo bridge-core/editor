@@ -12,7 +12,7 @@ export async function createConfig(
 		name: config.name,
 		authors: [config.author],
 		targetVersion: config.targetVersion,
-		experimentalGameplay: {},
+		experimentalGameplay: config.experiments,
 		namespace: config.namespace,
 		packs: Object.fromEntries(
 			config.packs.map((packId) => [
