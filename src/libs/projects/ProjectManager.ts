@@ -12,7 +12,7 @@ import { Pack } from './create/packs/Pack'
 import { ResourcePack } from './create/packs/ResourcePack'
 import { SkinPack } from './create/packs/SkinPack'
 
-export const Packs: {
+export const packs: {
 	[key: string]: Pack | undefined
 } = {
 	bridge: new BridgePack(),
@@ -73,7 +73,7 @@ export class ProjectManager {
 
 		await Promise.all(
 			config.packs.map(async (packId: string) => {
-				const pack = Packs[packId]
+				const pack = packs[packId]
 
 				if (pack === undefined) return
 

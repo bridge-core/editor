@@ -1,5 +1,6 @@
 import { BaseFileSystem } from '/@/libs/fileSystem/BaseFileSystem'
 import { CreateProjectConfig } from '../../CreateProjectConfig'
+import { defaultPackPaths } from 'mc-project-core'
 
 export async function createConfig(
 	fileSystem: BaseFileSystem,
@@ -13,10 +14,33 @@ export async function createConfig(
 		targetVersion: config.targetVersion,
 		experimentalGameplay: {},
 		namespace: config.namespace,
-		packs: config.packs,
-		worlds: [],
+		packs: Object.fromEntries(
+			config.packs.map((packId) => [
+				packId,
+				defaultPackPaths[packId as keyof typeof defaultPackPaths],
+			])
+		),
+		worlds: ['./worlds/*'],
 		packDefinitions: {},
-		bridge: {},
+		compiler: {
+			plugins: [
+				'generatorScripts',
+				'typeScript',
+				'entityIdentifierAlias',
+				'customEntityComponents',
+				'customItemComponents',
+				'customBlockComponents',
+				'customCommands',
+				'moLang',
+				'formatVersionCorrection',
+				[
+					'simpleRewrite',
+					{
+						packName: config.name,
+					},
+				],
+			],
+		},
 	}
 
 	await fileSystem.writeFile(path, JSON.stringify(configOutput, null, 2))

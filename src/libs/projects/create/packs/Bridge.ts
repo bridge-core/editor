@@ -14,6 +14,8 @@ export class BridgePack extends Pack {
 	) {
 		await fileSystem.makeDirectory(join(projectPath, '.bridge'))
 
+		await fileSystem.makeDirectory(join(projectPath, '.bridge/compiler'))
+
 		await createConfig(fileSystem, join(projectPath, 'config.json'), config)
 
 		await createDenoConfig(fileSystem, join(projectPath, 'deno.json'))

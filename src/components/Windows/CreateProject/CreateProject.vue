@@ -267,7 +267,7 @@ import { Ref, computed, onMounted, ref } from 'vue'
 import { App } from '/@/App'
 import { IPackType } from 'mc-project-core'
 import { translate as t } from '/@/libs/locales/Locales'
-import { Packs } from '/@/libs/projects/ProjectManager'
+import { packs } from '/@/libs/projects/ProjectManager'
 import { ConfigurableFile } from '/@/libs/projects/create/files/configurable/ConfigurableFile'
 import { FormatVersionDefinitions, ExperimentalToggle } from '/@/libs/data/Data'
 import { v4 as uuid } from 'uuid'
@@ -313,7 +313,7 @@ const availableConfigurableFiles = computed(() => {
 	const files: ConfigurableFile[] = []
 
 	for (const packType of selectedPackTypes.value) {
-		const pack = Packs[packType.id]
+		const pack = packs[packType.id]
 
 		if (!pack) continue
 
@@ -390,7 +390,7 @@ function selectPackType(packType: IPackType) {
 			linkResourcePack.value = false
 		}
 
-		const pack = Packs[packType.id]
+		const pack = packs[packType.id]
 
 		if (pack) {
 			for (const file of pack.configurableFiles) {
