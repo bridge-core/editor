@@ -11,7 +11,6 @@ import { BridgePack } from './create/packs/Bridge'
 import { Pack } from './create/packs/Pack'
 import { ResourcePack } from './create/packs/ResourcePack'
 import { SkinPack } from './create/packs/SkinPack'
-import { defaultPackPaths } from 'mc-project-core'
 
 export const packs: {
 	[key: string]: Pack | undefined
@@ -72,6 +71,16 @@ export class ProjectManager {
 		config: CreateProjectConfig,
 		fileSystem: BaseFileSystem
 	) {
+		const packDefinitions: { id: string; defaultPackPath: string }[] =
+			await App.instance.data.get(
+				'packages/minecraftBedrock/packDefinitions.json'
+			)
+
+		packDefinitions.push({
+			id: 'bridge',
+			defaultPackPath: '.bridge',
+		})
+
 		const projectPath = join('projects', config.name)
 
 		await fileSystem.makeDirectory(projectPath)
@@ -79,19 +88,17 @@ export class ProjectManager {
 		await Promise.all(
 			config.packs.map(async (packId: string) => {
 				const pack = packs[packId]
+				const packDefinition = packDefinitions.find(
+					(pack) => pack.id === packId
+				)
 
-				if (pack === undefined) return
+				if (pack === undefined || packDefinition === undefined) return
 
 				await pack.create(
 					fileSystem,
 					projectPath,
 					config,
-					join(
-						projectPath,
-						defaultPackPaths[
-							packId as keyof typeof defaultPackPaths
-						] ?? '.bridge/'
-					)
+					join(projectPath, packDefinition.defaultPackPath)
 				)
 			})
 		)
