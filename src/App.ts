@@ -5,6 +5,8 @@ import { getFileSystem } from '/@/libs/fileSystem/FileSystem'
 import { createApp } from 'vue'
 import { Windows } from '/@/components/Windows/Windows'
 import { Data } from '/@/libs/data/Data'
+import { Sidebar } from './components/Editor/Sidebar/Sidebar'
+import { FileBrowser } from './components/Editor/FileBrowser/FileBrowser'
 
 export class App {
 	public static instance: App
@@ -13,6 +15,8 @@ export class App {
 	public projectManager = new ProjectManager()
 	public windows = new Windows()
 	public data = new Data()
+	public sidebar = new Sidebar()
+	public fileBrowser = new FileBrowser()
 
 	protected themeManager = new ThemeManager()
 

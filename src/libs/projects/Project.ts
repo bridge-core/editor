@@ -7,6 +7,16 @@ export interface ProjectData {
 	icon: string
 }
 
+export class Project {
+	public icon: string | null = null
+
+	constructor(public name: string) {}
+
+	public async load() {
+		this.icon = (await getData(join('projects', this.name))).icon
+	}
+}
+
 export async function validProject(path: string) {
 	const fileSystem = App.instance.fileSystem
 

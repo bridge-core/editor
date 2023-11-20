@@ -1,6 +1,6 @@
 import { EventSystem } from '/@/libs/event/EventSystem'
 import { App } from '/@/App'
-import { ProjectData, getData, validProject } from './Project'
+import { Project, ProjectData, getData, validProject } from './Project'
 import { join } from '/@/libs/path'
 import { PWAFileSystem } from '../fileSystem/PWAFileSystem'
 import { BaseFileSystem } from '/@/libs/fileSystem/BaseFileSystem'
@@ -24,7 +24,11 @@ export const packs: {
 
 export class ProjectManager {
 	public projects: ProjectData[] = []
-	public eventSystem = new EventSystem(['updatedProjects'])
+	public eventSystem = new EventSystem([
+		'updatedProjects',
+		'updatedCurrentProject',
+	])
+	public currentProject: Project | null = null
 
 	public async loadProjects() {
 		const fileSystem = App.instance.fileSystem
@@ -95,8 +99,16 @@ export class ProjectManager {
 		this.addProject(await getData(projectPath))
 	}
 
+	public async loadProject(name: string) {
+		this.currentProject = new Project(name)
+
+		await this.currentProject.load()
+
+		this.eventSystem.dispatch('updatedCurrentProject', null)
+	}
+
 	public useProjects(): Ref<ProjectData[]> {
-		const projects: Ref<ProjectData[]> = ref([])
+		const projects: Ref<ProjectData[]> = ref(this.projects)
 
 		const me = this
 
@@ -108,5 +120,24 @@ export class ProjectManager {
 		onUnmounted(() => me.eventSystem.off('updatedProjects', updateProjects))
 
 		return projects
+	}
+
+	public useCurrentProject(): Ref<Project | null> {
+		const currentProject: Ref<Project | null> = ref(this.currentProject)
+
+		const me = this
+
+		function updateCurrentProject() {
+			currentProject.value = me.currentProject
+		}
+
+		onMounted(() =>
+			me.eventSystem.on('updatedCurrentProject', updateCurrentProject)
+		)
+		onUnmounted(() =>
+			me.eventSystem.off('updatedCurrentProject', updateCurrentProject)
+		)
+
+		return currentProject
 	}
 }

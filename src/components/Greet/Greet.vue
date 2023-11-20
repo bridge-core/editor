@@ -1,5 +1,8 @@
 <template>
-	<main class="w-full h-full flex justify-center items-center">
+	<main
+		class="w-full h-app flex justify-center items-center"
+		v-if="currentProject === null"
+	>
 		<div class="flex flex-col max-w-[28.5rem] w-full">
 			<Logo class="ml-auto mr-auto mb-24 -mt-24 w-48" />
 
@@ -90,6 +93,7 @@ import { ProjectData } from '/@/libs/projects/Project'
 import { get, set } from 'idb-keyval'
 
 const projects = App.instance.projectManager.useProjects()
+const currentProject = App.instance.projectManager.useCurrentProject()
 let fileSystemSetup = ref(true)
 if (App.instance.fileSystem instanceof PWAFileSystem)
 	fileSystemSetup = App.instance.fileSystem.useSetup()
@@ -134,6 +138,6 @@ async function createProject() {
 }
 
 async function openProject(project: ProjectData) {
-	console.log('Opening', project.name)
+	App.instance.projectManager.loadProject(project.name)
 }
 </script>

@@ -217,7 +217,7 @@ export class PWAFileSystem extends BaseFileSystem {
 	}
 
 	public useSetup(): Ref<boolean> {
-		const setup = ref(false)
+		const setup = ref(this.setup)
 
 		const me = this
 
