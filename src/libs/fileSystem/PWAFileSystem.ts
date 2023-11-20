@@ -102,6 +102,8 @@ export class PWAFileSystem extends BaseFileSystem {
 
 			await writable.write(content)
 			await writable.close()
+
+			this.eventSystem.dispatch('updated', path)
 		} catch (error) {
 			console.error(`Failed to write "${path}"`, error)
 		}
@@ -123,9 +125,12 @@ export class PWAFileSystem extends BaseFileSystem {
 		if (this.baseHandle === null) throw new Error('Base handle not set!')
 
 		try {
-			const handle = await (
-				await this.traverse(path)
-			).getDirectoryHandle(basename(path))
+			const handle =
+				path === '/'
+					? this.baseHandle
+					: await (
+							await this.traverse(path)
+					  ).getDirectoryHandle(basename(path))
 			const handleEntries = handle.entries()
 
 			const entries = []
@@ -151,6 +156,8 @@ export class PWAFileSystem extends BaseFileSystem {
 			await rootHandle.getDirectoryHandle(basename(path), {
 				create: true,
 			})
+
+			this.eventSystem.dispatch('updated', path)
 		} catch (error) {
 			console.error(`Failed to make directory "${path}"`)
 

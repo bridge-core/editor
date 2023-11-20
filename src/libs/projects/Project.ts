@@ -8,9 +8,12 @@ export interface ProjectData {
 }
 
 export class Project {
+	public path: string
 	public icon: string | null = null
 
-	constructor(public name: string) {}
+	constructor(public name: string) {
+		this.path = join('projects', this.name)
+	}
 
 	public async load() {
 		this.icon = (await getData(join('projects', this.name))).icon
