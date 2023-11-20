@@ -1,6 +1,6 @@
 import { ref } from 'vue'
 
-export class FileBrowser {
+export class FileExplorer {
 	public open = ref(true)
 
 	public toggle() {

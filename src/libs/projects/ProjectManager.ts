@@ -1,6 +1,6 @@
 import { EventSystem } from '/@/libs/event/EventSystem'
 import { App } from '/@/App'
-import { Project, ProjectData, getData, validProject } from './Project'
+import { Project, ProjectInfo, getProjectInfo, validProject } from './Project'
 import { join } from '/@/libs/path'
 import { PWAFileSystem } from '../fileSystem/PWAFileSystem'
 import { BaseFileSystem } from '/@/libs/fileSystem/BaseFileSystem'
@@ -11,6 +11,7 @@ import { BridgePack } from './create/packs/Bridge'
 import { Pack } from './create/packs/Pack'
 import { ResourcePack } from './create/packs/ResourcePack'
 import { SkinPack } from './create/packs/SkinPack'
+import { BedrockProjectData } from '../data/BedrockProjectData'
 
 export const packs: {
 	[key: string]: Pack | undefined
@@ -22,7 +23,7 @@ export const packs: {
 }
 
 export class ProjectManager {
-	public projects: ProjectData[] = []
+	public projects: ProjectInfo[] = []
 	public eventSystem = new EventSystem([
 		'updatedProjects',
 		'updatedCurrentProject',
@@ -55,13 +56,13 @@ export class ProjectManager {
 			const projectPath = join('projects', folderName)
 			if (!(await validProject(projectPath))) continue
 
-			this.projects.push(await getData(projectPath))
+			this.projects.push(await getProjectInfo(projectPath))
 		}
 
 		this.eventSystem.dispatch('updatedProjects', null)
 	}
 
-	private addProject(project: ProjectData) {
+	private addProject(project: ProjectInfo) {
 		this.projects.push(project)
 
 		this.eventSystem.dispatch('updatedProjects', null)
@@ -71,11 +72,11 @@ export class ProjectManager {
 		config: CreateProjectConfig,
 		fileSystem: BaseFileSystem
 	) {
-		const packDefinitions: { id: string; defaultPackPath: string }[] =
-			await App.instance.data.get(
-				'packages/minecraftBedrock/packDefinitions.json'
-			)
+		const data = new BedrockProjectData(App.instance.data)
+		await data.load()
 
+		const packDefinitions: { id: string; defaultPackPath: string }[] =
+			data.packDefinitions
 		packDefinitions.push({
 			id: 'bridge',
 			defaultPackPath: '.bridge',
@@ -103,19 +104,22 @@ export class ProjectManager {
 			})
 		)
 
-		this.addProject(await getData(projectPath))
+		this.addProject(await getProjectInfo(projectPath))
 	}
 
 	public async loadProject(name: string) {
-		this.currentProject = new Project(name)
+		this.currentProject = new Project(
+			name,
+			new BedrockProjectData(App.instance.data)
+		)
 
 		await this.currentProject.load()
 
 		this.eventSystem.dispatch('updatedCurrentProject', null)
 	}
 
-	public useProjects(): Ref<ProjectData[]> {
-		const projects: Ref<ProjectData[]> = ref(this.projects)
+	public useProjects(): Ref<ProjectInfo[]> {
+		const projects: Ref<ProjectInfo[]> = ref(this.projects)
 
 		const me = this
 
@@ -130,7 +134,10 @@ export class ProjectManager {
 	}
 
 	public useCurrentProject(): Ref<Project | null> {
-		const currentProject: Ref<Project | null> = ref(this.currentProject)
+		// ts typing for some reason doesn't like this type being in a ref
+		const currentProject: Ref<Project | null> = <any>(
+			ref(this.currentProject)
+		)
 
 		const me = this
 

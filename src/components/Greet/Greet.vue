@@ -89,7 +89,7 @@ import { App } from '/@/App'
 import { PWAFileSystem } from '/@/libs/fileSystem/PWAFileSystem'
 import { computed, ref } from 'vue'
 import { translate as t } from '/@/libs/locales/Locales'
-import { ProjectData } from '/@/libs/projects/Project'
+import { ProjectInfo } from '/@/libs/projects/Project'
 import { get, set } from 'idb-keyval'
 
 const projects = App.instance.projectManager.useProjects()
@@ -137,7 +137,7 @@ async function createProject() {
 	App.instance.windows.open('Create Project')
 }
 
-async function openProject(project: ProjectData) {
+async function openProject(project: ProjectInfo) {
 	App.instance.projectManager.loadProject(project.name)
 }
 </script>

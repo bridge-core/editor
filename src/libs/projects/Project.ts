@@ -1,8 +1,9 @@
 import { basename, join } from '/@/libs/path'
 import { App } from '/@/App'
 import { defaultPackPaths } from 'mc-project-core'
+import { ProjectData } from '../data/ProjectData'
 
-export interface ProjectData {
+export interface ProjectInfo {
 	name: string
 	icon: string
 }
@@ -11,12 +12,14 @@ export class Project {
 	public path: string
 	public icon: string | null = null
 
-	constructor(public name: string) {
+	constructor(public name: string, public data: ProjectData) {
 		this.path = join('projects', this.name)
 	}
 
 	public async load() {
-		this.icon = (await getData(join('projects', this.name))).icon
+		this.icon = (await getProjectInfo(join('projects', this.name))).icon
+
+		await this.data.load()
 	}
 }
 
@@ -26,7 +29,7 @@ export async function validProject(path: string) {
 	return await fileSystem.exists(join(path, 'config.json'))
 }
 
-export async function getData(path: string): Promise<ProjectData> {
+export async function getProjectInfo(path: string): Promise<ProjectInfo> {
 	const fileSystem = App.instance.fileSystem
 
 	let iconDataUrl =

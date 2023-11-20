@@ -9,7 +9,7 @@ export class Sidebar {
 
 	constructor() {
 		this.addButton('folder', () => {
-			App.instance.fileBrowser.toggle()
+			App.instance.fileExplorer.toggle()
 		})
 		this.addButton('quick_reference_all', () => {})
 		this.addButton('manufacturing', () => {})

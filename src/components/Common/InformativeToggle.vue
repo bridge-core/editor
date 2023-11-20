@@ -1,10 +1,12 @@
 <template>
 	<div
-		class="cursor-pointer hover:border-text w-60 rounded p-2 border-2 transition-colors duration-100 ease-out"
-		:class="{ '!border-primary': selected }"
+		class="cursor-pointer w-60 rounded bg-[var(--color)] hover:border-text p-2 border-2 transition-colors duration-100 ease-out"
+		:class="{
+			'!border-primary': selected,
+			'border-[var(--color)]': !selected,
+		}"
 		:style="{
-			'border-color': `var(--theme-color-${background})`,
-			'background-color': `var(--theme-color-${background})`,
+			'--color': `var(--theme-color-${background})`,
 		}"
 	>
 		<div class="flex items-center gap-1 mb-2">
