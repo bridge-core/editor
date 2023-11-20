@@ -3,7 +3,7 @@
 		<div></div>
 		<div class="flex gap-2" @click="openChangelog">
 			<Logo class="w-4" />
-			<span class="text-sm"> v{{ version }} </span>
+			<span class="text-sm text-textAlternate"> v{{ version }} </span>
 		</div>
 	</div>
 </template>
