@@ -1,30 +1,16 @@
-import { ToolbarCategory } from './ToolbarCategory'
-import { del, reactive, set } from 'vue'
-import { showContextMenu } from '../ContextMenu/showContextMenu'
-
 export class Toolbar {
-	protected state: Record<string, ToolbarCategory> = reactive({})
+	public items: { name: string; icon: string; action: () => void }[] = []
 
-	addCategory(category: ToolbarCategory) {
-		set(this.state, category.id, category)
-	}
-	add(item: any) {
-		set(this.state, item.id, item)
-	}
-	disposeCategory(category: ToolbarCategory) {
-		del(this.state, category.id)
+	constructor() {
+		this.addItem('Project', 'space_dashboard', () => null)
+		this.addItem('Settings', 'help', () => null)
+		this.addItem('File', 'draft', () => null)
+		this.addItem('Tools', 'build', () => null)
+		this.addItem('Help', 'help', () => null)
+		this.addItem('Download', 'download', () => null)
 	}
 
-	showMobileMenu(event: MouseEvent) {
-		showContextMenu(
-			event,
-			Object.values(this.state)
-				.map((category) => [
-					<const>{ type: 'divider' },
-					category.toNestedMenu(),
-				])
-				.flat(1)
-				.slice(1)
-		)
+	public addItem(name: string, icon: string, action: () => void) {
+		this.items.push({ name, icon, action })
 	}
 }
