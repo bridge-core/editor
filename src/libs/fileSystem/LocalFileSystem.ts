@@ -42,6 +42,23 @@ export class LocalFileSystem extends BaseFileSystem {
 		})
 	}
 
+	public async writeFileJson(
+		path: string,
+		content: object,
+		prettify: boolean
+	) {
+		if (this.rootName === null) throw new Error('Root name not set')
+
+		if (prettify) {
+			await this.writeFile(
+				path,
+				JSON.stringify(content, null, prettify ? '\t' : undefined)
+			)
+		} else {
+			await this.writeFile(path, JSON.stringify(content))
+		}
+	}
+
 	public async makeDirectory(path: string) {
 		if (this.rootName === null) throw new Error('Root name not set')
 

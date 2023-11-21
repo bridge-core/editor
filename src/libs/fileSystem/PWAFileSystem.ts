@@ -237,6 +237,15 @@ export class PWAFileSystem extends BaseFileSystem {
 		return true
 	}
 
+	public async hasPermissions(
+		handle: FileSystemDirectoryHandle | FileSystemFileHandle
+	): Promise<boolean> {
+		if ((await handle.queryPermission({ mode: 'readwrite' })) === 'granted')
+			return true
+
+		return false
+	}
+
 	public async ensurePermissions(
 		handle: FileSystemDirectoryHandle | FileSystemFileHandle
 	): Promise<boolean> {

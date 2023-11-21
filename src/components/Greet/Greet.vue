@@ -113,19 +113,25 @@ async function selectBridgeFolder() {
 		'bridgeFolderHandle'
 	)
 
-	if (savedHandle && (await fileSystem.ensurePermissions(savedHandle))) {
+	if (
+		!fileSystem.baseHandle &&
+		savedHandle &&
+		(await fileSystem.ensurePermissions(savedHandle))
+	) {
 		fileSystem.setBaseHandle(savedHandle)
 
 		return
 	}
 
-	fileSystem.setBaseHandle(
-		(await window.showDirectoryPicker({
-			mode: 'readwrite',
-		})) ?? null
-	)
+	try {
+		fileSystem.setBaseHandle(
+			(await window.showDirectoryPicker({
+				mode: 'readwrite',
+			})) ?? null
+		)
 
-	set('bridgeFolderHandle', fileSystem.baseHandle)
+		set('bridgeFolderHandle', fileSystem.baseHandle)
+	} catch {}
 }
 
 async function createProject() {
