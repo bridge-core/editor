@@ -52,11 +52,10 @@ export class ProjectManager {
 
 		this.projects = []
 
-		for (const folderName of foldersToLoad) {
-			const projectPath = join('projects', folderName)
-			if (!(await validProject(projectPath))) continue
+		for (const path of foldersToLoad) {
+			if (!(await validProject(path))) continue
 
-			this.projects.push(await getProjectInfo(projectPath))
+			this.projects.push(await getProjectInfo(path))
 		}
 
 		this.eventSystem.dispatch('updatedProjects', null)

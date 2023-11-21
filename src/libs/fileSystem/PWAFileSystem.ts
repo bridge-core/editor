@@ -1,4 +1,4 @@
-import { sep, parse, basename } from '/@/libs/path'
+import { sep, parse, basename, join } from '/@/libs/path'
 import { BaseEntry, BaseFileSystem } from './BaseFileSystem'
 import { Ref, onMounted, onUnmounted, ref } from 'vue'
 
@@ -162,7 +162,12 @@ export class PWAFileSystem extends BaseFileSystem {
 			const entries = []
 
 			for await (const handleEntry of handleEntries) {
-				entries.push(new BaseEntry(handleEntry[0], handleEntry[1].kind))
+				entries.push(
+					new BaseEntry(
+						join(path, handleEntry[0]),
+						handleEntry[1].kind
+					)
+				)
 			}
 
 			return entries

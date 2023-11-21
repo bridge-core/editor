@@ -4,8 +4,11 @@
 		v-if="instance.open.value"
 	>
 		<div class="bg-menuAlternate rounded h-16 flex items-center p-3 gap-3">
-			<img :src="currentProject?.icon ?? ''" class="w-10 h-10" />
-			<p class="text-3xl">{{ currentProject?.name }}</p>
+			<img
+				:src="currentProject?.icon ?? ''"
+				class="w-10 h-10 select-none"
+			/>
+			<p class="text-3xl select-none">{{ currentProject?.name }}</p>
 		</div>
 
 		<div class="bg-menuAlternate rounded flex-1 p-2">
@@ -41,14 +44,14 @@
 				</button>
 			</div>
 
-			<div v-for="entry in entries">
+			<div v-for="entry in entries" :key="entry.path">
 				<File
-					:name="basename(entry.path)"
+					:path="entry.path"
 					:color="selectedPackDefinition!.color"
 					v-if="entry.type === 'file'"
 				/>
 				<Directory
-					:name="basename(entry.path)"
+					:path="entry.path"
 					:color="selectedPackDefinition!.color"
 					v-if="entry.type === 'directory'"
 				/>
