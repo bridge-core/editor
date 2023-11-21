@@ -5,9 +5,10 @@ import { getFileSystem } from '/@/libs/fileSystem/FileSystem'
 import { createApp } from 'vue'
 import { Windows } from '/@/components/Windows/Windows'
 import { Data } from '/@/libs/data/Data'
-import { Sidebar } from './components/Editor/Sidebar/Sidebar'
-import { FileExplorer } from './components/Editor/FileExplorer/FileExplorer'
-import { Toolbar } from './components/Toolbar/Toolbar'
+import { Sidebar } from '/@/components/Editor/Sidebar/Sidebar'
+import { FileExplorer } from '/@/components/Editor/FileExplorer/FileExplorer'
+import { Toolbar } from '/@/components/Toolbar/Toolbar'
+import { Settings } from '/@/components/Windows/Settings/Settings'
 
 export class App {
 	public static instance: App
@@ -19,6 +20,7 @@ export class App {
 	public sidebar = new Sidebar()
 	public fileExplorer = new FileExplorer()
 	public toolbar = new Toolbar()
+	public settings = new Settings()
 
 	protected themeManager = new ThemeManager()
 

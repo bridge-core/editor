@@ -4,6 +4,7 @@
 			<button
 				v-for="item in instance.items"
 				class="flex items-center gap-1 group"
+				@click="item.action"
 			>
 				<!-- <Icon :icon="item.icon" class="text-xs" /> -->
 				<span
@@ -29,6 +30,6 @@ import { version } from '/@/libs/app/version'
 const instance = App.instance.toolbar
 
 function openChangelog() {
-	App.instance.windows.openWindows.value.push('Changelog')
+	App.instance.windows.openWindows.value.push('changelog')
 }
 </script>

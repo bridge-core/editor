@@ -1,5 +1,9 @@
 <template>
-	<Window name="Create Project" ref="window">
+	<Window
+		:name="t('windows.createProject.title')"
+		id="createProject"
+		ref="window"
+	>
 		<div class="flex flex-col">
 			<div
 				class="max-h-[35.675rem] overflow-y-scroll p-4 pt-2 m-4 mt-0 max-width overflow-x-auto"
@@ -106,7 +110,7 @@
 				<div class="flex gap-4 w-full mt-4">
 					<LabeledInput
 						:label="t('windows.createProject.icon.label')"
-						class="mb-4 flex"
+						class="mb-4 flex bg-background"
 						v-slot="{ focus, blur }"
 					>
 						<input
@@ -133,7 +137,7 @@
 
 					<LabeledInput
 						:label="t('windows.createProject.name.label')"
-						class="mb-4 flex-1"
+						class="mb-4 flex-1 bg-background"
 						v-slot="{ focus, blur }"
 					>
 						<input
@@ -150,7 +154,7 @@
 
 				<LabeledInput
 					:label="t('windows.createProject.description.label')"
-					class="mb-4"
+					class="mb-4 bg-background"
 					v-slot="{ focus, blur }"
 				>
 					<input
@@ -167,7 +171,7 @@
 				<div class="flex gap-4">
 					<LabeledInput
 						:label="t('windows.createProject.namespace.label')"
-						class="mb-4 flex-1"
+						class="mb-4 flex-1 bg-background"
 						v-slot="{ focus, blur }"
 					>
 						<input
@@ -183,7 +187,7 @@
 
 					<LabeledInput
 						:label="t('windows.createProject.author.label')"
-						class="mb-4 flex-1"
+						class="mb-4 flex-1 bg-background"
 						v-slot="{ focus, blur }"
 					>
 						<input
@@ -206,6 +210,7 @@
 									)
 								"
 								:focused="expanded"
+								class="bg-background"
 							>
 								<div
 									class="flex items-center justify-between cursor-pointer"

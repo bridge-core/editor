@@ -134,7 +134,7 @@ async function createProject() {
 	if (fileSystem instanceof PWAFileSystem && !fileSystem.setup)
 		await selectBridgeFolder()
 
-	App.instance.windows.open('Create Project')
+	App.instance.windows.open('createProject')
 }
 
 async function openProject(project: ProjectInfo) {

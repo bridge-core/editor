@@ -7,12 +7,13 @@
 		}"
 	>
 		<span
-			class="absolute -top-1/3 left-2 text-xs bg-background p-1 text-textAlternate"
+			class="absolute -top-1/3 left-2 text-xs bg-inherit p-1 text-textAlternate"
 			>{{ label }}</span
 		>
 		<slot
 			:focus="() => (_focused = true)"
 			:blur="() => (_focused = false)"
+			:focused="_focused || focused"
 		/>
 	</div>
 </template>

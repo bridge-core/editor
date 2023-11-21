@@ -1,5 +1,5 @@
 <template>
-	<Window :name="t('windows.changelogWindow.title')">
+	<Window :name="t('windows.changelogWindow.title')" id="changelog">
 		<div class="max-w-2xl overflow-auto h-[42rem] p-8">
 			<div v-html="content" class="changelog" />
 		</div>

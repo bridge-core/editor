@@ -8,15 +8,21 @@
 		></div>
 
 		<div
-			class="bg-background shadow-window rounded-md overflow-hidden z-10"
+			class="bg-background shadow-window rounded-md overflow-hidden z-10 flex items-stretch"
 		>
-			<div class="w-full flex justify-between align-center p-2">
-				<span class="select-none ml-1 text-textAlternate">
-					{{ name }}
-				</span>
-				<IconButton icon="close" class="text-sm" @click="close" />
+			<div class="bg-menuAlternate w-96">
+				<slot name="sidebar" />
 			</div>
-			<slot />
+
+			<div class="flex-1">
+				<div class="flex justify-between align-center p-2">
+					<span class="select-none ml-1 text-textAlternate">
+						{{ name }}
+					</span>
+					<IconButton icon="close" class="text-sm" @click="close" />
+				</div>
+				<slot name="content" />
+			</div>
 		</div>
 	</div>
 </template>
