@@ -27,12 +27,37 @@ export class Settings {
 
 	public async load() {
 		if (!(await this.fileSystem.exists('settings.json'))) {
-			this.settings = defaultSettings
+			this.settings = {}
+
+			for (const category of this.categories) {
+				this.settings = {
+					...this.settings,
+					...category.getDefaults(),
+				}
+			}
+
+			this.eventSystem.dispatch('settingsChanged', null)
+
+			for (const category of this.categories) {
+				for (const item of category.items) {
+					item.apply(this.settings[item.id])
+				}
+			}
 
 			return
 		}
 
 		this.settings = await this.fileSystem.readFileJson('settings.json')
+
+		for (const category of this.categories) {
+			for (const item of category.items) {
+				if (!this.settings[item.id]) {
+					this.settings[item.id] = item.defaultValue
+				}
+
+				item.apply(this.settings[item.id])
+			}
+		}
 
 		this.eventSystem.dispatch('settingsChanged', null)
 	}
@@ -51,6 +76,13 @@ export class Settings {
 		this.settings[id] = value
 
 		this.fileSystem.writeFileJson('settings.json', this.settings, false)
+
+		for (const category of this.categories) {
+			const item = category.items.find((item) => item.id === id)
+			if (!item) continue
+
+			item.apply(value)
+		}
 
 		this.eventSystem.dispatch('settingsChanged', value)
 	}
@@ -74,8 +106,4 @@ export class Settings {
 
 		return settings
 	}
-}
-
-export const defaultSettings = {
-	language: 'English',
 }

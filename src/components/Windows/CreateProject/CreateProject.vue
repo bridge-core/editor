@@ -284,11 +284,13 @@ import Dropdown from '/@/components/Common/Dropdown.vue'
 import { Ref, computed, onMounted, ref } from 'vue'
 import { App } from '/@/App'
 import { IPackType } from 'mc-project-core'
-import { translate as t } from '/@/libs/locales/Locales'
 import { packs } from '/@/libs/projects/ProjectManager'
 import { ConfigurableFile } from '/@/libs/projects/create/files/configurable/ConfigurableFile'
 import { FormatVersionDefinitions, ExperimentalToggle } from '/@/libs/data/Data'
 import { v4 as uuid } from 'uuid'
+import { useTranslate } from '/@/libs/locales/Locales'
+
+const t = useTranslate()
 
 const projectIconInput: Ref<HTMLInputElement | null> = ref(null)
 const window = ref<Window | null>(null)

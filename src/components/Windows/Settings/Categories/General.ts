@@ -1,4 +1,5 @@
 import { Category } from './Category'
+import { LocaleManager } from '/@/libs/locales/Locales'
 
 export class GeneralCategory extends Category {
 	public name = 'General'
@@ -10,9 +11,18 @@ export class GeneralCategory extends Category {
 
 		this.addDropdown(
 			'language',
+			'English',
 			'Language',
 			'Choose a language for bridge. to use.',
-			['English', 'Test']
+			LocaleManager.getAvailableLanguages().map(
+				(language) => language.text
+			),
+			(value) =>
+				LocaleManager.applyLanguage(
+					LocaleManager.getAvailableLanguages().find(
+						(language) => language.text === value
+					)?.value || LocaleManager.getCurrentLanguageId()
+				)
 		)
 	}
 }

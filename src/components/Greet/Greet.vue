@@ -88,9 +88,11 @@ import IconButton from '/@/components/Common/IconButton.vue'
 import { App } from '/@/App'
 import { PWAFileSystem } from '/@/libs/fileSystem/PWAFileSystem'
 import { computed, ref } from 'vue'
-import { translate as t } from '/@/libs/locales/Locales'
+import { useTranslate } from '/@/libs/locales/Locales'
 import { ProjectInfo } from '/@/libs/projects/Project'
 import { get, set } from 'idb-keyval'
+
+const t = useTranslate()
 
 const projects = App.instance.projectManager.useProjects()
 const currentProject = App.instance.projectManager.useCurrentProject()

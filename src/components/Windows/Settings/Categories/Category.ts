@@ -7,17 +7,35 @@ export class Category {
 	public items: {
 		type: 'dropdown'
 		id: string
+		defaultValue: any
 		name: string
 		description: string
 		items: string[] | Ref<string[]>
+		apply: (value: any) => void
 	}[] = []
 
 	public addDropdown(
 		id: string,
+		defaultValue: any,
 		name: string,
 		description: string,
-		items: string[] | Ref<string[]>
+		items: string[] | Ref<string[]>,
+		apply: (value: any) => void
 	) {
-		this.items.push({ type: 'dropdown', id, name, description, items })
+		this.items.push({
+			type: 'dropdown',
+			defaultValue,
+			id,
+			name,
+			description,
+			items,
+			apply,
+		})
+	}
+
+	public getDefaults(): { [key: string]: any } {
+		return Object.fromEntries(
+			this.items.map((item) => [item.id, item.defaultValue])
+		)
 	}
 }

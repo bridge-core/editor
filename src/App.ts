@@ -9,6 +9,7 @@ import { Sidebar } from '/@/components/Editor/Sidebar/Sidebar'
 import { FileExplorer } from '/@/components/Editor/FileExplorer/FileExplorer'
 import { Toolbar } from '/@/components/Toolbar/Toolbar'
 import { Settings } from '/@/components/Windows/Settings/Settings'
+import { LocaleManager } from './libs/locales/Locales'
 
 export class App {
 	public static instance: App
@@ -41,6 +42,8 @@ export class App {
 		this.fileSystem.eventSystem.on('reloaded', () => {
 			this.projectManager.loadProjects()
 		})
+
+		await LocaleManager.applyDefaultLanguage()
 
 		console.time('[App] Settings')
 		await this.settings.load()

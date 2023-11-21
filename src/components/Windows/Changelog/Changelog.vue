@@ -11,7 +11,9 @@ import Window from '/@/components/Windows/Window.vue'
 
 import { onMounted, ref } from 'vue'
 import { baseUrl } from '/@/libs/baseUrl'
-import { translate as t } from '/@/libs/locales/Locales'
+import { useTranslate } from '/@/libs/locales/Locales'
+
+const t = useTranslate()
 
 const content = ref('')
 

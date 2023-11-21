@@ -9,7 +9,7 @@
 				<!-- <Icon :icon="item.icon" class="text-xs" /> -->
 				<span
 					class="text-sm group-hover:text-primary transition-colors duration-100 ease-out"
-					>{{ item.name }}</span
+					>{{ t(item.name) }}</span
 				>
 			</button>
 		</div>
@@ -26,6 +26,8 @@ import Icon from '/@/components/Common/Icon.vue'
 
 import { App } from '/@/App'
 import { version } from '/@/libs/app/version'
+import { useTranslate } from '/@/libs/locales/Locales'
+const t = useTranslate()
 
 const instance = App.instance.toolbar
 

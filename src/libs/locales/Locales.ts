@@ -2,18 +2,23 @@ import { deepMerge } from 'bridge-common-utils'
 import { get } from 'idb-keyval'
 import enLang from '/@/locales/en.json'
 import allLanguages from '/@/locales/languages.json'
+import { Ref, onMounted, onUnmounted, ref } from 'vue'
+import { EventSystem } from '/@/libs/event/EventSystem'
 
+// loads all languages, exclude the language file and en file since en is a special case
+// en is a special case since it is the default and other languages override it
 const languages = Object.fromEntries(
 	Object.entries(
 		import.meta.glob([
 			'../../locales/*.json',
-			'!../../locales/en.json',
 			'!../../locales/languages.json',
 		])
 	).map(([key, val]) => [key.split('/').pop(), val])
 )
 
 export class LocaleManager {
+	public static EventSystem = new EventSystem(['languageChanged'])
+
 	protected static currentLanguage: any = enLang
 	protected static currentLanuageId = 'english'
 
@@ -25,11 +30,12 @@ export class LocaleManager {
 				value: l.id,
 			}))
 	}
+
 	static getCurrentLanguageId() {
 		return this.currentLanuageId
 	}
 
-	static async setDefaultLanguage() {
+	static async applyDefaultLanguage() {
 		const language = await get<string>('language')
 
 		// Set language based on bridge. setting
@@ -55,6 +61,8 @@ export class LocaleManager {
 		if (id === 'english') {
 			this.currentLanguage = clone(enLang)
 			this.currentLanuageId = id
+
+			this.EventSystem.dispatch('languageChanged', id)
 			return
 		}
 
@@ -71,6 +79,8 @@ export class LocaleManager {
 		this.currentLanguage = deepMerge(clone(enLang), clone({ ...language }))
 
 		this.currentLanuageId = id
+
+		this.EventSystem.dispatch('languageChanged', id)
 	}
 
 	static translate(key?: string, lang = this.currentLanguage) {
@@ -101,27 +111,27 @@ export class LocaleManager {
 	}
 }
 
-export function translate(key?: string, langId?: 'en') {
-	let lang = undefined
-	if (langId === 'en') lang = enLang
-
-	return LocaleManager.translate(key, lang)
-}
-
-export function translateWithInsertions(key?: string, insert?: string[]) {
-	let translation = LocaleManager.translate(key)
-	if (!insert) return translation
-
-	for (let i = 0; i <= insert.length; i++) {
-		translation = translation?.replace(`{{$${i + 1}}}`, insert[i])
-	}
-
-	return translation
-}
-
 function clone(obj: any) {
 	if (typeof window.structuredClone === 'function')
 		return window.structuredClone(obj)
 
 	return JSON.parse(JSON.stringify(obj))
+}
+
+export function useTranslate(): Ref<(key: string) => string> {
+	const translation = ref((key: string) => LocaleManager.translate(key))
+
+	function updateTranslate() {
+		translation.value = (key: string) => LocaleManager.translate(key)
+	}
+
+	onMounted(() => {
+		LocaleManager.EventSystem.on('languageChanged', updateTranslate)
+	})
+
+	onUnmounted(() => {
+		LocaleManager.EventSystem.off('languageChanged', updateTranslate)
+	})
+
+	return translation
 }

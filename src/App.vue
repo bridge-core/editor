@@ -4,8 +4,8 @@
 		<Editor />
 		<Greet />
 		<Changelog />
-		<Settings />
 		<CreateProject />
+		<Settings />
 	</main>
 </template>
 
