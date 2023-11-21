@@ -15,7 +15,7 @@ export class BaseFileSystem {
 		throw new Error('Not implemented!')
 	}
 
-	public async readFileJson(path: string): Promise<string> {
+	public async readFileJson(path: string): Promise<any> {
 		throw new Error('Not implemented!')
 	}
 

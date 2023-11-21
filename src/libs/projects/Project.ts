@@ -1,23 +1,28 @@
 import { basename, join } from '/@/libs/path'
 import { App } from '/@/App'
-import { defaultPackPaths } from 'mc-project-core'
+import { defaultPackPaths, IConfigJson } from 'mc-project-core'
 import { ProjectData } from '../data/ProjectData'
 
 export interface ProjectInfo {
 	name: string
 	icon: string
+	config: IConfigJson
 }
 
 export class Project {
 	public path: string
 	public icon: string | null = null
+	public packs: string[] = []
 
 	constructor(public name: string, public data: ProjectData) {
 		this.path = join('projects', this.name)
 	}
 
 	public async load() {
-		this.icon = (await getProjectInfo(join('projects', this.name))).icon
+		const projectInfo = await getProjectInfo(join('projects', this.name))
+
+		this.icon = projectInfo.icon
+		this.packs = Object.keys(projectInfo.config.packs)
 
 		await this.data.load()
 	}
@@ -65,5 +70,6 @@ export async function getProjectInfo(path: string): Promise<ProjectInfo> {
 	return {
 		name: basename(path),
 		icon: iconDataUrl,
+		config: await fileSystem.readFileJson(join(path, 'config.json')),
 	}
 }

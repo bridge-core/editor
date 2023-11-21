@@ -11,7 +11,7 @@
 		<div class="bg-menuAlternate rounded flex-1 p-2">
 			<div class="flex gap-2 mb-2" v-if="currentProject">
 				<button
-					v-for="packDefinition in (<BedrockProjectData>currentProject.data).packDefinitions"
+					v-for="packDefinition in currentProjectPackDefinitions"
 					class="flex-1 flex items-center justify-center p-2 rounded border-2 hover:border-text transition-colors duration-100 ease-out"
 					:class="{
 						'bg-background border-background':
@@ -32,6 +32,12 @@
 								: packDefinition.color
 						"
 					/>
+				</button>
+
+				<button
+					class="flex-1 flex items-center justify-center p-2 rounded bg-background hover:bg-primary transition-colors duration-100 ease-out"
+				>
+					<Icon icon="more_vert" />
 				</button>
 			</div>
 
@@ -76,6 +82,15 @@ const currentProject = App.instance.projectManager.useCurrentProject()
 let data: BedrockProjectData | null = currentProject.value
 	? <BedrockProjectData>currentProject.value.data
 	: null
+
+const currentProjectPackDefinitions: Ref<IPackType[]> = computed(() => {
+	if (!currentProject.value) return []
+	if (!data) return []
+
+	return data.packDefinitions.filter((pack) =>
+		currentProject.value?.packs.includes(pack.id)
+	)
+})
 
 const selectedPack: Ref<string> = ref('')
 const selectedPackDefinition: ComputedRef<IPackType | null> = computed(() => {
