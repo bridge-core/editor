@@ -107,6 +107,8 @@ export class ProjectManager {
 	}
 
 	public async loadProject(name: string) {
+		console.time('[APP] Load Project')
+
 		this.currentProject = new Project(
 			name,
 			new BedrockProjectData(App.instance.data)
@@ -115,6 +117,8 @@ export class ProjectManager {
 		await this.currentProject.load()
 
 		this.eventSystem.dispatch('updatedCurrentProject', null)
+
+		console.timeEnd('[APP] Load Project')
 	}
 
 	public useProjects(): Ref<ProjectInfo[]> {
