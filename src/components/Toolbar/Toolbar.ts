@@ -11,7 +11,9 @@ export class Toolbar {
 		this.addItem('File', 'draft', () => null)
 		this.addItem('Tools', 'build', () => null)
 		this.addItem('Help', 'help', () => null)
-		this.addItem('Download', 'download', () => null)
+		this.addItem('Download', 'download', () => {
+			window.open('https://bridge-core.app/guide/download/')
+		})
 	}
 
 	public addItem(name: string, icon: string, action: () => void) {
