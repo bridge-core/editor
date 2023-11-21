@@ -42,6 +42,10 @@ export class App {
 			this.projectManager.loadProjects()
 		})
 
+		console.time('[App] Settings')
+		await this.settings.load()
+		console.timeEnd('[App] Settings')
+
 		console.time('[App] Projects')
 		await this.projectManager.loadProjects()
 		console.timeEnd('[App] Projects')

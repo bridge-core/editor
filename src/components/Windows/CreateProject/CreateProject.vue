@@ -6,7 +6,7 @@
 	>
 		<div class="flex flex-col">
 			<div
-				class="max-h-[35.675rem] overflow-y-scroll p-4 pt-2 m-4 mt-0 max-width overflow-x-auto"
+				class="max-h-[36rem] overflow-y-scroll p-4 pt-2 m-4 mt-0 max-width overflow-x-auto"
 			>
 				<!-- Pack Types -->
 				<div class="flex gap-3 mb-4">

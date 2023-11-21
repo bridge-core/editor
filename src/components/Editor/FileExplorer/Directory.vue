@@ -47,9 +47,6 @@ const expanded = ref(false)
 
 async function updateEntries(path: unknown) {
 	if (typeof path !== 'string') return
-
-	console.log(path)
-
 	entries.value = await App.instance.fileSystem.readDirectoryEntries(
 		props.path
 	)

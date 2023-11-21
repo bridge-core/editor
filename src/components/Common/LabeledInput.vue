@@ -1,6 +1,6 @@
 <template>
 	<div
-		class="border rounded px-3 py-2 transition-colors duration-100 ease-out relative mt-3 select-none"
+		class="border-2 rounded px-3 py-2 transition-colors duration-100 ease-out relative mt-3 select-none"
 		:class="{
 			'border-menu': !(_focused || focused),
 			'border-primary': _focused || focused,
