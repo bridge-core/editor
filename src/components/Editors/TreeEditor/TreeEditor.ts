@@ -419,9 +419,15 @@ export class TreeEditor {
 			const index = parentTree.children.length
 
 			for (const key in json) {
+				let newKey = key
+
+				if (parentTree instanceof ObjectTree) {
+					while (parentTree.get([newKey]) !== null) newKey += '_copy'
+				}
+
 				const newTree = createTree(parentTree, json[key])
 				if (parentTree instanceof ObjectTree)
-					parentTree.addChild(key, newTree)
+					parentTree.addChild(newKey, newTree)
 				else parentTree.addChild(newTree)
 
 				entries.push(
