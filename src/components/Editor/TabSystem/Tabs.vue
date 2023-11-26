@@ -1,5 +1,5 @@
 <template>
-	<div>
+	<div class="flex-1 self-stretch m-2">
 		<TabSystem
 			v-for="tabSystem in instance.tabSystems"
 			:instance="tabSystem"

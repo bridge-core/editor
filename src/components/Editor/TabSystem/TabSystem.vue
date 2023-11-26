@@ -1,5 +1,5 @@
 <template>
-	<div>
+	<div class="w-full h-full">
 		<component
 			v-for="tab in instance.tabs.value"
 			:instance="tab"
