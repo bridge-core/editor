@@ -9,7 +9,8 @@ import { Sidebar } from '/@/components/Editor/Sidebar/Sidebar'
 import { FileExplorer } from '/@/components/Editor/FileExplorer/FileExplorer'
 import { Toolbar } from '/@/components/Toolbar/Toolbar'
 import { Settings } from '/@/components/Windows/Settings/Settings'
-import { LocaleManager } from './libs/locales/Locales'
+import { LocaleManager } from '/@/libs/locales/Locales'
+import { TabManager } from '/@/components/Editor/TabSystem/TabManager'
 
 export class App {
 	public static instance: App
@@ -22,6 +23,7 @@ export class App {
 	public fileExplorer = new FileExplorer()
 	public toolbar = new Toolbar()
 	public settings = new Settings()
+	public tabManager = new TabManager()
 
 	protected themeManager = new ThemeManager()
 

@@ -2,6 +2,7 @@ import { basename, join } from '/@/libs/path'
 import { App } from '/@/App'
 import { defaultPackPaths, IConfigJson } from 'mc-project-core'
 import { ProjectData } from '../data/ProjectData'
+import { TextTab } from '/@/components/Editor/Tabs/Text/TextTab'
 
 export interface ProjectInfo {
 	name: string
@@ -25,6 +26,12 @@ export class Project {
 		this.packs = Object.keys(projectInfo.config.packs)
 
 		await this.data.load()
+	}
+
+	public openFile(path: string) {
+		console.log('Opening file:', path)
+
+		App.instance.tabManager.openTab(new TextTab())
 	}
 }
 
