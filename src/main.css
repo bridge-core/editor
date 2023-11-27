@@ -6,8 +6,8 @@
 
 * {
 	color: var(--theme-color-text);
-	font-family: Inter, system-ui;
-	font-weight: 500;
+	/* font-family: Inter, system-ui;
+	font-weight: 500; */
 }
 
 .material-symbols-rounded {

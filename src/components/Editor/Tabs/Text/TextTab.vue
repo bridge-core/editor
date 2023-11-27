@@ -5,7 +5,7 @@
 <script setup lang="ts">
 import { Ref, onMounted, ref } from 'vue'
 
-defineProps({
+const { instance } = defineProps({
 	instance: {
 		type: Object,
 		required: true,
@@ -14,5 +14,9 @@ defineProps({
 
 const editor: Ref<HTMLDivElement | null> = ref(null)
 
-onMounted(() => {})
+onMounted(() => {
+	if (!editor.value) return
+
+	instance.addEditor(editor.value)
+})
 </script>
