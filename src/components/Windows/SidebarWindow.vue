@@ -16,7 +16,9 @@
 
 			<div class="flex-1">
 				<div class="flex justify-between align-center p-2">
-					<span class="select-none ml-1 text-textAlternate">
+					<span
+						class="select-none ml-1 text-textAlternate font-inter"
+					>
 						{{ name }}
 					</span>
 					<IconButton icon="close" class="text-sm" @click="close" />

@@ -11,7 +11,7 @@
 			class="bg-background shadow-window rounded-md overflow-hidden z-10"
 		>
 			<div class="w-full flex justify-between align-center p-2">
-				<span class="select-none ml-1 text-textAlternate">
+				<span class="select-none ml-1 text-textAlternate font-inter">
 					{{ name }}
 				</span>
 				<IconButton icon="close" class="text-sm" @click="close" />

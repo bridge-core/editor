@@ -9,7 +9,7 @@
 				@click="() => (expanded = !expanded)"
 			>
 				<span
-					class="group-hover:text-primary transition-colors duration-100 ease-out select-none"
+					class="group-hover:text-primary transition-colors duration-100 ease-out select-none font-inter font-medium"
 					>{{ name }}</span
 				>
 				<Icon

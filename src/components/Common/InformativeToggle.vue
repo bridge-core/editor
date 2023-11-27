@@ -11,7 +11,7 @@
 	>
 		<div class="flex items-center gap-1 mb-2">
 			<Icon :icon="icon" :color="color" />
-			<p class="select-none text-lg">
+			<p class="select-none text-lg font-inter font-medium">
 				{{ name }}
 			</p>
 		</div>
@@ -23,10 +23,12 @@
 				class="text-base mr-1"
 				:class="{ 'no-fill': !selected }"
 			/>
-			<span class="text-textAlternate select-none">Active</span>
+			<span class="text-textAlternate select-none font-inter"
+				>Active</span
+			>
 		</div>
 
-		<p class="text-sm select-none text-textAlternate">
+		<p class="text-sm select-none text-textAlternate font-inter">
 			{{ description }}
 		</p>
 

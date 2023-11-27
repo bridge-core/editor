@@ -7,7 +7,7 @@
 		}"
 	>
 		<span
-			class="absolute -top-1/3 left-2 text-xs bg-inherit p-1 text-textAlternate"
+			class="absolute -top-1/3 left-2 text-xs bg-inherit p-1 text-textAlternate font-inter"
 			>{{ label }}</span
 		>
 		<slot

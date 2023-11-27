@@ -7,7 +7,9 @@
 			<Logo class="ml-auto mr-auto mb-24 -mt-24 w-48" />
 
 			<div class="flex justify-between">
-				<p class="mb-1 text-lg text-text">{{ t('greet.projects') }}</p>
+				<p class="mb-1 text-lg text-text font-inter font-medium">
+					{{ t('greet.projects') }}
+				</p>
 
 				<div>
 					<IconButton
@@ -41,7 +43,7 @@
 						/>
 					</div>
 					<p
-						class="text-sm text-center mt-auto mb-auto ml-0.5 mr-0.5"
+						class="text-sm text-center mt-auto mb-auto ml-0.5 mr-0.5 font-inter font-medium"
 					>
 						{{ project.name }}
 					</p>
@@ -52,11 +54,11 @@
 				class="flex items-center flex-col mt-6"
 				v-if="!suggestSelectBridgeFolder && projects.length === 0"
 			>
-				<p class="opacity-30 text-text mb-2">
+				<p class="opacity-30 text-text mb-2 font-inter">
 					{{ t('greet.noProjects') }}
 				</p>
 				<p
-					class="text-primary cursor-pointer hover:underline"
+					class="text-primary cursor-pointer hover:underline font-inter font-medium"
 					@click="createProject"
 				>
 					{{ t('greet.createOne') }}
@@ -67,11 +69,11 @@
 				class="flex items-center flex-col mt-6"
 				v-if="suggestSelectBridgeFolder"
 			>
-				<p class="opacity-30 text-text mb-2">
+				<p class="opacity-30 text-text mb-2 font-inter">
 					{{ t('greet.noBridgeFolderSelected') }}
 				</p>
 				<p
-					class="text-primary cursor-pointer hover:underline"
+					class="text-primary cursor-pointer hover:underline font-inter font-medium"
 					@click="selectBridgeFolder"
 				>
 					{{ t('greet.selectBridgeFolder') }}

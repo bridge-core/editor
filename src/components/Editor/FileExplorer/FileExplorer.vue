@@ -8,7 +8,9 @@
 				:src="currentProject?.icon ?? ''"
 				class="w-10 h-10 select-none"
 			/>
-			<p class="text-3xl select-none">{{ currentProject?.name }}</p>
+			<p class="text-3xl select-none font-inter font-medium">
+				{{ currentProject?.name }}
+			</p>
 		</div>
 
 		<div class="bg-menuAlternate rounded flex-1 p-2">

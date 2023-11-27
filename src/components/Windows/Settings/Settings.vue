@@ -15,7 +15,7 @@
 						<input
 							@focus="focus"
 							@blur="blur"
-							class="outline-none border-none bg-transparent"
+							class="outline-none border-none bg-transparent font-inter"
 						/>
 					</div>
 				</LabeledInput>
@@ -38,7 +38,7 @@
 							"
 							class="text-base"
 						/>
-						<span>{{ category.name }}</span>
+						<span class="font-inter">{{ category.name }}</span>
 					</button>
 				</div>
 			</div>
@@ -62,7 +62,9 @@
 									class="flex items-center justify-between cursor-pointer"
 									@click="toggle"
 								>
-									<span>{{ settings.language }}</span>
+									<span class="font-inter">{{
+										settings.language
+									}}</span>
 
 									<Icon
 										icon="arrow_drop_down"
@@ -91,7 +93,7 @@
 												collapse()
 											}
 										"
-										class="hover:bg-primary text-start p-1 rounded transition-colors duration-100 ease-out"
+										class="hover:bg-primary text-start p-1 rounded transition-colors duration-100 ease-out font-inter"
 										:class="{
 											'bg-menu':
 												settings.language ===

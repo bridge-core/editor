@@ -2,7 +2,7 @@
 	<div class="flex items-center gap-1" @click="click">
 		<Icon icon="draft" :color="color" class="text-sm" />
 
-		<span class="select-none"> {{ basename(path) }} </span>
+		<span class="select-none font-inter"> {{ basename(path) }} </span>
 	</div>
 </template>
 

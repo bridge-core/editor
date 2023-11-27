@@ -8,14 +8,16 @@
 			>
 				<!-- <Icon :icon="item.icon" class="text-xs" /> -->
 				<span
-					class="text-sm group-hover:text-primary transition-colors duration-100 ease-out"
+					class="text-sm group-hover:text-primary transition-colors duration-100 ease-out font-inter"
 					>{{ t(item.name) }}</span
 				>
 			</button>
 		</div>
 		<div class="flex gap-2" @click="openChangelog">
 			<Logo class="w-4" />
-			<span class="text-sm text-textAlternate"> v{{ version }} </span>
+			<span class="text-sm text-textAlternate font-inter">
+				v{{ version }}
+			</span>
 		</div>
 	</div>
 </template>

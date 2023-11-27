@@ -2,7 +2,7 @@
 	<div class="flex items-center gap-1" @click="expanded = !expanded">
 		<Icon icon="folder" :color="color" class="text-sm" />
 
-		<span class="select-none"> {{ basename(path) }} </span>
+		<span class="select-none font-inter"> {{ basename(path) }} </span>
 	</div>
 
 	<div class="ml-1 border-l pl-1 border-menu" v-show="expanded">

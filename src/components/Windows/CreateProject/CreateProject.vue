@@ -29,7 +29,7 @@
 								@update:model-value="setLinkResourcePack"
 							/>
 							<span
-								class="text-xs text-textAlternate select-none"
+								class="text-xs text-textAlternate select-none font-inter"
 								>{{
 									t('windows.createProject.rpAsBpDependency')
 								}}</span
@@ -46,7 +46,7 @@
 								@update:model-value="setLinkBehaviourPack"
 							/>
 							<span
-								class="text-xs text-textAlternate select-none"
+								class="text-xs text-textAlternate select-none font-inter"
 								>{{
 									t('windows.createProject.bpAsRpDependency')
 								}}</span
@@ -121,7 +121,7 @@
 						/>
 
 						<button
-							class="flex align-center gap-2 text-textAlternate"
+							class="flex align-center gap-2 text-textAlternate font-inter"
 							@mouseenter="focus"
 							@mouseleave="blur"
 							@click="projectIconInput?.click()"
@@ -141,7 +141,7 @@
 						v-slot="{ focus, blur }"
 					>
 						<input
-							class="bg-background outline-none max-w-none w-full placeholder:text-textAlternate"
+							class="bg-background outline-none max-w-none w-full placeholder:text-textAlternate font-inter"
 							@focus="focus"
 							@blur="blur"
 							v-model="projectName"
@@ -158,7 +158,7 @@
 					v-slot="{ focus, blur }"
 				>
 					<input
-						class="bg-background outline-none max-w-none placeholder:text-textAlternate max-w-none w-full"
+						class="bg-background outline-none max-w-none placeholder:text-textAlternate max-w-none w-full font-inter"
 						@focus="focus"
 						@blur="blur"
 						v-model="projectDescription"
@@ -175,7 +175,7 @@
 						v-slot="{ focus, blur }"
 					>
 						<input
-							class="bg-background outline-none placeholder:text-textAlternate max-w-none w-full"
+							class="bg-background outline-none placeholder:text-textAlternate max-w-none w-full font-inter"
 							@focus="focus"
 							@blur="blur"
 							v-model="projectNamespace"
@@ -191,7 +191,7 @@
 						v-slot="{ focus, blur }"
 					>
 						<input
-							class="bg-background outline-none placeholder:text-textAlternate max-w-none w-full"
+							class="bg-background outline-none placeholder:text-textAlternate max-w-none w-full font-inter"
 							@focus="focus"
 							@blur="blur"
 							v-model="projectAuthor"
@@ -216,7 +216,9 @@
 									class="flex items-center justify-between cursor-pointer"
 									@click="toggle"
 								>
-									<span>{{ projectTargetVersion }}</span>
+									<span class="font-inter">{{
+										projectTargetVersion
+									}}</span>
 
 									<Icon
 										icon="arrow_drop_down"
@@ -244,7 +246,7 @@
 												collapse()
 											}
 										"
-										class="hover:bg-primary text-start p-1 rounded transition-colors duration-100 ease-out"
+										class="hover:bg-primary text-start p-1 rounded transition-colors duration-100 ease-out font-inter"
 										:class="{
 											'bg-menu':
 												projectTargetVersion ===
