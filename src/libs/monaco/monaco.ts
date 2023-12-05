@@ -1,5 +1,3 @@
-import { editor } from 'monaco-editor'
-
 import editorWorker from 'monaco-editor/esm/vs/editor/editor.worker.js?worker'
 import jsonWorker from 'monaco-editor/esm/vs/language/json/json.worker.js?worker'
 import cssWorker from 'monaco-editor/esm/vs/language/css/css.worker.js?worker'

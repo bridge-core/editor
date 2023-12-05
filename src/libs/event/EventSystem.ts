@@ -1,7 +1,3 @@
-/**
- * Trigger and react to events
- */
-
 import { EventDispatcher } from './EventDispatcher'
 
 export class EventSystem<T> {

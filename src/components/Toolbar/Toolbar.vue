@@ -23,16 +23,13 @@
 
 <script setup lang="ts">
 import Logo from '@/components/Common/Logo.vue'
-import Icon from '@/components/Common/Icon.vue'
 
-import { toolbar } from '@/App'
-
-import {} from '@/App'
+import { toolbar, windows } from '@/App'
 import { version } from '@/libs/app/Version'
 import { useTranslate } from '@/libs/locales/Locales'
 const t = useTranslate()
 
 function openChangelog() {
-	// App.instance.windows.openWindows.value.push('changelog')
+	windows.openWindows.value.push('changelog')
 }
 </script>

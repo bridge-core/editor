@@ -12,12 +12,21 @@
 	},
 	"dependencies": {
 		"bridge-common-utils": "^0.3.3",
+		"color-convert": "^2.0.1",
+		"dash-compiler": "github:bridge-core/dash-compiler#8fa35c73292f6382747d0f411fca26431a6d2c8e",
+		"fflate": "^0.8.1",
 		"idb-keyval": "^6.2.1",
+		"mc-project-core": "^0.3.23",
 		"monaco-editor": "^0.44.0",
+		"path-browserify": "^1.0.1",
+		"uuid": "^9.0.1",
 		"vue": "^3.3.10"
 	},
 	"devDependencies": {
+		"@types/color-convert": "^2.0.3",
 		"@types/node": "^20.10.3",
+		"@types/path-browserify": "^1.0.2",
+		"@types/uuid": "^9.0.7",
 		"@types/wicg-file-system-access": "^2023.10.4",
 		"@vitejs/plugin-vue": "^4.5.1",
 		"autoprefixer": "^10.4.16",
