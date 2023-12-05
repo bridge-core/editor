@@ -35,23 +35,15 @@ export class TextTab extends Tab {
 	}
 
 	public async addEditor(element: HTMLDivElement) {
-		window.addEventListener('keypress', (event) => {
-			if (event.key !== 't') return
+		this.editor = markRaw(
+			monaco.create(element, {
+				fontFamily: 'Consolas',
+			})
+		)
 
-			try {
-				this.editor = monaco.create(element, {
-					fontFamily: 'Consolas',
-				})
+		this.updateEditorTheme()
 
-				// throw new Error('test')
-
-				this.updateEditorTheme()
-
-				// this.editor.setValue('test')
-			} catch (error) {
-				console.log(error)
-			}
-		})
+		this.editor.setValue('test')
 
 		// this.updateEditorTheme()
 
