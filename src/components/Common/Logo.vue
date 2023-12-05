@@ -8,9 +8,5 @@
 </template>
 
 <script setup lang="ts">
-import { isNightly } from '/@/libs/app/isNightly'
-
-const logoPath = isNightly
-	? `/img/icons/nightly/favicon.svg`
-	: `/img/icons/favicon.svg`
+const logoPath = `/img/icons/favicon.svg`
 </script>

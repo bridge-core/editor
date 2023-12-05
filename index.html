@@ -47,34 +47,6 @@
 			href="https://fonts.bunny.net/css?family=Roboto:100,300,400,500,700,900&display=swap"
 		/>
 
-		<% if(isNightly) { %>
-		<link
-			rel="icon"
-			type="image/png"
-			sizes="32x32"
-			href="/img/icons/nightly/favicon-32x32.png"
-		/>
-		<link
-			rel="icon"
-			type="image/png"
-			sizes="16x16"
-			href="/img/icons/nightly/favicon-16x16.png"
-		/>
-		<meta name="apple-mobile-web-app-title" content="bridge Nightly" />
-		<link
-			rel="apple-touch-icon"
-			href="/img/icons/nightly/apple-touch-icon-152x152.png"
-		/>
-		<link
-			rel="mask-icon"
-			href="/img/icons/nightly/safari-pinned-tab.svg"
-			color="#1778D2"
-		/>
-		<meta
-			name="msapplication-TileImage"
-			content="/img/icons/nightly/msapplication-icon-144x144.png"
-		/>
-		<% } else { %>
 		<link
 			rel="icon"
 			type="image/png"
@@ -101,7 +73,6 @@
 			name="msapplication-TileImage"
 			content="/img/icons/msapplication-icon-144x144.png"
 		/>
-		<% } %>
 
 		<meta
 			name="theme-color"
@@ -118,15 +89,18 @@
 		<meta name="apple-mobile-web-app-status-bar-style" content="default" />
 
 		<meta name="msapplication-TileColor" content="#0F0F0F" />
+
 		<style>
 			body {
 				margin: 0;
 				overflow: hidden;
 			}
+
 			#app {
 				height: 100vh;
 				width: 100vw;
 			}
+
 			.initial-boot {
 				background-color: #ececec;
 				display: grid;
@@ -145,9 +119,11 @@
 				opacity: 1;
 				transition: opacity 200ms ease;
 			}
+
 			.initial-boot.complete {
 				opacity: 0;
 			}
+
 			.initial-boot img {
 				place-self: center;
 				user-select: none;
@@ -160,6 +136,7 @@
 				height: 50px;
 				box-sizing: content-box;
 			}
+
 			.loader {
 				margin: 60px auto;
 				font-size: 10px;
@@ -174,6 +151,7 @@
 				transform: translateZ(0);
 				animation: boot-anim 0.6s infinite linear;
 			}
+
 			@keyframes boot-anim {
 				0% {
 					-webkit-transform: rotate(0deg);
@@ -204,27 +182,21 @@
 				enabled. Please enable it to continue.
 			</strong>
 		</noscript>
+
 		<div id="app"></div>
 
 		<!-- Initial boot screen -->
 		<div data-tauri-drag-region class="initial-boot">
-			<% if(isNightly) { %>
-			<img
-				src="/img/icons/nightly/android-chrome-192x192.png"
-				data-tauri-drag-region
-				draggable="false"
-				alt="bridge Nightly"
-			/>
-			<% } else { %>
 			<img
 				src="/img/icons/android-chrome-192x192.png"
 				data-tauri-drag-region
 				draggable="false"
 				alt="bridge"
 			/>
-			<% } %>
+
 			<div class="loader"></div>
 		</div>
+
 		<script>
 			window.addEventListener('load', () => {
 				setTimeout(() => {
@@ -237,18 +209,6 @@
 					}, 200)
 				}, 200)
 			})
-		</script>
-
-		<script>
-			window.global = window
-			window.process = {
-				cwd: () => '',
-				env: {},
-				release: {
-					name: 'browser',
-				},
-			}
-			self.setImmediate = setTimeout
 		</script>
 
 		<script async type="module" src="/src/main.ts"></script>

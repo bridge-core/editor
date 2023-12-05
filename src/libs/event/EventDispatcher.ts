@@ -1,4 +1,4 @@
-import { IDisposable } from '/@/types/disposable'
+import { IDisposable } from '@/libs/disposeable/Disposeable'
 
 export class EventDispatcher<T> {
 	protected listeners = new Set<(data: T) => void>()

@@ -1,13 +1,11 @@
-import { App } from '/@/App'
-
 export class Toolbar {
 	public items: { name: string; icon: string; action: () => void }[] = []
 
 	constructor() {
 		this.addItem('toolbar.project.name', 'space_dashboard', () => null)
-		this.addItem('toolbar.settings.name', 'help', () =>
-			App.instance.windows.open('settings')
-		)
+		// this.addItem('toolbar.settings.name', 'help', () =>
+		// 	App.instance.windows.open('settings')
+		// )
 		this.addItem('toolbar.file.name', 'draft', () => null)
 		this.addItem('toolbar.tools.name', 'build', () => null)
 		this.addItem('toolbar.help.name', 'help', () => null)

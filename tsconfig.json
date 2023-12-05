@@ -1,25 +1,21 @@
 {
 	"compilerOptions": {
-		"target": "esnext",
-		"module": "esnext",
+		"target": "ESNext",
+		"module": "ESNext",
 		"strict": true,
 		"importHelpers": true,
-		"moduleResolution": "node",
+		"moduleResolution": "Node",
 		"skipLibCheck": true,
 		"esModuleInterop": true,
 		"resolveJsonModule": true,
 		"allowSyntheticDefaultImports": true,
 		"sourceMap": true,
 		"baseUrl": ".",
-		"types": [
-			"@types/wicg-file-system-access",
-			"node",
-			"vite-plugin-pwa/client"
-		],
+		"types": ["@types/wicg-file-system-access", "node"],
 		"paths": {
-			"/@/*": ["src/*"]
+			"@/*": ["src/*"]
 		},
-		"lib": ["esnext", "dom", "dom.iterable", "scripthost", "WebWorker"],
+		"lib": ["ESNext", "DOM", "DOM.Iterable", "WebWorker"],
 		"forceConsistentCasingInFileNames": true
 	},
 	"include": ["src/**/*.ts", "src/**/*.vue"],
