@@ -87,6 +87,32 @@ export class PWAFileSystem extends BaseFileSystem {
 		}
 	}
 
+	public async readFileText(path: string): Promise<string> {
+		if (this.baseHandle === null) throw new Error('Base handle not set!')
+
+		try {
+			const handle = await (
+				await this.traverse(path)
+			).getFileHandle(basename(path))
+
+			const file = await handle.getFile()
+
+			const reader = new FileReader()
+
+			return new Promise((resolve) => {
+				reader.onload = () => {
+					resolve(reader.result as string)
+				}
+
+				reader.readAsText(file)
+			})
+		} catch (error) {
+			console.error(`Failed to read "${path}"`)
+
+			throw error
+		}
+	}
+
 	public async readFileDataUrl(path: string): Promise<string> {
 		if (this.baseHandle === null) throw new Error('Base handle not set!')
 

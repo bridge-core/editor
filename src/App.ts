@@ -24,8 +24,7 @@ export class App {
 	public toolbar = new Toolbar()
 	public settings = new Settings()
 	public tabManager = new TabManager()
-
-	protected themeManager = new ThemeManager()
+	public themeManager = new ThemeManager()
 
 	get projectSelected() {
 		return false
@@ -42,7 +41,9 @@ export class App {
 
 	protected async setup() {
 		this.fileSystem.eventSystem.on('reloaded', () => {
+			console.time('[App] Projects')
 			this.projectManager.loadProjects()
+			console.timeEnd('[App] Projects')
 		})
 
 		await LocaleManager.applyDefaultLanguage()

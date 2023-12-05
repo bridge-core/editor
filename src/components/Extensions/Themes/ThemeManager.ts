@@ -52,6 +52,8 @@ export type TThemeDefinition = {
 }
 
 export class ThemeManager {
+	public currentTheme: TThemeDefinition = bridgeDark
+
 	constructor() {
 		this.applyTheme(bridgeDark)
 	}
@@ -64,5 +66,7 @@ export class ThemeManager {
 		for (const name of colorNames) {
 			root.style.setProperty(`--theme-color-${name}`, theme.colors[name])
 		}
+
+		this.currentTheme = theme
 	}
 }

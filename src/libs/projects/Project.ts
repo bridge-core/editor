@@ -31,7 +31,7 @@ export class Project {
 	public openFile(path: string) {
 		console.log('Opening file:', path)
 
-		App.instance.tabManager.openTab(new TextTab())
+		App.instance.tabManager.openTab(new TextTab(path))
 	}
 }
 

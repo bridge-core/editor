@@ -12,7 +12,6 @@
 		"build:nightly": "node ./scripts/build.mjs && node ./scripts/buildApp.mjs --nightly"
 	},
 	"dependencies": {
-		"@codemirror/lang-javascript": "^6.2.1",
 		"@mdi/font": "^6.9.96",
 		"@tauri-apps/api": "^1.2.0",
 		"@types/codemirror": "^5.60.15",
@@ -22,7 +21,6 @@
 		"bridge-js-runtime": "^0.4.1",
 		"bridge-model-viewer": "^0.7.7",
 		"buffer": "^6.0.3",
-		"codemirror": "^6.0.1",
 		"color-convert": "^2.0.1",
 		"comlink": "^4.3.0",
 		"compare-versions": "^3.6.0",
@@ -38,7 +36,7 @@
 		"lz-string": "^1.4.4",
 		"mc-project-core": "^0.3.23",
 		"molang": "^1.13.11",
-		"monaco-editor": "^0.33.0",
+		"monaco-editor": "^0.44.0",
 		"path-browserify": "^1.0.1",
 		"prismarine-nbt": "^1.6.0",
 		"quick-score": "^0.0.13",
