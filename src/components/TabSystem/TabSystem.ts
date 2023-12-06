@@ -6,13 +6,19 @@ export class TabSystem {
 	public id = uuid()
 	public tabs: Ref<Tab[]> = ref([])
 
-	public addTab(tab: Tab) {
+	public async addTab(tab: Tab) {
+		if (this.tabs.value.includes(tab)) return
+
 		this.tabs.value.push(tab)
 
-		console.log(this.tabs.value)
+		await tab.activate()
 	}
 
-	public removeTab(tab: Tab) {
+	public async removeTab(tab: Tab) {
+		if (!this.tabs.value.includes(tab)) return
+
+		tab.deactivate()
+
 		this.tabs.value = this.tabs.value.filter(
 			(otherTab) => otherTab.id !== tab.id
 		)

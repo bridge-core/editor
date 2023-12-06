@@ -7,13 +7,13 @@
 </template>
 
 <script setup lang="ts">
-import { projectManager } from '@/App'
+import { tabManager } from '@/App'
 import Icon from '@/components/Common/Icon.vue'
 
 import { basename } from '@/libs/path'
 
 function click() {
-	projectManager.currentProject?.openFile(path)
+	tabManager.openFile(path)
 }
 
 const { path } = defineProps({

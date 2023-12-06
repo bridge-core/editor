@@ -27,10 +27,6 @@ export class Project {
 
 		await this.data.load()
 	}
-
-	public openFile(path: string) {
-		tabManager.openTab(new TextTab(path))
-	}
 }
 
 export async function validProject(path: string) {

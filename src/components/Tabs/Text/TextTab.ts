@@ -1,14 +1,14 @@
-import { Component, markRaw } from 'vue'
+import { Component, markRaw, ref } from 'vue'
 import { Tab } from '@/components/TabSystem/Tab'
 import TextTabComponent from '@/components/Tabs/Text/TextTab.vue'
 import { Uri, editor as monaco } from 'monaco-editor'
 import { keyword } from 'color-convert'
-import { fileSystem, themeManager } from '@/App'
+import { fileSystem, fileTypeData, themeManager } from '@/App'
 import { basename } from '@/libs/path'
 
 export class TextTab extends Tab {
 	public component: Component | null = markRaw(TextTabComponent)
-	public icon = 'draft'
+	public icon = ref('data_object')
 
 	private editor: monaco.IStandaloneCodeEditor | null = null
 	private model: monaco.ITextModel | null = null
@@ -16,7 +16,27 @@ export class TextTab extends Tab {
 	constructor(public path: string) {
 		super()
 
-		this.name = basename(path)
+		this.name.value = basename(path)
+	}
+
+	public async activate() {
+		const fileType = await fileTypeData.get(this.path)
+
+		if (fileType === null) return
+
+		if (fileType.icon === undefined) return
+
+		this.icon.value = fileType.icon
+	}
+
+	public async deactivate() {
+		if (this.editor === null) return
+
+		this.editor.dispose()
+
+		if (this.model === null) return
+
+		this.model.dispose()
 	}
 
 	private getColor(name: string): string {

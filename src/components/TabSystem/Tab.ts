@@ -1,9 +1,12 @@
 import { v4 as uuid } from 'uuid'
-import { Component } from 'vue'
+import { Component, Ref, ref } from 'vue'
 
 export class Tab {
 	public id = uuid()
 	public component: Component | null = null
-	public name = 'New Tab'
-	public icon: string | null = null
+	public name = ref('New Tab')
+	public icon: Ref<string | null> = ref(null)
+
+	public async activate() {}
+	public async deactivate() {}
 }
