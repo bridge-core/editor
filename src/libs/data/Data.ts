@@ -23,7 +23,7 @@ export class Data {
 	}
 
 	public async load() {
-		// if (await this.fileSystem.exists('loaded')) return
+		if (await this.fileSystem.exists('loaded')) return
 
 		const rawData = await fetch(baseUrl + 'packages.zip').then((response) =>
 			response.arrayBuffer()
