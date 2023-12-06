@@ -10,12 +10,14 @@ import { TabManager } from '@/components/TabSystem/TabManager'
 import { Sidebar } from '@/components/Sidebar/Sidebar'
 import { FileExplorer } from '@/components/FileExplorer/FileExplorer'
 import { Settings } from '@/components/Windows/Settings/Settings'
+import { FileTypeData } from '@/libs/data/FileTypeData'
 
 export const toolbar = new Toolbar()
 export const themeManager = new ThemeManager()
 export const projectManager = new ProjectManager()
 export const fileSystem = getFileSystem()
 export const data = new Data()
+export const fileTypeData = new FileTypeData()
 export const windows = new Windows()
 export const tabManager = new TabManager()
 export const sidebar = new Sidebar()
@@ -23,7 +25,9 @@ export const fileExplorer = new FileExplorer()
 export const settings = new Settings()
 
 export async function setup() {
+	console.time('[App] Language Workers')
 	setupLanguageWorkers()
+	console.timeEnd('[App] Language Workers')
 
 	fileSystem.eventSystem.on('reloaded', () => {
 		console.time('[App] Projects')
@@ -31,7 +35,9 @@ export async function setup() {
 		console.timeEnd('[App] Projects')
 	})
 
+	console.time('[App] Locale')
 	await LocaleManager.applyDefaultLanguage()
+	console.timeEnd('[App] Locale')
 
 	console.time('[App] Settings')
 	await settings.load()
@@ -43,5 +49,6 @@ export async function setup() {
 
 	console.time('[App] Data')
 	await data.load()
+	await fileTypeData.load(data)
 	console.timeEnd('[App] Data')
 }

@@ -8,5 +8,13 @@ export class TabSystem {
 
 	public addTab(tab: Tab) {
 		this.tabs.value.push(tab)
+
+		console.log(this.tabs.value)
+	}
+
+	public removeTab(tab: Tab) {
+		this.tabs.value = this.tabs.value.filter(
+			(otherTab) => otherTab.id !== tab.id
+		)
 	}
 }

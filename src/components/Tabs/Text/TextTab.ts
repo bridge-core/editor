@@ -3,16 +3,20 @@ import { Tab } from '@/components/TabSystem/Tab'
 import TextTabComponent from '@/components/Tabs/Text/TextTab.vue'
 import { Uri, editor as monaco } from 'monaco-editor'
 import { keyword } from 'color-convert'
-import { themeManager } from '@/App'
+import { fileSystem, themeManager } from '@/App'
+import { basename } from '@/libs/path'
 
 export class TextTab extends Tab {
 	public component: Component | null = markRaw(TextTabComponent)
+	public icon = 'draft'
 
 	private editor: monaco.IStandaloneCodeEditor | null = null
 	private model: monaco.ITextModel | null = null
 
 	constructor(public path: string) {
 		super()
+
+		this.name = basename(path)
 	}
 
 	private getColor(name: string): string {
@@ -43,23 +47,13 @@ export class TextTab extends Tab {
 
 		this.updateEditorTheme()
 
-		this.editor.setValue('test')
+		const fileContent = await fileSystem.readFileText(this.path)
 
-		// this.updateEditorTheme()
+		this.model = markRaw(
+			monaco.createModel(fileContent, 'json', Uri.file(this.path))
+		)
 
-		// this.model = this.editor.getModel()
-
-		// const fileSystem = fileSystem
-
-		// const fileContent = await fileSystem.readFileText(this.path)
-
-		// console.log(fileContent)
-
-		// this.model?.setValue('test')
-
-		// this.model?.setValue(fileContent)
-
-		// this.editor?.setModel(this.model)
+		this.editor.setModel(this.model)
 	}
 
 	private updateEditorTheme() {

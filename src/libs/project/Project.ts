@@ -29,8 +29,6 @@ export class Project {
 	}
 
 	public openFile(path: string) {
-		console.log('Opening file:', path)
-
 		tabManager.openTab(new TextTab(path))
 	}
 }
