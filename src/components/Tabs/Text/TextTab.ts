@@ -1,14 +1,17 @@
 import { Component, markRaw, ref } from 'vue'
 import { Tab } from '@/components/TabSystem/Tab'
 import TextTabComponent from '@/components/Tabs/Text/TextTab.vue'
-import { editor as monaco } from 'monaco-editor'
+import { Uri, editor as monaco } from 'monaco-editor'
 import { keyword } from 'color-convert'
-import { fileTypeData, themeManager } from '@/App'
+import { fileSystem, fileTypeData, themeManager } from '@/App'
 import { basename } from '@/libs/path'
 
 export class TextTab extends Tab {
 	public component: Component | null = markRaw(TextTabComponent)
 	public icon = ref('data_object')
+
+	private editor: monaco.IStandaloneCodeEditor | null = null
+	private model: monaco.ITextModel | null = null
 
 	constructor(public path: string) {
 		super()
@@ -24,6 +27,29 @@ export class TextTab extends Tab {
 		if (fileType.icon === undefined) return
 
 		this.icon.value = fileType.icon
+	}
+
+	public async mountEditor(element: HTMLElement) {
+		this.editor = markRaw(
+			monaco.create(element, {
+				fontFamily: 'Consolas',
+			})
+		)
+
+		this.updateEditorTheme()
+
+		const fileContent = await fileSystem.readFileText(this.path)
+
+		this.model = markRaw(
+			monaco.createModel(fileContent, 'json', Uri.file(this.path))
+		)
+
+		this.editor.setModel(this.model)
+	}
+
+	public unmountEditor() {
+		this.editor?.dispose()
+		this.model?.dispose()
 	}
 
 	private getColor(name: string): string {
@@ -45,7 +71,7 @@ export class TextTab extends Tab {
 		return keyword.hex(color as any)
 	}
 
-	public updateEditorTheme() {
+	private updateEditorTheme() {
 		const theme = themeManager.currentTheme
 
 		monaco.defineTheme(`bridge`, {

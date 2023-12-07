@@ -7,7 +7,7 @@
 			>
 				<Icon
 					v-if="tab.icon"
-					:icon="tab.icon.value ?? ''"
+					:icon="<any>tab.icon"
 					class="text-base text-behaviorPack"
 				/>
 

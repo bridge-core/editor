@@ -1,7 +1,7 @@
 <template>
 	<div
 		class="self-stretch my-2 w-96 flex flex-col gap-2"
-		v-if="fileExplorer.open.value"
+		v-if="fileExplorer.open"
 	>
 		<div class="bg-menuAlternate rounded h-16 flex items-center p-3 gap-3">
 			<img
