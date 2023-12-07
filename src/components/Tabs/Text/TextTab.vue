@@ -1,9 +1,11 @@
 <template>
-	<div ref="editor" class="w-full h-full" />
+	<div ref="editorElement" class="w-full h-full" />
 </template>
 
 <script setup lang="ts">
-import { Ref, onMounted, ref } from 'vue'
+import { Ref, markRaw, onMounted, onUnmounted, ref } from 'vue'
+import { Uri, editor as monaco } from 'monaco-editor'
+import { fileSystem } from '@/App'
 
 const { instance } = defineProps({
 	instance: {
@@ -12,11 +14,38 @@ const { instance } = defineProps({
 	},
 })
 
-const editor: Ref<HTMLDivElement | null> = ref(null)
+const editorElement: Ref<HTMLDivElement | null> = ref(null)
 
-onMounted(() => {
-	if (!editor.value) return
+let editor: monaco.IStandaloneCodeEditor | null = null
+let model: monaco.ITextModel | null = null
 
-	instance.addEditor(editor.value)
+onMounted(async () => {
+	if (!editorElement.value) return
+
+	editor = markRaw(
+		monaco.create(editorElement.value, {
+			fontFamily: 'Consolas',
+		})
+	)
+
+	instance.updateEditorTheme()
+
+	const fileContent = await fileSystem.readFileText(instance.path)
+
+	model = markRaw(
+		monaco.createModel(fileContent, 'json', Uri.file(instance.path))
+	)
+
+	editor.setModel(model)
+})
+
+onUnmounted(() => {
+	if (editor === null) return
+
+	editor?.dispose()
+
+	if (model === null) return
+
+	model?.dispose()
 })
 </script>

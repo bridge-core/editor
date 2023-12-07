@@ -7,7 +7,7 @@
 			>
 				<Icon
 					v-if="tab.icon"
-					:icon="tab.icon"
+					:icon="tab.icon.value ?? ''"
 					class="text-base text-behaviorPack"
 				/>
 
@@ -24,10 +24,10 @@
 		</div>
 
 		<component
-			v-for="tab in instance.tabs.value"
-			:instance="tab"
-			:key="tab.id"
-			:is="tab.component"
+			v-if="instance.selectedTab.value"
+			:instance="instance.selectedTab.value"
+			:is="instance.selectedTab.value.component"
+			:key="instance.selectedTab.value.id"
 		/>
 	</div>
 </template>

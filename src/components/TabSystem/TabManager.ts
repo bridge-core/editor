@@ -9,8 +9,8 @@ export class TabManager {
 		return this.tabSystems[0]
 	}
 
-	public openTab(tab: Tab) {
-		this.defaultTabSystem.addTab(tab)
+	public async openTab(tab: Tab) {
+		await this.defaultTabSystem.addTab(tab)
 	}
 
 	public openFile(path: string) {
