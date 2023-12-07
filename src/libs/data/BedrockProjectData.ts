@@ -1,6 +1,6 @@
 import { IPackType } from 'mc-project-core'
 import { ProjectData } from './ProjectData'
-import { addSchemas } from '@/libs/monaco/Json'
+import { addSchema } from '@/libs/monaco/Json'
 
 export class BedrockProjectData extends ProjectData {
 	public packDefinitions: IPackType[] = []
@@ -9,16 +9,5 @@ export class BedrockProjectData extends ProjectData {
 		this.packDefinitions = await this.data.get(
 			'packages/minecraftBedrock/packDefinitions.json'
 		)
-
-		const commonSchemas = Object.entries(
-			await this.data.get('packages/common/schemas.json')
-		).map(([uri, schema]: [string, any]) => {
-			return {
-				uri,
-				schema,
-			}
-		})
-
-		addSchemas(commonSchemas)
 	}
 }

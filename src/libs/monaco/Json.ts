@@ -1,9 +1,19 @@
 import { languages } from 'monaco-editor'
 
-let schemas: any[] = []
+interface SchemaDefinition {
+	readonly uri: string
+	readonly fileMatch?: string[]
+	readonly schema?: any
+}
 
-export function addSchemas(schemas: any[]) {
-	schemas.push(...schemas.filter((schema) => !schemas.includes(schema)))
+let schemas: SchemaDefinition[] = []
+
+export function addSchema(schema: SchemaDefinition) {
+	console.log('Adding schmea', schema)
+
+	if (schemas.find((otherSchema) => otherSchema.uri === schema.uri)) return
+
+	schemas.push(schema)
 
 	languages.json.jsonDefaults.setDiagnosticsOptions({
 		enableSchemaRequest: false,
@@ -13,8 +23,8 @@ export function addSchemas(schemas: any[]) {
 	})
 }
 
-export function removeSchemas(schemas: any[]) {
-	schemas = schemas.filter((schema) => !schemas.includes(schema))
+export function removeSchema(schemaUri: string) {
+	schemas = schemas.filter((schema) => schema.uri !== schemaUri)
 
 	languages.json.jsonDefaults.setDiagnosticsOptions({
 		enableSchemaRequest: false,

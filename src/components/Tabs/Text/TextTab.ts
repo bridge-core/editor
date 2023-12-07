@@ -3,8 +3,9 @@ import { Tab } from '@/components/TabSystem/Tab'
 import TextTabComponent from '@/components/Tabs/Text/TextTab.vue'
 import { Uri, editor as monaco } from 'monaco-editor'
 import { keyword } from 'color-convert'
-import { fileSystem, fileTypeData, themeManager } from '@/App'
+import { fileSystem, fileTypeData, schemaData, themeManager } from '@/App'
 import { basename } from '@/libs/path'
+import { addSchema, removeSchema } from '@/libs/monaco/Json'
 
 export class TextTab extends Tab {
 	public component: Component | null = markRaw(TextTabComponent)
@@ -12,6 +13,8 @@ export class TextTab extends Tab {
 
 	private editor: monaco.IStandaloneCodeEditor | null = null
 	private model: monaco.ITextModel | null = null
+
+	private fileType: any | null = null
 
 	constructor(public path: string) {
 		super()
@@ -45,11 +48,24 @@ export class TextTab extends Tab {
 		)
 
 		this.editor.setModel(this.model)
+
+		this.fileType = await fileTypeData.get(this.path)
+
+		const schema = await schemaData.get(this.fileType.schema)
+
+		addSchema({
+			uri: this.fileType.schema,
+			fileMatch: [this.path],
+			schema,
+		})
 	}
 
 	public unmountEditor() {
-		this.editor?.dispose()
+		if (this.fileType !== null && this.fileType.schema !== undefined)
+			removeSchema(this.fileType.schema)
+
 		this.model?.dispose()
+		this.editor?.dispose()
 	}
 
 	private getColor(name: string): string {
