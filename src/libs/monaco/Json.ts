@@ -6,30 +6,26 @@ interface SchemaDefinition {
 	readonly schema?: any
 }
 
-let schemas: SchemaDefinition[] = []
-
-export function addSchema(schema: SchemaDefinition) {
-	console.log('Adding schmea', schema)
-
-	if (schemas.find((otherSchema) => otherSchema.uri === schema.uri)) return
-
-	schemas.push(schema)
-
-	languages.json.jsonDefaults.setDiagnosticsOptions({
-		enableSchemaRequest: false,
-		allowComments: true,
-		validate: true,
-		schemas,
-	})
+let settings: {
+	enableSchemaRequest: boolean
+	allowComments: boolean
+	validate: boolean
+	schemas: SchemaDefinition[]
+} = {
+	enableSchemaRequest: false,
+	allowComments: true,
+	validate: true,
+	schemas: [],
 }
 
-export function removeSchema(schemaUri: string) {
-	schemas = schemas.filter((schema) => schema.uri !== schemaUri)
-
-	languages.json.jsonDefaults.setDiagnosticsOptions({
-		enableSchemaRequest: false,
-		allowComments: true,
-		validate: true,
-		schemas,
-	})
+function updateDefaults() {
+	languages.json.jsonDefaults.setDiagnosticsOptions(settings)
 }
+
+export function setSchemas(schemas: SchemaDefinition[]) {
+	settings.schemas = schemas
+
+	updateDefaults()
+}
+
+updateDefaults()

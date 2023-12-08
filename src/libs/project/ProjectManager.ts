@@ -11,7 +11,7 @@ import { BridgePack } from './create/packs/Bridge'
 import { Pack } from './create/packs/Pack'
 import { ResourcePack } from './create/packs/ResourcePack'
 import { SkinPack } from './create/packs/SkinPack'
-import { BedrockProjectData } from '@/libs/data/BedrockProjectData'
+import { BedrockProjectData } from '@/libs/data/bedrock/BedrockProjectData'
 
 export const packs: {
 	[key: string]: Pack | undefined

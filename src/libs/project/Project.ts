@@ -2,7 +2,6 @@ import { basename, join } from '@/libs/path'
 import { fileSystem, tabManager } from '@/App'
 import { defaultPackPaths, IConfigJson } from 'mc-project-core'
 import { ProjectData } from '../data/ProjectData'
-import { TextTab } from '@/components/Tabs/Text/TextTab'
 
 export interface ProjectInfo {
 	name: string

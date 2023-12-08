@@ -3,9 +3,9 @@ import { Tab } from '@/components/TabSystem/Tab'
 import TextTabComponent from '@/components/Tabs/Text/TextTab.vue'
 import { Uri, editor as monaco } from 'monaco-editor'
 import { keyword } from 'color-convert'
-import { fileSystem, fileTypeData, schemaData, themeManager } from '@/App'
+import { fileSystem, projectManager, themeManager } from '@/App'
 import { basename } from '@/libs/path'
-import { addSchema, removeSchema } from '@/libs/monaco/Json'
+import { BedrockProjectData } from '@/libs/data/bedrock/BedrockProjectData'
 
 export class TextTab extends Tab {
 	public component: Component | null = markRaw(TextTabComponent)
@@ -23,6 +23,12 @@ export class TextTab extends Tab {
 	}
 
 	public async setup() {
+		if (!projectManager.currentProject) return
+		if (!(projectManager.currentProject.data instanceof BedrockProjectData))
+			return
+
+		const fileTypeData = projectManager.currentProject.data.fileTypeData
+
 		const fileType = await fileTypeData.get(this.path)
 
 		if (fileType === null) return
@@ -33,6 +39,13 @@ export class TextTab extends Tab {
 	}
 
 	public async mountEditor(element: HTMLElement) {
+		if (!projectManager.currentProject) return
+		if (!(projectManager.currentProject.data instanceof BedrockProjectData))
+			return
+
+		const fileTypeData = projectManager.currentProject.data.fileTypeData
+		const schemaData = projectManager.currentProject.data.schemaData
+
 		this.editor = markRaw(
 			monaco.create(element, {
 				fontFamily: 'Consolas',
@@ -51,18 +64,17 @@ export class TextTab extends Tab {
 
 		this.fileType = await fileTypeData.get(this.path)
 
-		const schema = await schemaData.get(this.fileType.schema)
-
-		addSchema({
-			uri: this.fileType.schema,
-			fileMatch: [this.path],
-			schema,
-		})
+		schemaData.applySchema(this.path, this.fileType.schema)
 	}
 
 	public unmountEditor() {
-		if (this.fileType !== null && this.fileType.schema !== undefined)
-			removeSchema(this.fileType.schema)
+		if (!projectManager.currentProject) return
+		if (!(projectManager.currentProject.data instanceof BedrockProjectData))
+			return
+
+		const schemaData = projectManager.currentProject.data.schemaData
+
+		schemaData.releaseSchema()
 
 		this.model?.dispose()
 		this.editor?.dispose()

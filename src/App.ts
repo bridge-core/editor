@@ -10,16 +10,12 @@ import { TabManager } from '@/components/TabSystem/TabManager'
 import { Sidebar } from '@/components/Sidebar/Sidebar'
 import { FileExplorer } from '@/components/FileExplorer/FileExplorer'
 import { Settings } from '@/components/Windows/Settings/Settings'
-import { FileTypeData } from '@/libs/data/FileTypeData'
-import { SchemaData } from '@/libs/data/SchemaData'
 
 export const toolbar = new Toolbar()
 export const themeManager = new ThemeManager()
 export const projectManager = new ProjectManager()
 export const fileSystem = getFileSystem()
 export const data = new Data()
-export const fileTypeData = new FileTypeData()
-export const schemaData = new SchemaData()
 export const windows = new Windows()
 export const tabManager = new TabManager()
 export const sidebar = new Sidebar()
@@ -53,8 +49,6 @@ export async function setup() {
 
 	console.time('[App] Data')
 	await data.load()
-	await fileTypeData.load(data)
-	await schemaData.load(data)
 	console.timeEnd('[App] Data')
 
 	console.timeEnd('[App] Setup')
