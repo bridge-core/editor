@@ -1,6 +1,6 @@
 <template>
 	<span
-		class="material-symbols-rounded select-none text-background text-text"
+		class="material-symbols-rounded select-none"
 		ref="element"
 		:style="color ? { color: `var(--theme-color-${color})` } : {}"
 	>
@@ -9,6 +9,7 @@
 </template>
 
 <script setup lang="ts">
+// TODO: Remove this later when we fix the data!
 const mdiMap: { [key: string]: string | undefined } = {
 	'mdi-human': 'accessibility_new',
 	'mdi-earth': 'public',

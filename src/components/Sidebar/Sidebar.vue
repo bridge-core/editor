@@ -15,6 +15,31 @@
 				v-if="item.type === 'divider'"
 			/>
 		</div>
+		<div v-for="item in sidebar.notifications">
+			<div
+				class="w-10 h-10 rounded flex justify-center items-center bg-[var(--color)] hover:bg-[var(--hover-color)] transition-colors duration-100 ease-out cursor-pointer group"
+				:style="{
+					'--color': item.color
+						? `var(--theme-color-${item.color})`
+						: 'var(--theme-color-background)',
+					'--hover-color': item.color
+						? `var(--theme-color-text)`
+						: 'var(--theme-color-primary)',
+				}"
+				@click="item.callback"
+			>
+				<Icon
+					:icon="item.icon!"
+					:color="undefined"
+					class="group-hover:text-[var(--hover-color)] text-text transition-colors duration-100 ease-out"
+					:style="{
+						'--hover-color': item.color
+							? `var(--theme-color-background)`
+							: 'var(--theme-color-text)',
+					}"
+				/>
+			</div>
+		</div>
 	</div>
 </template>
 
