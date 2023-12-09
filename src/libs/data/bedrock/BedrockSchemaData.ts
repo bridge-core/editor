@@ -94,8 +94,6 @@ export class BedrockSchemaData {
 	}
 
 	private async runScript(scriptPath: string, scriptData: any) {
-		console.log('Running schema script', scriptData)
-
 		const result = await (
 			await this.runtime.run(
 				scriptPath,
