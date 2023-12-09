@@ -62,12 +62,7 @@ export class BedrockSchemaData {
 	}
 
 	private async runScripts() {
-		// for (const script of Object.keys(this.schemaScripts).map((path) =>
-		// 	//the current data appends this to the front which should ignore to get a patch the data loader can actually use
-		// 	path.substring('file:///data/'.length)
-		// )) {
-		// 	console.log(script)
-		// }
+		const promises = []
 
 		for (const scriptPath of Object.keys(this.schemaScripts)) {
 			if (
@@ -81,8 +76,10 @@ export class BedrockSchemaData {
 					? { script: this.schemaScripts[scriptPath] }
 					: this.schemaScripts[scriptPath]
 
-			await this.runScript(scriptPath, scriptData)
+			promises.push(this.runScript(scriptPath, scriptData))
 		}
+
+		await Promise.all(promises)
 
 		setSchemas([
 			...Object.keys(this.schemas).map((schema) => ({
