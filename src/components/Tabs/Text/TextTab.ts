@@ -1,4 +1,4 @@
-import { Component, markRaw, ref } from 'vue'
+import { Component, ref } from 'vue'
 import { Tab } from '@/components/TabSystem/Tab'
 import TextTabComponent from '@/components/Tabs/Text/TextTab.vue'
 import { Uri, editor as monaco } from 'monaco-editor'
@@ -9,7 +9,7 @@ import { BedrockProjectData } from '@/libs/data/bedrock/BedrockProjectData'
 import { setMonarchTokensProvider } from '@/libs/monaco/Json'
 
 export class TextTab extends Tab {
-	public component: Component | null = markRaw(TextTabComponent)
+	public component: Component | null = TextTabComponent
 	public icon = ref('data_object')
 
 	private editor: monaco.IStandaloneCodeEditor | null = null
@@ -30,13 +30,13 @@ export class TextTab extends Tab {
 
 		const fileTypeData = projectManager.currentProject.data.fileTypeData
 
-		const fileType = await fileTypeData.get(this.path)
+		this.fileType = await fileTypeData.get(this.path)
 
-		if (fileType === null) return
+		if (this.fileType === null) return
 
-		if (fileType.icon === undefined) return
+		if (this.fileType.icon === undefined) return
 
-		this.icon.value = fileType.icon
+		this.icon.value = this.fileType.icon
 	}
 
 	public async mountEditor(element: HTMLElement) {
@@ -44,30 +44,27 @@ export class TextTab extends Tab {
 		if (!(projectManager.currentProject.data instanceof BedrockProjectData))
 			return
 
-		const fileTypeData = projectManager.currentProject.data.fileTypeData
 		const schemaData = projectManager.currentProject.data.schemaData
 
-		this.editor = markRaw(
-			monaco.create(element, {
-				fontFamily: 'Consolas',
-				//@ts-ignore Monaco types have not been update yet
-				'bracketPairColorization.enabled': settings.get(
-					'bracketPairColorization'
-				),
-			})
-		)
+		this.editor = monaco.create(element, {
+			fontFamily: 'Consolas',
+			//@ts-ignore Monaco types have not been update yet
+			'bracketPairColorization.enabled': settings.get(
+				'bracketPairColorization'
+			),
+		})
 
 		this.updateEditorTheme()
 
 		const fileContent = await fileSystem.readFileText(this.path)
 
-		this.model = markRaw(
-			monaco.createModel(fileContent, 'json', Uri.file(this.path))
+		this.model = monaco.createModel(
+			fileContent,
+			'json',
+			Uri.file(this.path)
 		)
 
 		this.editor.setModel(this.model)
-
-		this.fileType = await fileTypeData.get(this.path)
 
 		schemaData.applySchema(this.path, this.fileType.schema)
 	}
@@ -197,14 +194,23 @@ export class TextTab extends Tab {
 
 		monaco.setTheme(`bridge`)
 
+		let typeIdentifiers: string[] = []
+		let variables: string[] = []
+
+		if (this.fileType.highlighterConfiguration) {
+			typeIdentifiers =
+				this.fileType.highlighterConfiguration.typeIdentifiers ?? []
+			variables = this.fileType.highlighterConfiguration.variables ?? []
+		}
+
 		setMonarchTokensProvider({
 			defaultToken: 'invalid',
 
 			keywords: ['format_version'],
 			atoms: ['true', 'false', 'null'],
-			typeIdentifiers: [],
+			typeIdentifiers,
 			definitions: [],
-			variables: ['metadata', 'header', 'modules'],
+			variables,
 
 			symbols: /[=><!~?:&|+\-*\/\^%]+/,
 			escapes:

@@ -1,18 +1,18 @@
 <template>
 	<div class="w-full h-full">
-		<div class="w-full h-8 flex gap-4">
+		<div class="w-full h-8 flex gap-4 mb-2">
 			<div
 				v-for="tab in instance.tabs.value"
 				class="flex items-center gap-1"
 			>
 				<Icon
 					v-if="tab.icon"
-					:icon="<any>tab.icon"
+					:icon="tab.icon.value ?? 'help'"
 					class="text-base text-behaviorPack"
 				/>
 
 				<button class="font-inter">
-					{{ tab.name }}
+					{{ tab.name.value ?? 'Tab' }}
 				</button>
 
 				<IconButton

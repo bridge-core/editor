@@ -1,12 +1,12 @@
 import { v4 as uuid } from 'uuid'
 import { Tab } from './Tab'
-import { Ref, ref } from 'vue'
+import { Ref, ref, shallowRef } from 'vue'
 
 export class TabSystem {
 	public id = uuid()
-	public tabs: Ref<Tab[]> = ref([])
-
-	public selectedTab: Ref<Tab | null> = ref(null)
+	// Monaco editor freezes browser when made deep reactive, so instead we make it shallow reactive
+	public tabs: Ref<Tab[]> = shallowRef([])
+	public selectedTab: Ref<Tab | null> = shallowRef(null)
 
 	public async addTab(tab: Tab, select = true) {
 		if (this.tabs.value.includes(tab)) {
@@ -15,11 +15,11 @@ export class TabSystem {
 			return
 		}
 
+		await tab.setup()
+
 		this.tabs.value.push(tab)
 
 		if (select) await this.selectTab(tab)
-
-		await tab.setup()
 	}
 
 	public async selectTab(tab: Tab) {
@@ -40,14 +40,13 @@ export class TabSystem {
 
 		this.selectedTab.value = null
 
-		tab.destroy()
-
 		const tabIndex = this.tabs.value.indexOf(tab)
 
 		this.tabs.value.splice(tabIndex, 1)
 
-		if (this.tabs.value.length == 0) return
+		if (this.tabs.value.length != 0)
+			await this.selectTab(this.tabs.value[Math.max(tabIndex - 1, 0)])
 
-		await this.selectTab(this.tabs.value[Math.max(tabIndex - 1, 0)])
+		await tab.destroy()
 	}
 }
