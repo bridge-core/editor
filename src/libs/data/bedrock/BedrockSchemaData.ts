@@ -16,13 +16,6 @@ export class BedrockSchemaData {
 			...(await data.get('packages/minecraftBedrock/schemas.json')),
 		}
 
-		this.schemas = {
-			'file:///data/packages/minecraftBedrock/schema/langDef/main.json':
-				this.schemas[
-					'file:///data/packages/minecraftBedrock/schema/langDef/main.json'
-				],
-		}
-
 		this.schemaScripts = await data.get(
 			'packages/minecraftBedrock/schemaScripts.json'
 		)

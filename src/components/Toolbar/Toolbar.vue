@@ -7,7 +7,7 @@
 				@click="item.action"
 			>
 				<span
-					class="text-sm group-hover:text-primary transition-colors duration-100 ease-out font-inter"
+					class="text-sm group-hover:text-primary transition-colors duration-100 ease-out font-inter select-none"
 					>{{ t(item.name) }}</span
 				>
 			</button>

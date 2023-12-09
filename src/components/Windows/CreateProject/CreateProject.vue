@@ -283,7 +283,7 @@ import InformativeToggle from '@/components/Common/InformativeToggle.vue'
 import Expandable from '@/components/Common/Expandable.vue'
 import Dropdown from '@/components/Common/Dropdown.vue'
 
-import { Ref, computed, onMounted, ref } from 'vue'
+import { Ref, computed, onMounted, ref, watch } from 'vue'
 import { IPackType } from 'mc-project-core'
 import { packs } from '@/libs/project/ProjectManager'
 import { ConfigurableFile } from '@/libs/project/create/files/configurable/ConfigurableFile'

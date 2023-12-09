@@ -3,7 +3,7 @@ import { Tab } from '@/components/TabSystem/Tab'
 import TextTabComponent from '@/components/Tabs/Text/TextTab.vue'
 import { Uri, editor as monaco } from 'monaco-editor'
 import { keyword } from 'color-convert'
-import { fileSystem, projectManager, themeManager } from '@/App'
+import { fileSystem, projectManager, settings, themeManager } from '@/App'
 import { basename } from '@/libs/path'
 import { BedrockProjectData } from '@/libs/data/bedrock/BedrockProjectData'
 
@@ -49,6 +49,10 @@ export class TextTab extends Tab {
 		this.editor = markRaw(
 			monaco.create(element, {
 				fontFamily: 'Consolas',
+				//@ts-ignore Monaco types have not been update yet
+				'bracketPairColorization.enabled': settings.get(
+					'bracketPairColorization'
+				),
 			})
 		)
 

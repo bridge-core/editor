@@ -63,7 +63,7 @@
 									@click="toggle"
 								>
 									<span class="font-inter">{{
-										settings.language
+										settings[item.id]
 									}}</span>
 
 									<Icon
@@ -96,7 +96,7 @@
 										class="hover:bg-primary text-start p-1 rounded transition-colors duration-100 ease-out font-inter"
 										:class="{
 											'bg-menu':
-												settings.language ===
+												settings[item.id] ===
 												dropdownItem,
 										}"
 									>
@@ -106,6 +106,13 @@
 							</div>
 						</template>
 					</Dropdown>
+					<Switch
+						:model-value="settings[item.id]"
+						@update:model-value="
+							(value) => settingsManager.set(item.id, value)
+						"
+						v-if="item.type === 'switch'"
+					/>
 					<p class="text-textAlternate">{{ item.description }}</p>
 				</div>
 			</div>
@@ -118,6 +125,7 @@ import SidebarWindow from '@/components/Windows/SidebarWindow.vue'
 import LabeledInput from '@/components/Common/LabeledInput.vue'
 import Icon from '@/components/Common/Icon.vue'
 import Dropdown from '@/components/Common/Dropdown.vue'
+import Switch from '@/components/Common/Switch.vue'
 import { settings as settingsManager } from '@/App'
 
 import { Ref, ref } from 'vue'

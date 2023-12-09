@@ -93,7 +93,7 @@ export class Settings {
 		const me = this
 
 		function updateSettings() {
-			settings.value = me.settings
+			settings.value = { ...me.settings }
 		}
 
 		onMounted(() => {
