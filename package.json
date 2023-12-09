@@ -12,6 +12,7 @@
 	},
 	"dependencies": {
 		"bridge-common-utils": "^0.3.3",
+		"bridge-js-runtime": "^0.4.1",
 		"color-convert": "^2.0.1",
 		"dash-compiler": "github:bridge-core/dash-compiler#8fa35c73292f6382747d0f411fca26431a6d2c8e",
 		"fflate": "^0.8.1",

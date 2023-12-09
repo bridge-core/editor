@@ -25,6 +25,8 @@ function updateDefaults() {
 export function setSchemas(schemas: SchemaDefinition[]) {
 	settings.schemas = schemas
 
+	console.log('set schemas', schemas)
+
 	updateDefaults()
 }
 

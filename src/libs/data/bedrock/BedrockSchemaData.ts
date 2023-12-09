@@ -1,8 +1,14 @@
 import { setSchemas } from '@/libs/monaco/Json'
 import { Data } from '../Data'
+import { Runtime } from '@/libs/runtime/Runtime'
+import { fileSystem, projectManager } from '@/App'
+import { basename, join } from '@/libs/path'
 
 export class BedrockSchemaData {
-	public schemas: any
+	private schemas: any = {}
+	private dynamicSchemas: any = {}
+	private schemaScripts: any = {}
+	private runtime = new Runtime()
 
 	public async load(data: Data) {
 		this.schemas = {
@@ -10,12 +16,18 @@ export class BedrockSchemaData {
 			...(await data.get('packages/minecraftBedrock/schemas.json')),
 		}
 
-		setSchemas(
-			Object.keys(this.schemas).map((schema) => ({
-				uri: schema,
-				schema: this.schemas[schema],
-			}))
+		this.schemas = {
+			'file:///data/packages/minecraftBedrock/schema/langDef/main.json':
+				this.schemas[
+					'file:///data/packages/minecraftBedrock/schema/langDef/main.json'
+				],
+		}
+
+		this.schemaScripts = await data.get(
+			'packages/minecraftBedrock/schemaScripts.json'
 		)
+
+		await this.runScripts()
 	}
 
 	public get(path: string): any | null {
@@ -23,21 +35,111 @@ export class BedrockSchemaData {
 	}
 
 	public applySchema(path: string, schemaUri: string) {
-		setSchemas(
-			Object.keys(this.schemas).map((schema) => ({
+		setSchemas([
+			...Object.keys(this.schemas).map((schema) => ({
 				uri: schema,
 				fileMatch: schema === schemaUri ? [path] : undefined,
 				schema: this.schemas[schema],
-			}))
-		)
+			})),
+			...Object.keys({ ...this.dynamicSchemas }).map((schema) => ({
+				uri: schema,
+				schema: this.dynamicSchemas[schema],
+			})),
+		])
 	}
 
 	public releaseSchema() {
-		setSchemas(
-			Object.keys(this.schemas).map((schema) => ({
+		setSchemas([
+			...Object.keys(this.schemas).map((schema) => ({
 				uri: schema,
 				schema: this.schemas[schema],
-			}))
-		)
+			})),
+			...Object.keys({ ...this.dynamicSchemas }).map((schema) => ({
+				uri: schema,
+				schema: this.dynamicSchemas[schema],
+			})),
+		])
+	}
+
+	private async runScripts() {
+		// for (const script of Object.keys(this.schemaScripts).map((path) =>
+		// 	//the current data appends this to the front which should ignore to get a patch the data loader can actually use
+		// 	path.substring('file:///data/'.length)
+		// )) {
+		// 	console.log(script)
+		// }
+
+		for (const scriptPath of Object.keys(this.schemaScripts)) {
+			if (
+				scriptPath !==
+				'file:///data/packages/minecraftBedrock/schemaScript/lang/langPath.json'
+			)
+				continue
+
+			let scriptData =
+				typeof this.schemaScripts[scriptPath] === 'string'
+					? { script: this.schemaScripts[scriptPath] }
+					: this.schemaScripts[scriptPath]
+
+			await this.runScript(scriptPath, scriptData)
+		}
+
+		setSchemas([
+			...Object.keys(this.schemas).map((schema) => ({
+				uri: schema,
+				schema: this.schemas[schema],
+			})),
+			...Object.keys({ ...this.dynamicSchemas }).map((schema) => ({
+				uri: schema,
+				schema: this.dynamicSchemas[schema],
+			})),
+		])
+	}
+
+	private async runScript(scriptPath: string, scriptData: any) {
+		console.log('Running schema script', scriptData)
+
+		const result = await (
+			await this.runtime.run(
+				scriptPath,
+				{
+					readdir: async (path: string) => {
+						return (
+							await fileSystem.readDirectoryEntries(path)
+						).map((entry) => {
+							return {
+								kind: entry.type,
+								name: basename(entry.path),
+							}
+						})
+					},
+					resolvePackPath(packId: string, path: string) {
+						return join(
+							projectManager.currentProject?.path ?? '',
+							'RP',
+							path
+						)
+					},
+				},
+				`
+			___module.execute = async function(){
+				${scriptData.script}
+			}
+		`
+			)
+		).execute()
+
+		if (scriptData.type === 'enum') {
+			this.dynamicSchemas[
+				'file:///' +
+					join(
+						'data/packages/minecraftBedrock/schema/',
+						scriptData.generateFile
+					)
+			] = {
+				type: 'string',
+				enum: result,
+			}
+		}
 	}
 }
