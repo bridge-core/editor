@@ -204,7 +204,7 @@ export class TextTab extends Tab {
 		}
 
 		setMonarchTokensProvider({
-			defaultToken: 'invalid',
+			defaultToken: 'identifier',
 
 			keywords: ['format_version'],
 			atoms: ['true', 'false', 'null'],
@@ -238,6 +238,12 @@ export class TextTab extends Tab {
 					[/[:,]/, 'identifier'],
 
 					[/"/, 'identifier', '@string'],
+
+					[/\/\*\*(?!\/)/, 'comment.doc', '@jsdoc'],
+
+					[/\/\*/, 'comment', '@comment'],
+
+					[/\/\/.*$/, 'comment'],
 				],
 
 				whitespace: [[/[ \t\r\n]+/, '']],
@@ -268,6 +274,22 @@ export class TextTab extends Tab {
 					],
 
 					[/(@digits)/, 'number'],
+				],
+
+				comment: [
+					[/[^\/*]+/, 'comment'],
+
+					[/\*\//, 'comment', '@pop'],
+
+					[/[\/*]/, 'comment'],
+				],
+
+				jsdoc: [
+					[/[^\/*]+/, 'comment.doc'],
+
+					[/\*\//, 'comment.doc', '@pop'],
+
+					[/[\/*]/, 'comment.doc'],
 				],
 			},
 		})
