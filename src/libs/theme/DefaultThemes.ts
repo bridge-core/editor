@@ -37,6 +37,9 @@ export const dark = {
 		worldTemplate: '#4caf50',
 	},
 	highlighter: {
+		invalid: {
+			color: '#ff00ff',
+		},
 		type: {
 			color: '#a6e22e',
 		},

@@ -6,6 +6,7 @@ import { keyword } from 'color-convert'
 import { fileSystem, projectManager, settings, themeManager } from '@/App'
 import { basename } from '@/libs/path'
 import { BedrockProjectData } from '@/libs/data/bedrock/BedrockProjectData'
+import { setMonarchTokensProvider } from '@/libs/monaco/Json'
 
 export class TextTab extends Tab {
 	public component: Component | null = markRaw(TextTabComponent)
@@ -195,5 +196,74 @@ export class TextTab extends Tab {
 		})
 
 		monaco.setTheme(`bridge`)
+
+		setMonarchTokensProvider({
+			defaultToken: 'invalid',
+
+			keywords: ['format_version'],
+			atoms: ['true', 'false', 'null'],
+			typeIdentifiers: [],
+			definitions: [],
+			variables: ['metadata', 'header', 'modules'],
+
+			symbols: /[=><!~?:&|+\-*\/\^%]+/,
+			escapes:
+				/\\(?:[abfnrtv\\"']|x[0-9A-Fa-f]{1,4}|u[0-9A-Fa-f]{4}|U[0-9A-Fa-f]{8})/,
+			digits: /\d+(_+\d+)*/,
+
+			tokenizer: {
+				root: [
+					[/[{}\[\]]/, 'delimiter.bracket'],
+
+					{ include: '@whitespace' },
+
+					{ include: '@number' },
+
+					[
+						/[a-z_$][\w$]*/,
+						{
+							cases: {
+								'@atoms': 'type',
+								'@default': 'identifier',
+							},
+						},
+					],
+
+					[/[:,]/, 'identifier'],
+
+					[/"/, 'identifier', '@string'],
+				],
+
+				whitespace: [[/[ \t\r\n]+/, '']],
+
+				string: [
+					[/@escapes/, 'keyword'],
+
+					[
+						/([^(\\")])+/,
+						{
+							cases: {
+								'@keywords': 'keyword',
+								'@variables': 'variable',
+								'@default': 'string',
+							},
+						},
+					],
+
+					[/(?<!\\)"/, 'identifier', '@pop'],
+				],
+
+				number: [
+					[/(@digits)[eE]([\-+]?(@digits))?/, 'number.float'],
+
+					[
+						/(@digits)\.(@digits)([eE][\-+]?(@digits))?/,
+						'number.float',
+					],
+
+					[/(@digits)/, 'number'],
+				],
+			},
+		})
 	}
 }
