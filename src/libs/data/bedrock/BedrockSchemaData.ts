@@ -3,6 +3,7 @@ import { Data } from '../Data'
 import { Runtime } from '@/libs/runtime/Runtime'
 import { fileSystem, projectManager } from '@/App'
 import { basename, join } from '@/libs/path'
+import { CompatabilityFileSystem } from '@/libs/fileSystem/CompatabilityFileSystem'
 
 export class BedrockSchemaData {
 	private schemas: any = {}
@@ -87,20 +88,15 @@ export class BedrockSchemaData {
 	}
 
 	private async runScript(scriptPath: string, scriptData: any) {
+		const compatabilityFileSystem = new CompatabilityFileSystem(fileSystem)
+
 		const result = await (
 			await this.runtime.run(
 				scriptPath,
 				{
-					readdir: async (path: string) => {
-						return (
-							await fileSystem.readDirectoryEntries(path)
-						).map((entry) => {
-							return {
-								kind: entry.type,
-								name: basename(entry.path),
-							}
-						})
-					},
+					readdir: compatabilityFileSystem.readdir.bind(
+						compatabilityFileSystem
+					),
 					resolvePackPath(packId: string, path: string) {
 						return join(
 							projectManager.currentProject?.path ?? '',

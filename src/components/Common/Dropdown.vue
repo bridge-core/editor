@@ -1,17 +1,3 @@
-<template>
-	<div>
-		<div ref="sizing">
-			<slot name="main" :expanded="expanded" :toggle="toggleExpanded" />
-		</div>
-
-		<div class="absolute" ref="container">
-			<div v-if="expanded">
-				<slot name="choices" :collapse="toggleExpanded" />
-			</div>
-		</div>
-	</div>
-</template>
-
 <script setup lang="ts">
 import { Ref, onMounted, ref } from 'vue'
 
@@ -38,3 +24,17 @@ onMounted(() => {
 	container.value.style.width = `${sizing.value.clientWidth}px`
 })
 </script>
+
+<template>
+	<div>
+		<div ref="sizing">
+			<slot name="main" :expanded="expanded" :toggle="toggleExpanded" />
+		</div>
+
+		<div class="absolute" ref="container">
+			<div v-if="expanded">
+				<slot name="choices" :collapse="toggleExpanded" />
+			</div>
+		</div>
+	</div>
+</template>

@@ -266,7 +266,7 @@
 				icon="add"
 				text="Create"
 				@click="create"
-				class="mt-4 mr-8 mb-8 self-end transition-[color, opacity]"
+				class="mt-4 mr-8 mb-8 self-end transition-[color, opacity] font-inter"
 				:enabled="dataValid"
 			/>
 		</div>

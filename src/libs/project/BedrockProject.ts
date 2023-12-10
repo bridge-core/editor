@@ -30,4 +30,8 @@ export class BedrockProject extends Project {
 		this.dashService.setNewOutputFileSystem(fileSystem)
 		this.dashService.build()
 	}
+
+	public async build() {
+		await this.dashService.build()
+	}
 }

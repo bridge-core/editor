@@ -70,11 +70,8 @@ export class ProjectManager {
 		config: CreateProjectConfig,
 		fileSystem: BaseFileSystem
 	) {
-		const projectData = new BedrockProjectData(data)
-		await projectData.load()
-
 		const packDefinitions: { id: string; defaultPackPath: string }[] =
-			projectData.packDefinitions
+			await data.get('packages/minecraftBedrock/packDefinitions.json')
 		packDefinitions.push({
 			id: 'bridge',
 			defaultPackPath: '.bridge',
