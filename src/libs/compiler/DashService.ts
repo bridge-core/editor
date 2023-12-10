@@ -11,14 +11,16 @@ export class DashService {
 		fileSystem,
 		'inputFileSystem'
 	)
-	private outputFileSystem = new WorkerFileSystemEntryPoint(
-		this.worker,
-		fileSystem,
-		'outputFileSystem'
-	)
+	private outputFileSystem: WorkerFileSystemEntryPoint
 
 	constructor(public project: BedrockProject) {
 		this.worker.onmessage = this.onWorkerMessage.bind(this)
+
+		this.outputFileSystem = new WorkerFileSystemEntryPoint(
+			this.worker,
+			project.outputFileSystem,
+			'outputFileSystem'
+		)
 	}
 
 	public async onWorkerMessage(event: MessageEvent) {

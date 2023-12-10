@@ -5,6 +5,7 @@ import Editor from './components/Editor/Editor.vue'
 import Changelog from '@/components/Windows/Changelog/Changelog.vue'
 import CreateProject from '@/components/Windows/CreateProject/CreateProject.vue'
 import Settings from '@/components/Windows/Settings/Settings.vue'
+import Confirm from '@/components/Windows/Confirm/Confirm.vue'
 
 import { onMounted } from 'vue'
 import { setup } from '@/App'
@@ -22,5 +23,6 @@ onMounted(() => {
 		<Changelog />
 		<CreateProject />
 		<Settings />
+		<Confirm />
 	</main>
 </template>

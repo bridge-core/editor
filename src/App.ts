@@ -10,6 +10,7 @@ import { TabManager } from '@/components/TabSystem/TabManager'
 import { Sidebar } from '@/components/Sidebar/Sidebar'
 import { FileExplorer } from '@/components/FileExplorer/FileExplorer'
 import { Settings } from '@/components/Windows/Settings/Settings'
+import { ConfirmWindow } from './components/Windows/Confirm/Confirm'
 
 export const toolbar = new Toolbar()
 export const themeManager = new ThemeManager()
@@ -21,6 +22,7 @@ export const tabManager = new TabManager()
 export const sidebar = new Sidebar()
 export const fileExplorer = new FileExplorer()
 export const settings = new Settings()
+export const confirmWindow = new ConfirmWindow()
 
 export async function setup() {
 	console.time('[App] Setup')

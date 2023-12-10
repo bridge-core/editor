@@ -1,3 +1,65 @@
+<script setup lang="ts">
+import Logo from '@/components/Common/Logo.vue'
+import IconButton from '@/components/Common/IconButton.vue'
+
+import { projectManager, fileSystem, windows } from '@/App'
+import { PWAFileSystem } from '@/libs/fileSystem/PWAFileSystem'
+import { computed, ref } from 'vue'
+import { useTranslate } from '@/libs/locales/Locales'
+import { ProjectInfo } from '@/libs/project/Project'
+import { get, set } from 'idb-keyval'
+
+const t = useTranslate()
+
+const projects = projectManager.useProjects()
+const currentProject = projectManager.useCurrentProject()
+let fileSystemSetup = ref(true)
+if (fileSystem instanceof PWAFileSystem) fileSystemSetup = fileSystem.useSetup()
+
+const suggestSelectBridgeFolder = computed(
+	() => fileSystem instanceof PWAFileSystem && !fileSystemSetup.value
+)
+
+async function selectBridgeFolder() {
+	if (!(fileSystem instanceof PWAFileSystem)) return
+
+	const savedHandle: undefined | FileSystemDirectoryHandle = await get(
+		'bridgeFolderHandle'
+	)
+
+	if (
+		!fileSystem.baseHandle &&
+		savedHandle &&
+		(await fileSystem.ensurePermissions(savedHandle))
+	) {
+		fileSystem.setBaseHandle(savedHandle)
+
+		return
+	}
+
+	try {
+		fileSystem.setBaseHandle(
+			(await window.showDirectoryPicker({
+				mode: 'readwrite',
+			})) ?? null
+		)
+
+		set('bridgeFolderHandle', fileSystem.baseHandle)
+	} catch {}
+}
+
+async function createProject() {
+	if (fileSystem instanceof PWAFileSystem && !fileSystem.setup)
+		await selectBridgeFolder()
+
+	windows.open('createProject')
+}
+
+async function openProject(project: ProjectInfo) {
+	projectManager.loadProject(project.name)
+}
+</script>
+
 <template>
 	<main
 		class="w-full h-app flex justify-center items-center"
@@ -82,65 +144,3 @@
 		</div>
 	</main>
 </template>
-
-<script setup lang="ts">
-import Logo from '@/components/Common/Logo.vue'
-import IconButton from '@/components/Common/IconButton.vue'
-
-import { projectManager, fileSystem, windows } from '@/App'
-import { PWAFileSystem } from '@/libs/fileSystem/PWAFileSystem'
-import { computed, ref } from 'vue'
-import { useTranslate } from '@/libs/locales/Locales'
-import { ProjectInfo } from '@/libs/project/Project'
-import { get, set } from 'idb-keyval'
-
-const t = useTranslate()
-
-const projects = projectManager.useProjects()
-const currentProject = projectManager.useCurrentProject()
-let fileSystemSetup = ref(true)
-if (fileSystem instanceof PWAFileSystem) fileSystemSetup = fileSystem.useSetup()
-
-const suggestSelectBridgeFolder = computed(
-	() => fileSystem instanceof PWAFileSystem && !fileSystemSetup.value
-)
-
-async function selectBridgeFolder() {
-	if (!(fileSystem instanceof PWAFileSystem)) return
-
-	const savedHandle: undefined | FileSystemDirectoryHandle = await get(
-		'bridgeFolderHandle'
-	)
-
-	if (
-		!fileSystem.baseHandle &&
-		savedHandle &&
-		(await fileSystem.ensurePermissions(savedHandle))
-	) {
-		fileSystem.setBaseHandle(savedHandle)
-
-		return
-	}
-
-	try {
-		fileSystem.setBaseHandle(
-			(await window.showDirectoryPicker({
-				mode: 'readwrite',
-			})) ?? null
-		)
-
-		set('bridgeFolderHandle', fileSystem.baseHandle)
-	} catch {}
-}
-
-async function createProject() {
-	if (fileSystem instanceof PWAFileSystem && !fileSystem.setup)
-		await selectBridgeFolder()
-
-	windows.open('createProject')
-}
-
-async function openProject(project: ProjectInfo) {
-	projectManager.loadProject(project.name)
-}
-</script>

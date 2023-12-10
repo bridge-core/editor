@@ -1,4 +1,6 @@
 import { fileExplorer } from '@/App'
+import { Ref, ref } from 'vue'
+import { v4 as uuid } from 'uuid'
 
 export class Sidebar {
 	items: {
@@ -7,8 +9,9 @@ export class Sidebar {
 		callback?: () => void
 	}[] = []
 
-	notifications: { icon?: string; color?: string; callback?: () => void }[] =
-		[]
+	notifications: Ref<
+		{ icon?: string; color?: string; callback?: () => void; id: string }[]
+	> = ref([])
 
 	constructor() {
 		this.addButton('folder', () => {
@@ -18,13 +21,18 @@ export class Sidebar {
 		this.addButton('manufacturing', () => {})
 		this.addButton('extension', () => {})
 		this.addDivider()
-		// this.addButton('download', () => {})
-		// this.addButton('link', () => {})
-		// this.addButton('help', () => {})
 
-		this.addNotification('download', () => {}, 'primary')
-		this.addNotification('link', () => {}, 'skinPack')
-		this.addNotification('help', () => {})
+		this.addNotification(
+			'download',
+			() => {
+				window.open('https://bridge-core.app/guide/download/')
+			},
+			'primary'
+		)
+		this.addNotification('link', () => {}, 'warning')
+		this.addNotification('help', () => {
+			window.open('https://bridge-core.app/guide/')
+		})
 	}
 
 	public addButton(icon: string, callback: () => void) {
@@ -42,10 +50,28 @@ export class Sidebar {
 	}
 
 	public addNotification(icon: string, callback: () => void, color?: string) {
-		this.notifications.push({
+		this.notifications.value.push({
 			icon,
 			callback,
 			color,
+			id: uuid(),
 		})
+
+		this.notifications.value = [...this.notifications.value]
+	}
+
+	public activateNotification(item: {
+		icon?: string
+		color?: string
+		callback?: () => void
+		id: string
+	}) {
+		this.notifications.value.splice(
+			this.notifications.value.indexOf(item),
+			1
+		)
+		this.notifications.value = [...this.notifications.value]
+
+		if (item.callback) item.callback()
 	}
 }

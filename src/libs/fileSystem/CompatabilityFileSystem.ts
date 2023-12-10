@@ -8,8 +8,6 @@ export class CompatabilityFileSystem extends FileSystem {
 	}
 
 	async readFile(path: string): Promise<File> {
-		console.log('Reading file from ', path)
-
 		const content = await this.fileSystem.readFile(path)
 
 		const file = new File([new Blob([content])], basename(path))
@@ -17,8 +15,6 @@ export class CompatabilityFileSystem extends FileSystem {
 		return file
 	}
 	async writeFile(path: string, content: string | Uint8Array): Promise<void> {
-		console.log('Writing file to ', path)
-
 		let currentPath = ''
 
 		const pathSlices = path.split(sep)
@@ -32,8 +28,6 @@ export class CompatabilityFileSystem extends FileSystem {
 		await this.fileSystem.writeFile(path, content)
 	}
 	async unlink(path: string): Promise<void> {
-		console.log('Deleting file ', path)
-
 		throw new Error('Method not implemented.')
 	}
 	async readdir(path: string): Promise<
@@ -42,8 +36,6 @@ export class CompatabilityFileSystem extends FileSystem {
 			kind: 'file' | 'directory'
 		}[]
 	> {
-		console.log('Reading directory ', path)
-
 		if (!(await this.fileSystem.exists(path)))
 			await this.fileSystem.makeDirectory(path)
 
@@ -54,8 +46,6 @@ export class CompatabilityFileSystem extends FileSystem {
 		)
 	}
 	async mkdir(path: string): Promise<void> {
-		console.log('Creating directory ', path)
-
 		throw new Error('Method not implemented.')
 	}
 	async lastModified(filePath: string): Promise<number> {
