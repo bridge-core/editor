@@ -8,7 +8,7 @@
 		"dev:host": "vite --host",
 		"serve": "vite preview",
 		"check": "tsc --project tsconfig.json --noEmit",
-		"build": "vue-tsc && vite build"
+		"build": "vue-tsc --noEmit && vite build"
 	},
 	"dependencies": {
 		"bridge-common-utils": "^0.3.3",

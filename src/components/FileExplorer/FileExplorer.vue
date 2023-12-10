@@ -79,7 +79,7 @@ import {
 	watch,
 } from 'vue'
 import { basename, join } from '@/libs/path'
-import { BedrockProjectData } from '@/libs/data/BedrockProjectData'
+import { BedrockProjectData } from '@/libs/data/bedrock/BedrockProjectData'
 import { IPackType } from 'mc-project-core'
 
 const currentProject = projectManager.useCurrentProject()
@@ -91,7 +91,7 @@ const currentProjectPackDefinitions: Ref<IPackType[]> = computed(() => {
 	if (!currentProject.value) return []
 	if (!data) return []
 
-	return data.packDefinitions.filter((pack) =>
+	return data.packDefinitions.filter((pack: IPackType) =>
 		currentProject.value?.packs.includes(pack.id)
 	)
 })
@@ -101,8 +101,9 @@ const selectedPackDefinition: ComputedRef<IPackType | null> = computed(() => {
 	if (!data) return null
 
 	return (
-		data.packDefinitions.find((pack) => pack.id === selectedPack.value) ??
-		null
+		data.packDefinitions.find(
+			(pack: IPackType) => pack.id === selectedPack.value
+		) ?? null
 	)
 })
 const selectedPackPath: ComputedRef<string> = computed(() => {
@@ -111,8 +112,9 @@ const selectedPackPath: ComputedRef<string> = computed(() => {
 
 	return join(
 		currentProject.value.path,
-		data.packDefinitions.find((pack) => pack.id === selectedPack.value)
-			?.defaultPackPath ?? ''
+		data.packDefinitions.find(
+			(pack: IPackType) => pack.id === selectedPack.value
+		)?.defaultPackPath ?? ''
 	)
 })
 

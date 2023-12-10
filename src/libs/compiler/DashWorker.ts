@@ -4,6 +4,7 @@ import { WorkerFileSystemEndPoint } from '@/libs/fileSystem/WorkerFileSystem'
 import { CompatabilityFileType } from '@/libs/data/compatability/FileType'
 import { CompatabilityPackType } from '../data/compatability/PackType'
 import { v4 as uuid } from 'uuid'
+import { IDashOptions } from 'dash-compiler/dist/Dash'
 
 //@ts-ignore make path browserify work in web worker
 globalThis.process = {
@@ -62,10 +63,10 @@ async function setup(config: any, configPath: string) {
 	const packType = new CompatabilityPackType(config)
 	const fileType = new CompatabilityFileType(config, () => false)
 
-	dash = new Dash<{ fileTypes: any }>(
+	dash = new Dash<{ fileTypes: any; packTypes: any }>(
 		compatabilityInputFileSystem,
 		compatabilityOutputFileSystem,
-		{
+		<any>{
 			config: configPath,
 			packType,
 			fileType,
