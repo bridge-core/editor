@@ -5,6 +5,15 @@ import { CompatabilityFileType } from '@/libs/data/compatability/FileType'
 import { CompatabilityPackType } from '../data/compatability/PackType'
 import { v4 as uuid } from 'uuid'
 
+//@ts-ignore make path browserify work in web worker
+globalThis.process = {
+	cwd: () => '',
+	env: {},
+	release: {
+		name: 'browser',
+	},
+}
+
 const inputFileSystem = new WorkerFileSystemEndPoint('inputFileSystem')
 const compatabilityInputFileSystem = new CompatabilityFileSystem(
 	inputFileSystem
@@ -14,7 +23,7 @@ const compatabilityOutputFileSystem = new CompatabilityFileSystem(
 	outputFileSystem
 )
 
-let dash: null | Dash<{ fileTypes: any }> = null
+let dash: null | Dash<{ fileTypes: any; packTypes: any }> = null
 
 async function getJsonData(path: string): Promise<any> {
 	if (path.startsWith('data/')) path = path.slice('path/'.length)
@@ -67,6 +76,9 @@ async function setup(config: any, configPath: string) {
 	await dash.setup({
 		fileTypes: await getJsonData(
 			'packages/minecraftBedrock/fileDefinitions.json'
+		),
+		packTypes: await getJsonData(
+			'packages/minecraftBedrock/packDefinitions.json'
 		),
 	})
 
