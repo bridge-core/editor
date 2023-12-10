@@ -12,6 +12,7 @@ import { Pack } from './create/packs/Pack'
 import { ResourcePack } from './create/packs/ResourcePack'
 import { SkinPack } from './create/packs/SkinPack'
 import { BedrockProjectData } from '@/libs/data/bedrock/BedrockProjectData'
+import { BedrockProject } from './BedrockProject'
 
 export const packs: {
 	[key: string]: Pack | undefined
@@ -107,7 +108,10 @@ export class ProjectManager {
 	public async loadProject(name: string) {
 		console.time('[APP] Load Project')
 
-		this.currentProject = new Project(name, new BedrockProjectData(data))
+		this.currentProject = new BedrockProject(
+			name,
+			new BedrockProjectData(data)
+		)
 
 		await this.currentProject.load()
 

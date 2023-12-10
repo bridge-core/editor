@@ -1,7 +1,7 @@
 import { basename, join } from '@/libs/path'
-import { fileSystem, tabManager } from '@/App'
+import { fileSystem } from '@/App'
 import { defaultPackPaths, IConfigJson } from 'mc-project-core'
-import { ProjectData } from '../data/ProjectData'
+import { ProjectData } from '@/libs/data/ProjectData'
 
 export interface ProjectInfo {
 	name: string
@@ -26,6 +26,8 @@ export class Project {
 
 		await this.data.load()
 	}
+
+	public async dispose() {}
 }
 
 export async function validProject(path: string) {
