@@ -1,6 +1,8 @@
 import { Dash } from 'dash-compiler'
 import { CompatabilityFileSystem } from '@/libs/fileSystem/CompatabilityFileSystem'
 import { WorkerFileSystemEndPoint } from '@/libs/fileSystem/WorkerFileSystem'
+import { CompatabilityFileType } from '@/libs/data/compatability/FileType'
+import { data } from '@/App'
 
 const inputFileSystem = new WorkerFileSystemEndPoint('inputFileSystem')
 const compatabilityInputFileSystem = new CompatabilityFileSystem(
@@ -13,26 +15,26 @@ const compatabilityOutputFileSystem = new CompatabilityFileSystem(
 
 let dash: null | Dash = null
 
-async function setup(config: string) {
-	console.log('Setting up Dash...', config)
+async function setup(config: any, configPath: string) {
+	console.log('Setting up Dash...')
+
+	const fileType = new CompatabilityFileType(config, () => false)
 
 	dash = new Dash(
 		compatabilityInputFileSystem,
 		compatabilityOutputFileSystem,
 		{
-			config: config,
+			config: configPath,
 			packType: <any>undefined,
-			fileType: <any>undefined,
-			requestJsonData: <any>undefined,
+			fileType,
+			requestJsonData: data.get,
 		}
 	)
 
 	await dash.setup(undefined)
 
-	console.log(dash.isCompilerActivated)
-
-	// await dash.reload()
-	// await dash.build()
+	await dash.reload()
+	await dash.build()
 
 	console.log('Dash setup complete!')
 }
@@ -40,5 +42,6 @@ async function setup(config: string) {
 onmessage = (event: any) => {
 	if (!event.data) return
 
-	if (event.data.action === 'setup') setup(event.data.config)
+	if (event.data.action === 'setup')
+		setup(JSON.parse(event.data.config), event.data.configPath)
 }

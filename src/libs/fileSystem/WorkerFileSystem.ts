@@ -16,21 +16,16 @@ export class WorkerFileSystemEntryPoint {
 
 	private async onWorkerMessage(event: MessageEvent) {
 		if (!event.data) return
+		if (event.data.fileSystemName !== this.name) return
 
 		if (event.data.action === 'readFile') {
-			console.log(
-				'Worker file system entry point reading file',
-				event.data.path
-			)
-
-			console.log(this)
-
 			const data = await this.fileSystem.readFile(event.data.path)
 
 			this.worker.postMessage(
 				{
-					id: event.data.id,
 					arrayBuffer: data,
+					id: event.data.id,
+					fileSystemName: this.name,
 				},
 				[data]
 			)
@@ -48,9 +43,9 @@ export class WorkerFileSystemEndPoint extends BaseFileSystem {
 	}
 
 	public async readFile(path: string): Promise<ArrayBuffer> {
-		console.log('Worker file system end point reading file', path)
-
 		let functionToUnbind: EventListener | null = null
+
+		const name = this.name
 
 		const data: ArrayBuffer = await new Promise((resolve, reject) => {
 			let messageId = uuid()
@@ -58,6 +53,7 @@ export class WorkerFileSystemEndPoint extends BaseFileSystem {
 			function recieveMessage(event: MessageEvent) {
 				if (!event.data) return
 				if (event.data.id !== messageId) return
+				if (event.data.fileSystemName !== name) return
 
 				resolve(event.data.arrayBuffer)
 			}
@@ -70,12 +66,11 @@ export class WorkerFileSystemEndPoint extends BaseFileSystem {
 				action: 'readFile',
 				path: path,
 				id: messageId,
+				fileSystemName: this.name,
 			})
 		})
 
 		removeEventListener('message', functionToUnbind!)
-
-		console.log('Worker file system end point recieved file', path)
 
 		return data
 	}

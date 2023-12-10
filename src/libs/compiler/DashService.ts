@@ -22,7 +22,8 @@ export class DashService {
 	public async load() {
 		this.worker.postMessage({
 			action: 'setup',
-			config: join(this.project.path, 'config.json'),
+			config: JSON.stringify(this.project.config),
+			configPath: join(this.project.path, 'config.json'),
 		})
 	}
 

@@ -8,8 +8,6 @@ export class CompatabilityFileSystem extends FileSystem {
 	}
 
 	async readFile(path: string): Promise<File> {
-		console.log('Compatability file system reading file', path)
-
 		const content = await this.fileSystem.readFile(path)
 
 		return new CompatabilityFile([new Blob([content])], basename(path))
