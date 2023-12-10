@@ -1,8 +1,10 @@
-import { Dash } from 'dash-compiler'
+import { Dash, initRuntimes } from 'dash-compiler'
 import { CompatabilityFileSystem } from '@/libs/fileSystem/CompatabilityFileSystem'
 import { WorkerFileSystemEndPoint } from '@/libs/fileSystem/WorkerFileSystem'
 import { CompatabilityFileType } from '@/libs/data/compatability/FileType'
-import { data } from '@/App'
+import wasmUrl from '@swc/wasm-web/wasm-web_bg.wasm?url'
+
+initRuntimes(wasmUrl)
 
 const inputFileSystem = new WorkerFileSystemEndPoint('inputFileSystem')
 const compatabilityInputFileSystem = new CompatabilityFileSystem(
@@ -15,9 +17,14 @@ const compatabilityOutputFileSystem = new CompatabilityFileSystem(
 
 let dash: null | Dash = null
 
+async function getJson(path: string) {
+	console.log('Getting json for', path)
+
+	return {}
+}
+
 async function setup(config: any, configPath: string) {
 	console.log('Setting up Dash...')
-
 	const fileType = new CompatabilityFileType(config, () => false)
 
 	dash = new Dash(
@@ -27,10 +34,9 @@ async function setup(config: any, configPath: string) {
 			config: configPath,
 			packType: <any>undefined,
 			fileType,
-			requestJsonData: data.get,
+			requestJsonData: <any>getJson,
 		}
 	)
-
 	await dash.setup(undefined)
 
 	await dash.reload()
