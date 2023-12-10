@@ -3,6 +3,7 @@ import { CompatabilityFileSystem } from '@/libs/fileSystem/CompatabilityFileSyst
 import { WorkerFileSystemEndPoint } from '@/libs/fileSystem/WorkerFileSystem'
 import { CompatabilityFileType } from '@/libs/data/compatability/FileType'
 import wasmUrl from '@swc/wasm-web/wasm-web_bg.wasm?url'
+import { CompatabilityPackType } from '../data/compatability/PackType'
 
 initRuntimes(wasmUrl)
 
@@ -25,6 +26,8 @@ async function getJson(path: string) {
 
 async function setup(config: any, configPath: string) {
 	console.log('Setting up Dash...')
+
+	const packType = new CompatabilityPackType(config)
 	const fileType = new CompatabilityFileType(config, () => false)
 
 	dash = new Dash(
@@ -32,7 +35,7 @@ async function setup(config: any, configPath: string) {
 		compatabilityOutputFileSystem,
 		{
 			config: configPath,
-			packType: <any>undefined,
+			packType,
 			fileType,
 			requestJsonData: <any>getJson,
 		}

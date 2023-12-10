@@ -1,4 +1,4 @@
-import { BaseFileSystem } from './BaseFileSystem'
+import { BaseEntry, BaseFileSystem } from './BaseFileSystem'
 import { v4 as uuid } from 'uuid'
 
 export class WorkerFileSystemEntryPoint {
@@ -29,6 +29,42 @@ export class WorkerFileSystemEntryPoint {
 				},
 				[data]
 			)
+		}
+
+		if (event.data.action === 'writeFile') {
+			await this.fileSystem.writeFile(event.data.path, event.data.content)
+
+			this.worker.postMessage({
+				id: event.data.id,
+				fileSystemName: this.name,
+			})
+		}
+
+		if (event.data.action === 'readDirectoryEntries') {
+			this.worker.postMessage({
+				entries: JSON.stringify(
+					await this.fileSystem.readDirectoryEntries(event.data.path)
+				),
+				id: event.data.id,
+				fileSystemName: this.name,
+			})
+		}
+
+		if (event.data.action === 'makeDirectory') {
+			await this.fileSystem.makeDirectory(event.data.path)
+
+			this.worker.postMessage({
+				id: event.data.id,
+				fileSystemName: this.name,
+			})
+		}
+
+		if (event.data.action === 'exists') {
+			this.worker.postMessage({
+				exists: await this.fileSystem.exists(event.data.path),
+				id: event.data.id,
+				fileSystemName: this.name,
+			})
 		}
 	}
 
@@ -64,7 +100,7 @@ export class WorkerFileSystemEndPoint extends BaseFileSystem {
 
 			postMessage({
 				action: 'readFile',
-				path: path,
+				path,
 				id: messageId,
 				fileSystemName: this.name,
 			})
@@ -73,5 +109,134 @@ export class WorkerFileSystemEndPoint extends BaseFileSystem {
 		removeEventListener('message', functionToUnbind!)
 
 		return data
+	}
+
+	public async writeFile(path: string, content: string) {
+		let functionToUnbind: EventListener | null = null
+
+		const name = this.name
+
+		await new Promise<void>((resolve, reject) => {
+			let messageId = uuid()
+
+			function recieveMessage(event: MessageEvent) {
+				if (!event.data) return
+				if (event.data.id !== messageId) return
+				if (event.data.fileSystemName !== name) return
+
+				resolve()
+			}
+
+			let functionToUnbind = recieveMessage
+
+			addEventListener('message', functionToUnbind)
+
+			postMessage({
+				action: 'writeFile',
+				path,
+				content,
+				id: messageId,
+				fileSystemName: this.name,
+			})
+		})
+
+		removeEventListener('message', functionToUnbind!)
+	}
+
+	public async readDirectoryEntries(path: string): Promise<BaseEntry[]> {
+		let functionToUnbind: EventListener | null = null
+
+		const name = this.name
+
+		const data: BaseEntry[] = await new Promise((resolve, reject) => {
+			let messageId = uuid()
+
+			function recieveMessage(event: MessageEvent) {
+				if (!event.data) return
+				if (event.data.id !== messageId) return
+				if (event.data.fileSystemName !== name) return
+
+				resolve(JSON.parse(event.data.entries))
+			}
+
+			let functionToUnbind = recieveMessage
+
+			addEventListener('message', functionToUnbind)
+
+			postMessage({
+				action: 'readDirectoryEntries',
+				path,
+				id: messageId,
+				fileSystemName: this.name,
+			})
+		})
+
+		removeEventListener('message', functionToUnbind!)
+
+		return data
+	}
+
+	public async makeDirectory(path: string) {
+		let functionToUnbind: EventListener | null = null
+
+		const name = this.name
+
+		await new Promise<void>((resolve, reject) => {
+			let messageId = uuid()
+
+			function recieveMessage(event: MessageEvent) {
+				if (!event.data) return
+				if (event.data.id !== messageId) return
+				if (event.data.fileSystemName !== name) return
+
+				resolve()
+			}
+
+			let functionToUnbind = recieveMessage
+
+			addEventListener('message', functionToUnbind)
+
+			postMessage({
+				action: 'makeDirectory',
+				path,
+				id: messageId,
+				fileSystemName: this.name,
+			})
+		})
+
+		removeEventListener('message', functionToUnbind!)
+	}
+
+	public async exists(path: string): Promise<boolean> {
+		let functionToUnbind: EventListener | null = null
+
+		const name = this.name
+
+		const exists: boolean = await new Promise((resolve, reject) => {
+			let messageId = uuid()
+
+			function recieveMessage(event: MessageEvent) {
+				if (!event.data) return
+				if (event.data.id !== messageId) return
+				if (event.data.fileSystemName !== name) return
+
+				resolve(event.data.exists)
+			}
+
+			let functionToUnbind = recieveMessage
+
+			addEventListener('message', functionToUnbind)
+
+			postMessage({
+				action: 'exists',
+				path,
+				id: messageId,
+				fileSystemName: this.name,
+			})
+		})
+
+		removeEventListener('message', functionToUnbind!)
+
+		return exists
 	}
 }
