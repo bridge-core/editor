@@ -1,6 +1,6 @@
 import './style.css'
 
-import { initRuntimes } from 'bridge-js-runtime'
+import { initRuntimes } from 'dash-compiler'
 import wasmUrl from '@swc/wasm-web/wasm-web_bg.wasm?url'
 import { createApp } from 'vue'
 import App from '@/App.vue'

@@ -1,12 +1,9 @@
-import { Dash, initRuntimes } from 'dash-compiler'
+import { Dash } from 'dash-compiler'
 import { CompatabilityFileSystem } from '@/libs/fileSystem/CompatabilityFileSystem'
 import { WorkerFileSystemEndPoint } from '@/libs/fileSystem/WorkerFileSystem'
 import { CompatabilityFileType } from '@/libs/data/compatability/FileType'
-import wasmUrl from '@swc/wasm-web/wasm-web_bg.wasm?url'
 import { CompatabilityPackType } from '../data/compatability/PackType'
 import { v4 as uuid } from 'uuid'
-
-initRuntimes(wasmUrl)
 
 const inputFileSystem = new WorkerFileSystemEndPoint('inputFileSystem')
 const compatabilityInputFileSystem = new CompatabilityFileSystem(
@@ -21,8 +18,6 @@ let dash: null | Dash<{ fileTypes: any }> = null
 
 async function getJsonData(path: string): Promise<any> {
 	if (path.startsWith('data/')) path = path.slice('path/'.length)
-
-	console.log('Getting json for', path)
 
 	let functionToUnbind: EventListener | null = null
 
@@ -66,6 +61,7 @@ async function setup(config: any, configPath: string) {
 			packType,
 			fileType,
 			requestJsonData: <any>getJsonData,
+			console: <any>console,
 		}
 	)
 	await dash.setup({
@@ -74,7 +70,6 @@ async function setup(config: any, configPath: string) {
 		),
 	})
 
-	await dash.reload()
 	await dash.build()
 
 	console.log('Dash setup complete!')

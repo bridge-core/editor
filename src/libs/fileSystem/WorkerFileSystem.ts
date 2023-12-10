@@ -79,6 +79,8 @@ export class WorkerFileSystemEndPoint extends BaseFileSystem {
 	}
 
 	public async readFile(path: string): Promise<ArrayBuffer> {
+		// console.log('Worker read file', path)
+
 		let functionToUnbind: EventListener | null = null
 
 		const name = this.name
@@ -112,6 +114,8 @@ export class WorkerFileSystemEndPoint extends BaseFileSystem {
 	}
 
 	public async writeFile(path: string, content: string) {
+		// console.log('Worker write file', path)
+
 		let functionToUnbind: EventListener | null = null
 
 		const name = this.name
@@ -144,6 +148,8 @@ export class WorkerFileSystemEndPoint extends BaseFileSystem {
 	}
 
 	public async readDirectoryEntries(path: string): Promise<BaseEntry[]> {
+		// console.log('Worker read directory entries', path)
+
 		let functionToUnbind: EventListener | null = null
 
 		const name = this.name
@@ -177,6 +183,8 @@ export class WorkerFileSystemEndPoint extends BaseFileSystem {
 	}
 
 	public async makeDirectory(path: string) {
+		// console.log('Worker make directory', path)
+
 		let functionToUnbind: EventListener | null = null
 
 		const name = this.name
@@ -208,6 +216,8 @@ export class WorkerFileSystemEndPoint extends BaseFileSystem {
 	}
 
 	public async exists(path: string): Promise<boolean> {
+		// console.log('Worker exists', path)
+
 		let functionToUnbind: EventListener | null = null
 
 		const name = this.name
