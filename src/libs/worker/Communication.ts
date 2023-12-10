@@ -1,8 +1,11 @@
 import { v4 as uuid } from 'uuid'
 
-export async function sendAndWait(message: {
-	[key: string]: any
-}): Promise<any> {
+export async function sendAndWait(
+	message: {
+		[key: string]: any
+	},
+	worker?: Worker
+): Promise<any> {
 	let functionToUnbind: any = null
 
 	const response = await new Promise((resolve) => {
@@ -17,15 +20,30 @@ export async function sendAndWait(message: {
 
 		functionToUnbind = recieveMessage
 
-		addEventListener('message', functionToUnbind)
+		if (worker) {
+			worker.addEventListener('message', functionToUnbind)
+		} else {
+			addEventListener('message', functionToUnbind)
+		}
 
-		postMessage({
-			...message,
-			id: messageId,
-		})
+		if (worker) {
+			worker.postMessage({
+				...message,
+				id: messageId,
+			})
+		} else {
+			postMessage({
+				...message,
+				id: messageId,
+			})
+		}
 	})
 
-	removeEventListener('message', functionToUnbind)
+	if (worker) {
+		worker.removeEventListener('message', functionToUnbind)
+	} else {
+		removeEventListener('message', functionToUnbind)
+	}
 
 	return response
 }
