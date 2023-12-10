@@ -1,5 +1,5 @@
 import { PackType } from 'mc-project-core'
 
-export class CompatabilityPackType extends PackType<void> {
-	async setup(arg: void) {}
+export class CompatabilityPackType extends PackType<{ fileTypes: any }> {
+	async setup(arg: { fileTypes: any }) {}
 }

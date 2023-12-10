@@ -2,7 +2,7 @@ import { join } from '@/libs/path'
 import DashWorker from './DashWorker?worker'
 import { BedrockProject } from '@/libs/project/BedrockProject'
 import { WorkerFileSystemEntryPoint } from '../fileSystem/WorkerFileSystem'
-import { fileSystem } from '@/App'
+import { data, fileSystem } from '@/App'
 
 export class DashService {
 	private worker = new DashWorker()
@@ -17,7 +17,20 @@ export class DashService {
 		'outputFileSystem'
 	)
 
-	constructor(public project: BedrockProject) {}
+	constructor(public project: BedrockProject) {
+		this.worker.onmessage = this.onWorkerMessage.bind(this)
+	}
+
+	public async onWorkerMessage(event: MessageEvent) {
+		if (!event.data) return
+
+		if (event.data.action === 'getJsonData') {
+			this.worker.postMessage({
+				id: event.data.id,
+				data: JSON.stringify(await data.get(event.data.path)),
+			})
+		}
+	}
 
 	public async load() {
 		this.worker.postMessage({

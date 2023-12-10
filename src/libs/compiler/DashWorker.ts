@@ -4,6 +4,7 @@ import { WorkerFileSystemEndPoint } from '@/libs/fileSystem/WorkerFileSystem'
 import { CompatabilityFileType } from '@/libs/data/compatability/FileType'
 import wasmUrl from '@swc/wasm-web/wasm-web_bg.wasm?url'
 import { CompatabilityPackType } from '../data/compatability/PackType'
+import { v4 as uuid } from 'uuid'
 
 initRuntimes(wasmUrl)
 
@@ -16,12 +17,39 @@ const compatabilityOutputFileSystem = new CompatabilityFileSystem(
 	outputFileSystem
 )
 
-let dash: null | Dash = null
+let dash: null | Dash<{ fileTypes: any }> = null
 
-async function getJson(path: string) {
+async function getJsonData(path: string): Promise<any> {
+	if (path.startsWith('data/')) path = path.slice('path/'.length)
+
 	console.log('Getting json for', path)
 
-	return {}
+	let functionToUnbind: EventListener | null = null
+
+	const data = await new Promise<void>((resolve, reject) => {
+		let messageId = uuid()
+
+		function recieveMessage(event: MessageEvent) {
+			if (!event.data) return
+			if (event.data.id !== messageId) return
+
+			resolve(JSON.parse(event.data.data))
+		}
+
+		let functionToUnbind = recieveMessage
+
+		addEventListener('message', functionToUnbind)
+
+		postMessage({
+			action: 'getJsonData',
+			path,
+			id: messageId,
+		})
+	})
+
+	removeEventListener('message', functionToUnbind!)
+
+	return data
 }
 
 async function setup(config: any, configPath: string) {
@@ -30,17 +58,21 @@ async function setup(config: any, configPath: string) {
 	const packType = new CompatabilityPackType(config)
 	const fileType = new CompatabilityFileType(config, () => false)
 
-	dash = new Dash(
+	dash = new Dash<{ fileTypes: any }>(
 		compatabilityInputFileSystem,
 		compatabilityOutputFileSystem,
 		{
 			config: configPath,
 			packType,
 			fileType,
-			requestJsonData: <any>getJson,
+			requestJsonData: <any>getJsonData,
 		}
 	)
-	await dash.setup(undefined)
+	await dash.setup({
+		fileTypes: await getJsonData(
+			'packages/minecraftBedrock/fileDefinitions.json'
+		),
+	})
 
 	await dash.reload()
 	await dash.build()
