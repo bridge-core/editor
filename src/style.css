@@ -2,7 +2,7 @@
 
 @font-face {
 	font-family: Inter;
-	src: url(Inter.ttf);
+	src: url(/Inter.ttf);
 }
 
 @tailwind base;
