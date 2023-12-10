@@ -1,3 +1,4 @@
+import { sendAndWait } from '@/libs/worker/Communication'
 import { BaseEntry, BaseFileSystem } from './BaseFileSystem'
 import { v4 as uuid } from 'uuid'
 
@@ -42,8 +43,8 @@ export class WorkerFileSystemEntryPoint {
 
 		if (event.data.action === 'readDirectoryEntries') {
 			this.worker.postMessage({
-				entries: JSON.stringify(
-					await this.fileSystem.readDirectoryEntries(event.data.path)
+				entries: await this.fileSystem.readDirectoryEntries(
+					event.data.path
 				),
 				id: event.data.id,
 				fileSystemName: this.name,
@@ -79,174 +80,57 @@ export class WorkerFileSystemEndPoint extends BaseFileSystem {
 	}
 
 	public async readFile(path: string): Promise<ArrayBuffer> {
-		// console.log('Worker read file', path)
-
-		let functionToUnbind: EventListener | null = null
-
-		const name = this.name
-
-		const data: ArrayBuffer = await new Promise((resolve, reject) => {
-			let messageId = uuid()
-
-			function recieveMessage(event: MessageEvent) {
-				if (!event.data) return
-				if (event.data.id !== messageId) return
-				if (event.data.fileSystemName !== name) return
-
-				resolve(event.data.arrayBuffer)
-			}
-
-			let functionToUnbind = recieveMessage
-
-			addEventListener('message', functionToUnbind)
-
-			postMessage({
+		return (
+			await sendAndWait({
 				action: 'readFile',
 				path,
-				id: messageId,
 				fileSystemName: this.name,
 			})
-		})
-
-		removeEventListener('message', functionToUnbind!)
-
-		return data
+		).arrayBuffer
 	}
 
 	public async writeFile(path: string, content: string) {
 		// console.log('Worker write file', path)
 
-		let functionToUnbind: EventListener | null = null
-
-		const name = this.name
-
-		await new Promise<void>((resolve, reject) => {
-			let messageId = uuid()
-
-			function recieveMessage(event: MessageEvent) {
-				if (!event.data) return
-				if (event.data.id !== messageId) return
-				if (event.data.fileSystemName !== name) return
-
-				resolve()
-			}
-
-			let functionToUnbind = recieveMessage
-
-			addEventListener('message', functionToUnbind)
-
-			postMessage({
-				action: 'writeFile',
-				path,
-				content,
-				id: messageId,
-				fileSystemName: this.name,
-			})
+		await sendAndWait({
+			action: 'writeFile',
+			path,
+			content,
+			fileSystemName: this.name,
 		})
-
-		removeEventListener('message', functionToUnbind!)
 	}
 
 	public async readDirectoryEntries(path: string): Promise<BaseEntry[]> {
 		// console.log('Worker read directory entries', path)
 
-		let functionToUnbind: EventListener | null = null
-
-		const name = this.name
-
-		const data: BaseEntry[] = await new Promise((resolve, reject) => {
-			let messageId = uuid()
-
-			function recieveMessage(event: MessageEvent) {
-				if (!event.data) return
-				if (event.data.id !== messageId) return
-				if (event.data.fileSystemName !== name) return
-
-				resolve(JSON.parse(event.data.entries))
-			}
-
-			let functionToUnbind = recieveMessage
-
-			addEventListener('message', functionToUnbind)
-
-			postMessage({
+		return (
+			await sendAndWait({
 				action: 'readDirectoryEntries',
 				path,
-				id: messageId,
 				fileSystemName: this.name,
 			})
-		})
-
-		removeEventListener('message', functionToUnbind!)
-
-		return data
+		).entries
 	}
 
 	public async makeDirectory(path: string) {
 		// console.log('Worker make directory', path)
 
-		let functionToUnbind: EventListener | null = null
-
-		const name = this.name
-
-		await new Promise<void>((resolve, reject) => {
-			let messageId = uuid()
-
-			function recieveMessage(event: MessageEvent) {
-				if (!event.data) return
-				if (event.data.id !== messageId) return
-				if (event.data.fileSystemName !== name) return
-
-				resolve()
-			}
-
-			let functionToUnbind = recieveMessage
-
-			addEventListener('message', functionToUnbind)
-
-			postMessage({
-				action: 'makeDirectory',
-				path,
-				id: messageId,
-				fileSystemName: this.name,
-			})
+		await sendAndWait({
+			action: 'makeDirectory',
+			path,
+			fileSystemName: this.name,
 		})
-
-		removeEventListener('message', functionToUnbind!)
 	}
 
 	public async exists(path: string): Promise<boolean> {
 		// console.log('Worker exists', path)
 
-		let functionToUnbind: EventListener | null = null
-
-		const name = this.name
-
-		const exists: boolean = await new Promise((resolve, reject) => {
-			let messageId = uuid()
-
-			function recieveMessage(event: MessageEvent) {
-				if (!event.data) return
-				if (event.data.id !== messageId) return
-				if (event.data.fileSystemName !== name) return
-
-				resolve(event.data.exists)
-			}
-
-			let functionToUnbind = recieveMessage
-
-			addEventListener('message', functionToUnbind)
-
-			postMessage({
+		return (
+			await sendAndWait({
 				action: 'exists',
 				path,
-				id: messageId,
 				fileSystemName: this.name,
 			})
-		})
-
-		removeEventListener('message', functionToUnbind!)
-
-		return exists
+		).exists
 	}
 }
