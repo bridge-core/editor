@@ -4,7 +4,7 @@ import { WorkerFileSystemEndPoint } from '@/libs/fileSystem/WorkerFileSystem'
 import { CompatabilityFileType } from '@/libs/data/compatability/FileType'
 import { CompatabilityPackType } from '../data/compatability/PackType'
 import { v4 as uuid } from 'uuid'
-import { IDashOptions } from 'dash-compiler/dist/Dash'
+import { sendAndWait } from '../worker/Communication'
 
 //@ts-ignore make path browserify work in web worker
 globalThis.process = {
@@ -29,35 +29,15 @@ let dash: null | Dash<{ fileTypes: any; packTypes: any }> = null
 async function getJsonData(path: string): Promise<any> {
 	if (path.startsWith('data/')) path = path.slice('path/'.length)
 
-	let functionToUnbind: EventListener | null = null
-
-	const data = await new Promise<void>((resolve, reject) => {
-		let messageId = uuid()
-
-		function recieveMessage(event: MessageEvent) {
-			if (!event.data) return
-			if (event.data.id !== messageId) return
-
-			resolve(JSON.parse(event.data.data))
-		}
-
-		let functionToUnbind = recieveMessage
-
-		addEventListener('message', functionToUnbind)
-
-		postMessage({
+	return (
+		await sendAndWait({
 			action: 'getJsonData',
 			path,
-			id: messageId,
 		})
-	})
-
-	removeEventListener('message', functionToUnbind!)
-
-	return data
+	).data
 }
 
-async function setup(config: any, configPath: string) {
+async function setup(config: any, configPath: string, actionId: string) {
 	console.log('Setting up Dash...')
 
 	const packType = new CompatabilityPackType(config)
@@ -83,14 +63,34 @@ async function setup(config: any, configPath: string) {
 		),
 	})
 
+	console.log('Dash setup complete!')
+
+	postMessage({
+		action: 'setupComplete',
+		id: actionId,
+	})
+}
+
+async function build(actionId: string) {
+	console.log('Dash Building...')
+
+	if (!dash) return
+
 	await dash.build()
 
-	console.log('Dash setup complete!')
+	console.log('Dash build complete!')
+
+	postMessage({
+		action: 'buildComplete',
+		id: actionId,
+	})
 }
 
 onmessage = (event: any) => {
 	if (!event.data) return
 
 	if (event.data.action === 'setup')
-		setup(JSON.parse(event.data.config), event.data.configPath)
+		setup(event.data.config, event.data.configPath, event.data.id)
+
+	if (event.data.action === 'build') build(event.data.id)
 }

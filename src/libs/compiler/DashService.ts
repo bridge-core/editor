@@ -3,6 +3,8 @@ import DashWorker from './DashWorker?worker'
 import { BedrockProject } from '@/libs/project/BedrockProject'
 import { WorkerFileSystemEntryPoint } from '../fileSystem/WorkerFileSystem'
 import { data, fileSystem } from '@/App'
+import { BaseFileSystem } from '../fileSystem/BaseFileSystem'
+import { sendAndWait } from '../worker/Communication'
 
 export class DashService {
 	private worker = new DashWorker()
@@ -29,22 +31,44 @@ export class DashService {
 		if (event.data.action === 'getJsonData') {
 			this.worker.postMessage({
 				id: event.data.id,
-				data: JSON.stringify(await data.get(event.data.path)),
+				data: await data.get(event.data.path),
 			})
 		}
 	}
 
 	public async load() {
-		this.worker.postMessage({
-			action: 'setup',
-			config: JSON.stringify(this.project.config),
-			configPath: join(this.project.path, 'config.json'),
-		})
+		await sendAndWait(
+			{
+				action: 'setup',
+				config: this.project.config,
+				configPath: join(this.project.path, 'config.json'),
+			},
+			this.worker
+		)
 	}
 
 	public async dispose() {
 		this.inputFileSystem.dispose()
 		this.outputFileSystem.dispose()
 		this.worker.terminate()
+	}
+
+	public setNewOutputFileSystem(fileSystem: BaseFileSystem) {
+		this.outputFileSystem.dispose()
+
+		this.outputFileSystem = new WorkerFileSystemEntryPoint(
+			this.worker,
+			fileSystem,
+			'outputFileSystem'
+		)
+	}
+
+	public async build() {
+		await sendAndWait(
+			{
+				action: 'build',
+			},
+			this.worker
+		)
 	}
 }

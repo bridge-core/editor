@@ -2,10 +2,11 @@ import { basename, join } from '@/libs/path'
 import { confirmWindow, fileSystem, sidebar } from '@/App'
 import { defaultPackPaths, IConfigJson } from 'mc-project-core'
 import { ProjectData } from '@/libs/data/ProjectData'
-import { BaseFileSystem } from '../fileSystem/BaseFileSystem'
-import { getFileSystem } from '../fileSystem/FileSystem'
-import { PWAFileSystem } from '../fileSystem/PWAFileSystem'
+import { BaseFileSystem } from '@/libs/fileSystem/BaseFileSystem'
+import { PWAFileSystem } from '@/libs/fileSystem/PWAFileSystem'
 import { get, set } from 'idb-keyval'
+import { EventSystem } from '@/libs/event/EventSystem'
+import { LocalFileSystem } from '../fileSystem/LocalFileSystem'
 
 export interface ProjectInfo {
 	name: string
@@ -17,10 +18,15 @@ export class Project {
 	public path: string
 	public icon: string | null = null
 	public packs: string[] = []
-	public outputFileSystem: BaseFileSystem = getFileSystem()
+	public outputFileSystem: BaseFileSystem = new LocalFileSystem()
+	public eventSystem = new EventSystem(['outputFileSystemChanged'])
 
 	constructor(public name: string, public data: ProjectData) {
 		this.path = join('projects', this.name)
+
+		if (!(this.outputFileSystem instanceof LocalFileSystem)) return
+
+		this.outputFileSystem.setRootName(this.name)
 	}
 
 	public async load() {
@@ -31,55 +37,62 @@ export class Project {
 
 		await this.data.load()
 
-		if (this.outputFileSystem instanceof PWAFileSystem) {
-			const savedHandle: undefined | FileSystemDirectoryHandle =
-				await get(`projectOutputFolderHandle-${this.name}`)
-
-			console.log(savedHandle)
-
-			if (
-				!this.outputFileSystem.baseHandle &&
-				savedHandle &&
-				(await this.outputFileSystem.ensurePermissions(savedHandle))
-			) {
-				this.outputFileSystem.setBaseHandle(savedHandle)
-			} else {
-				sidebar.addNotification(
-					'warning',
-					() => {
-						confirmWindow.open(
-							'You have not set up your output folder yet. Do you want to set it up now?',
-							async () => {
-								try {
-									if (
-										!(
-											this.outputFileSystem instanceof
-											PWAFileSystem
-										)
-									)
-										return
-
-									this.outputFileSystem.setBaseHandle(
-										(await window.showDirectoryPicker({
-											mode: 'readwrite',
-										})) ?? null
-									)
-
-									set(
-										`projectOutputFolderHandle-${this.name}`,
-										this.outputFileSystem.baseHandle
-									)
-								} catch {}
-							}
-						)
-					},
-					'warning'
-				)
-			}
-		}
+		await this.loadBetterOutputFileSystemOrAsk()
 	}
 
 	public async dispose() {}
+
+	// Should probably break this into something more managable at some point
+	private async loadBetterOutputFileSystemOrAsk() {
+		const savedHandle: undefined | FileSystemDirectoryHandle = await get(
+			`projectOutputFolderHandle-${this.name}`
+		)
+
+		const newOutputFileSystem = new PWAFileSystem()
+
+		if (
+			savedHandle &&
+			(await newOutputFileSystem.ensurePermissions(savedHandle))
+		) {
+			newOutputFileSystem.setBaseHandle(savedHandle)
+
+			await this.setNewOutputFileSystem(newOutputFileSystem)
+		} else {
+			sidebar.addNotification(
+				'warning',
+				() => {
+					confirmWindow.open(
+						'You have not set up your output folder yet. Do you want to set it up now?',
+						async () => {
+							try {
+								newOutputFileSystem.setBaseHandle(
+									(await window.showDirectoryPicker({
+										mode: 'readwrite',
+									})) ?? null
+								)
+
+								set(
+									`projectOutputFolderHandle-${this.name}`,
+									newOutputFileSystem.baseHandle
+								)
+
+								await this.setNewOutputFileSystem(
+									newOutputFileSystem
+								)
+							} catch {}
+						}
+					)
+				},
+				'warning'
+			)
+		}
+	}
+
+	public async setNewOutputFileSystem(fileSystem: BaseFileSystem) {
+		this.outputFileSystem = fileSystem
+
+		this.eventSystem.dispatch('outputFileSystemChanged', undefined)
+	}
 }
 
 export async function validProject(path: string) {
