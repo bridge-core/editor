@@ -1,5 +1,5 @@
 import { zipSize } from '@/libs/app/DataPackage'
-import { baseUrl } from '@/libs/app/BaseUrl'
+import { baseUrl } from '@/libs/app/AppEnv'
 import { unzip, Unzipped } from 'fflate'
 import { LocalFileSystem } from '@/libs/fileSystem/LocalFileSystem'
 

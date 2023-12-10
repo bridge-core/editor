@@ -10,7 +10,7 @@
 import Window from '@/components/Windows/Window.vue'
 
 import { onMounted, ref } from 'vue'
-import { baseUrl } from '@/libs/app/BaseUrl'
+import { baseUrl } from '@/libs/app/AppEnv'
 import { useTranslate } from '@/libs/locales/Locales'
 
 const t = useTranslate()

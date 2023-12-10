@@ -1,8 +1,7 @@
 import { v4 as uuid } from 'uuid'
 import { BaseFileSystem } from '@/libs/fileSystem/BaseFileSystem'
 import { CreateProjectConfig } from '../../CreateProjectConfig'
-import { version } from '@/libs/app/Version'
-import { dashVersion } from '@/libs/app/DashVersion'
+import { appVersion, dashVersion } from '@/libs/app/AppEnv'
 import { data } from '@/App'
 
 async function targetVersionToMinEngineVersion(targetVersion: string) {
@@ -37,7 +36,7 @@ export async function createManifest(
 		metadata: {
 			authors: [config.author],
 			generated_with: {
-				bridge: [version],
+				bridge: [appVersion],
 				dash: [dashVersion],
 			},
 		},

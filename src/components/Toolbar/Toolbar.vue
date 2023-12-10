@@ -15,7 +15,7 @@
 		<div class="flex gap-2" @click="openChangelog">
 			<Logo class="w-4" />
 			<span class="text-sm text-textAlternate font-inter">
-				v{{ version }}
+				v{{ appVersion }}
 			</span>
 		</div>
 	</div>
@@ -25,7 +25,7 @@
 import Logo from '@/components/Common/Logo.vue'
 
 import { toolbar, windows } from '@/App'
-import { version } from '@/libs/app/Version'
+import { appVersion } from '@/libs/app/AppEnv'
 import { useTranslate } from '@/libs/locales/Locales'
 const t = useTranslate()
 
