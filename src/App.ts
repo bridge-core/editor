@@ -1,6 +1,5 @@
 import { Toolbar } from '@/components/Toolbar/Toolbar'
 import { ThemeManager } from '@/libs/theme/ThemeManager'
-import { setupLanguageWorkers } from '@/libs/monaco/Monaco'
 import { LocaleManager } from '@/libs/locales/Locales'
 import { ProjectManager } from '@/libs/project/ProjectManager'
 import { getFileSystem } from '@/libs/fileSystem/FileSystem'
@@ -26,10 +25,6 @@ export const confirmWindow = new ConfirmWindow()
 
 export async function setup() {
 	console.time('[App] Setup')
-
-	console.time('[App] Language Workers')
-	setupLanguageWorkers()
-	console.timeEnd('[App] Language Workers')
 
 	fileSystem.eventSystem.on('reloaded', () => {
 		console.time('[App] Projects')
