@@ -66,6 +66,8 @@ export class TextTab extends Tab {
 
 		this.editor.setModel(this.model)
 
+		if (!this.fileType) return
+
 		schemaData.applySchema(this.path, this.fileType.schema)
 	}
 
@@ -197,7 +199,7 @@ export class TextTab extends Tab {
 		let typeIdentifiers: string[] = []
 		let variables: string[] = []
 
-		if (this.fileType.highlighterConfiguration) {
+		if (this.fileType && this.fileType.highlighterConfiguration) {
 			typeIdentifiers =
 				this.fileType.highlighterConfiguration.typeIdentifiers ?? []
 			variables = this.fileType.highlighterConfiguration.variables ?? []

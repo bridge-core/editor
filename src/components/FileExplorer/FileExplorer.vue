@@ -4,7 +4,14 @@ import Directory from './Directory.vue'
 import Icon from '@/components/Common/Icon.vue'
 import ContextMenu from '@/components/Common/ContextMenu.vue'
 
-import { projectManager, fileSystem, fileExplorer } from '@/App'
+import {
+	projectManager,
+	fileSystem,
+	fileExplorer,
+	tabManager,
+	windows,
+	presetsWindow,
+} from '@/App'
 import { BaseEntry } from '@/libs/fileSystem/BaseFileSystem'
 import {
 	ComputedRef,
@@ -19,6 +26,9 @@ import { join } from '@/libs/path'
 import { BedrockProjectData } from '@/libs/data/bedrock/BedrockProjectData'
 import { IPackType } from 'mc-project-core'
 import { BedrockProject } from '@/libs/project/BedrockProject'
+import { useTranslate } from '@/libs/locales/Locales'
+
+const t = useTranslate()
 
 const currentProject = projectManager.useCurrentProject()
 let data: BedrockProjectData | null = currentProject.value
@@ -97,12 +107,24 @@ async function contextMenuBuild(close: any) {
 
 	await currentProject.value.build()
 }
+
+async function contextMenuNewFile(close: any) {
+	close()
+
+	await presetsWindow.open()
+}
+
+async function contextMenuOpenProjectConfig(close: any) {
+	close()
+
+	tabManager.openFile(join(currentProject.value!.path, 'config.json'))
+}
 </script>
 
 <template>
 	<div
 		class="self-stretch my-2 w-96 flex flex-col gap-2"
-		v-if="fileExplorer.open"
+		v-if="fileExplorer.open.value"
 	>
 		<div class="bg-menuAlternate rounded h-16 flex items-center p-3 gap-3">
 			<img
@@ -152,8 +174,21 @@ async function contextMenuBuild(close: any) {
 
 					<template #menu="{ close }">
 						<div
-							class="w-48 bg-menuAlternate rounded mt-2 shadow-window overflow-hidden"
+							class="w-52 bg-menuAlternate rounded mt-2 shadow-window overflow-hidden relative z-10"
 						>
+							<div
+								@click="() => contextMenuNewFile(close)"
+								class="flex item-center group hover:bg-menu p-2 cursor-pointer transition-colors duration-100 ease-out"
+							>
+								<Icon
+									icon="add"
+									class="text-base group-hover:text-primary transition-colors duration-100 ease-out"
+								/>
+								<span class="ml-2 font-inter select-none">{{
+									t('New File')
+								}}</span>
+							</div>
+
 							<div
 								@click="() => contextMenuBuild(close)"
 								class="flex item-center group hover:bg-menu p-2 cursor-pointer transition-colors duration-100 ease-out"
@@ -162,9 +197,24 @@ async function contextMenuBuild(close: any) {
 									icon="manufacturing"
 									class="text-base group-hover:text-primary transition-colors duration-100 ease-out"
 								/>
-								<span class="ml-2 font-inter select-none"
-									>Build</span
-								>
+								<span class="ml-2 font-inter select-none">{{
+									t('Build')
+								}}</span>
+							</div>
+
+							<div
+								@click="
+									() => contextMenuOpenProjectConfig(close)
+								"
+								class="flex item-center group hover:bg-menu p-2 cursor-pointer transition-colors duration-100 ease-out"
+							>
+								<Icon
+									icon="settings"
+									class="text-base group-hover:text-primary transition-colors duration-100 ease-out"
+								/>
+								<span class="ml-2 font-inter select-none">{{
+									t('Open Project Config')
+								}}</span>
 							</div>
 						</div>
 					</template>

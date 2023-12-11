@@ -3,10 +3,13 @@ import { Project } from './Project'
 import { fileSystem } from '@/App'
 import { join } from '@/libs/path'
 import { BaseFileSystem } from '../fileSystem/BaseFileSystem'
+import { BedrockProjectData } from '../data/bedrock/BedrockProjectData'
 
 export class BedrockProject extends Project {
 	public dashService = new DashService(this)
 	public config: any
+
+	public declare data: BedrockProjectData
 
 	public async load() {
 		await super.load()

@@ -9,7 +9,8 @@ import { TabManager } from '@/components/TabSystem/TabManager'
 import { Sidebar } from '@/components/Sidebar/Sidebar'
 import { FileExplorer } from '@/components/FileExplorer/FileExplorer'
 import { Settings } from '@/components/Windows/Settings/Settings'
-import { ConfirmWindow } from './components/Windows/Confirm/Confirm'
+import { ConfirmWindow } from '@/components/Windows/Confirm/ConfirmWindow'
+import { PresetsWindow } from '@/components/Windows/Presets/PresetsWindow'
 
 export const toolbar = new Toolbar()
 export const themeManager = new ThemeManager()
@@ -22,6 +23,7 @@ export const sidebar = new Sidebar()
 export const fileExplorer = new FileExplorer()
 export const settings = new Settings()
 export const confirmWindow = new ConfirmWindow()
+export const presetsWindow = new PresetsWindow()
 
 export async function setup() {
 	console.time('[App] Setup')

@@ -1,10 +1,13 @@
 <template>
-	<SidebarWindow :name="`Settings - ${selectedCategory.name}`" id="settings">
+	<SidebarWindow
+		:name="`${t('Settings')} - ${selectedCategory.name}`"
+		id="settings"
+	>
 		<template #sidebar>
 			<div class="p-4">
 				<LabeledInput
 					v-slot="{ focus, blur }"
-					label="Search Settings"
+					:label="t('Search Settings')"
 					class="bg-menuAlternate !mt-1"
 				>
 					<div class="flex gap-1">
@@ -38,7 +41,7 @@
 							"
 							class="text-base"
 						/>
-						<span class="font-inter">{{ category.name }}</span>
+						<span class="font-inter">{{ t(category.name) }}</span>
 					</button>
 				</div>
 			</div>
@@ -54,7 +57,7 @@
 					<Dropdown class="mb-4 w-48" v-if="item.type === 'dropdown'">
 						<template #main="{ expanded, toggle }">
 							<LabeledInput
-								:label="item.name"
+								:label="t(item.name)"
 								:focused="expanded"
 								class="bg-background"
 							>
@@ -113,7 +116,7 @@
 						"
 						v-if="item.type === 'switch'"
 					/>
-					<p class="text-textAlternate">{{ item.description }}</p>
+					<p class="text-textAlternate">{{ t(item.description) }}</p>
 				</div>
 			</div>
 		</template>
@@ -127,9 +130,11 @@ import Icon from '@/components/Common/Icon.vue'
 import Dropdown from '@/components/Common/Dropdown.vue'
 import Switch from '@/components/Common/Switch.vue'
 import { settings as settingsManager } from '@/App'
-
 import { Ref, ref } from 'vue'
 import { Category } from './Categories/Category'
+import { useTranslate } from '@/libs/locales/Locales'
+
+const t = useTranslate()
 
 const selectedCategory: Ref<Category> = ref(settingsManager.categories[0])
 
