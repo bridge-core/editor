@@ -117,7 +117,7 @@
 							type="file"
 							class="hidden"
 							ref="projectIconInput"
-							v-on:change="chooseProjectIcon"
+							@:change="chooseProjectIcon"
 						/>
 
 						<button
@@ -264,9 +264,9 @@
 
 			<Button
 				icon="add"
-				text="Create"
+				:text="t('Create')"
 				@click="create"
-				class="mt-4 mr-8 mb-8 self-end transition-[color, opacity] font-inter"
+				class="mt-4 mr-8 mb-8 self-end transition-[color, opacity]"
 				:enabled="dataValid"
 			/>
 		</div>

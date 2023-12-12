@@ -22,4 +22,12 @@ export class PresetsWindow {
 
 		windows.open('presets')
 	}
+
+	public async createPreset(path: string, options: any) {
+		console.log(
+			'Creating preset',
+			path,
+			JSON.parse(JSON.stringify(options))
+		)
+	}
 }

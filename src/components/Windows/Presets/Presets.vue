@@ -3,6 +3,7 @@ import SidebarWindow from '@/components/Windows/SidebarWindow.vue'
 import LabeledInput from '@/components/Common/LabeledInput.vue'
 import Expandable from '@/components/Common/Expandable.vue'
 import Icon from '@/components/Common/Icon.vue'
+import Button from '@/components/Common/Button.vue'
 import { useTranslate } from '@/libs/locales/Locales'
 import { presetsWindow, projectManager } from '@/App'
 import { ComputedRef, Ref, computed, ref, watch } from 'vue'
@@ -20,8 +21,6 @@ watch(presetsWindow.categorizedPresets, () => {
 		presetsWindow.categorizedPresets.value[firstCategory]
 	)[0]
 
-	console.log(firstPreset)
-
 	selectedPresetPath.value = firstPreset
 })
 
@@ -34,6 +33,25 @@ const selectedPreset: ComputedRef<null | any> = computed(() => {
 
 	return projectManager.currentProject.data.presets[selectedPresetPath.value]
 })
+
+const createPresetOptions: Ref<any> = ref({})
+
+watch(selectedPreset, () => {
+	createPresetOptions.value = {}
+})
+
+function create() {
+	if (selectedPresetPath.value === null) return
+
+	if (!projectManager.currentProject) return
+
+	if (!(projectManager.currentProject instanceof BedrockProject)) return
+
+	presetsWindow.createPreset(
+		selectedPresetPath.value,
+		createPresetOptions.value
+	)
+}
 </script>
 
 <template>
@@ -106,62 +124,80 @@ const selectedPreset: ComputedRef<null | any> = computed(() => {
 			<div
 				class="w-[64rem] h-[38rem] flex flex-col overflow-y-auto p-4 pt-0"
 			>
-				<div v-if="selectedPreset !== null">
-					<div class="flex items-center gap-2 mb-2">
-						<Icon :icon="selectedPreset.icon" />
+				<div
+					v-if="selectedPreset !== null"
+					class="flex flex-col h-full"
+				>
+					<div>
+						<div class="flex items-center gap-2 mb-2">
+							<Icon :icon="selectedPreset.icon" />
 
-						<span class="text-3xl font-bold font-inter">{{
-							selectedPreset.name
-						}}</span>
+							<span class="text-3xl font-bold font-inter">{{
+								selectedPreset.name
+							}}</span>
+						</div>
+
+						<p class="font-inter text-textAlternate mb-12">
+							{{ selectedPreset.description }}
+						</p>
+
+						<div
+							v-for="[
+								fieldName,
+								fieldId,
+								fieldOptions,
+							] of selectedPreset.fields"
+							:key="fieldId"
+						>
+							<LabeledInput
+								v-if="!fieldOptions.type"
+								:label="fieldName"
+								class="mb-6 flex-1 bg-background"
+								v-slot="{ focus, blur }"
+							>
+								<input
+									class="bg-background outline-none placeholder:text-textAlternate max-w-none w-full font-inter"
+									@focus="focus"
+									@blur="blur"
+									:placeholder="fieldName"
+									:value="createPresetOptions[fieldId] ?? ''"
+									@input="
+									(event: Event) =>
+										(createPresetOptions[fieldId] = (<HTMLInputElement>event.target).value)
+								"
+								/>
+							</LabeledInput>
+
+							<LabeledInput
+								v-if="fieldOptions.type === 'fileInput'"
+								:label="fieldName"
+								class="mb-6 flex bg-background"
+								v-slot="{ focus, blur }"
+							>
+								<input type="file" class="hidden" />
+
+								<button
+									class="flex align-center gap-2 text-textAlternate font-inter"
+									@mouseenter="focus"
+									@mouseleave="blur"
+								>
+									<Icon
+										icon="image"
+										class="no-fill"
+										color="text-textAlternate"
+									/>
+									{{ fieldName }}
+								</button>
+							</LabeledInput>
+						</div>
 					</div>
 
-					<p class="font-inter text-textAlternate mb-12">
-						{{ selectedPreset.description }}
-					</p>
-
-					<div
-						v-for="[
-							fieldName,
-							fieldId,
-							fieldOptions,
-						] of selectedPreset.fields"
-						:key="fieldId"
-					>
-						<LabeledInput
-							v-if="!fieldOptions.type"
-							:label="fieldName"
-							class="mb-6 flex-1 bg-background"
-							v-slot="{ focus, blur }"
-						>
-							<input
-								class="bg-background outline-none placeholder:text-textAlternate max-w-none w-full font-inter"
-								@focus="focus"
-								@blur="blur"
-								:placeholder="fieldName"
-							/>
-						</LabeledInput>
-
-						<LabeledInput
-							v-if="fieldOptions.type === 'fileInput'"
-							:label="fieldName"
-							class="mb-6 flex bg-background"
-							v-slot="{ focus, blur }"
-						>
-							<input type="file" class="hidden" />
-
-							<button
-								class="flex align-center gap-2 text-textAlternate font-inter"
-								@mouseenter="focus"
-								@mouseleave="blur"
-							>
-								<Icon
-									icon="image"
-									class="no-fill"
-									color="text-textAlternate"
-								/>
-								{{ fieldName }}
-							</button>
-						</LabeledInput>
+					<div class="flex-1 flex flex-col justify-end">
+						<Button
+							:text="t('Create')"
+							class="self-end"
+							@click="create"
+						/>
 					</div>
 				</div>
 			</div>
