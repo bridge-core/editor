@@ -5,6 +5,7 @@ import { useTranslate } from '@/libs/locales/Locales'
 import { ref } from 'vue'
 import { projectManager } from '@/App'
 import { PWAFileSystem } from '@/libs/fileSystem/PWAFileSystem'
+import { LocalFileSystem } from '@/libs/fileSystem/LocalFileSystem'
 
 const t = useTranslate()
 
@@ -94,8 +95,17 @@ async function droppedOutputFolder(event: DragEvent) {
 				class="w-[64rem] h-[38rem] flex flex-col overflow-y-auto p-4 pt-0"
 			>
 				<div v-if="selectedCategory === 'outputFolder'">
+					<p
+						v-if="
+							projectManager.currentProject
+								?.outputFileSystem instanceof LocalFileSystem
+						"
+						class="font-inter mt-2 text-center"
+					>
+						{{ t('You need to select an output folder.') }}
+					</p>
 					<div
-						class="w-96 h-48 border-2 border-dashed rounded flex justify-center items-center transition-colors duration-100 ease-out"
+						class="mt-8 ml-auto mr-auto w-96 h-48 border-2 border-dashed rounded flex justify-center items-center transition-colors duration-100 ease-out"
 						:class="{
 							'border-primary': outputFolderInputHovered,
 							'border-menuAlternate': !outputFolderInputHovered,
