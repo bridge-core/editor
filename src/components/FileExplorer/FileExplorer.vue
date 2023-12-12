@@ -9,7 +9,7 @@ import {
 	fileSystem,
 	fileExplorer,
 	tabManager,
-	presetsWindow,
+	windows,
 } from '@/App'
 import { BaseEntry } from '@/libs/fileSystem/BaseFileSystem'
 import {
@@ -106,7 +106,7 @@ async function contextMenuBuild(close: any) {
 async function contextMenuNewFile(close: any) {
 	close()
 
-	await presetsWindow.open()
+	windows.open('presets')
 }
 
 async function contextMenuOpenProjectConfig(close: any) {
