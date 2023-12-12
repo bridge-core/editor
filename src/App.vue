@@ -7,6 +7,7 @@ import CreateProject from '@/components/Windows/CreateProject/CreateProject.vue'
 import Settings from '@/components/Windows/Settings/Settings.vue'
 import Confirm from '@/components/Windows/Confirm/Confirm.vue'
 import Presets from '@/components/Windows/Presets/Presets.vue'
+import Compiler from '@/components/Windows/Compiler/Compiler.vue'
 
 import { onMounted } from 'vue'
 import { setup } from '@/App'
@@ -23,8 +24,9 @@ onMounted(() => {
 		<Greet />
 		<Changelog />
 		<CreateProject />
-		<Settings />
 		<Presets />
+		<Compiler />
+		<Settings />
 		<Confirm />
 	</main>
 </template>

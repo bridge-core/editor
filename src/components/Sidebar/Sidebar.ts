@@ -1,4 +1,4 @@
-import { fileExplorer } from '@/App'
+import { fileExplorer, windows } from '@/App'
 import { Ref, ref } from 'vue'
 import { v4 as uuid } from 'uuid'
 
@@ -18,7 +18,9 @@ export class Sidebar {
 			fileExplorer.toggle()
 		})
 		this.addButton('quick_reference_all', () => {})
-		this.addButton('manufacturing', () => {})
+		this.addButton('manufacturing', () => {
+			windows.open('compiler')
+		})
 		this.addButton('extension', () => {})
 		this.addDivider()
 

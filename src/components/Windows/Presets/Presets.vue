@@ -5,7 +5,7 @@ import Expandable from '@/components/Common/Expandable.vue'
 import Icon from '@/components/Common/Icon.vue'
 import Button from '@/components/Common/Button.vue'
 import { useTranslate } from '@/libs/locales/Locales'
-import { presetsWindow, projectManager } from '@/App'
+import { projectManager } from '@/App'
 import { ComputedRef, Ref, computed, ref, watch } from 'vue'
 import { BedrockProject } from '@/libs/project/BedrockProject'
 
