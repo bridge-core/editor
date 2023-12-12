@@ -3,6 +3,8 @@ import SidebarWindow from '@/components/Windows/SidebarWindow.vue'
 import Icon from '@/components/Common/Icon.vue'
 import { useTranslate } from '@/libs/locales/Locales'
 import { ref } from 'vue'
+import { projectManager } from '@/App'
+import { PWAFileSystem } from '@/libs/fileSystem/PWAFileSystem'
 
 const t = useTranslate()
 
@@ -22,8 +24,8 @@ const categories: {
 		icon: 'group',
 	},
 	{
-		name: 'Output Folders',
-		id: 'outputFolders',
+		name: 'Output Folder',
+		id: 'outputFolder',
 		icon: 'folder',
 	},
 	{
@@ -34,6 +36,28 @@ const categories: {
 ]
 
 const selectedCategory = ref(categories[0].id)
+
+const outputFolderInputHovered = ref(false)
+
+async function droppedOutputFolder(event: DragEvent) {
+	event.preventDefault()
+	event.stopPropagation()
+
+	outputFolderInputHovered.value = false
+
+	if (!event.dataTransfer) return
+
+	if (!projectManager.currentProject) return
+
+	const items = event.dataTransfer.items
+
+	const fileHandle = await items[0].getAsFileSystemHandle()
+
+	if (!fileHandle) return
+	if (!(fileHandle instanceof FileSystemDirectoryHandle)) return
+
+	await projectManager.currentProject.setOutputFolder(fileHandle)
+}
 </script>
 
 <template>
@@ -69,8 +93,24 @@ const selectedCategory = ref(categories[0].id)
 			<div
 				class="w-[64rem] h-[38rem] flex flex-col overflow-y-auto p-4 pt-0"
 			>
-				<div v-if="selectedCategory === 'outputFolders'">
-					<p>Output Folders</p>
+				<div v-if="selectedCategory === 'outputFolder'">
+					<div
+						class="w-96 h-48 border-2 border-dashed rounded flex justify-center items-center transition-colors duration-100 ease-out"
+						:class="{
+							'border-primary': outputFolderInputHovered,
+							'border-menuAlternate': !outputFolderInputHovered,
+						}"
+						@dragenter="outputFolderInputHovered = true"
+						@dragleave="outputFolderInputHovered = false"
+						@dragover.prevent
+						@drop="droppedOutputFolder"
+					>
+						<span
+							class="font-inter text-textAlternate select-none pointer-events-none"
+						>
+							{{ t('Drop your output folder here.') }}
+						</span>
+					</div>
 				</div>
 			</div>
 		</template>

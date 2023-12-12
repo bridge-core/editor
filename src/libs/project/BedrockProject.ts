@@ -37,10 +37,11 @@ export class BedrockProject extends Project {
 		await this.dashService.dispose()
 	}
 
-	public async setNewOutputFileSystem(fileSystem: BaseFileSystem) {
-		await super.setNewOutputFileSystem(fileSystem)
+	public async setOutputFileSystem(fileSystem: BaseFileSystem) {
+		await super.setOutputFileSystem(fileSystem)
 
-		this.dashService.setNewOutputFileSystem(fileSystem)
+		await this.dashService.setOutputFileSystem(fileSystem)
+
 		this.dashService.build()
 	}
 

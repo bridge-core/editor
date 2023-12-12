@@ -48,7 +48,7 @@ export class Project {
 		) {
 			newOutputFileSystem.setBaseHandle(savedHandle)
 
-			await this.setNewOutputFileSystem(newOutputFileSystem)
+			await this.setOutputFileSystem(newOutputFileSystem)
 		} else {
 			sidebar.addNotification(
 				'warning',
@@ -57,20 +57,15 @@ export class Project {
 						'You have not set up your output folder yet. Do you want to set it up now?',
 						async () => {
 							try {
-								newOutputFileSystem.setBaseHandle(
-									(await window.showDirectoryPicker({
+								const handle = await window.showDirectoryPicker(
+									{
 										mode: 'readwrite',
-									})) ?? null
+									}
 								)
 
-								set(
-									`projectOutputFolderHandle-${this.name}`,
-									newOutputFileSystem.baseHandle
-								)
+								if (!handle) return
 
-								await this.setNewOutputFileSystem(
-									newOutputFileSystem
-								)
+								this.setOutputFolder(handle)
 							} catch {}
 						}
 					)
@@ -80,10 +75,19 @@ export class Project {
 		}
 	}
 
-	public async setNewOutputFileSystem(fileSystem: BaseFileSystem) {
+	protected async setOutputFileSystem(fileSystem: BaseFileSystem) {
 		this.outputFileSystem = fileSystem
 
 		this.eventSystem.dispatch('outputFileSystemChanged', undefined)
+	}
+
+	public async setOutputFolder(handle: FileSystemDirectoryHandle) {
+		set(`projectOutputFolderHandle-${this.name}`, handle)
+
+		const newOutputFileSystem = new PWAFileSystem()
+		newOutputFileSystem.setBaseHandle(handle)
+
+		await this.setOutputFileSystem(newOutputFileSystem)
 	}
 }
 

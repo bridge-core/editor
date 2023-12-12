@@ -53,7 +53,7 @@ export class DashService {
 		this.worker.terminate()
 	}
 
-	public setNewOutputFileSystem(fileSystem: BaseFileSystem) {
+	public setOutputFileSystem(fileSystem: BaseFileSystem) {
 		this.outputFileSystem.dispose()
 
 		this.outputFileSystem = new WorkerFileSystemEntryPoint(
