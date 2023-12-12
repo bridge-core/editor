@@ -40,14 +40,20 @@ watch(selectedPreset, () => {
 	createPresetOptions.value = {}
 })
 
-function create() {
+const window = ref<Window | null>(null)
+
+async function create() {
+	if (!window.value) return
+
 	if (selectedPresetPath.value === null) return
 
 	if (!projectManager.currentProject) return
 
 	if (!(projectManager.currentProject instanceof BedrockProject)) return
 
-	presetsWindow.createPreset(
+	window.value.close()
+
+	await presetsWindow.createPreset(
 		selectedPresetPath.value,
 		createPresetOptions.value
 	)
@@ -55,7 +61,7 @@ function create() {
 </script>
 
 <template>
-	<SidebarWindow :name="t('Presets')" id="presets">
+	<SidebarWindow :name="t('Presets')" id="presets" ref="window">
 		<template #sidebar>
 			<div class="p-4">
 				<LabeledInput
@@ -132,12 +138,15 @@ function create() {
 						<div class="flex items-center gap-2 mb-2">
 							<Icon :icon="selectedPreset.icon" />
 
-							<span class="text-3xl font-bold font-inter">{{
-								selectedPreset.name
-							}}</span>
+							<span
+								class="text-3xl font-bold font-inter select-none"
+								>{{ selectedPreset.name }}</span
+							>
 						</div>
 
-						<p class="font-inter text-textAlternate mb-12">
+						<p
+							class="font-inter text-textAlternate mb-12 select-none"
+						>
 							{{ selectedPreset.description }}
 						</p>
 
