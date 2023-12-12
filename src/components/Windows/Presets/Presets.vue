@@ -102,7 +102,7 @@ async function create() {
 								v-for="presetPath of categories[category]"
 								class="flex align-center gap-2 border-transparent hover:border-text border-2 transition-colors duration-100 ease-out rounded p-2 mt-1"
 								:class="{
-									'bg-menu':
+									'bg-primary':
 										selectedPresetPath === presetPath,
 								}"
 								@click="selectedPresetPath = presetPath"
@@ -111,8 +111,10 @@ async function create() {
 									:icon="presets[presetPath].icon"
 									class="text-base transition-colors duration-100 ease-out"
 									:class="{
-										'text-primary':
+										'text-text':
 											selectedPresetPath === presetPath,
+										'text-primary':
+											selectedPresetPath !== presetPath,
 									}"
 								/>
 								<span class="font-inter select-none">{{
