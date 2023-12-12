@@ -1,27 +1,19 @@
-import { basename, join } from '@/libs/path'
+import { join } from '@/libs/path'
 import { confirmWindow, fileSystem, sidebar } from '@/App'
-import { defaultPackPaths, IConfigJson } from 'mc-project-core'
-import { ProjectData } from '@/libs/data/ProjectData'
 import { BaseFileSystem } from '@/libs/fileSystem/BaseFileSystem'
 import { PWAFileSystem } from '@/libs/fileSystem/PWAFileSystem'
 import { get, set } from 'idb-keyval'
 import { EventSystem } from '@/libs/event/EventSystem'
 import { LocalFileSystem } from '../fileSystem/LocalFileSystem'
 
-export interface ProjectInfo {
-	name: string
-	icon: string
-	config: IConfigJson
-}
-
 export class Project {
 	public path: string
 	public icon: string | null = null
-	public packs: string[] = []
+	public config: any | null = null
 	public outputFileSystem: BaseFileSystem = new LocalFileSystem()
 	public eventSystem = new EventSystem(['outputFileSystemChanged'])
 
-	constructor(public name: string, public data: ProjectData) {
+	constructor(public name: string) {
 		this.path = join('projects', this.name)
 
 		if (!(this.outputFileSystem instanceof LocalFileSystem)) return
@@ -30,12 +22,12 @@ export class Project {
 	}
 
 	public async load() {
-		const projectInfo = await getProjectInfo(join('projects', this.name))
-
-		this.icon = projectInfo.icon
-		this.packs = Object.keys(projectInfo.config.packs)
-
-		await this.data.load()
+		this.config = await fileSystem.readFileJson(
+			join(this.path, 'config.json')
+		)
+		this.icon = await fileSystem.readFileDataUrl(
+			join(this.path, 'BP', 'pack_icon.png')
+		)
 
 		await this.loadBetterOutputFileSystemOrAsk()
 	}
@@ -97,42 +89,4 @@ export class Project {
 
 export async function validProject(path: string) {
 	return await fileSystem.exists(join(path, 'config.json'))
-}
-
-export async function getProjectInfo(path: string): Promise<ProjectInfo> {
-	let iconDataUrl =
-		'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw=='
-
-	if (
-		await fileSystem.exists(
-			join(path, defaultPackPaths['behaviorPack'], 'pack_icon.png')
-		)
-	)
-		iconDataUrl = await fileSystem.readFileDataUrl(
-			join(path, 'BP', 'pack_icon.png')
-		)
-
-	if (
-		await fileSystem.exists(
-			join(path, defaultPackPaths['resourcePack'], 'pack_icon.png')
-		)
-	)
-		iconDataUrl = await fileSystem.readFileDataUrl(
-			join(path, 'BP', 'pack_icon.png')
-		)
-
-	if (
-		await fileSystem.exists(
-			join(path, defaultPackPaths['skinPack'], 'pack_icon.png')
-		)
-	)
-		iconDataUrl = await fileSystem.readFileDataUrl(
-			join(path, 'BP', 'pack_icon.png')
-		)
-
-	return {
-		name: basename(path),
-		icon: iconDataUrl,
-		config: await fileSystem.readFileJson(join(path, 'config.json')),
-	}
 }

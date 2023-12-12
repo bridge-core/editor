@@ -1,8 +1,7 @@
 import { setSchemas } from '@/libs/monaco/Json'
-import { Data } from '../Data'
 import { Runtime } from '@/libs/runtime/Runtime'
-import { fileSystem, projectManager } from '@/App'
-import { basename, join } from '@/libs/path'
+import { data, fileSystem, projectManager } from '@/App'
+import { join } from '@/libs/path'
 import { CompatabilityFileSystem } from '@/libs/fileSystem/CompatabilityFileSystem'
 
 export class BedrockSchemaData {
@@ -11,7 +10,7 @@ export class BedrockSchemaData {
 	private schemaScripts: any = {}
 	private runtime = new Runtime()
 
-	public async load(data: Data) {
+	public async load() {
 		this.schemas = {
 			...(await data.get('packages/common/schemas.json')),
 			...(await data.get('packages/minecraftBedrock/schemas.json')),

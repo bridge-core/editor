@@ -6,8 +6,8 @@ import { projectManager, fileSystem, windows } from '@/App'
 import { PWAFileSystem } from '@/libs/fileSystem/PWAFileSystem'
 import { computed, ref } from 'vue'
 import { useTranslate } from '@/libs/locales/Locales'
-import { ProjectInfo } from '@/libs/project/Project'
 import { get, set } from 'idb-keyval'
+import { ProjectInfo } from '@/libs/project/ProjectManager'
 
 const t = useTranslate()
 

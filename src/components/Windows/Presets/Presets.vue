@@ -31,7 +31,7 @@ const selectedPreset: ComputedRef<null | any> = computed(() => {
 
 	if (!(projectManager.currentProject instanceof BedrockProject)) return null
 
-	return projectManager.currentProject.data.presets[selectedPresetPath.value]
+	return projectManager.currentProject.presets[selectedPresetPath.value]
 })
 
 const createPresetOptions: Ref<any> = ref({})

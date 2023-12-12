@@ -1,7 +1,7 @@
 import { EventSystem } from '@/libs/event/EventSystem'
 import { fileSystem, data } from '@/App'
-import { Project, ProjectInfo, getProjectInfo, validProject } from './Project'
-import { join } from '@/libs/path'
+import { Project, validProject } from './Project'
+import { basename, join } from '@/libs/path'
 import { PWAFileSystem } from '@/libs/fileSystem/PWAFileSystem'
 import { BaseFileSystem } from '@/libs/fileSystem/BaseFileSystem'
 import { CreateProjectConfig } from './CreateProjectConfig'
@@ -11,8 +11,8 @@ import { BridgePack } from './create/packs/Bridge'
 import { Pack } from './create/packs/Pack'
 import { ResourcePack } from './create/packs/ResourcePack'
 import { SkinPack } from './create/packs/SkinPack'
-import { BedrockProjectData } from '@/libs/data/bedrock/BedrockProjectData'
 import { BedrockProject } from './BedrockProject'
+import { IConfigJson, defaultPackPaths } from 'mc-project-core'
 
 export const packs: {
 	[key: string]: Pack | undefined
@@ -21,6 +21,12 @@ export const packs: {
 	behaviorPack: new BehaviourPack(),
 	resourcePack: new ResourcePack(),
 	skinPack: new SkinPack(),
+}
+
+export interface ProjectInfo {
+	name: string
+	icon: string
+	config: IConfigJson
 }
 
 export class ProjectManager {
@@ -54,7 +60,7 @@ export class ProjectManager {
 		for (const path of foldersToLoad) {
 			if (!(await validProject(path))) continue
 
-			this.projects.push(await getProjectInfo(path))
+			this.projects.push(await this.getProjectInfo(path))
 		}
 
 		this.eventSystem.dispatch('updatedProjects', null)
@@ -99,22 +105,57 @@ export class ProjectManager {
 			})
 		)
 
-		this.addProject(await getProjectInfo(projectPath))
+		this.addProject(await this.getProjectInfo(projectPath))
 	}
 
 	public async loadProject(name: string) {
 		console.time('[APP] Load Project')
 
-		this.currentProject = new BedrockProject(
-			name,
-			new BedrockProjectData(data)
-		)
+		this.currentProject = new BedrockProject(name)
 
 		await this.currentProject.load()
 
 		this.eventSystem.dispatch('updatedCurrentProject', null)
 
 		console.timeEnd('[APP] Load Project')
+	}
+
+	public async getProjectInfo(path: string): Promise<ProjectInfo> {
+		let iconDataUrl =
+			'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw=='
+
+		if (
+			await fileSystem.exists(
+				join(path, defaultPackPaths['behaviorPack'], 'pack_icon.png')
+			)
+		)
+			iconDataUrl = await fileSystem.readFileDataUrl(
+				join(path, 'BP', 'pack_icon.png')
+			)
+
+		if (
+			await fileSystem.exists(
+				join(path, defaultPackPaths['resourcePack'], 'pack_icon.png')
+			)
+		)
+			iconDataUrl = await fileSystem.readFileDataUrl(
+				join(path, 'BP', 'pack_icon.png')
+			)
+
+		if (
+			await fileSystem.exists(
+				join(path, defaultPackPaths['skinPack'], 'pack_icon.png')
+			)
+		)
+			iconDataUrl = await fileSystem.readFileDataUrl(
+				join(path, 'BP', 'pack_icon.png')
+			)
+
+		return {
+			name: basename(path),
+			icon: iconDataUrl,
+			config: await fileSystem.readFileJson(join(path, 'config.json')),
+		}
 	}
 
 	public useProjects(): Ref<ProjectInfo[]> {

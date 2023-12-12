@@ -9,7 +9,6 @@ import {
 	fileSystem,
 	fileExplorer,
 	tabManager,
-	windows,
 	presetsWindow,
 } from '@/App'
 import { BaseEntry } from '@/libs/fileSystem/BaseFileSystem'
@@ -23,7 +22,6 @@ import {
 	watch,
 } from 'vue'
 import { join } from '@/libs/path'
-import { BedrockProjectData } from '@/libs/data/bedrock/BedrockProjectData'
 import { IPackType } from 'mc-project-core'
 import { BedrockProject } from '@/libs/project/BedrockProject'
 import { useTranslate } from '@/libs/locales/Locales'
@@ -31,36 +29,34 @@ import { useTranslate } from '@/libs/locales/Locales'
 const t = useTranslate()
 
 const currentProject = projectManager.useCurrentProject()
-let data: BedrockProjectData | null = currentProject.value
-	? <BedrockProjectData>currentProject.value.data
-	: null
 
 const currentProjectPackDefinitions: Ref<IPackType[]> = computed(() => {
 	if (!currentProject.value) return []
-	if (!data) return []
+	if (!(currentProject.value instanceof BedrockProject)) return []
 
-	return data.packDefinitions.filter((pack: IPackType) =>
-		currentProject.value?.packs.includes(pack.id)
+	return currentProject.value.packDefinitions.filter((pack: IPackType) =>
+		Object.keys(currentProject.value?.config.packs).includes(pack.id)
 	)
 })
 
 const selectedPack: Ref<string> = ref('')
 const selectedPackDefinition: ComputedRef<IPackType | null> = computed(() => {
-	if (!data) return null
+	if (!currentProject.value) return null
+	if (!(currentProject.value instanceof BedrockProject)) return null
 
 	return (
-		data.packDefinitions.find(
+		currentProject.value.packDefinitions.find(
 			(pack: IPackType) => pack.id === selectedPack.value
 		) ?? null
 	)
 })
 const selectedPackPath: ComputedRef<string> = computed(() => {
 	if (!currentProject.value) return ''
-	if (!data) return ''
+	if (!(currentProject.value instanceof BedrockProject)) return ''
 
 	return join(
 		currentProject.value.path,
-		data.packDefinitions.find(
+		currentProject.value.packDefinitions.find(
 			(pack: IPackType) => pack.id === selectedPack.value
 		)?.defaultPackPath ?? ''
 	)
@@ -71,7 +67,6 @@ const entries: Ref<BaseEntry[]> = ref([])
 async function updateEntries(path: unknown) {
 	if (typeof path !== 'string') return
 	if (!currentProject.value) return
-	if (!data) return
 
 	if (path !== selectedPackPath.value) return
 
@@ -88,9 +83,9 @@ onMounted(async () => {
 	fileSystem.eventSystem.on('updated', updateEntries)
 
 	if (!currentProject.value) return
-	if (!data) return
+	if (!(currentProject.value instanceof BedrockProject)) return
 
-	selectedPack.value = data.packDefinitions[0]?.id ?? ''
+	selectedPack.value = currentProject.value.packDefinitions[0]?.id ?? ''
 
 	updateEntries(selectedPackPath.value)
 })

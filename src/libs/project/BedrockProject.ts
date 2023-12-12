@@ -1,22 +1,32 @@
 import { DashService } from '@/libs/compiler/DashService'
 import { Project } from './Project'
-import { fileSystem } from '@/App'
-import { join } from '@/libs/path'
-import { BaseFileSystem } from '../fileSystem/BaseFileSystem'
-import { BedrockProjectData } from '../data/bedrock/BedrockProjectData'
+import { BaseFileSystem } from '@/libs/fileSystem/BaseFileSystem'
+import { IConfigJson, IPackType } from 'mc-project-core'
+import { FileTypeData } from '@/libs/data/bedrock/FileTypeData'
+import { data } from '@/App'
+import { BedrockSchemaData } from '@/libs/data/bedrock/BedrockSchemaData'
 
 export class BedrockProject extends Project {
-	public dashService = new DashService(this)
-	public config: any
+	public declare config: IConfigJson | null
 
-	public declare data: BedrockProjectData
+	public packDefinitions: IPackType[] = []
+	public presets: { [key: string]: any } = {}
+	public fileTypeData = new FileTypeData()
+	public schemaData = new BedrockSchemaData()
+
+	public dashService = new DashService(this)
 
 	public async load() {
 		await super.load()
 
-		this.config = JSON.parse(
-			await fileSystem.readFileText(join(this.path, 'config.json'))
+		this.packDefinitions = await data.get(
+			'packages/minecraftBedrock/packDefinitions.json'
 		)
+
+		this.presets = await data.get('packages/minecraftBedrock/presets.json')
+
+		await this.fileTypeData.load()
+		await this.schemaData.load()
 
 		await this.dashService.load()
 

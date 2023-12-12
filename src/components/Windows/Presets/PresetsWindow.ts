@@ -10,7 +10,7 @@ export class PresetsWindow {
 		if (!(projectManager.currentProject instanceof BedrockProject)) return
 
 		for (const [presetPath, preset] of Object.entries(
-			projectManager.currentProject.data.presets
+			projectManager.currentProject.presets
 		)) {
 			if (!this.categorizedPresets.value[preset.category])
 				this.categorizedPresets.value[preset.category] = {}

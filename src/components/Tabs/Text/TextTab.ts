@@ -5,8 +5,8 @@ import { Uri, editor as monaco } from 'monaco-editor'
 import { keyword } from 'color-convert'
 import { fileSystem, projectManager, settings, themeManager } from '@/App'
 import { basename } from '@/libs/path'
-import { BedrockProjectData } from '@/libs/data/bedrock/BedrockProjectData'
 import { setMonarchTokensProvider } from '@/libs/monaco/Json'
+import { BedrockProject } from '@/libs/project/BedrockProject'
 
 export class TextTab extends Tab {
 	public component: Component | null = TextTabComponent
@@ -25,10 +25,9 @@ export class TextTab extends Tab {
 
 	public async setup() {
 		if (!projectManager.currentProject) return
-		if (!(projectManager.currentProject.data instanceof BedrockProjectData))
-			return
+		if (!(projectManager.currentProject instanceof BedrockProject)) return
 
-		const fileTypeData = projectManager.currentProject.data.fileTypeData
+		const fileTypeData = projectManager.currentProject.fileTypeData
 
 		this.fileType = await fileTypeData.get(this.path)
 
@@ -41,10 +40,9 @@ export class TextTab extends Tab {
 
 	public async mountEditor(element: HTMLElement) {
 		if (!projectManager.currentProject) return
-		if (!(projectManager.currentProject.data instanceof BedrockProjectData))
-			return
+		if (!(projectManager.currentProject instanceof BedrockProject)) return
 
-		const schemaData = projectManager.currentProject.data.schemaData
+		const schemaData = projectManager.currentProject.schemaData
 
 		this.editor = monaco.create(element, {
 			fontFamily: 'Consolas',
@@ -73,10 +71,9 @@ export class TextTab extends Tab {
 
 	public unmountEditor() {
 		if (!projectManager.currentProject) return
-		if (!(projectManager.currentProject.data instanceof BedrockProjectData))
-			return
+		if (!(projectManager.currentProject instanceof BedrockProject)) return
 
-		const schemaData = projectManager.currentProject.data.schemaData
+		const schemaData = projectManager.currentProject.schemaData
 
 		schemaData.releaseSchema()
 
