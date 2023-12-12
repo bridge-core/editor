@@ -4,9 +4,36 @@ import LabeledInput from '@/components/Common/LabeledInput.vue'
 import Expandable from '@/components/Common/Expandable.vue'
 import Icon from '@/components/Common/Icon.vue'
 import { useTranslate } from '@/libs/locales/Locales'
-import { presetsWindow } from '@/App'
+import { presetsWindow, projectManager } from '@/App'
+import { ComputedRef, Ref, computed, ref, watch } from 'vue'
+import { BedrockProject } from '@/libs/project/BedrockProject'
 
 const t = useTranslate()
+
+const selectedPresetPath: Ref<string | null> = ref(null)
+
+watch(presetsWindow.categorizedPresets, () => {
+	if (selectedPresetPath.value !== null) return
+
+	const firstCategory = Object.keys(presetsWindow.categorizedPresets.value)[0]
+	const firstPreset = Object.keys(
+		presetsWindow.categorizedPresets.value[firstCategory]
+	)[0]
+
+	console.log(firstPreset)
+
+	selectedPresetPath.value = firstPreset
+})
+
+const selectedPreset: ComputedRef<null | any> = computed(() => {
+	if (selectedPresetPath.value === null) return null
+
+	if (!projectManager.currentProject) return null
+
+	if (!(projectManager.currentProject instanceof BedrockProject)) return null
+
+	return projectManager.currentProject.data.presets[selectedPresetPath.value]
+})
 </script>
 
 <template>
@@ -34,23 +61,40 @@ const t = useTranslate()
 				<div class="overflow-y-scroll max-h-[34rem]">
 					<Expandable
 						v-for="category of Object.keys(
-							presetsWindow.presets.value
+							presetsWindow.categorizedPresets.value
 						)"
 						:name="t(category)"
 					>
 						<div class="flex flex-col">
 							<button
-								v-for="preset of presetsWindow.presets.value[
-									category
-								]"
-								class="flex align-center gap-2 group hover:bg-menu transition-colors duration-100 ease-out rounded p-2 mt-1"
+								v-for="presetPath of Object.keys(
+									presetsWindow.categorizedPresets.value[
+										category
+									]
+								)"
+								class="flex align-center gap-2 border-transparent hover:border-text border-2 transition-colors duration-100 ease-out rounded p-2 mt-1"
+								:class="{
+									'bg-menu':
+										selectedPresetPath === presetPath,
+								}"
+								@click="selectedPresetPath = presetPath"
 							>
 								<Icon
-									:icon="preset.icon"
-									class="text-base group-hover:text-primary transition-colors duration-100 ease-out"
+									:icon="
+										presetsWindow.categorizedPresets.value[
+											category
+										][presetPath].icon
+									"
+									class="text-base transition-colors duration-100 ease-out"
+									:class="{
+										'text-primary':
+											selectedPresetPath === presetPath,
+									}"
 								/>
 								<span class="font-inter select-none">{{
-									preset.name
+									presetsWindow.categorizedPresets.value[
+										category
+									][presetPath].name
 								}}</span>
 							</button>
 						</div>
@@ -61,7 +105,66 @@ const t = useTranslate()
 		<template #content>
 			<div
 				class="w-[64rem] h-[38rem] flex flex-col overflow-y-auto p-4 pt-0"
-			></div>
+			>
+				<div v-if="selectedPreset !== null">
+					<div class="flex items-center gap-2 mb-2">
+						<Icon :icon="selectedPreset.icon" />
+
+						<span class="text-3xl font-bold font-inter">{{
+							selectedPreset.name
+						}}</span>
+					</div>
+
+					<p class="font-inter text-textAlternate mb-12">
+						{{ selectedPreset.description }}
+					</p>
+
+					<div
+						v-for="[
+							fieldName,
+							fieldId,
+							fieldOptions,
+						] of selectedPreset.fields"
+						:key="fieldId"
+					>
+						<LabeledInput
+							v-if="!fieldOptions.type"
+							:label="fieldName"
+							class="mb-6 flex-1 bg-background"
+							v-slot="{ focus, blur }"
+						>
+							<input
+								class="bg-background outline-none placeholder:text-textAlternate max-w-none w-full font-inter"
+								@focus="focus"
+								@blur="blur"
+								:placeholder="fieldName"
+							/>
+						</LabeledInput>
+
+						<LabeledInput
+							v-if="fieldOptions.type === 'fileInput'"
+							:label="fieldName"
+							class="mb-6 flex bg-background"
+							v-slot="{ focus, blur }"
+						>
+							<input type="file" class="hidden" />
+
+							<button
+								class="flex align-center gap-2 text-textAlternate font-inter"
+								@mouseenter="focus"
+								@mouseleave="blur"
+							>
+								<Icon
+									icon="image"
+									class="no-fill"
+									color="text-textAlternate"
+								/>
+								{{ fieldName }}
+							</button>
+						</LabeledInput>
+					</div>
+				</div>
+			</div>
 		</template>
 	</SidebarWindow>
 </template>

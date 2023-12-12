@@ -3,7 +3,8 @@ import { BedrockProject } from '@/libs/project/BedrockProject'
 import { Ref, ref } from 'vue'
 
 export class PresetsWindow {
-	public presets: Ref<{ [key: string]: any[] }> = ref({})
+	public categorizedPresets: Ref<{ [key: string]: { [key: string]: any } }> =
+		ref({})
 
 	public async open() {
 		if (!(projectManager.currentProject instanceof BedrockProject)) return
@@ -11,16 +12,13 @@ export class PresetsWindow {
 		for (const [presetPath, preset] of Object.entries(
 			projectManager.currentProject.data.presets
 		)) {
-			if (!this.presets.value[preset.category]) {
-				this.presets.value[preset.category] = [preset]
-			} else {
-				this.presets.value[preset.category].push(preset)
-			}
+			if (!this.categorizedPresets.value[preset.category])
+				this.categorizedPresets.value[preset.category] = {}
+
+			this.categorizedPresets.value[preset.category][presetPath] = preset
 		}
 
-		this.presets.value = { ...this.presets.value }
-
-		console.log(this.presets.value)
+		this.categorizedPresets.value = { ...this.categorizedPresets.value }
 
 		windows.open('presets')
 	}

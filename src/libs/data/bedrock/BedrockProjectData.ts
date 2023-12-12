@@ -5,7 +5,7 @@ import { BedrockSchemaData } from './BedrockSchemaData'
 
 export class BedrockProjectData extends ProjectData {
 	public packDefinitions: IPackType[] = []
-	public presets: any[] = []
+	public presets: { [key: string]: any } = {}
 	public fileTypeData = new FileTypeData()
 	public schemaData = new BedrockSchemaData()
 
