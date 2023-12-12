@@ -13,17 +13,6 @@ const t = useTranslate()
 
 const selectedPresetPath: Ref<string | null> = ref(null)
 
-watch(presetsWindow.categorizedPresets, () => {
-	if (selectedPresetPath.value !== null) return
-
-	const firstCategory = Object.keys(presetsWindow.categorizedPresets.value)[0]
-	const firstPreset = Object.keys(
-		presetsWindow.categorizedPresets.value[firstCategory]
-	)[0]
-
-	selectedPresetPath.value = firstPreset
-})
-
 const selectedPreset: ComputedRef<null | any> = computed(() => {
 	if (selectedPresetPath.value === null) return null
 
@@ -31,7 +20,9 @@ const selectedPreset: ComputedRef<null | any> = computed(() => {
 
 	if (!(projectManager.currentProject instanceof BedrockProject)) return null
 
-	return projectManager.currentProject.presets[selectedPresetPath.value]
+	return projectManager.currentProject.presetData.presets[
+		selectedPresetPath.value
+	]
 })
 
 const createPresetOptions: Ref<any> = ref({})
@@ -40,7 +31,21 @@ watch(selectedPreset, () => {
 	createPresetOptions.value = {}
 })
 
+const categories: Ref<{ [key: string]: string[] }> = ref({})
+const presets: Ref<{ [key: string]: any }> = ref({})
+
 const window = ref<Window | null>(null)
+
+function opened() {
+	if (!projectManager.currentProject) return
+	if (!(projectManager.currentProject instanceof BedrockProject)) return
+
+	selectedPresetPath.value =
+		Object.keys(projectManager.currentProject.presetData.presets)[0] ?? null
+
+	categories.value = projectManager.currentProject.presetData.categories
+	presets.value = projectManager.currentProject.presetData.presets
+}
 
 async function create() {
 	if (!window.value) return
@@ -53,7 +58,7 @@ async function create() {
 
 	window.value.close()
 
-	await presetsWindow.createPreset(
+	await projectManager.currentProject.presetData.createPreset(
 		selectedPresetPath.value,
 		createPresetOptions.value
 	)
@@ -61,7 +66,12 @@ async function create() {
 </script>
 
 <template>
-	<SidebarWindow :name="t('Presets')" id="presets" ref="window">
+	<SidebarWindow
+		:name="t('Presets')"
+		id="presets"
+		ref="window"
+		@open="opened"
+	>
 		<template #sidebar>
 			<div class="p-4">
 				<LabeledInput
@@ -84,18 +94,12 @@ async function create() {
 
 				<div class="overflow-y-scroll max-h-[34rem]">
 					<Expandable
-						v-for="category of Object.keys(
-							presetsWindow.categorizedPresets.value
-						)"
+						v-for="category of Object.keys(categories)"
 						:name="t(category)"
 					>
 						<div class="flex flex-col">
 							<button
-								v-for="presetPath of Object.keys(
-									presetsWindow.categorizedPresets.value[
-										category
-									]
-								)"
+								v-for="presetPath of categories[category]"
 								class="flex align-center gap-2 border-transparent hover:border-text border-2 transition-colors duration-100 ease-out rounded p-2 mt-1"
 								:class="{
 									'bg-menu':
@@ -104,11 +108,7 @@ async function create() {
 								@click="selectedPresetPath = presetPath"
 							>
 								<Icon
-									:icon="
-										presetsWindow.categorizedPresets.value[
-											category
-										][presetPath].icon
-									"
+									:icon="presets[presetPath].icon"
 									class="text-base transition-colors duration-100 ease-out"
 									:class="{
 										'text-primary':
@@ -116,9 +116,7 @@ async function create() {
 									}"
 								/>
 								<span class="font-inter select-none">{{
-									presetsWindow.categorizedPresets.value[
-										category
-									][presetPath].name
+									presets[presetPath].name
 								}}</span>
 							</button>
 						</div>

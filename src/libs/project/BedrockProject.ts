@@ -4,15 +4,16 @@ import { BaseFileSystem } from '@/libs/fileSystem/BaseFileSystem'
 import { IConfigJson, IPackType } from 'mc-project-core'
 import { FileTypeData } from '@/libs/data/bedrock/FileTypeData'
 import { data } from '@/App'
-import { BedrockSchemaData } from '@/libs/data/bedrock/BedrockSchemaData'
+import { SchemaData } from '@/libs/data/bedrock/SchemaData'
+import { PresetData } from '@/libs/data/bedrock/PresetData'
 
 export class BedrockProject extends Project {
 	public declare config: IConfigJson | null
 
 	public packDefinitions: IPackType[] = []
-	public presets: { [key: string]: any } = {}
 	public fileTypeData = new FileTypeData()
-	public schemaData = new BedrockSchemaData()
+	public schemaData = new SchemaData()
+	public presetData = new PresetData()
 
 	public dashService = new DashService(this)
 
@@ -23,10 +24,9 @@ export class BedrockProject extends Project {
 			'packages/minecraftBedrock/packDefinitions.json'
 		)
 
-		this.presets = await data.get('packages/minecraftBedrock/presets.json')
-
 		await this.fileTypeData.load()
 		await this.schemaData.load()
+		await this.presetData.load()
 
 		await this.dashService.load()
 

@@ -4,7 +4,7 @@ import { data, fileSystem, projectManager } from '@/App'
 import { join } from '@/libs/path'
 import { CompatabilityFileSystem } from '@/libs/fileSystem/CompatabilityFileSystem'
 
-export class BedrockSchemaData {
+export class SchemaData {
 	private schemas: any = {}
 	private dynamicSchemas: any = {}
 	private schemaScripts: any = {}
