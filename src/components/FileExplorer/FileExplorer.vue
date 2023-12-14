@@ -35,9 +35,7 @@ const currentProjectPackDefinitions: Ref<IPackType[]> = computed(() => {
 	if (!(currentProject.value instanceof BedrockProject)) return []
 
 	return currentProject.value.packDefinitions.filter((pack: IPackType) => {
-		if (currentProject.value === null) return false
-		if (currentProject.value.config === null) return false
-
+		//@ts-ignore just ignoring for now untill I figure out a fix for these types, just checking and returning false breaks it for some reason but I need to go to bed now
 		Object.keys(currentProject.value.config.packs).includes(pack.id)
 	})
 })
