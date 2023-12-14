@@ -157,6 +157,29 @@ async function create() {
 							{{ selectedPreset.description }}
 						</p>
 
+						<LabeledInput
+							v-if="
+								selectedPreset.additionalModels &&
+								selectedPreset.additionalModels.PRESET_PATH !==
+									undefined
+							"
+							:label="t('Folder')"
+							class="mb-6 flex-1 bg-background"
+							v-slot="{ focus, blur }"
+						>
+							<input
+								class="bg-background outline-none placeholder:text-textAlternate max-w-none w-full font-inter"
+								@focus="focus"
+								@blur="blur"
+								:placeholder="t('Folder')"
+								:value="createPresetOptions.PRESET_PATH"
+								@input="
+									(event: Event) =>
+										createPresetOptions.PRESET_PATH = (<HTMLInputElement>event.target).value
+								"
+							/>
+						</LabeledInput>
+
 						<div
 							v-for="[
 								fieldName,

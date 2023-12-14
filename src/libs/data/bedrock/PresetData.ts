@@ -33,6 +33,12 @@ export class PresetData {
 
 		if (!project) return
 
+		if (
+			!presetOptions.PRESET_PATH.endsWith('/') &&
+			presetOptions.PRESET_PATH !== ''
+		)
+			presetOptions.PRESET_PATH += '/'
+
 		const preset = this.presets[presetPath]
 
 		const createFiles = preset.createFiles ?? []
