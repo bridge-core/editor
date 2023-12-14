@@ -28,7 +28,14 @@ const selectedPreset: ComputedRef<null | any> = computed(() => {
 const createPresetOptions: Ref<any> = ref({})
 
 watch(selectedPreset, () => {
-	createPresetOptions.value = {}
+	if (!projectManager.currentProject) return
+	if (!(projectManager.currentProject instanceof BedrockProject)) return
+	if (!selectedPresetPath.value) return
+
+	createPresetOptions.value =
+		projectManager.currentProject.presetData.getDefaultPresetOptions(
+			selectedPresetPath.value
+		)
 })
 
 const categories: Ref<{ [key: string]: string[] }> = ref({})

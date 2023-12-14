@@ -58,6 +58,10 @@ export class Data {
 		return await this.fileSystem.readFileJson(path)
 	}
 
+	public async getText(path: string): Promise<string> {
+		return await this.fileSystem.readFileText(path)
+	}
+
 	public async getRaw(path: string): Promise<ArrayBuffer> {
 		return await this.fileSystem.readFile(path)
 	}

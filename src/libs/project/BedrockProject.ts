@@ -1,15 +1,13 @@
 import { DashService } from '@/libs/compiler/DashService'
 import { Project } from './Project'
 import { BaseFileSystem } from '@/libs/fileSystem/BaseFileSystem'
-import { IConfigJson, IPackType } from 'mc-project-core'
+import { IPackType } from 'mc-project-core'
 import { FileTypeData } from '@/libs/data/bedrock/FileTypeData'
 import { data } from '@/App'
 import { SchemaData } from '@/libs/data/bedrock/SchemaData'
 import { PresetData } from '@/libs/data/bedrock/PresetData'
 
 export class BedrockProject extends Project {
-	public declare config: IConfigJson | null
-
 	public packDefinitions: IPackType[] = []
 	public fileTypeData = new FileTypeData()
 	public schemaData = new SchemaData()

@@ -19,6 +19,7 @@ export class PWAFileSystem extends BaseFileSystem {
 		if (!this.baseHandle) throw new Error('Base handle not set!')
 
 		const directoryNames = parse(path).dir.split(sep)
+
 		if (directoryNames[0] === '' || directoryNames[0] === '.')
 			directoryNames.shift()
 
@@ -134,6 +135,34 @@ export class PWAFileSystem extends BaseFileSystem {
 			})
 		} catch (error) {
 			console.error(`Failed to read "${path}"`)
+
+			throw error
+		}
+	}
+
+	public async ensureDirectory(path: string) {
+		if (this.baseHandle === null) throw new Error('Base handle not set!')
+
+		try {
+			const directoryNames = parse(path).dir.split(sep)
+
+			if (directoryNames[0] === '' || directoryNames[0] === '.')
+				directoryNames.shift()
+
+			let currentHandle = this.baseHandle
+
+			for (const directoryName of directoryNames) {
+				if (directoryName === '') continue
+
+				currentHandle = await currentHandle.getDirectoryHandle(
+					directoryName,
+					{
+						create: true,
+					}
+				)
+			}
+		} catch (error) {
+			console.error(`Failed to ensure directory "${path}"`)
 
 			throw error
 		}

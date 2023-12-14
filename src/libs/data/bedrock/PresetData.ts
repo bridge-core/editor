@@ -1,4 +1,4 @@
-import { data } from '@/App'
+import { data, fileSystem, projectManager } from '@/App'
 import { dirname, join } from '@/libs/path'
 
 export class PresetData {
@@ -16,10 +16,24 @@ export class PresetData {
 		}
 	}
 
-	public async createPreset(presetPath: string, presetOptions: any) {
+	public getDefaultPresetOptions(presetPath: string) {
 		const preset = this.presets[presetPath]
 
-		console.log(preset)
+		const options: any = {}
+
+		for (const [key, value] of Object.entries(preset.additionalModels)) {
+			options[key] = value
+		}
+
+		return options
+	}
+
+	public async createPreset(presetPath: string, presetOptions: any) {
+		const project = projectManager.currentProject
+
+		if (!project) return
+
+		const preset = this.presets[presetPath]
 
 		const createFiles = preset.createFiles ?? []
 
@@ -29,18 +43,25 @@ export class PresetData {
 				templatePath
 			)
 
-			let templateContent = await data.get(templatePath)
+			let templateContent = await data.getText(templatePath)
 
 			if (templateOptions.inject) {
 				for (const inject of templateOptions.inject) {
 					targetPath = targetPath.replace(
-						inject,
-						`{{${presetOptions[inject]}}}`
+						'{{' + inject + '}}',
+						presetOptions[inject]
 					)
 				}
 			}
 
-			console.log(targetPath)
+			targetPath = join(
+				project.packs[templateOptions.packPath],
+				targetPath
+			)
+
+			await fileSystem.ensureDirectory(targetPath)
+
+			await fileSystem.writeFile(targetPath, templateContent)
 		}
 	}
 }

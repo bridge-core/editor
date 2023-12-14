@@ -5,13 +5,15 @@ import { PWAFileSystem } from '@/libs/fileSystem/PWAFileSystem'
 import { get, set } from 'idb-keyval'
 import { EventSystem } from '@/libs/event/EventSystem'
 import { LocalFileSystem } from '../fileSystem/LocalFileSystem'
+import { IConfigJson } from 'mc-project-core'
 
 export class Project {
 	public path: string
 	public icon: string | null = null
-	public config: any | null = null
+	public config: IConfigJson | null = null
 	public outputFileSystem: BaseFileSystem = new LocalFileSystem()
 	public eventSystem = new EventSystem(['outputFileSystemChanged'])
+	public packs: { [key: string]: string } = {}
 
 	constructor(public name: string) {
 		this.path = join('projects', this.name)
@@ -25,6 +27,13 @@ export class Project {
 		this.config = await fileSystem.readFileJson(
 			join(this.path, 'config.json')
 		)
+
+		if (!this.config) throw new Error('Failed to load project config!')
+
+		for (const [packId, packPath] of Object.entries(this.config.packs)) {
+			this.packs[packId] = join(this.path, packPath)
+		}
+
 		this.icon = await fileSystem.readFileDataUrl(
 			join(this.path, 'BP', 'pack_icon.png')
 		)
