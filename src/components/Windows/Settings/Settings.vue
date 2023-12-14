@@ -1,6 +1,6 @@
 <template>
 	<SidebarWindow
-		:name="`${t('Settings')} - ${selectedCategory.name}`"
+		:name="`${t('windows.settings.title')} - ${selectedCategory.name}`"
 		id="settings"
 	>
 		<template #sidebar>

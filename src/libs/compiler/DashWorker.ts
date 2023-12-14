@@ -38,8 +38,6 @@ async function getJsonData(path: string): Promise<any> {
 }
 
 async function setup(config: any, configPath: string, actionId: string) {
-	console.log('Setting up Dash...')
-
 	const packType = new CompatabilityPackType(config)
 	const fileType = new CompatabilityFileType(config, () => false)
 
@@ -63,8 +61,6 @@ async function setup(config: any, configPath: string, actionId: string) {
 		),
 	})
 
-	console.log('Dash setup complete!')
-
 	postMessage({
 		action: 'setupComplete',
 		id: actionId,
@@ -72,13 +68,9 @@ async function setup(config: any, configPath: string, actionId: string) {
 }
 
 async function build(actionId: string) {
-	console.log('Dash Building...')
-
 	if (!dash) return
 
 	await dash.build()
-
-	console.log('Dash build complete!')
 
 	postMessage({
 		action: 'buildComplete',

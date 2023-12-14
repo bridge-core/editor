@@ -28,7 +28,7 @@ function cancel() {
 </script>
 
 <template>
-	<Window :name="t('windows.confirm.title')" id="confirm" ref="window">
+	<Window :name="t('general.confirm')" id="confirm" ref="window">
 		<div class="p-4">
 			<p class="mb-4 max-w-sm font-inter">
 				{{ t(confirmWindow.text) }}

@@ -74,7 +74,7 @@ async function create() {
 
 <template>
 	<SidebarWindow
-		:name="t('Presets')"
+		:name="t('windows.createPreset.title')"
 		id="presets"
 		ref="window"
 		@open="opened"

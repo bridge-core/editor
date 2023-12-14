@@ -62,7 +62,11 @@ async function droppedOutputFolder(event: DragEvent) {
 </script>
 
 <template>
-	<SidebarWindow :name="t('Compiler')" id="compiler" ref="window">
+	<SidebarWindow
+		:name="t('sidebar.compiler.name')"
+		id="compiler"
+		ref="window"
+	>
 		<template #sidebar>
 			<div class="p-4">
 				<div class="overflow-y-scroll max-h-[34rem]">
