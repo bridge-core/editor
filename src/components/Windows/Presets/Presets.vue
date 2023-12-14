@@ -135,7 +135,7 @@ async function create() {
 		</template>
 		<template #content>
 			<div
-				class="w-[64rem] h-[38rem] flex flex-col overflow-y-auto p-4 pt-0"
+				class="window-content h-[38rem] flex flex-col overflow-y-auto p-4 pt-0"
 			>
 				<div
 					v-if="selectedPreset !== null"
@@ -243,3 +243,10 @@ async function create() {
 		</template>
 	</SidebarWindow>
 </template>
+
+<style scoped>
+.window-content {
+	width: calc(90vw - 24rem);
+	max-width: 50rem;
+}
+</style>
