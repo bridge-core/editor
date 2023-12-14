@@ -34,9 +34,12 @@ const currentProjectPackDefinitions: Ref<IPackType[]> = computed(() => {
 	if (!currentProject.value) return []
 	if (!(currentProject.value instanceof BedrockProject)) return []
 
-	return currentProject.value.packDefinitions.filter((pack: IPackType) =>
-		Object.keys(currentProject.value?.config.packs).includes(pack.id)
-	)
+	return currentProject.value.packDefinitions.filter((pack: IPackType) => {
+		if (currentProject.value === null) return false
+		if (currentProject.value.config === null) return false
+
+		Object.keys(currentProject.value.config.packs).includes(pack.id)
+	})
 })
 
 const selectedPack: Ref<string> = ref('')
