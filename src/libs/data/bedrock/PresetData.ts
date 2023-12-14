@@ -1,9 +1,12 @@
 import { data, fileSystem, projectManager } from '@/App'
-import { dirname, join } from '@/libs/path'
+import { basename, dirname, join } from '@/libs/path'
+import { Runtime } from '@/libs/runtime/Runtime'
 
 export class PresetData {
 	public presets: { [key: string]: any } = {}
 	public categories: { [key: string]: string[] } = {}
+
+	private runtime = new Runtime()
 
 	public async load() {
 		this.presets = await data.get('packages/minecraftBedrock/presets.json')
@@ -43,7 +46,69 @@ export class PresetData {
 
 		const createFiles = preset.createFiles ?? []
 
-		for (let [templatePath, targetPath, templateOptions] of createFiles) {
+		for (let createFileOptions of createFiles) {
+			const isScript = typeof createFileOptions === 'string'
+
+			if (isScript) {
+				let templatePath = createFileOptions
+
+				templatePath = join('packages/minecraftBedrock/', templatePath)
+
+				const script = await data.getText(templatePath)
+
+				const module: any = {}
+
+				const result = await this.runtime.run(
+					templatePath,
+					{
+						module,
+					},
+					script
+				)
+
+				module.exports({
+					// We are just faking filehandles here since the file system doesn't necesarily use file handles
+					createFile: async (
+						path: string,
+						handle: any,
+						options: any
+					) => {
+						const packPath = project.packs[options.packPath]
+						const filePath = join(packPath, path)
+
+						await fileSystem.ensureDirectory(filePath)
+						await fileSystem.writeFile(filePath, handle.content)
+					},
+					loadPresetFile: async (path: string) => {
+						return {
+							name: basename(path),
+							content: await data.getRaw(
+								join(
+									dirname(
+										presetPath.substring(
+											'file:///data/'.length
+										)
+									),
+									path
+								)
+							),
+						}
+					},
+					models: presetOptions,
+					expandFile: (path: string, content: any, options: any) =>
+						console.log(
+							'Trying to expand file',
+							path,
+							content,
+							options
+						),
+				})
+
+				continue
+			}
+
+			let [templatePath, targetPath, templateOptions] = createFileOptions
+
 			templatePath = join(
 				dirname(presetPath.substring('file:///data/'.length)),
 				templatePath

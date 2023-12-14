@@ -163,7 +163,7 @@ async function create() {
 								selectedPreset.additionalModels.PRESET_PATH !==
 									undefined
 							"
-							:label="t('Folder')"
+							:label="t('Folders')"
 							class="mb-6 flex-1 bg-background"
 							v-slot="{ focus, blur }"
 						>
@@ -171,7 +171,7 @@ async function create() {
 								class="bg-background outline-none placeholder:text-textAlternate max-w-none w-full font-inter"
 								@focus="focus"
 								@blur="blur"
-								:placeholder="t('Folder')"
+								:placeholder="t('Folders')"
 								:value="createPresetOptions.PRESET_PATH"
 								@input="
 									(event: Event) =>
