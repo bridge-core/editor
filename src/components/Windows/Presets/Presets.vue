@@ -16,13 +16,7 @@ const selectedPresetPath: Ref<string | null> = ref(null)
 const selectedPreset: ComputedRef<null | any> = computed(() => {
 	if (selectedPresetPath.value === null) return null
 
-	if (!projectManager.currentProject) return null
-
-	if (!(projectManager.currentProject instanceof BedrockProject)) return null
-
-	return projectManager.currentProject.presetData.presets[
-		selectedPresetPath.value
-	]
+	return availablePresets.value[selectedPresetPath.value]
 })
 
 const createPresetOptions: Ref<any> = ref({})
@@ -38,8 +32,19 @@ watch(selectedPreset, () => {
 		)
 })
 
-const categories: Ref<{ [key: string]: string[] }> = ref({})
-const presets: Ref<{ [key: string]: any }> = ref({})
+let availablePresets: Ref<{ [key: string]: any }> = ref({})
+
+const categories: ComputedRef<{ [key: string]: string[] }> = computed(() => {
+	const categories: { [key: string]: string[] } = {}
+
+	for (const [presetPath, preset] of Object.entries(availablePresets.value)) {
+		if (!categories[preset.category]) categories[preset.category] = []
+
+		categories[preset.category].push(presetPath)
+	}
+
+	return categories
+})
 
 const window = ref<Window | null>(null)
 
@@ -47,11 +52,10 @@ function opened() {
 	if (!projectManager.currentProject) return
 	if (!(projectManager.currentProject instanceof BedrockProject)) return
 
-	selectedPresetPath.value =
-		Object.keys(projectManager.currentProject.presetData.presets)[0] ?? null
+	availablePresets =
+		projectManager.currentProject.presetData.useAvailablePresets()
 
-	categories.value = projectManager.currentProject.presetData.categories
-	presets.value = projectManager.currentProject.presetData.presets
+	selectedPresetPath.value = Object.keys(availablePresets.value)[0] ?? null
 }
 
 async function create() {
@@ -115,7 +119,7 @@ async function create() {
 								@click="selectedPresetPath = presetPath"
 							>
 								<Icon
-									:icon="presets[presetPath].icon"
+									:icon="availablePresets[presetPath].icon"
 									class="text-base transition-colors duration-100 ease-out"
 									:class="{
 										'text-text':
@@ -125,7 +129,7 @@ async function create() {
 									}"
 								/>
 								<span class="font-inter select-none">{{
-									presets[presetPath].name
+									availablePresets[presetPath].name
 								}}</span>
 							</button>
 						</div>

@@ -1,6 +1,8 @@
 import { data, fileSystem, projectManager } from '@/App'
 import { basename, dirname, join } from '@/libs/path'
 import { Runtime } from '@/libs/runtime/Runtime'
+import { compareVersions } from 'bridge-common-utils'
+import { Ref, ref } from 'vue'
 
 export class PresetData {
 	public presets: { [key: string]: any } = {}
@@ -134,5 +136,66 @@ export class PresetData {
 
 			await fileSystem.writeFile(targetPath, templateContent)
 		}
+	}
+
+	public getAvailablePresets() {
+		return Object.fromEntries(
+			Object.entries(this.presets).filter(([presetPath, preset]) => {
+				if (!preset.requires) return true
+
+				if (!projectManager.currentProject) return true
+
+				if (preset.requires.packTypes) {
+					for (const pack of preset.requires.packTypes) {
+						if (!projectManager.currentProject.packs[pack])
+							return false
+					}
+				}
+
+				if (preset.requires.targetVersion) {
+					if (Array.isArray(preset.requires.targetVersion)) {
+						if (
+							!compareVersions(
+								projectManager.currentProject.config
+									?.targetVersion ?? '',
+								preset.requires.targetVersion[1],
+								preset.requires.targetVersion[0]
+							)
+						)
+							return false
+					} else {
+						if (
+							preset.requires.targetVersion.min &&
+							!compareVersions(
+								projectManager.currentProject.config
+									?.targetVersion ?? '',
+								preset.requires.targetVersion.min ?? '',
+								'>='
+							)
+						)
+							return false
+
+						if (
+							preset.requires.targetVersion.max &&
+							!compareVersions(
+								projectManager.currentProject.config
+									?.targetVersion ?? '',
+								preset.requires.targetVersion.max ?? '',
+								'<='
+							)
+						)
+							return false
+					}
+				}
+
+				return true
+			})
+		)
+	}
+
+	public useAvailablePresets(): Ref<{ [key: string]: any }> {
+		const availablePresets = ref(this.getAvailablePresets())
+
+		return availablePresets
 	}
 }
