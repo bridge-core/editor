@@ -137,9 +137,7 @@ async function contextMenuOpenProjectConfig(close: any) {
 		<div class="bg-menuAlternate rounded flex-1 p-2">
 			<div class="flex gap-2 mb-2" v-if="currentProject">
 				<button
-					v-for="packDefinition in console.log(
-						currentProjectPackDefinitions
-					) || currentProjectPackDefinitions"
+					v-for="packDefinition in currentProjectPackDefinitions"
 					class="flex-1 flex items-center justify-center p-2 rounded border-2 hover:border-text transition-colors duration-100 ease-out"
 					:class="{
 						'bg-background border-background':
