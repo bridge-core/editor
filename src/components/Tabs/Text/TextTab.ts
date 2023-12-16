@@ -42,6 +42,8 @@ export class TextTab extends Tab {
 		if (!projectManager.currentProject) return
 		if (!(projectManager.currentProject instanceof BedrockProject)) return
 
+		this.updateEditorTheme()
+
 		const schemaData = projectManager.currentProject.schemaData
 
 		this.editor = monaco.create(element, {
@@ -51,8 +53,6 @@ export class TextTab extends Tab {
 				'bracketPairColorization'
 			),
 		})
-
-		this.updateEditorTheme()
 
 		const fileContent = await fileSystem.readFileText(this.path)
 
@@ -67,6 +67,14 @@ export class TextTab extends Tab {
 		if (!this.fileType) return
 
 		schemaData.applySchema(this.path, this.fileType.schema)
+
+		window.addEventListener('keydown', (event) => {
+			if (event.ctrlKey && event.key === 's') {
+				event.preventDefault()
+
+				this.save()
+			}
+		})
 	}
 
 	public unmountEditor() {
@@ -79,6 +87,29 @@ export class TextTab extends Tab {
 
 		this.model?.dispose()
 		this.editor?.dispose()
+	}
+
+	private async save() {
+		if (!this.model) return
+
+		this.editor?.trigger(
+			'contextmenu',
+			'editor.action.formatDocument',
+			null
+		)
+
+		let disposableCallback: any = null
+		await new Promise<void>((resolve) => {
+			if (!this.model) return
+
+			disposableCallback = this.model.onDidChangeContent(() => {
+				resolve()
+			})
+		})
+
+		disposableCallback?.dispose()
+
+		await fileSystem.writeFile(this.path, this.model.getValue())
 	}
 
 	private getColor(name: string): string {
