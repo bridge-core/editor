@@ -58,12 +58,6 @@ export class SchemaData {
 		const promises = []
 
 		for (const scriptPath of Object.keys(this.schemaScripts)) {
-			if (
-				scriptPath !==
-				'file:///data/packages/minecraftBedrock/schemaScript/lang/langPath.json'
-			)
-				continue
-
 			let scriptData =
 				typeof this.schemaScripts[scriptPath] === 'string'
 					? { script: this.schemaScripts[scriptPath] }
@@ -87,42 +81,56 @@ export class SchemaData {
 	}
 
 	private async runScript(scriptPath: string, scriptData: any) {
+		console.log('Running script ', scriptPath)
+
 		const compatabilityFileSystem = new CompatabilityFileSystem(fileSystem)
 
-		const result = await (
-			await this.runtime.run(
-				scriptPath,
-				{
-					readdir: compatabilityFileSystem.readdir.bind(
-						compatabilityFileSystem
-					),
-					resolvePackPath(packId: string, path: string) {
-						return join(
-							projectManager.currentProject?.path ?? '',
-							'RP',
-							path
-						)
-					},
-				},
-				`
-			___module.execute = async function(){
-				${scriptData.script}
-			}
-		`
-			)
-		).execute()
+		const formatVersions = (
+			await data.get('packages/minecraftBedrock/formatVersions.json')
+		).formatVersions
 
-		if (scriptData.type === 'enum') {
-			this.dynamicSchemas[
-				'file:///' +
-					join(
-						'data/packages/minecraftBedrock/schema/',
-						scriptData.generateFile
-					)
-			] = {
-				type: 'string',
-				enum: result,
+		try {
+			const result = await (
+				await this.runtime.run(
+					scriptPath,
+					{
+						readdir: compatabilityFileSystem.readdir.bind(
+							compatabilityFileSystem
+						),
+						resolvePackPath(packId: string, path: string) {
+							return join(
+								projectManager.currentProject?.path ?? '',
+								'RP',
+								path
+							)
+						},
+						getFormatVersions() {
+							return formatVersions
+						},
+					},
+					`
+				___module.execute = async function(){
+					${scriptData.script}
+				}
+			`
+				)
+			).execute()
+
+			if (scriptData.type === 'enum') {
+				this.dynamicSchemas[
+					'file:///' +
+						join(
+							'data/packages/minecraftBedrock/schema/',
+							scriptData.generateFile
+						)
+				] = {
+					type: 'string',
+					enum: result,
+				}
 			}
+		} catch (err) {
+			console.error('Error running schema script ', scriptPath)
+			console.error(err)
 		}
 	}
 }
