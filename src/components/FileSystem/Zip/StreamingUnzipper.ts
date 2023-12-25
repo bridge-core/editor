@@ -3,6 +3,7 @@ import { GenericUnzipper } from './GenericUnzipper'
 import { FileSystem } from '../FileSystem'
 import { wait } from '/@/utils/wait'
 import { invoke } from '@tauri-apps/api/tauri'
+import { basename, parse } from '/@/utils/path'
 
 /**
  * Streaming variant of the Unzipper class. It is slightly faster and consumes less memory.
@@ -30,7 +31,10 @@ export class StreamingUnzipper extends GenericUnzipper<Uint8Array> {
 			const paths = Object.keys(files)
 			for (let fileIndex = 0; fileIndex < paths.length; fileIndex++) {
 				const path = paths[fileIndex]
-				await fs.writeFile(path, new Uint8Array(files[path]))
+
+				// Some zip files seem to also contain folders which we need to check for so that we don't create a file
+				if (path.endsWith(basename(path)))
+					await fs.writeFile(path, new Uint8Array(files[path]))
 
 				this.task?.update(
 					100 + Math.floor((fileIndex / paths.length) * 100),
