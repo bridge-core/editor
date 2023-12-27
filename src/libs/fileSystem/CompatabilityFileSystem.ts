@@ -36,8 +36,7 @@ export class CompatabilityFileSystem extends FileSystem {
 			kind: 'file' | 'directory'
 		}[]
 	> {
-		if (!(await this.fileSystem.exists(path)))
-			await this.fileSystem.makeDirectory(path)
+		if (!(await this.fileSystem.exists(path))) return []
 
 		return (await this.fileSystem.readDirectoryEntries(path)).map(
 			(entry) => {
