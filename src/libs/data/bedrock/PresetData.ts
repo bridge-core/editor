@@ -44,6 +44,8 @@ export class PresetData {
 		)
 			presetOptions.PRESET_PATH += '/'
 
+		presetOptions.PROJECT_PREFIX = project.config?.namespace
+
 		const preset = this.presets[presetPath]
 
 		const createFiles = preset.createFiles ?? []
@@ -118,9 +120,16 @@ export class PresetData {
 
 			let templateContent = await data.getText(templatePath)
 
+			console.log(templateOptions.inject)
+
 			if (templateOptions.inject) {
 				for (const inject of templateOptions.inject) {
 					targetPath = targetPath.replace(
+						'{{' + inject + '}}',
+						presetOptions[inject]
+					)
+
+					templateContent = templateContent.replace(
 						'{{' + inject + '}}',
 						presetOptions[inject]
 					)

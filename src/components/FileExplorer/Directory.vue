@@ -1,6 +1,10 @@
 <template>
 	<div class="flex items-center gap-1" @click="expanded = !expanded">
-		<Icon icon="folder" :color="color" class="text-sm" />
+		<Icon
+			:icon="expanded ? 'folder_open' : 'folder'"
+			:color="color"
+			class="text-sm"
+		/>
 
 		<span class="select-none font-inter"> {{ basename(path) }} </span>
 	</div>

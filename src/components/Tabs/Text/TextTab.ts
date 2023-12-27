@@ -29,7 +29,7 @@ export class TextTab extends Tab {
 
 		const fileTypeData = projectManager.currentProject.fileTypeData
 
-		this.fileType = await fileTypeData.get(this.path)
+		this.fileType = fileTypeData.get(this.path)
 
 		if (this.fileType === null) return
 

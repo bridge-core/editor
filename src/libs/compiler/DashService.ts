@@ -36,7 +36,7 @@ export class DashService {
 		}
 	}
 
-	public async load() {
+	public async setup() {
 		await sendAndWait(
 			{
 				action: 'setup',
@@ -48,9 +48,10 @@ export class DashService {
 	}
 
 	public async dispose() {
+		this.worker.terminate()
+
 		this.inputFileSystem.dispose()
 		this.outputFileSystem.dispose()
-		this.worker.terminate()
 	}
 
 	public setOutputFileSystem(fileSystem: BaseFileSystem) {

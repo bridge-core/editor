@@ -3,6 +3,8 @@ import { Runtime } from '@/libs/runtime/Runtime'
 import { data, fileSystem, projectManager } from '@/App'
 import { join } from '@/libs/path'
 import { CompatabilityFileSystem } from '@/libs/fileSystem/CompatabilityFileSystem'
+import { BedrockProject } from '@/libs/project/BedrockProject'
+import { v4 as uuid } from 'uuid'
 
 export class SchemaData {
 	private schemas: any = {}
@@ -81,8 +83,6 @@ export class SchemaData {
 	}
 
 	private async runScript(scriptPath: string, scriptData: any) {
-		console.log('Running script ', scriptPath)
-
 		const compatabilityFileSystem = new CompatabilityFileSystem(fileSystem)
 
 		const formatVersions = (
@@ -106,6 +106,57 @@ export class SchemaData {
 						},
 						getFormatVersions() {
 							return formatVersions
+						},
+						getCacheDataFor(
+							fileType: string,
+							filePath?: string,
+							cacheKey?: string
+						) {
+							console.warn(
+								'Getting cache data',
+								fileType,
+								filePath,
+								cacheKey
+							)
+
+							const result = (
+								projectManager.currentProject as BedrockProject
+							).indexerService.getCachedData(
+								fileType,
+								filePath,
+								cacheKey
+							)
+
+							result.then(console.log)
+
+							return result
+						},
+						getProjectConfig() {
+							return projectManager.currentProject?.config
+						},
+						getProjectPrefix() {
+							return projectManager.currentProject?.config
+								?.namespace
+						},
+						getFileName() {
+							console.warn('Not implemented yet!')
+							return undefined
+						},
+						uuid,
+						get(path: string) {
+							console.warn('Not Implemented yet!')
+							return []
+						},
+						customComponents(fileType: any) {
+							console.warn('Not Implemented yet!')
+							return {}
+						},
+						getIndexedPaths(fileType: string, sort: boolean) {
+							console.warn('Not Implemented yet!')
+							return Promise.resolve([])
+						},
+						failedCurrentFileLoad() {
+							return false
 						},
 					},
 					`

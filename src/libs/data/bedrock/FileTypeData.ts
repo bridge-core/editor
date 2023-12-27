@@ -3,7 +3,7 @@ import { isMatch } from 'bridge-common-utils'
 import { data } from '@/App'
 
 export class FileTypeData {
-	private fileTypes: any[] = []
+	public fileTypes: any[] = []
 
 	public async load() {
 		this.fileTypes = await data.get(
@@ -11,7 +11,7 @@ export class FileTypeData {
 		)
 	}
 
-	public async get(path: string): Promise<null | any> {
+	public get(path: string): null | any {
 		const projectRelativePath = path.split(sep).slice(3).join(sep)
 
 		for (const fileType of this.fileTypes) {
