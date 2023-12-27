@@ -1,6 +1,6 @@
 import { WorkerFileSystemEndPoint } from '@/libs/fileSystem/WorkerFileSystem'
-import { sep } from '@/libs/path'
 import { sendAndWait } from '@/libs/worker/Communication'
+import { walkObject } from 'bridge-common-utils'
 
 const fileSystem = new WorkerFileSystemEndPoint()
 
@@ -18,23 +18,6 @@ async function getFileType(path: string): Promise<any> {
 }
 
 let index: { [key: string]: { fileType: string; data?: any } } = {}
-
-function walkObject(path: string, object: any): string[] {
-	const keys = path.split(sep)
-
-	while (keys.length > 0) {
-		const currentKey = keys.shift()!
-
-		if (object[currentKey] === undefined) return []
-
-		object = object[currentKey]
-	}
-
-	if (Array.isArray(object)) return object
-	if (typeof object === 'object') return Object.keys(object)
-
-	return [object]
-}
 
 async function indexFile(path: string) {
 	let fileType = await getFileType(path)
@@ -78,9 +61,15 @@ async function indexFile(path: string) {
 
 				let foundData: string[] = []
 
-				for (const path of paths) {
-					foundData = foundData.concat(walkObject(path, json))
-				}
+				walkObject(path, json, (data) => {
+					if (Array.isArray(data)) {
+						foundData = foundData.concat(data)
+					} else if (typeof data === 'object') {
+						foundData = foundData.concat(Object.keys(data))
+					} else {
+						foundData.push(data)
+					}
+				})
 
 				console.log('Setting cache data', cacheKey, foundData, json)
 
