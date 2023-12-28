@@ -1,90 +1,271 @@
 import { setSchemas } from '@/libs/monaco/Json'
 import { Runtime } from '@/libs/runtime/Runtime'
 import { data, fileSystem, projectManager } from '@/App'
-import { join } from '@/libs/path'
+import { basename, dirname, join } from '@/libs/path'
 import { CompatabilityFileSystem } from '@/libs/fileSystem/CompatabilityFileSystem'
 import { BedrockProject } from '@/libs/project/BedrockProject'
 import { v4 as uuid } from 'uuid'
+import { walkObject } from 'bridge-common-utils'
+
+/*
+Building the schema for a file is a little complicated.
+We can't use simple references because different files need to "reuse" generated schemas with different values.
+We need some way to swap out the references to these dynamically generated schemas
+
+The idea here is to walk the dependency tree of the schema and replace all of the references with a modified path relative to a custom folder based on the path of the file
+and then supply the referenced schema under the new path.
+Before compiling we'll also generate the dynamic schemas which will be supplied when referenced durring the compile step.
+
+Optimizations:
+- pregenerate generated schemas for all the non dynamic schema scripts when the project loads to save time.
+*/
 
 export class SchemaData {
 	private schemas: any = {}
-	private generatedSchemas: any = {}
-	private dynamicSchemas: string[] = []
-	private generatedDynamicSchemas: { [key: string]: any } = {}
-	private schemaUsers: { [key: string]: string[] } = {}
+
 	private schemaScripts: any = {}
+	private dynamicSchemaScripts: string[] = []
+
+	private staticGeneratedSchemas: any = {}
+
+	private fileSchemas: {
+		[key: string]: {
+			main: string
+			localSchemas: {
+				[key: string]: any
+			}
+		}
+	} = {}
+
 	private runtime = new Runtime()
+
+	private fixPaths(schemas: { [key: string]: any }) {
+		return Object.fromEntries(
+			Object.entries(schemas).map(([path, schema]) => [
+				path.substring('file:///'.length),
+				schema,
+			])
+		)
+	}
 
 	public async load() {
 		this.schemas = {
-			...(await data.get('packages/common/schemas.json')),
-			...(await data.get('packages/minecraftBedrock/schemas.json')),
+			...this.fixPaths(await data.get('packages/common/schemas.json')),
+			...this.fixPaths(
+				await data.get('packages/minecraftBedrock/schemas.json')
+			),
 		}
 
-		this.schemaScripts = await data.get(
-			'packages/minecraftBedrock/schemaScripts.json'
+		this.schemaScripts = this.fixPaths(
+			await data.get('packages/minecraftBedrock/schemaScripts.json')
 		)
 
-		await this.runScripts()
+		await this.generateStaticGeneratedSchemas()
 	}
 
-	public get(path: string): any | null {
-		return this.schemas[path] ?? null
+	private rebaseReferences(
+		schemaPart: any,
+		schemaPath: string,
+		basePath: string
+	): { references: string[]; rebasedSchemaPart: any } {
+		let references: string[] = []
+
+		if (Array.isArray(schemaPart)) {
+			for (let index = 0; index < schemaPart.length; index++) {
+				const result = this.rebaseReferences(
+					schemaPart[index],
+					schemaPath,
+					basePath
+				)
+
+				schemaPart[index] = result.rebasedSchemaPart
+				references = references.concat(result.references)
+			}
+		} else if (typeof schemaPart === 'object') {
+			for (const key of Object.keys(schemaPart)) {
+				if (key === '$ref') {
+					let reference = schemaPart[key]
+
+					if (reference.startsWith('#')) {
+					} else if (reference.startsWith('/')) {
+						references.push(reference)
+
+						reference = join(basePath, reference)
+					} else {
+						references.push(join(dirname(schemaPath), reference))
+					}
+
+					schemaPart[key] = reference
+
+					continue
+				}
+
+				const result = this.rebaseReferences(
+					schemaPart[key],
+					schemaPath,
+					basePath
+				)
+
+				schemaPart[key] = result.rebasedSchemaPart
+				references = references.concat(result.references)
+			}
+		}
+
+		return {
+			references,
+			rebasedSchemaPart: schemaPart,
+		}
 	}
 
-	public loadDynamicSchemas(path: string, schemaUri: string) {
-		if (this.schemaUsers[schemaUri] === undefined)
-			this.schemaUsers[schemaUri] = []
+	public async applySchemaForFile(path: string, schemaUri: string) {
+		if (schemaUri.startsWith('file:///'))
+			schemaUri = schemaUri.substring('file:///'.length)
 
-		if (!this.schemaUsers[schemaUri].includes(path))
-			this.schemaUsers[schemaUri].push(path)
+		const generatedDynamicSchemas: { [key: string]: any } = {}
 
-		// generate dynamic schemas for this file
-		console.log(this.dynamicSchemas)
+		for (const scriptPath of this.dynamicSchemaScripts) {
+			let scriptData = this.schemaScripts[scriptPath]
 
-		setSchemas([
-			...Object.keys(this.schemas).map((schema) => ({
-				uri: schema,
-				fileMatch: this.schemaUsers[schema],
-				schema: this.schemas[schema],
-			})),
-			...Object.keys({ ...this.generatedSchemas }).map((schema) => ({
-				uri: schema,
-				schema: this.generatedSchemas[schema],
-			})),
-		])
+			const scriptResult = await this.runScript(
+				scriptPath,
+				typeof scriptData === 'string' ? scriptData : scriptData.script,
+				path
+			)
+
+			if (typeof scriptData === 'string') {
+				scriptData = scriptResult.result
+			} else {
+				scriptData.data = scriptResult.result
+			}
+
+			generatedDynamicSchemas[
+				join(
+					'data/packages/minecraftBedrock/schema/',
+					scriptData.generateFile
+				)
+			] = this.processScriptData(scriptData)
+		}
+
+		const localSchemas: { [key: string]: any } = {}
+
+		let rebasedSchemas = []
+		let schemasToRebaseQueue = [schemaUri]
+
+		while (schemasToRebaseQueue.length > 0) {
+			const schemaPathToRebase = schemasToRebaseQueue.shift()!
+			rebasedSchemas.push(schemaPathToRebase)
+
+			const schema =
+				generatedDynamicSchemas[schemaPathToRebase] ??
+				this.staticGeneratedSchemas[schemaPathToRebase] ??
+				this.schemas[schemaPathToRebase]
+
+			const result = this.rebaseReferences(
+				JSON.parse(JSON.stringify(schema)),
+				schemaPathToRebase,
+				path
+			)
+
+			for (const reference of result.references) {
+				if (rebasedSchemas.includes(reference)) continue
+
+				schemasToRebaseQueue.push(reference)
+				rebasedSchemas.push(reference)
+			}
+
+			localSchemas[join(path, schemaPathToRebase)] =
+				result.rebasedSchemaPart
+		}
+
+		this.fileSchemas[path] = {
+			main: join(path, schemaUri),
+			localSchemas,
+		}
+
+		this.updateDefaults()
 	}
 
-	private async runScripts() {
+	private updateDefaults() {
+		setSchemas(
+			Object.entries(this.fileSchemas)
+				.map(([filePath, schemaInfo]) => {
+					return Object.entries(schemaInfo.localSchemas).map(
+						([schemaPath, schema]) => ({
+							uri: schemaPath,
+							fileMatch:
+								schemaPath === schemaInfo.main
+									? [filePath]
+									: undefined,
+							schema,
+						})
+					)
+				})
+				.flat()
+		)
+	}
+
+	private async generateStaticGeneratedSchemas() {
+		this.staticGeneratedSchemas = {}
+		this.dynamicSchemaScripts = []
+
 		const promises = []
 
 		for (const scriptPath of Object.keys(this.schemaScripts)) {
-			let scriptData =
-				typeof this.schemaScripts[scriptPath] === 'string'
-					? {
-							script: this.schemaScripts[scriptPath],
-							generatesData: true,
-					  }
-					: this.schemaScripts[scriptPath]
-
-			promises.push(this.runScript(scriptPath, scriptData))
+			promises.push(
+				this.generateStaticSchema(
+					scriptPath,
+					this.schemaScripts[scriptPath]
+				)
+			)
 		}
 
 		await Promise.all(promises)
-
-		setSchemas([
-			...Object.keys(this.schemas).map((schema) => ({
-				uri: schema,
-				schema: this.schemas[schema],
-			})),
-			...Object.keys({ ...this.generatedSchemas }).map((schema) => ({
-				uri: schema,
-				schema: this.generatedSchemas[schema],
-			})),
-		])
 	}
 
-	private async runScript(scriptPath: string, scriptData: any) {
+	private async generateStaticSchema(scriptPath: string, scriptData: any) {
+		const scriptResult = await this.runScript(
+			scriptPath,
+			typeof scriptData === 'string' ? scriptData : scriptData.script
+		)
+
+		if (scriptResult.dynamic) {
+			this.dynamicSchemaScripts.push(scriptPath)
+
+			return
+		}
+
+		if (typeof scriptData === 'string') {
+			scriptData = scriptResult.result
+		} else {
+			scriptData.data = scriptResult.result
+		}
+
+		if (scriptData === undefined) return
+
+		this.staticGeneratedSchemas[
+			join(
+				'data/packages/minecraftBedrock/schema/',
+				scriptData.generateFile
+			)
+		] = this.processScriptData(scriptData)
+	}
+
+	private processScriptData(scriptData: any): any {
+		if (scriptData.type === 'enum') {
+			return {
+				type: 'string',
+				enum: scriptData.data,
+			}
+		}
+
+		return undefined
+	}
+
+	private async runScript(
+		scriptPath: string,
+		script: string,
+		filePath?: string
+	): Promise<{ dynamic: boolean; result?: any }> {
 		const compatabilityFileSystem = new CompatabilityFileSystem(fileSystem)
 
 		const formatVersions = (
@@ -92,6 +273,17 @@ export class SchemaData {
 		).formatVersions
 
 		let dynamicSchema = false
+
+		let invalidJson = true
+		let fileJson: any = undefined
+
+		if (filePath !== undefined) {
+			try {
+				fileJson = await fileSystem.readFileJson(filePath)
+
+				invalidJson = false
+			} catch {}
+		}
 
 		try {
 			const result = await (
@@ -101,10 +293,27 @@ export class SchemaData {
 						readdir: compatabilityFileSystem.readdir.bind(
 							compatabilityFileSystem
 						),
-						resolvePackPath(packId: string, path: string) {
+						resolvePackPath(packId: string, path?: string) {
+							if (!projectManager.currentProject) return ''
+							if (!projectManager.currentProject.config) return ''
+							if (!projectManager.currentProject.config.packs)
+								return ''
+
+							if (path === undefined) {
+								return join(
+									projectManager.currentProject.path ?? '',
+									(<any>(
+										projectManager.currentProject.config
+											.packs
+									))[packId]
+								)
+							}
+
 							return join(
-								projectManager.currentProject?.path ?? '',
-								'RP',
+								projectManager.currentProject.path ?? '',
+								(<any>(
+									projectManager.currentProject.config.packs
+								))[packId],
 								path
 							)
 						},
@@ -133,60 +342,65 @@ export class SchemaData {
 						},
 						getFileName() {
 							dynamicSchema = true
-							console.warn('Not implemented yet!')
-							return undefined
+
+							if (filePath === undefined) return undefined
+
+							return basename(filePath)
 						},
 						uuid,
 						get(path: string) {
 							dynamicSchema = true
-							console.warn('Not Implemented yet!')
-							return []
+
+							if (fileJson === undefined) return []
+
+							let data: string[] = []
+
+							walkObject(path, fileJson, data.push)
+
+							return data
 						},
 						customComponents(fileType: any) {
 							console.warn('Not Implemented yet!')
 							return {}
 						},
 						getIndexedPaths(fileType: string, sort: boolean) {
-							console.warn('Not Implemented yet!')
-							return Promise.resolve([])
+							if (
+								!(
+									projectManager.currentProject instanceof
+									BedrockProject
+								)
+							)
+								return Promise.resolve([])
+
+							return Promise.resolve(
+								projectManager.currentProject.indexerService.getIndexedFiles()
+							)
 						},
 						failedCurrentFileLoad() {
 							dynamicSchema = true
 
-							return false
+							return invalidJson
 						},
 					},
 					`
 				___module.execute = async function(){
-					${scriptData.script}
+					${script}
 				}
 			`
 				)
 			).execute()
 
-			if (scriptData.generatesData) scriptData = result
-
-			if (scriptData.type === 'enum') {
-				this.generatedSchemas[
-					'file:///' +
-						join(
-							'data/packages/minecraftBedrock/schema/',
-							scriptData.generateFile
-						)
-				] = {
-					type: 'string',
-					enum: result,
-				}
+			return {
+				dynamic: dynamicSchema,
+				result,
 			}
-
-			if (dynamicSchema)
-				console.log('Dynamic schema', scriptPath, scriptData)
 		} catch (err) {
 			console.error('Error running schema script ', scriptPath)
 			console.error(err)
-		}
 
-		if (dynamicSchema && !this.dynamicSchemas.includes(scriptPath))
-			this.dynamicSchemas.push(scriptPath)
+			return {
+				dynamic: dynamicSchema,
+			}
+		}
 	}
 }

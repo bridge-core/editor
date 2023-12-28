@@ -62,6 +62,10 @@ export class IndexerService {
 		return data.length === 0 ? null : data
 	}
 
+	public getIndexedFiles() {
+		return Object.keys(this.index)
+	}
+
 	public async disposte() {
 		this.worker.terminate()
 

@@ -66,7 +66,7 @@ export class TextTab extends Tab {
 
 		if (!this.fileType) return
 
-		schemaData.loadDynamicSchemas(this.path, this.fileType.schema)
+		await schemaData.applySchemaForFile(this.path, this.fileType.schema)
 
 		window.addEventListener('keydown', (event) => {
 			if (event.ctrlKey && event.key === 's') {

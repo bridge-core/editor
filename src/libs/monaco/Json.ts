@@ -48,6 +48,6 @@ export function setMonarchTokensProvider(
 	return new Promise<void>((res) => {
 		setTimeout(() => {
 			res()
-		}, 5)
+		}, 10)
 	})
 }
