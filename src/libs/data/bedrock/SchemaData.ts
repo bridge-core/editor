@@ -8,7 +8,10 @@ import { v4 as uuid } from 'uuid'
 
 export class SchemaData {
 	private schemas: any = {}
-	private dynamicSchemas: any = {}
+	private generatedSchemas: any = {}
+	private dynamicSchemas: string[] = []
+	private generatedDynamicSchemas: { [key: string]: any } = {}
+	private schemaUsers: { [key: string]: string[] } = {}
 	private schemaScripts: any = {}
 	private runtime = new Runtime()
 
@@ -29,29 +32,25 @@ export class SchemaData {
 		return this.schemas[path] ?? null
 	}
 
-	public applySchema(path: string, schemaUri: string) {
-		setSchemas([
-			...Object.keys(this.schemas).map((schema) => ({
-				uri: schema,
-				fileMatch: schema === schemaUri ? [path] : undefined,
-				schema: this.schemas[schema],
-			})),
-			...Object.keys({ ...this.dynamicSchemas }).map((schema) => ({
-				uri: schema,
-				schema: this.dynamicSchemas[schema],
-			})),
-		])
-	}
+	public loadDynamicSchemas(path: string, schemaUri: string) {
+		if (this.schemaUsers[schemaUri] === undefined)
+			this.schemaUsers[schemaUri] = []
 
-	public releaseSchema() {
+		if (!this.schemaUsers[schemaUri].includes(path))
+			this.schemaUsers[schemaUri].push(path)
+
+		// generate dynamic schemas for this file
+		console.log(this.dynamicSchemas)
+
 		setSchemas([
 			...Object.keys(this.schemas).map((schema) => ({
 				uri: schema,
+				fileMatch: this.schemaUsers[schema],
 				schema: this.schemas[schema],
 			})),
-			...Object.keys({ ...this.dynamicSchemas }).map((schema) => ({
+			...Object.keys({ ...this.generatedSchemas }).map((schema) => ({
 				uri: schema,
-				schema: this.dynamicSchemas[schema],
+				schema: this.generatedSchemas[schema],
 			})),
 		])
 	}
@@ -62,7 +61,10 @@ export class SchemaData {
 		for (const scriptPath of Object.keys(this.schemaScripts)) {
 			let scriptData =
 				typeof this.schemaScripts[scriptPath] === 'string'
-					? { script: this.schemaScripts[scriptPath] }
+					? {
+							script: this.schemaScripts[scriptPath],
+							generatesData: true,
+					  }
 					: this.schemaScripts[scriptPath]
 
 			promises.push(this.runScript(scriptPath, scriptData))
@@ -75,9 +77,9 @@ export class SchemaData {
 				uri: schema,
 				schema: this.schemas[schema],
 			})),
-			...Object.keys({ ...this.dynamicSchemas }).map((schema) => ({
+			...Object.keys({ ...this.generatedSchemas }).map((schema) => ({
 				uri: schema,
-				schema: this.dynamicSchemas[schema],
+				schema: this.generatedSchemas[schema],
 			})),
 		])
 	}
@@ -88,6 +90,8 @@ export class SchemaData {
 		const formatVersions = (
 			await data.get('packages/minecraftBedrock/formatVersions.json')
 		).formatVersions
+
+		let dynamicSchema = false
 
 		try {
 			const result = await (
@@ -112,24 +116,13 @@ export class SchemaData {
 							filePath?: string,
 							cacheKey?: string
 						) {
-							console.warn(
-								'Getting cache data',
-								fileType,
-								filePath,
-								cacheKey
-							)
-
-							const result = (
+							return (
 								projectManager.currentProject as BedrockProject
 							).indexerService.getCachedData(
 								fileType,
 								filePath,
 								cacheKey
 							)
-
-							result.then(console.log)
-
-							return result
 						},
 						getProjectConfig() {
 							return projectManager.currentProject?.config
@@ -139,11 +132,13 @@ export class SchemaData {
 								?.namespace
 						},
 						getFileName() {
+							dynamicSchema = true
 							console.warn('Not implemented yet!')
 							return undefined
 						},
 						uuid,
 						get(path: string) {
+							dynamicSchema = true
 							console.warn('Not Implemented yet!')
 							return []
 						},
@@ -156,6 +151,8 @@ export class SchemaData {
 							return Promise.resolve([])
 						},
 						failedCurrentFileLoad() {
+							dynamicSchema = true
+
 							return false
 						},
 					},
@@ -167,8 +164,10 @@ export class SchemaData {
 				)
 			).execute()
 
+			if (scriptData.generatesData) scriptData = result
+
 			if (scriptData.type === 'enum') {
-				this.dynamicSchemas[
+				this.generatedSchemas[
 					'file:///' +
 						join(
 							'data/packages/minecraftBedrock/schema/',
@@ -179,9 +178,15 @@ export class SchemaData {
 					enum: result,
 				}
 			}
+
+			if (dynamicSchema)
+				console.log('Dynamic schema', scriptPath, scriptData)
 		} catch (err) {
 			console.error('Error running schema script ', scriptPath)
 			console.error(err)
 		}
+
+		if (dynamicSchema && !this.dynamicSchemas.includes(scriptPath))
+			this.dynamicSchemas.push(scriptPath)
 	}
 }

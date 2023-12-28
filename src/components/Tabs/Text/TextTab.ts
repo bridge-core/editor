@@ -66,7 +66,7 @@ export class TextTab extends Tab {
 
 		if (!this.fileType) return
 
-		schemaData.applySchema(this.path, this.fileType.schema)
+		schemaData.loadDynamicSchemas(this.path, this.fileType.schema)
 
 		window.addEventListener('keydown', (event) => {
 			if (event.ctrlKey && event.key === 's') {
@@ -78,13 +78,6 @@ export class TextTab extends Tab {
 	}
 
 	public unmountEditor() {
-		if (!projectManager.currentProject) return
-		if (!(projectManager.currentProject instanceof BedrockProject)) return
-
-		const schemaData = projectManager.currentProject.schemaData
-
-		schemaData.releaseSchema()
-
 		this.model?.dispose()
 		this.editor?.dispose()
 	}

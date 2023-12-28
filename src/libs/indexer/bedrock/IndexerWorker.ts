@@ -47,8 +47,6 @@ async function indexFile(path: string) {
 		if (typeof fileInstructions === 'string') {
 		} else {
 			for (const instruction of fileInstructions) {
-				console.log(instruction)
-
 				const { cacheKey, path, pathScript } = instruction
 
 				let paths: string[] = []
@@ -61,17 +59,17 @@ async function indexFile(path: string) {
 
 				let foundData: string[] = []
 
-				walkObject(path, json, (data) => {
-					if (Array.isArray(data)) {
-						foundData = foundData.concat(data)
-					} else if (typeof data === 'object') {
-						foundData = foundData.concat(Object.keys(data))
-					} else {
-						foundData.push(data)
-					}
-				})
-
-				console.log('Setting cache data', cacheKey, foundData, json)
+				for (const path of paths) {
+					walkObject(path, json, (data) => {
+						if (Array.isArray(data)) {
+							foundData = foundData.concat(data)
+						} else if (typeof data === 'object') {
+							foundData = foundData.concat(Object.keys(data))
+						} else {
+							foundData.push(data)
+						}
+					})
+				}
 
 				data[cacheKey] = foundData
 			}
