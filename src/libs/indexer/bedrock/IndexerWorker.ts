@@ -4,6 +4,10 @@ import { Runtime } from '@/libs/runtime/Runtime'
 import { sendAndWait } from '@/libs/worker/Communication'
 import { walkObject } from 'bridge-common-utils'
 import { IConfigJson } from 'mc-project-core'
+import wasmUrl from '@swc/wasm-web/wasm-web_bg.wasm?url'
+import { initRuntimes } from 'bridge-js-runtime'
+
+initRuntimes(wasmUrl)
 
 interface IndexInstruction {
 	cacheKey: string
@@ -35,6 +39,17 @@ async function getFileType(path: string): Promise<any> {
 
 let index: { [key: string]: { fileType: string; data?: any } } = {}
 
+function resolvePackPath(packId: string, path: string) {
+	if (!config) return ''
+	if (config.packs) return ''
+
+	if (path === undefined) {
+		return join(projectPath ?? '', (<any>config.packs)[packId])
+	}
+
+	return join(projectPath ?? '', (<any>config.packs)[packId], path)
+}
+
 async function runLightningCacheScript(
 	script: string,
 	path: string,
@@ -53,23 +68,7 @@ async function runLightningCacheScript(
 							return possiblePath
 					}
 				},
-				resolvePackPath(packId: string, path: string) {
-					if (!config) return ''
-					if (config.packs) return ''
-
-					if (path === undefined) {
-						return join(
-							projectPath ?? '',
-							(<any>config.packs)[packId]
-						)
-					}
-
-					return join(
-						projectPath ?? '',
-						(<any>config.packs)[packId],
-						path
-					)
-				},
+				resolvePackPath,
 			},
 		},
 		`
@@ -80,6 +79,113 @@ async function runLightningCacheScript(
 	)
 
 	return await scriptResult.execute()
+}
+
+async function handleJsonInstructions(
+	path: string,
+	fileType: any,
+	json: any,
+	fileInstructions: IndexInstruction[]
+) {
+	let data: { [key: string]: any } = {}
+
+	for (const instruction of fileInstructions) {
+		const { cacheKey, path, filter, script, pathScript } = instruction
+
+		let paths: string[] = []
+
+		if (typeof path === 'string') {
+			paths = [path]
+		} else {
+			paths = path
+		}
+
+		if (pathScript !== undefined) {
+			paths = (
+				await runtime.run(
+					path,
+					{
+						Bridge: { paths },
+					},
+					`
+				___module.execute = async function(){
+					${pathScript}
+				}
+				`
+				)
+			).execute()
+		}
+
+		if (!Array.isArray(paths) || paths.length === 0) continue
+
+		let foundData: string[] = []
+
+		for (const jsonPath of paths) {
+			walkObject(jsonPath, json, async (data) => {
+				if (filter !== undefined)
+					data = data.filter(
+						(value: string) => !filter.includes(value)
+					)
+
+				if (script !== undefined) {
+					data = (
+						await Promise.all(
+							data.map(async (value: string) => {
+								return await runLightningCacheScript(
+									script,
+									path,
+									value
+								)
+							})
+						)
+					).filter((value: unknown) => value !== undefined)
+				}
+
+				if (Array.isArray(data)) {
+					foundData = foundData.concat(data)
+				} else if (typeof data === 'object') {
+					foundData = foundData.concat(Object.keys(data))
+				} else {
+					foundData.push(data)
+				}
+			})
+		}
+
+		data[cacheKey] = foundData
+	}
+
+	index[path] = {
+		fileType: fileType ? fileType.id : 'unkown',
+		data,
+	}
+}
+
+async function handleScriptInstructions(
+	path: string,
+	fileType: any,
+	text: string,
+	script: string
+) {
+	let data: { [key: string]: any } = {}
+
+	const module: any = {}
+	await runtime.run(
+		path,
+		{
+			module,
+		},
+		script
+	)
+
+	if (typeof module.exports === 'function')
+		data = module.exports(text, {
+			resolvePackPath,
+		})
+
+	index[path] = {
+		fileType: fileType ? fileType.id : 'unkown',
+		data,
+	}
 }
 
 async function indexFile(path: string) {
@@ -107,72 +213,25 @@ async function indexFile(path: string) {
 			json = JSON.parse(text)
 		} catch {}
 
-		if (typeof fileInstructions === 'string') {
-		} else {
-			for (const instruction of fileInstructions) {
-				const { cacheKey, path, filter, script, pathScript } =
-					instruction
+		if (text !== undefined) {
+			if (typeof fileInstructions === 'string') {
+				await handleScriptInstructions(
+					path,
+					fileType,
+					text,
+					fileInstructions
+				)
 
-				let paths: string[] = []
+				return
+			} else {
+				await handleJsonInstructions(
+					path,
+					fileType,
+					json,
+					fileInstructions
+				)
 
-				if (typeof path === 'string') {
-					paths = [path]
-				} else {
-					paths = path
-				}
-
-				if (pathScript !== undefined) {
-					paths = (
-						await runtime.run(
-							path,
-							{
-								Bridge: { paths },
-							},
-							`
-						___module.execute = async function(){
-							${pathScript}
-						}
-						`
-						)
-					).execute()
-				}
-
-				if (!Array.isArray(paths) || paths.length === 0) continue
-
-				let foundData: string[] = []
-
-				for (const jsonPath of paths) {
-					walkObject(jsonPath, json, async (data) => {
-						if (filter !== undefined)
-							data = data.filter(
-								(value: string) => !filter.includes(value)
-							)
-
-						if (script !== undefined) {
-							data = (
-								await Promise.all(
-									data.map(async (value: string) => {
-										return await runLightningCacheScript(
-											script,
-											path,
-											value
-										)
-									})
-								)
-							).filter((value: unknown) => value !== undefined)
-						}
-
-						if (Array.isArray(data)) {
-							foundData = foundData.concat(data)
-						} else if (typeof data === 'object') {
-							foundData = foundData.concat(Object.keys(data))
-						} else {
-							foundData.push(data)
-						}
-					})
-				}
-
-				data[cacheKey] = foundData
+				return
 			}
 		}
 	}
