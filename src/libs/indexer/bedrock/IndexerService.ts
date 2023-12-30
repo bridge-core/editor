@@ -43,8 +43,6 @@ export class IndexerService {
 				this.worker
 			)
 		).index
-
-		console.log(this.index)
 	}
 
 	public async getCachedData(
