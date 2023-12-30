@@ -295,25 +295,9 @@ export class SchemaData {
 						),
 						resolvePackPath(packId: string, path?: string) {
 							if (!projectManager.currentProject) return ''
-							if (!projectManager.currentProject.config) return ''
-							if (!projectManager.currentProject.config.packs)
-								return ''
 
-							if (path === undefined) {
-								return join(
-									projectManager.currentProject.path ?? '',
-									(<any>(
-										projectManager.currentProject.config
-											.packs
-									))[packId]
-								)
-							}
-
-							return join(
-								projectManager.currentProject.path ?? '',
-								(<any>(
-									projectManager.currentProject.config.packs
-								))[packId],
+							return projectManager.currentProject.resolvePackPath(
+								packId,
 								path
 							)
 						},

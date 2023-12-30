@@ -98,6 +98,20 @@ export class Project {
 
 		await this.setOutputFileSystem(newOutputFileSystem)
 	}
+
+	public resolvePackPath(packId?: string, path?: string) {
+		if (!this.config) return ''
+		if (!this.config.packs) return ''
+
+		if (packId === undefined && path === undefined) return this.path
+
+		if (packId === undefined) return join(this.path ?? '', path!)
+
+		if (path === undefined)
+			return join(this.path ?? '', (<any>this.config.packs)[packId])
+
+		return join(this.path ?? '', (<any>this.config.packs)[packId], path)
+	}
 }
 
 export async function validProject(path: string) {
