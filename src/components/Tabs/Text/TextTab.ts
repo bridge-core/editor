@@ -64,9 +64,8 @@ export class TextTab extends Tab {
 
 		this.editor.setModel(this.model)
 
-		if (!this.fileType) return
-
-		await schemaData.applySchemaForFile(this.path, this.fileType.schema)
+		if (this.fileType && this.fileType.schema)
+			await schemaData.applySchemaForFile(this.path, this.fileType.schema)
 
 		window.addEventListener('keydown', (event) => {
 			if (event.ctrlKey && event.key === 's') {
