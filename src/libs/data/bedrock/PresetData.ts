@@ -8,7 +8,7 @@ export class PresetData {
 	public presets: { [key: string]: any } = {}
 	public categories: { [key: string]: string[] } = {}
 
-	private runtime = new Runtime()
+	private runtime = new Runtime(fileSystem)
 
 	public async load() {
 		this.presets = await data.get('packages/minecraftBedrock/presets.json')

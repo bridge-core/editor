@@ -39,11 +39,12 @@ export class IndexerService {
 					action: 'setup',
 					path: this.project.path,
 					instructions: this.instructions,
-					fileTypes: this.project.fileTypeData.fileTypes,
 				},
 				this.worker
 			)
 		).index
+
+		console.log(this.index)
 	}
 
 	public async getCachedData(
@@ -51,13 +52,25 @@ export class IndexerService {
 		filePath?: string,
 		cacheKey?: string
 	): Promise<null | any> {
-		const data = Object.entries(this.index)
-			.filter(([path, content]) => {
-				return content.fileType === fileType && content.data
-			})
-			.map(([path, content]) => {
-				return cacheKey ? content.data[cacheKey] : content
-			})
+		let data: string[] = []
+
+		if (filePath !== undefined) {
+			if (this.index[filePath] === undefined) return null
+
+			if (this.index[filePath].fileType !== fileType) return null
+
+			return cacheKey
+				? this.index[filePath].data[cacheKey]
+				: this.index[filePath].data
+		} else {
+			data = Object.values(this.index)
+				.filter((indexedData) => {
+					return indexedData.fileType === fileType && indexedData.data
+				})
+				.map((indexedData) => {
+					return cacheKey ? indexedData.data[cacheKey] : indexedData
+				})
+		}
 
 		return data.length === 0 ? null : data
 	}

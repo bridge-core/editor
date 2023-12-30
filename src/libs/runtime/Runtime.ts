@@ -1,10 +1,14 @@
-import { fileSystem } from '@/App'
 import { Runtime as BridgeRuntime } from 'bridge-js-runtime'
 import { basename } from '@/libs/path'
+import { BaseFileSystem } from '../fileSystem/BaseFileSystem'
 
 export class Runtime extends BridgeRuntime {
+	constructor(public fileSystem: BaseFileSystem) {
+		super()
+	}
+
 	async readFile(filePath: string): Promise<File> {
-		const file = await fileSystem.readFile(filePath)
+		const file = await this.fileSystem.readFile(filePath)
 
 		return {
 			name: basename(filePath),

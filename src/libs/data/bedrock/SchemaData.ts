@@ -37,7 +37,7 @@ export class SchemaData {
 		}
 	} = {}
 
-	private runtime = new Runtime()
+	private runtime = new Runtime(fileSystem)
 
 	private fixPaths(schemas: { [key: string]: any }) {
 		return Object.fromEntries(
