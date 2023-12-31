@@ -25,6 +25,7 @@ const mdiMap: { [key: string]: string | undefined } = {
 	'mdi-school-outline': 'school',
 	'mdi-ab-testing': 'help',
 	'mdi-alpha-m': 'help',
+	'mdi-alpha-m-box-outline': 'data_object',
 }
 
 defineProps({
