@@ -1,5 +1,5 @@
 <template>
-	<div class="flex items-center gap-1" @click="expanded = !expanded">
+	<div class="flex items-center gap-2" @click="expanded = !expanded">
 		<Icon
 			:icon="expanded ? 'folder_open' : 'folder'"
 			:color="color"

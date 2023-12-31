@@ -1,5 +1,5 @@
 <template>
-	<div class="flex items-center gap-1" @click="click">
+	<div class="flex items-center gap-2" @click="click">
 		<Icon icon="draft" :color="color" class="text-sm" />
 
 		<span class="select-none font-inter"> {{ basename(path) }} </span>
