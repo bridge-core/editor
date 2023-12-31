@@ -4,6 +4,7 @@
 			<div
 				v-for="tab in instance.tabs.value"
 				class="flex items-center gap-1"
+				@click="() => instance.selectTab(tab)"
 			>
 				<Icon
 					v-if="tab.icon"
@@ -18,7 +19,7 @@
 				<IconButton
 					icon="close"
 					class="text-base"
-					@click="() => instance.removeTab(tab)"
+					@click.stop="() => instance.removeTab(tab)"
 				/>
 			</div>
 		</div>

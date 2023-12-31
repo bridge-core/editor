@@ -60,11 +60,15 @@ export class TextTab extends Tab {
 
 		const fileContent = await fileSystem.readFileText(this.path)
 
-		this.model = monaco.createModel(
-			fileContent,
-			this.fileType.type ?? 'json',
-			Uri.file(this.path)
-		)
+		this.model = monaco.getModel(Uri.file(this.path))
+
+		if (this.model === null) {
+			this.model = monaco.createModel(
+				fileContent,
+				this.fileType.type ?? 'json',
+				Uri.file(this.path)
+			)
+		}
 
 		this.editor.setModel(this.model)
 
