@@ -42,7 +42,7 @@ export class TextTab extends Tab {
 		if (!projectManager.currentProject) return
 		if (!(projectManager.currentProject instanceof BedrockProject)) return
 
-		await this.updateEditorTheme()
+		this.updateEditorTheme()
 
 		const schemaData = projectManager.currentProject.schemaData
 
@@ -66,6 +66,8 @@ export class TextTab extends Tab {
 
 		if (this.fileType && this.fileType.schema)
 			await schemaData.applySchemaForFile(this.path, this.fileType.schema)
+
+		this.updateEditorTheme()
 
 		window.addEventListener('keydown', (event) => {
 			if (event.ctrlKey && event.key === 's') {
@@ -123,7 +125,7 @@ export class TextTab extends Tab {
 		return keyword.hex(color as any)
 	}
 
-	private async updateEditorTheme() {
+	private updateEditorTheme() {
 		const theme = themeManager.currentTheme
 
 		monaco.defineTheme(`bridge`, {
@@ -225,7 +227,7 @@ export class TextTab extends Tab {
 			variables = this.fileType.highlighterConfiguration.variables ?? []
 		}
 
-		await setMonarchTokensProvider({
+		setMonarchTokensProvider({
 			defaultToken: 'identifier',
 
 			keywords: ['format_version'],

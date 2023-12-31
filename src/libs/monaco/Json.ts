@@ -43,11 +43,4 @@ export function setMonarchTokensProvider(
 	)
 
 	currentMonarchLanguage = newMonarchLanguage
-
-	// For some reason it seems like monarch languages don't apply right away so we wait a tiny bit for it to apply
-	return new Promise<void>((res) => {
-		setTimeout(() => {
-			res()
-		}, 10)
-	})
 }
