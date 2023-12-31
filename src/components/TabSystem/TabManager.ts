@@ -18,6 +18,8 @@ export class TabManager {
 			for (const tab of tabSystem.tabs.value) {
 				if (tab instanceof TextTab) {
 					if (tab.path === path) {
+						tabSystem.selectTab(tab)
+
 						return
 					}
 				}
