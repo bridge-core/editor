@@ -41,10 +41,11 @@ defineProps({
 
 <style scoped>
 .spinner {
-	margin-left: 1px;
-	margin-right: 1px;
-	width: 14px;
-	height: 14px;
+	margin: 0.1rem;
+	margin-top: 0.3rem;
+	margin-bottom: 0.3rem;
+	width: 0.8rem;
+	height: 0.8rem;
 	border: 2px solid;
 	border-bottom-color: transparent;
 	border-radius: 50%;
