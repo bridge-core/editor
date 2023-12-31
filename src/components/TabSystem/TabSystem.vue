@@ -3,7 +3,13 @@
 		<div class="w-full h-8 flex gap-4 mb-2">
 			<div
 				v-for="tab in instance.tabs.value"
-				class="flex items-center gap-1"
+				class="flex items-center gap-1 p-2 rounded cursor-pointer"
+				:style="{
+					background:
+						instance.selectedTab.value == tab
+							? 'var(--theme-color-menuAlternate)'
+							: 'transparent',
+				}"
 				@click="() => instance.selectTab(tab)"
 			>
 				<Icon
@@ -12,9 +18,9 @@
 					class="text-base text-behaviorPack"
 				/>
 
-				<button class="font-inter">
-					{{ tab.name.value ?? 'Tab' }}
-				</button>
+				<span class="font-inter select-none">{{
+					tab.name.value ?? 'Tab'
+				}}</span>
 
 				<IconButton
 					icon="close"
