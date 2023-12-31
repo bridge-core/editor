@@ -1,7 +1,7 @@
 <template>
 	<div class="w-full h-full" ref="tabElement">
 		<div class="absolute" ref="editorContainer">
-			<div class="w-full" ref="editorElement" />
+			<div class="h-full" ref="editorElement" />
 		</div>
 	</div>
 </template>
