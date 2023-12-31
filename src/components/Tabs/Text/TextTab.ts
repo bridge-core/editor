@@ -12,6 +12,7 @@ export class TextTab extends Tab {
 	public component: Component | null = TextTabComponent
 	public icon = ref('data_object')
 
+	private fileTypeIcon: string = 'data_object'
 	private editor: monaco.IStandaloneCodeEditor | null = null
 	private model: monaco.ITextModel | null = null
 
@@ -36,6 +37,8 @@ export class TextTab extends Tab {
 		if (this.fileType.icon === undefined) return
 
 		this.icon.value = this.fileType.icon
+
+		this.fileTypeIcon = this.fileType.icon
 	}
 
 	public async mountEditor(element: HTMLElement) {
@@ -69,11 +72,15 @@ export class TextTab extends Tab {
 
 		this.updateEditorTheme()
 
-		window.addEventListener('keydown', (event) => {
+		window.addEventListener('keydown', async (event) => {
 			if (event.ctrlKey && event.key === 's') {
 				event.preventDefault()
 
-				this.save()
+				this.icon.value = 'loading'
+
+				await this.save()
+
+				this.icon.value = this.fileTypeIcon
 			}
 		})
 	}
@@ -85,23 +92,9 @@ export class TextTab extends Tab {
 
 	private async save() {
 		if (!this.model) return
+		if (!this.editor) return
 
-		this.editor?.trigger(
-			'contextmenu',
-			'editor.action.formatDocument',
-			null
-		)
-
-		let disposableCallback: any = null
-		await new Promise<void>((resolve) => {
-			if (!this.model) return
-
-			disposableCallback = this.model.onDidChangeContent(() => {
-				resolve()
-			})
-		})
-
-		disposableCallback?.dispose()
+		this.editor.trigger('contextmenu', 'editor.action.formatDocument', null)
 
 		await fileSystem.writeFile(this.path, this.model.getValue())
 	}

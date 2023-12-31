@@ -1,11 +1,15 @@
 <template>
 	<span
+		v-if="icon !== 'loading'"
 		class="material-symbols-rounded select-none"
 		ref="element"
 		:style="color ? { color: `var(--theme-color-${color})` } : {}"
+		v-bind="$attrs"
 	>
 		{{ mdiMap[icon] ?? icon }}
 	</span>
+
+	<div v-bind="$attrs" v-if="icon === 'loading'" class="spinner" />
 </template>
 
 <script setup lang="ts">
@@ -33,3 +37,27 @@ defineProps({
 	},
 })
 </script>
+
+<style scoped>
+.spinner {
+	margin-left: 1px;
+	margin-right: 1px;
+	width: 14px;
+	height: 14px;
+	border: 2px solid;
+	border-bottom-color: transparent;
+	border-radius: 50%;
+	display: inline-block;
+	box-sizing: border-box;
+	animation: rotation 1s ease infinite;
+}
+
+@keyframes rotation {
+	0% {
+		transform: rotate(90deg);
+	}
+	100% {
+		transform: rotate(450deg);
+	}
+}
+</style>
