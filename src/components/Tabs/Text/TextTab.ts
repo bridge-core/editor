@@ -55,6 +55,7 @@ export class TextTab extends Tab {
 			'bracketPairColorization.enabled': settings.get(
 				'bracketPairColorization'
 			),
+			automaticLayout: true,
 		})
 
 		const fileContent = await fileSystem.readFileText(this.path)
