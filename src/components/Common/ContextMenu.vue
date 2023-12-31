@@ -1,27 +1,35 @@
 <script setup lang="ts">
 import { onUnmounted, ref } from 'vue'
 
-const open = ref(false)
+import { isElementOrChild } from '@/libs/element/Element'
+
+const isOpen = ref(false)
 const menu = ref<HTMLElement | null>(null)
 
 function toggle() {
-	open.value = !open.value
+	isOpen.value = !isOpen.value
 
-	if (open.value) {
+	if (isOpen.value) {
 		window.addEventListener('click', click)
 	} else {
 		window.removeEventListener('click', click)
 	}
 }
 
-function isElementOrChild(element: HTMLElement | null, target: HTMLElement) {
-	while (element) {
-		if (element === target) return true
+function open() {
+	if (isOpen.value) return
 
-		element = element.parentElement
-	}
+	isOpen.value = true
 
-	return false
+	window.addEventListener('click', click)
+}
+
+function close() {
+	if (!isOpen.value) return
+
+	isOpen.value = false
+
+	window.removeEventListener('click', click)
 }
 
 function click(event: Event) {
@@ -30,14 +38,16 @@ function click(event: Event) {
 
 	if (isElementOrChild(event.target, menu.value)) return
 
-	open.value = false
+	isOpen.value = false
 }
 
 onUnmounted(() => {
-	if (!open.value) return
+	if (!isOpen.value) return
 
 	window.removeEventListener('click', click)
 })
+
+defineExpose({ open, close })
 </script>
 
 <template>
@@ -45,7 +55,7 @@ onUnmounted(() => {
 		<slot name="main" :toggle="toggle" />
 
 		<div class="absolute">
-			<slot name="menu" v-if="open" :close="toggle" />
+			<slot name="menu" v-if="isOpen" :close="toggle" />
 		</div>
 	</div>
 </template>
