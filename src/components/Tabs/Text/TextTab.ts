@@ -66,7 +66,7 @@ export class TextTab extends Tab {
 		if (this.model === null) {
 			this.model = monaco.createModel(
 				fileContent,
-				this.fileType.type ?? 'json',
+				this.fileType?.type ?? 'json',
 				Uri.file(this.path)
 			)
 		}
