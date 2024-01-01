@@ -14,6 +14,7 @@ export class Project {
 	public outputFileSystem: BaseFileSystem = new LocalFileSystem()
 	public eventSystem = new EventSystem(['outputFileSystemChanged'])
 	public packs: { [key: string]: string } = {}
+	public loadedBetterFileSystem: boolean = false
 
 	constructor(public name: string) {
 		this.path = join('projects', this.name)
@@ -58,6 +59,8 @@ export class Project {
 			newOutputFileSystem.setBaseHandle(savedHandle)
 
 			await this.setOutputFileSystem(newOutputFileSystem)
+
+			this.loadedBetterFileSystem = true
 		} else {
 			sidebar.addNotification(
 				'warning',
@@ -75,6 +78,8 @@ export class Project {
 								if (!handle) return
 
 								this.setOutputFolder(handle)
+
+								this.loadedBetterFileSystem = true
 							} catch {}
 						}
 					)

@@ -79,7 +79,11 @@ async function setup(config: any, configPath: string, actionId: string) {
 }
 
 async function build(actionId: string) {
-	if (!dash) return
+	if (!dash) {
+		console.warn('Tried building but Dash is not setup yet!')
+
+		return
+	}
 
 	await dash.build()
 

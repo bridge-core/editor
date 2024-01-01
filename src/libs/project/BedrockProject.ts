@@ -15,7 +15,6 @@ export class BedrockProject extends Project {
 	public presetData = new PresetData()
 	public indexerService = new IndexerService(this)
 	public dashService = new DashService(this)
-	private setFileSystem: boolean = false
 
 	public async load() {
 		await super.load()
@@ -34,7 +33,7 @@ export class BedrockProject extends Project {
 
 		await this.dashService.setup()
 
-		if (!this.setFileSystem) this.dashService.build()
+		this.dashService.build()
 	}
 
 	public async dispose() {
@@ -42,13 +41,11 @@ export class BedrockProject extends Project {
 	}
 
 	public async setOutputFileSystem(fileSystem: BaseFileSystem) {
-		this.setFileSystem = true
-
 		await super.setOutputFileSystem(fileSystem)
 
 		await this.dashService.setOutputFileSystem(fileSystem)
 
-		this.dashService.build()
+		if (this.loadedBetterFileSystem) this.dashService.build()
 	}
 
 	public async build() {
