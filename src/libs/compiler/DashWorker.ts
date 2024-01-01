@@ -63,6 +63,14 @@ async function setup(config: any, configPath: string, actionId: string) {
 			},
 		}
 	)
+
+	dash.progress.onChange((progress) => {
+		postMessage({
+			action: 'progress',
+			progress: progress.percentage,
+		})
+	})
+
 	await dash.setup({
 		fileTypes: await getJsonData(
 			'packages/minecraftBedrock/fileDefinitions.json'

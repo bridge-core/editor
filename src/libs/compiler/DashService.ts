@@ -1,10 +1,11 @@
 import { join } from '@/libs/path'
 import DashWorker from './DashWorker?worker'
 import { BedrockProject } from '@/libs/project/BedrockProject'
-import { WorkerFileSystemEntryPoint } from '../fileSystem/WorkerFileSystem'
+import { WorkerFileSystemEntryPoint } from '@/libs/fileSystem/WorkerFileSystem'
 import { data, fileSystem, sidebar } from '@/App'
-import { BaseFileSystem } from '../fileSystem/BaseFileSystem'
-import { sendAndWait } from '../worker/Communication'
+import { BaseFileSystem } from '@/libs/fileSystem/BaseFileSystem'
+import { sendAndWait } from '@/libs/worker/Communication'
+import { Notification } from '@/components/Sidebar/Sidebar'
 
 export class DashService {
 	public logs: string[] = []
@@ -16,6 +17,7 @@ export class DashService {
 		'inputFileSystem'
 	)
 	private outputFileSystem: WorkerFileSystemEntryPoint
+	private progressNotification: Notification | null = null
 
 	constructor(public project: BedrockProject) {
 		this.worker.onmessage = this.onWorkerMessage.bind(this)
@@ -39,6 +41,12 @@ export class DashService {
 
 		if (event.data.action === 'log') {
 			this.logs.push(event.data.message)
+		}
+
+		if (event.data.action === 'progress') {
+			if (this.progressNotification === null) return
+
+			sidebar.setProgress(this.progressNotification, event.data.progress)
 		}
 	}
 
@@ -71,11 +79,12 @@ export class DashService {
 	}
 
 	public async build() {
-		const notification = sidebar.addNotification(
+		this.progressNotification = sidebar.addProgressNotification(
 			'manufacturing',
+			0,
+			1,
 			undefined,
-			undefined,
-			'progress'
+			undefined
 		)
 
 		await sendAndWait(
@@ -85,6 +94,6 @@ export class DashService {
 			this.worker
 		)
 
-		sidebar.clearNotification(notification)
+		sidebar.clearNotification(this.progressNotification)
 	}
 }
