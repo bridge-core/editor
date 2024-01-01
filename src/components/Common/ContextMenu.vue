@@ -55,7 +55,32 @@ defineExpose({ open, close })
 		<slot name="main" :toggle="toggle" />
 
 		<div class="absolute">
-			<slot name="menu" v-if="isOpen" :close="toggle" />
+			<Transition>
+				<slot name="menu" v-if="isOpen" :close="toggle" />
+			</Transition>
 		</div>
 	</div>
 </template>
+
+<style scoped>
+.v-enter-active {
+	transition: opacity 0.15s ease, scale 0.2s ease, translate 0.2s ease;
+}
+
+.v-leave-active {
+	transition: opacity 0.15s ease, scale 0.2s ease, translate 0.2s ease;
+}
+
+.v-enter-to,
+.v-leave-from {
+	translate: 0px 0px;
+	scale: 1;
+}
+
+.v-enter-from,
+.v-leave-to {
+	opacity: 0;
+	translate: 0px -1rem;
+	scale: 0.95;
+}
+</style>
