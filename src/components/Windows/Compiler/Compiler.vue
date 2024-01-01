@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import SidebarWindow from '@/components/Windows/SidebarWindow.vue'
 import Icon from '@/components/Common/Icon.vue'
+import TextButton from '@/components/Common/Button.vue'
+
 import { useTranslate } from '@/libs/locales/Locales'
 import { ref } from 'vue'
 import { projectManager } from '@/App'
@@ -98,6 +100,15 @@ async function droppedOutputFolder(event: DragEvent) {
 			<div
 				class="w-[64rem] h-[38rem] flex flex-col overflow-y-auto p-3 pt-0"
 			>
+				<div v-if="selectedCategory === 'general'">
+					<TextButton
+						text="Compile"
+						@click="() =>
+							(projectManager.currentProject as BedrockProject).dashService.build()
+						"
+					/>
+				</div>
+
 				<div v-if="selectedCategory === 'outputFolder'">
 					<p
 						v-if="
@@ -131,7 +142,7 @@ async function droppedOutputFolder(event: DragEvent) {
 					<div>
 						<p
 							v-for="log in (<BedrockProject>projectManager.currentProject).dashService.logs"
-							class="font-inter border-b border-menuAlternate pb-2 mb-2"
+							class="font-inter border-b border-menuAlternate pb-2 mb-2 text-sm"
 						>
 							{{ log }}
 						</p>
