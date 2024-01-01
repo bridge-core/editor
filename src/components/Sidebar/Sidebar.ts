@@ -2,6 +2,14 @@ import { fileExplorer, windows } from '@/App'
 import { Ref, ref } from 'vue'
 import { v4 as uuid } from 'uuid'
 
+export interface Notification {
+	icon?: string
+	color?: string
+	callback?: () => void
+	id: string
+	type: 'button' | 'progress'
+}
+
 export class Sidebar {
 	items: {
 		type: 'button' | 'divider'
@@ -9,9 +17,7 @@ export class Sidebar {
 		callback?: () => void
 	}[] = []
 
-	notifications: Ref<
-		{ icon?: string; color?: string; callback?: () => void; id: string }[]
-	> = ref([])
+	notifications: Ref<Notification[]> = ref([])
 
 	constructor() {
 		this.addButton('folder', () => {
@@ -31,7 +37,7 @@ export class Sidebar {
 			},
 			'primary'
 		)
-		this.addNotification('link', () => {}, 'warning')
+		// this.addNotification('link', () => {}, 'warning') // Don't remember why I put this, maybe a social media thing?
 		this.addNotification('help', () => {
 			window.open('https://bridge-core.app/guide/')
 		})
@@ -51,29 +57,43 @@ export class Sidebar {
 		})
 	}
 
-	public addNotification(icon: string, callback: () => void, color?: string) {
-		this.notifications.value.push({
+	public addNotification(
+		icon: string,
+		callback?: () => void,
+		color?: string,
+		type: 'button' | 'progress' = 'button'
+	): Notification {
+		const notification = {
 			icon,
 			callback,
 			color,
 			id: uuid(),
-		})
+			type,
+		}
 
+		this.notifications.value.push(notification)
 		this.notifications.value = [...this.notifications.value]
+
+		return notification
 	}
 
-	public activateNotification(item: {
-		icon?: string
-		color?: string
-		callback?: () => void
-		id: string
-	}) {
+	public activateNotification(item: Notification) {
+		if (item.type === 'button') {
+			this.notifications.value.splice(
+				this.notifications.value.indexOf(item),
+				1
+			)
+			this.notifications.value = [...this.notifications.value]
+		}
+
+		if (item.callback) item.callback()
+	}
+
+	public clearNotification(item: Notification) {
 		this.notifications.value.splice(
 			this.notifications.value.indexOf(item),
 			1
 		)
 		this.notifications.value = [...this.notifications.value]
-
-		if (item.callback) item.callback()
 	}
 }

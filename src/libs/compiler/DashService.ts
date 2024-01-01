@@ -2,7 +2,7 @@ import { join } from '@/libs/path'
 import DashWorker from './DashWorker?worker'
 import { BedrockProject } from '@/libs/project/BedrockProject'
 import { WorkerFileSystemEntryPoint } from '../fileSystem/WorkerFileSystem'
-import { data, fileSystem } from '@/App'
+import { data, fileSystem, sidebar } from '@/App'
 import { BaseFileSystem } from '../fileSystem/BaseFileSystem'
 import { sendAndWait } from '../worker/Communication'
 
@@ -71,11 +71,20 @@ export class DashService {
 	}
 
 	public async build() {
+		const notification = sidebar.addNotification(
+			'manufacturing',
+			undefined,
+			undefined,
+			'progress'
+		)
+
 		await sendAndWait(
 			{
 				action: 'build',
 			},
 			this.worker
 		)
+
+		sidebar.clearNotification(notification)
 	}
 }
