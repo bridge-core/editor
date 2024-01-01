@@ -23,7 +23,7 @@ const t = useTranslate()
 	>
 		<Icon
 			:icon="icon"
-			class="text-base group-hover:text-primary transition-colors duration-100 ease-out"
+			class="text-base text-primary transition-colors duration-100 ease-out"
 		/>
 		<span class="ml-2 font-inter select-none">{{ t(text) }}</span>
 	</div>

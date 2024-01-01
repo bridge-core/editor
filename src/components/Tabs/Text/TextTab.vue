@@ -84,14 +84,17 @@ onUnmounted(() => {
 				top: contextMenuY + 'px',
 			}"
 		>
-			<ContextMenuItem text="View Documentation" icon="menu_book" />
-			<ContextMenuItem text="Go to Definition" icon="search" />
-			<ContextMenuItem text="Go to Symbol" icon="arrow_forward" />
-			<ContextMenuItem text="Change All Occurances" icon="edit" />
-			<ContextMenuItem text="Format Document" icon="edit_note" />
 			<ContextMenuItem text="Copy" icon="content_copy" />
 			<ContextMenuItem text="Cut" icon="content_cut" />
 			<ContextMenuItem text="Paste" icon="content_paste" />
+
+			<div class="bg-menu h-px m-2" />
+
+			<ContextMenuItem text="View Documentation" icon="menu_book" />
+			<ContextMenuItem text="Format Document" icon="edit_note" />
+			<ContextMenuItem text="Change All Occurances" icon="edit" />
+			<ContextMenuItem text="Go to Definition" icon="search" />
+			<ContextMenuItem text="Go to Symbol" icon="arrow_forward" />
 		</div>
 	</div>
 </template>

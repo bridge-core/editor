@@ -3,6 +3,7 @@ import File from './File.vue'
 import Directory from './Directory.vue'
 import Icon from '@/components/Common/Icon.vue'
 import ContextMenu from '@/components/Common/ContextMenu.vue'
+import ContextMenuItem from '../Common/ContextMenuItem.vue'
 
 import {
 	projectManager,
@@ -174,46 +175,23 @@ async function contextMenuOpenProjectConfig(close: any) {
 						<div
 							class="w-52 bg-menuAlternate rounded mt-2 shadow-window overflow-hidden relative z-10"
 						>
-							<div
+							<ContextMenuItem
+								text="New File"
+								icon="add"
 								@click="() => contextMenuNewFile(close)"
-								class="flex item-center group hover:bg-menu p-2 cursor-pointer transition-colors duration-100 ease-out"
-							>
-								<Icon
-									icon="add"
-									class="text-base group-hover:text-primary transition-colors duration-100 ease-out"
-								/>
-								<span class="ml-2 font-inter select-none">{{
-									t('New File')
-								}}</span>
-							</div>
-
-							<div
+							/>
+							<ContextMenuItem
+								text="Build"
+								icon="manufacturing"
 								@click="() => contextMenuBuild(close)"
-								class="flex item-center group hover:bg-menu p-2 cursor-pointer transition-colors duration-100 ease-out"
-							>
-								<Icon
-									icon="manufacturing"
-									class="text-base group-hover:text-primary transition-colors duration-100 ease-out"
-								/>
-								<span class="ml-2 font-inter select-none">{{
-									t('Build')
-								}}</span>
-							</div>
-
-							<div
+							/>
+							<ContextMenuItem
+								text="Open Project Config"
+								icon="settings"
 								@click="
 									() => contextMenuOpenProjectConfig(close)
 								"
-								class="flex item-center group hover:bg-menu p-2 cursor-pointer transition-colors duration-100 ease-out"
-							>
-								<Icon
-									icon="settings"
-									class="text-base group-hover:text-primary transition-colors duration-100 ease-out"
-								/>
-								<span class="ml-2 font-inter select-none">{{
-									t('Open Project Config')
-								}}</span>
-							</div>
+							/>
 						</div>
 					</template>
 				</ContextMenu>
