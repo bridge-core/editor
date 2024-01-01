@@ -19,7 +19,7 @@ const t = useTranslate()
 
 <template>
 	<div
-		class="flex item-center group hover:bg-menu p-2 cursor-pointer transition-colors duration-100 ease-out"
+		class="flex item-center group hover:bg-menu p-2 px-4 cursor-pointer transition-colors duration-100 ease-out"
 	>
 		<Icon
 			:icon="icon"

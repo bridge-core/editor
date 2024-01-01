@@ -173,12 +173,13 @@ async function contextMenuOpenProjectConfig(close: any) {
 
 					<template #menu="{ close }">
 						<div
-							class="w-52 bg-menuAlternate rounded mt-2 shadow-window overflow-hidden relative z-10"
+							class="w-56 bg-menuAlternate rounded mt-2 shadow-window overflow-hidden relative z-10"
 						>
 							<ContextMenuItem
 								text="New File"
 								icon="add"
 								@click="() => contextMenuNewFile(close)"
+								class="pt-4"
 							/>
 							<ContextMenuItem
 								text="Build"
@@ -191,6 +192,7 @@ async function contextMenuOpenProjectConfig(close: any) {
 								@click="
 									() => contextMenuOpenProjectConfig(close)
 								"
+								class="pb-4"
 							/>
 						</div>
 					</template>
