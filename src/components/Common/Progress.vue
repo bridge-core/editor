@@ -6,6 +6,10 @@ const props = defineProps({
 		type: Number,
 		required: true,
 	},
+	strokeWidth: {
+		type: Number,
+		default: 2,
+	},
 })
 
 const radius: Ref<number> = ref(0)
@@ -17,7 +21,8 @@ const svgElement: Ref<SVGAElement | null> = ref(null)
 function updateSvg() {
 	if (!svgElement.value) return
 
-	radius.value = svgElement.value.getBoundingClientRect().width / 2 - 2
+	radius.value =
+		svgElement.value.getBoundingClientRect().width / 2 - props.strokeWidth
 
 	const circumference = 2 * Math.PI * radius.value
 
@@ -42,10 +47,10 @@ watch(
 	<svg ref="svgElement" class="rotate-[270deg]">
 		<circle
 			:r="radius + 'px'"
-			:cx="radius + 2 + 'px'"
-			:cy="radius + 2 + 'px'"
+			:cx="radius + strokeWidth + 'px'"
+			:cy="radius + strokeWidth + 'px'"
 			fill="transparent"
-			stroke-width="2px"
+			:stroke-width="strokeWidth + 'px'"
 			:stroke-dasharray="strokeDashArray + 'px'"
 			:stroke-dashoffset="strokeDashOffset + 'px'"
 		></circle>

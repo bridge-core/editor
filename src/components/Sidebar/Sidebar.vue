@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import Icon from '@/components/Common/Icon.vue'
+import Progress from '@/components/Common/Progress.vue'
+
 import { sidebar } from '@/App'
 </script>
 
@@ -34,6 +36,7 @@ import { sidebar } from '@/App'
 				@click="() => sidebar.activateNotification(item)"
 			>
 				<Icon
+					v-if="item.type === 'button'"
 					:icon="item.icon!"
 					:color="undefined"
 					class="group-hover:text-[var(--hover-color)] text-text transition-colors duration-100 ease-out"
@@ -43,6 +46,34 @@ import { sidebar } from '@/App'
 							: 'var(--theme-color-text)',
 					}"
 				/>
+
+				<div v-if="item.type === 'progress'" class="w-10 h-10 relative">
+					<Progress
+						class="w-7 h-7 absolute left-[0.375rem] top-[0.375rem] group-hover:stroke-[var(--hover-color)] stroke-text transition-colors duration-100 ease-out"
+						:progress="
+							(item.progress ?? 0) / (item.maxProgress ?? 100)
+						"
+						:style="{
+							'--color': item.color
+								? `var(--theme-color-${item.color})`
+								: 'var(--theme-color-background)',
+							'--hover-color': item.color
+								? `var(--theme-color-background)`
+								: 'var(--theme-color-text)',
+						}"
+					/>
+
+					<Icon
+						:icon="item.icon!"
+						:color="undefined"
+						class="text-xs absolute left-[0.88rem] top-[0.75rem] group-hover:text-[var(--hover-color)] text-text transition-colors duration-100 ease-out"
+						:style="{
+							'--hover-color': item.color
+								? `var(--theme-color-background)`
+								: 'var(--theme-color-text)',
+						}"
+					/>
+				</div>
 			</div>
 		</div>
 	</div>
