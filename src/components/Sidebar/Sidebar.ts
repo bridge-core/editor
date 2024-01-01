@@ -8,6 +8,8 @@ export interface Notification {
 	callback?: () => void
 	id: string
 	type: 'button' | 'progress'
+	progress?: number
+	maxProgress?: number
 }
 
 export class Sidebar {
@@ -60,15 +62,14 @@ export class Sidebar {
 	public addNotification(
 		icon: string,
 		callback?: () => void,
-		color?: string,
-		type: 'button' | 'progress' = 'button'
+		color?: string
 	): Notification {
-		const notification = {
+		const notification: Notification = {
 			icon,
 			callback,
 			color,
 			id: uuid(),
-			type,
+			type: 'button',
 		}
 
 		this.notifications.value.push(notification)
@@ -77,23 +78,51 @@ export class Sidebar {
 		return notification
 	}
 
-	public activateNotification(item: Notification) {
-		if (item.type === 'button') {
+	public addProgressNotification(
+		icon: string,
+		progress: number,
+		maxProgress: number,
+		callback?: () => void,
+		color?: string
+	): Notification {
+		const notification: Notification = {
+			icon,
+			callback,
+			color,
+			id: uuid(),
+			type: 'progress',
+			progress,
+			maxProgress,
+		}
+
+		this.notifications.value.push(notification)
+		this.notifications.value = [...this.notifications.value]
+
+		return notification
+	}
+
+	public activateNotification(notification: Notification) {
+		if (notification.type === 'button') {
 			this.notifications.value.splice(
-				this.notifications.value.indexOf(item),
+				this.notifications.value.indexOf(notification),
 				1
 			)
 			this.notifications.value = [...this.notifications.value]
 		}
 
-		if (item.callback) item.callback()
+		if (notification.callback) notification.callback()
 	}
 
-	public clearNotification(item: Notification) {
+	public clearNotification(notification: Notification) {
 		this.notifications.value.splice(
-			this.notifications.value.indexOf(item),
+			this.notifications.value.indexOf(notification),
 			1
 		)
+		this.notifications.value = [...this.notifications.value]
+	}
+
+	public setProgress(notification: Notification, progress: number) {
+		notification.progress = progress
 		this.notifications.value = [...this.notifications.value]
 	}
 }
