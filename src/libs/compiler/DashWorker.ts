@@ -49,7 +49,18 @@ async function setup(config: any, configPath: string, actionId: string) {
 			packType,
 			fileType,
 			requestJsonData: <any>getJsonData,
-			console: <any>console,
+			console: {
+				log(...args: any[]) {
+					postMessage({
+						action: 'log',
+						message: args.join(' '),
+					})
+
+					console.log(...args)
+				},
+				time: console.time,
+				timeEnd: console.timeEnd,
+			},
 		}
 	)
 	await dash.setup({

@@ -7,6 +7,8 @@ import { BaseFileSystem } from '../fileSystem/BaseFileSystem'
 import { sendAndWait } from '../worker/Communication'
 
 export class DashService {
+	public logs: string[] = []
+
 	private worker = new DashWorker()
 	private inputFileSystem = new WorkerFileSystemEntryPoint(
 		this.worker,
@@ -33,6 +35,10 @@ export class DashService {
 				id: event.data.id,
 				data: await data.get(event.data.path),
 			})
+		}
+
+		if (event.data.action === 'log') {
+			this.logs.push(event.data.message)
 		}
 	}
 

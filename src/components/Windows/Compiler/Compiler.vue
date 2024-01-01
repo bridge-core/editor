@@ -4,8 +4,8 @@ import Icon from '@/components/Common/Icon.vue'
 import { useTranslate } from '@/libs/locales/Locales'
 import { ref } from 'vue'
 import { projectManager } from '@/App'
-import { PWAFileSystem } from '@/libs/fileSystem/PWAFileSystem'
 import { LocalFileSystem } from '@/libs/fileSystem/LocalFileSystem'
+import { BedrockProject } from '@/libs/project/BedrockProject'
 
 const t = useTranslate()
 
@@ -96,7 +96,7 @@ async function droppedOutputFolder(event: DragEvent) {
 		</template>
 		<template #content>
 			<div
-				class="w-[64rem] h-[38rem] flex flex-col overflow-y-auto p-4 pt-0"
+				class="w-[64rem] h-[38rem] flex flex-col overflow-y-auto p-3 pt-0"
 			>
 				<div v-if="selectedCategory === 'outputFolder'">
 					<p
@@ -124,6 +124,17 @@ async function droppedOutputFolder(event: DragEvent) {
 						>
 							{{ t('Drop your output folder here.') }}
 						</span>
+					</div>
+				</div>
+
+				<div v-if="selectedCategory === 'logs'">
+					<div>
+						<p
+							v-for="log in (<BedrockProject>projectManager.currentProject).dashService.logs"
+							class="font-inter border-b border-menuAlternate pb-2 mb-2"
+						>
+							{{ log }}
+						</p>
 					</div>
 				</div>
 			</div>
