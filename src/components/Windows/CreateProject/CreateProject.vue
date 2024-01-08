@@ -287,12 +287,17 @@ import { Ref, computed, onMounted, ref, watch } from 'vue'
 import { IPackType } from 'mc-project-core'
 import { packs } from '@/libs/project/ProjectManager'
 import { ConfigurableFile } from '@/libs/project/create/files/configurable/ConfigurableFile'
-import { FormatVersionDefinitions, ExperimentalToggle } from '@/libs/data/Data'
+import {
+	FormatVersionDefinitions,
+	ExperimentalToggle,
+	useGetData,
+} from '@/libs/data/Data'
 import { v4 as uuid } from 'uuid'
 import { useTranslate } from '@/libs/locales/Locales'
 import { data, fileSystem, projectManager } from '@/App'
 
 const t = useTranslate()
+const getData = useGetData()
 
 const projectIconInput: Ref<HTMLInputElement | null> = ref(null)
 const window = ref<Window | null>(null)
@@ -329,8 +334,29 @@ const projectIcon: Ref<File | null> = ref(null)
 
 const packTypes: Ref<IPackType[]> = ref([])
 const selectedPackTypes: Ref<IPackType[]> = ref([])
+
 const experimentalToggles: Ref<ExperimentalToggle[]> = ref([])
 const selectedExperimentalToggles: Ref<ExperimentalToggle[]> = ref([])
+
+watch(getData, async (getData) => {
+	packTypes.value =
+		(await getData('packages/minecraftBedrock/packDefinitions.json')) || []
+
+	experimentalToggles.value =
+		(await getData(
+			'packages/minecraftBedrock/experimentalGameplay.json'
+		)) || []
+
+	formatVersionDefinitions.value =
+		<FormatVersionDefinitions>(
+			await getData('packages/minecraftBedrock/formatVersions.json')
+		) || []
+
+	if (!formatVersionDefinitions.value) return
+
+	projectTargetVersion.value = formatVersionDefinitions.value.currentStable
+})
+
 const availableConfigurableFiles = computed(() => {
 	const files: ConfigurableFile[] = []
 
@@ -344,6 +370,7 @@ const availableConfigurableFiles = computed(() => {
 
 	return files
 })
+
 const selectedFiles: Ref<ConfigurableFile[]> = ref([])
 const formatVersionDefinitions: Ref<FormatVersionDefinitions | null> = ref(null)
 
@@ -456,22 +483,6 @@ function chooseProjectIcon() {
 
 	projectIcon.value = projectIconInput.value.files[0]
 }
-
-onMounted(async () => {
-	packTypes.value = await data.get(
-		'packages/minecraftBedrock/packDefinitions.json'
-	)
-
-	experimentalToggles.value = await data.get(
-		'packages/minecraftBedrock/experimentalGameplay.json'
-	)
-
-	formatVersionDefinitions.value = <FormatVersionDefinitions>(
-		await data.get('packages/minecraftBedrock/formatVersions.json')
-	)
-
-	projectTargetVersion.value = formatVersionDefinitions.value.currentStable
-})
 </script>
 
 <style scoped>

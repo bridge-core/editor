@@ -17,7 +17,7 @@ const languages = Object.fromEntries(
 )
 
 export class LocaleManager {
-	public static EventSystem = new EventSystem(['languageChanged'])
+	public static eventSystem = new EventSystem(['languageChanged'])
 
 	protected static currentLanguage: any = enLang
 	protected static currentLanuageId = 'english'
@@ -62,7 +62,7 @@ export class LocaleManager {
 			this.currentLanguage = clone(enLang)
 			this.currentLanuageId = id
 
-			this.EventSystem.dispatch('languageChanged', id)
+			this.eventSystem.dispatch('languageChanged', id)
 			return
 		}
 
@@ -80,7 +80,7 @@ export class LocaleManager {
 
 		this.currentLanuageId = id
 
-		this.EventSystem.dispatch('languageChanged', id)
+		this.eventSystem.dispatch('languageChanged', id)
 	}
 
 	static translate(key?: string, lang = this.currentLanguage) {
@@ -126,11 +126,11 @@ export function useTranslate(): Ref<(key: string) => string> {
 	}
 
 	onMounted(() => {
-		LocaleManager.EventSystem.on('languageChanged', updateTranslate)
+		LocaleManager.eventSystem.on('languageChanged', updateTranslate)
 	})
 
 	onUnmounted(() => {
-		LocaleManager.EventSystem.off('languageChanged', updateTranslate)
+		LocaleManager.eventSystem.off('languageChanged', updateTranslate)
 	})
 
 	return translation

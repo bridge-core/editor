@@ -2,6 +2,9 @@ import { zipSize } from '@/libs/app/DataPackage'
 import { baseUrl } from '@/libs/app/AppEnv'
 import { unzip, Unzipped } from 'fflate'
 import { LocalFileSystem } from '@/libs/fileSystem/LocalFileSystem'
+import { EventSystem } from '@/libs/event/EventSystem'
+import { onMounted, onUnmounted, ref, Ref } from 'vue'
+import { data } from '@/App'
 
 export interface FormatVersionDefinitions {
 	currentStable: string
@@ -16,6 +19,8 @@ export interface ExperimentalToggle {
 }
 
 export class Data {
+	public eventSystem = new EventSystem(['loaded'])
+
 	private fileSystem = new LocalFileSystem()
 
 	constructor() {
@@ -52,6 +57,8 @@ export class Data {
 		}
 
 		await this.fileSystem.writeFile('loaded', '')
+
+		this.eventSystem.dispatch('loaded', undefined)
 	}
 
 	public async get(path: string): Promise<any> {
@@ -65,4 +72,22 @@ export class Data {
 	public async getRaw(path: string): Promise<ArrayBuffer> {
 		return await this.fileSystem.readFile(path)
 	}
+}
+
+export function useGetData(): Ref<(path: string) => undefined | any> {
+	const get = ref((path: string) => Promise.resolve(undefined))
+
+	function updateGet() {
+		get.value = (path: string) => data.get(path)
+	}
+
+	onMounted(() => {
+		data.eventSystem.on('loaded', updateGet)
+	})
+
+	onUnmounted(() => {
+		data.eventSystem.off('loaded', updateGet)
+	})
+
+	return get
 }
