@@ -10,6 +10,8 @@ import { Sidebar } from '@/components/Sidebar/Sidebar'
 import { FileExplorer } from '@/components/FileExplorer/FileExplorer'
 import { Settings } from '@/components/Windows/Settings/Settings'
 import { ConfirmWindow } from '@/components/Windows/Confirm/ConfirmWindow'
+import { PWAFileSystem } from '@/libs/fileSystem/PWAFileSystem'
+import { get, set } from 'idb-keyval'
 
 export const toolbar = new Toolbar()
 export const themeManager = new ThemeManager()
@@ -49,4 +51,32 @@ export async function setup() {
 	console.timeEnd('[App] Data')
 
 	console.timeEnd('[App] Setup')
+}
+
+export async function selectOrLoadBridgeFolder() {
+	if (!(fileSystem instanceof PWAFileSystem)) return
+
+	const savedHandle: undefined | FileSystemDirectoryHandle = await get(
+		'bridgeFolderHandle'
+	)
+
+	if (
+		!fileSystem.baseHandle &&
+		savedHandle &&
+		(await fileSystem.ensurePermissions(savedHandle))
+	) {
+		fileSystem.setBaseHandle(savedHandle)
+
+		return
+	}
+
+	try {
+		fileSystem.setBaseHandle(
+			(await window.showDirectoryPicker({
+				mode: 'readwrite',
+			})) ?? null
+		)
+
+		set('bridgeFolderHandle', fileSystem.baseHandle)
+	} catch {}
 }

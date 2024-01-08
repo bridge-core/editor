@@ -13,6 +13,7 @@ import { ResourcePack } from './create/packs/ResourcePack'
 import { SkinPack } from './create/packs/SkinPack'
 import { BedrockProject } from './BedrockProject'
 import { IConfigJson, defaultPackPaths } from 'mc-project-core'
+import { LocalFileSystem } from '@/libs/fileSystem/LocalFileSystem'
 
 export const packs: {
 	[key: string]: Pack | undefined
@@ -37,9 +38,20 @@ export class ProjectManager {
 	])
 	public currentProject: Project | null = null
 
+	private cacheFileSystem = new LocalFileSystem()
+
+	constructor() {
+		this.cacheFileSystem.setRootName('projectCache')
+	}
+
 	public async loadProjects() {
 		if (fileSystem instanceof PWAFileSystem && !fileSystem.setup) {
 			this.projects = []
+
+			if (await this.cacheFileSystem.exists('projects.json'))
+				this.projects = await this.cacheFileSystem.readFileJson(
+					'projects.json'
+				)
 
 			this.eventSystem.dispatch('updatedProjects', null)
 
@@ -63,11 +75,15 @@ export class ProjectManager {
 			this.projects.push(await this.getProjectInfo(path))
 		}
 
+		this.updateProjectCache()
+
 		this.eventSystem.dispatch('updatedProjects', null)
 	}
 
 	private addProject(project: ProjectInfo) {
 		this.projects.push(project)
+
+		this.updateProjectCache()
 
 		this.eventSystem.dispatch('updatedProjects', null)
 	}
@@ -193,5 +209,13 @@ export class ProjectManager {
 		)
 
 		return currentProject
+	}
+
+	private async updateProjectCache() {
+		await this.cacheFileSystem.writeFileJson(
+			'projects.json',
+			this.projects,
+			false
+		)
 	}
 }

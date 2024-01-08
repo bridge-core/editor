@@ -2,11 +2,15 @@
 import Logo from '@/components/Common/Logo.vue'
 import IconButton from '@/components/Common/IconButton.vue'
 
-import { projectManager, fileSystem, windows } from '@/App'
+import {
+	projectManager,
+	fileSystem,
+	windows,
+	selectOrLoadBridgeFolder,
+} from '@/App'
 import { PWAFileSystem } from '@/libs/fileSystem/PWAFileSystem'
 import { computed, ref } from 'vue'
 import { useTranslate } from '@/libs/locales/Locales'
-import { get, set } from 'idb-keyval'
 import { ProjectInfo } from '@/libs/project/ProjectManager'
 
 const t = useTranslate()
@@ -17,45 +21,23 @@ let fileSystemSetup = ref(true)
 if (fileSystem instanceof PWAFileSystem) fileSystemSetup = fileSystem.useSetup()
 
 const suggestSelectBridgeFolder = computed(
-	() => fileSystem instanceof PWAFileSystem && !fileSystemSetup.value
+	() =>
+		fileSystem instanceof PWAFileSystem &&
+		!fileSystemSetup.value &&
+		projects.value.length == 0
 )
-
-async function selectBridgeFolder() {
-	if (!(fileSystem instanceof PWAFileSystem)) return
-
-	const savedHandle: undefined | FileSystemDirectoryHandle = await get(
-		'bridgeFolderHandle'
-	)
-
-	if (
-		!fileSystem.baseHandle &&
-		savedHandle &&
-		(await fileSystem.ensurePermissions(savedHandle))
-	) {
-		fileSystem.setBaseHandle(savedHandle)
-
-		return
-	}
-
-	try {
-		fileSystem.setBaseHandle(
-			(await window.showDirectoryPicker({
-				mode: 'readwrite',
-			})) ?? null
-		)
-
-		set('bridgeFolderHandle', fileSystem.baseHandle)
-	} catch {}
-}
 
 async function createProject() {
 	if (fileSystem instanceof PWAFileSystem && !fileSystem.setup)
-		await selectBridgeFolder()
+		await selectOrLoadBridgeFolder()
 
 	windows.open('createProject')
 }
 
 async function openProject(project: ProjectInfo) {
+	if (fileSystem instanceof PWAFileSystem && !fileSystem.setup)
+		await selectOrLoadBridgeFolder()
+
 	projectManager.loadProject(project.name)
 }
 </script>
@@ -77,7 +59,7 @@ async function openProject(project: ProjectInfo) {
 					<IconButton
 						icon="folder"
 						class="mr-1"
-						@click="selectBridgeFolder"
+						@click="selectOrLoadBridgeFolder"
 					/>
 					<IconButton
 						icon="add"
@@ -136,7 +118,7 @@ async function openProject(project: ProjectInfo) {
 				</p>
 				<p
 					class="text-primary cursor-pointer hover:underline font-inter font-medium"
-					@click="selectBridgeFolder"
+					@click="selectOrLoadBridgeFolder"
 				>
 					{{ t('greet.selectBridgeFolder') }}
 				</p>
