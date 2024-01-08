@@ -75,15 +75,15 @@ async function openProject(project: ProjectInfo) {
 				class="flex flex-wrap gap-2 overflow-x-hidden overflow-y-hidden"
 			>
 				<div
-					class="flex flex-col bg-menu rounded-md relative w-36 h-36 cursor-pointer"
+					class="flex flex-col bg-menu rounded relative w-36 h-36 cursor-pointer border-transparent border-2 group hover:border-text transition-colors duration-100 ease-out"
 					v-for="(project, index) in projects"
 					:key="index"
 					@click="openProject(project)"
 				>
-					<div class="w-full overflow-hidden">
+					<div class="w-full rounded overflow-hidden aspect-video">
 						<img
 							:src="project.icon"
-							class="w-full aspect-video object-cover"
+							class="w-full object-cover group-hover:scale-150 transition-transform duration-100 ease-out -translate-y-1/4 pixelated"
 						/>
 					</div>
 					<p
@@ -126,3 +126,9 @@ async function openProject(project: ProjectInfo) {
 		</div>
 	</main>
 </template>
+
+<style scoped>
+.pixelated {
+	image-rendering: pixelated;
+}
+</style>
