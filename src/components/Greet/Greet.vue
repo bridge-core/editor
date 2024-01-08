@@ -83,7 +83,7 @@ async function openProject(project: ProjectInfo) {
 					<div class="w-full rounded overflow-hidden aspect-video">
 						<img
 							:src="project.icon"
-							class="w-full object-cover group-hover:scale-150 transition-transform duration-100 ease-out -translate-y-1/4 pixelated"
+							class="w-full object-cover group-hover:scale-110 transition-transform duration-100 ease-out -translate-y-1/4 pixelated"
 						/>
 					</div>
 					<p
