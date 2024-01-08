@@ -114,6 +114,19 @@ export class Sidebar {
 	}
 
 	public clearNotification(notification: Notification) {
+		if (notification.type === 'progress') {
+			// Allow time for the progress bar to reach full value
+			setTimeout(() => {
+				this.notifications.value.splice(
+					this.notifications.value.indexOf(notification),
+					1
+				)
+				this.notifications.value = [...this.notifications.value]
+			}, 300)
+
+			return
+		}
+
 		this.notifications.value.splice(
 			this.notifications.value.indexOf(notification),
 			1

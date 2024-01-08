@@ -53,6 +53,11 @@ watch(
 			:stroke-width="strokeWidth + 'px'"
 			:stroke-dasharray="strokeDashArray + 'px'"
 			:stroke-dashoffset="strokeDashOffset + 'px'"
+			:style="{
+				'transition-property':
+					progress > 0 ? 'stroke-dashoffset' : undefined,
+				'transition-duration': progress > 0 ? '300ms' : undefined,
+			}"
 		></circle>
 	</svg>
 </template>
