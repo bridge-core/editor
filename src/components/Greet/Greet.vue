@@ -72,7 +72,7 @@ async function openProject(project: ProjectInfo) {
 			<div class="h-px w-full bg-menu mb-1" />
 
 			<div
-				class="flex flex-wrap gap-2 overflow-x-hidden overflow-y-hidden"
+				class="flex flex-wrap gap-2 overflow-x-hidden overflow-y-hidden mt-2"
 			>
 				<div
 					class="flex flex-col bg-menu rounded relative w-36 h-36 cursor-pointer border-transparent border-2 group hover:border-text transition-colors duration-100 ease-out"
