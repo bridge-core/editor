@@ -23,7 +23,7 @@ onMounted(async () => {
 })
 </script>
 
-<style>
+<style scoped>
 .changelog ul {
 	margin-bottom: 24px;
 }

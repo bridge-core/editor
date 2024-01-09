@@ -68,6 +68,7 @@ export class IndexerService {
 				.map((indexedData) => {
 					return cacheKey ? indexedData.data[cacheKey] : indexedData
 				})
+				.flat()
 		}
 
 		return data.length === 0 ? null : data

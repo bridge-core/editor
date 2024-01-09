@@ -82,7 +82,7 @@ async function runLightningCacheScript(
 }
 
 async function handleJsonInstructions(
-	path: string,
+	filePath: string,
 	fileType: any,
 	json: any,
 	fileInstructions: IndexInstruction[]
@@ -103,7 +103,7 @@ async function handleJsonInstructions(
 		if (pathScript !== undefined) {
 			paths = (
 				await runtime.run(
-					path,
+					filePath,
 					{
 						Bridge: { paths },
 					},
@@ -122,6 +122,9 @@ async function handleJsonInstructions(
 
 		for (const jsonPath of paths) {
 			walkObject(jsonPath, json, async (data) => {
+				if (typeof data === 'object') data = Object.keys(data)
+				if (!Array.isArray(data)) data = [data]
+
 				if (filter !== undefined)
 					data = data.filter(
 						(value: string) => !filter.includes(value)
@@ -133,7 +136,7 @@ async function handleJsonInstructions(
 							data.map(async (value: string) => {
 								return await runLightningCacheScript(
 									script,
-									path,
+									filePath,
 									value
 								)
 							})
@@ -141,20 +144,14 @@ async function handleJsonInstructions(
 					).filter((value: unknown) => value !== undefined)
 				}
 
-				if (Array.isArray(data)) {
-					foundData = foundData.concat(data)
-				} else if (typeof data === 'object') {
-					foundData = foundData.concat(Object.keys(data))
-				} else {
-					foundData.push(data)
-				}
+				foundData = foundData.concat(data)
 			})
 		}
 
 		data[cacheKey] = foundData
 	}
 
-	index[path] = {
+	index[filePath] = {
 		fileType: fileType ? fileType.id : 'unkown',
 		data,
 	}

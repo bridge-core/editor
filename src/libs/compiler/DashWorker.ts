@@ -3,8 +3,11 @@ import { CompatabilityFileSystem } from '@/libs/fileSystem/CompatabilityFileSyst
 import { WorkerFileSystemEndPoint } from '@/libs/fileSystem/WorkerFileSystem'
 import { CompatabilityFileType } from '@/libs/data/compatability/FileType'
 import { CompatabilityPackType } from '../data/compatability/PackType'
-import { v4 as uuid } from 'uuid'
 import { sendAndWait } from '../worker/Communication'
+import wasmUrl from '@swc/wasm-web/wasm-web_bg.wasm?url'
+import { initRuntimes } from 'bridge-js-runtime'
+
+initRuntimes(wasmUrl)
 
 //@ts-ignore make path browserify work in web worker
 globalThis.process = {
@@ -57,6 +60,14 @@ async function setup(config: any, configPath: string, actionId: string) {
 					})
 
 					console.log(...args)
+				},
+				error(...args: any[]) {
+					postMessage({
+						action: 'log',
+						message: args.join(' '),
+					})
+
+					console.error(...args)
 				},
 				time: console.time,
 				timeEnd: console.timeEnd,
