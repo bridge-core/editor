@@ -10,7 +10,7 @@ import { BedrockProject } from '@/libs/project/BedrockProject'
 
 export class TextTab extends Tab {
 	public component: Component | null = TextTabComponent
-	public icon = ref('data_object')
+	public icon = ref('loading')
 
 	private fileTypeIcon: string = 'data_object'
 	private editor: monaco.IStandaloneCodeEditor | null = null
@@ -35,8 +35,6 @@ export class TextTab extends Tab {
 		if (this.fileType === null) return
 
 		if (this.fileType.icon === undefined) return
-
-		this.icon.value = this.fileType.icon
 
 		this.fileTypeIcon = this.fileType.icon
 	}
@@ -89,6 +87,8 @@ export class TextTab extends Tab {
 				this.icon.value = this.fileTypeIcon
 			}
 		})
+
+		this.icon.value = this.fileTypeIcon
 	}
 
 	public unmountEditor() {
