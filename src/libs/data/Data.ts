@@ -28,7 +28,11 @@ export class Data {
 	}
 
 	public async load() {
-		if (await this.fileSystem.exists('loaded')) return
+		if (await this.fileSystem.exists('loaded')) {
+			this.eventSystem.dispatch('loaded', null)
+
+			return
+		}
 
 		const rawData = await fetch(baseUrl + 'packages.zip').then((response) =>
 			response.arrayBuffer()
@@ -58,7 +62,7 @@ export class Data {
 
 		await this.fileSystem.writeFile('loaded', '')
 
-		this.eventSystem.dispatch('loaded', undefined)
+		this.eventSystem.dispatch('loaded', null)
 	}
 
 	public async get(path: string): Promise<any> {
