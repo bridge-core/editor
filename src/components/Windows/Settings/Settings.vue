@@ -54,6 +54,7 @@
 					v-for="item in selectedCategory.items"
 					class="flex gap-6 items-center"
 				>
+					<component :is="item.component!" :item="item" />
 					<Dropdown class="mb-4 w-48" v-if="item.type === 'dropdown'">
 						<template #main="{ expanded, toggle }">
 							<LabeledInput
@@ -116,7 +117,9 @@
 						"
 						v-if="item.type === 'switch'"
 					/>
-					<p class="text-textAlternate">{{ t(item.description) }}</p>
+					<p v-if="item.type !== 'custom'" class="text-textAlternate">
+						{{ t(item.description) }}
+					</p>
 				</div>
 			</div>
 		</template>

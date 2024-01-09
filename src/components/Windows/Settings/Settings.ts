@@ -51,7 +51,9 @@ export class Settings {
 
 		for (const category of this.categories) {
 			for (const item of category.items) {
-				if (!this.settings[item.id]) {
+				if (item.load) {
+					this.settings[item.id] = await item.load()
+				} else if (!this.settings[item.id]) {
 					this.settings[item.id] = item.defaultValue
 				}
 
@@ -75,16 +77,24 @@ export class Settings {
 
 		this.settings[id] = value
 
-		this.fileSystem.writeFileJson('settings.json', this.settings, false)
-
 		for (const category of this.categories) {
 			const item = category.items.find((item) => item.id === id)
 			if (!item) continue
 
-			item.apply(value)
-		}
+			if (item.save) {
+				await item.save(value)
+			} else {
+				this.fileSystem.writeFileJson(
+					'settings.json',
+					this.settings,
+					false
+				)
+			}
 
-		this.eventSystem.dispatch('settingsChanged', value)
+			item.apply(value)
+
+			this.eventSystem.dispatch('settingsChanged', value)
+		}
 	}
 
 	public useSettings(): Ref<any> {
