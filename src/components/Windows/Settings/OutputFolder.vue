@@ -30,7 +30,7 @@ async function droppedOutputFolder(event: DragEvent) {
 
 <template>
 	<div
-		class="mt-8 ml-auto mr-auto w-96 h-48 border-2 border-dashed rounded flex justify-center items-center transition-colors duration-100 ease-out"
+		class="mt-8 mb-8 w-full h-48 border-2 border-dashed rounded flex justify-center items-center transition-colors duration-100 ease-out"
 		:class="{
 			'border-primary': outputFolderInputHovered,
 			'border-menuAlternate': !outputFolderInputHovered,
@@ -40,9 +40,7 @@ async function droppedOutputFolder(event: DragEvent) {
 		@dragover.prevent
 		@drop="droppedOutputFolder"
 	>
-		<span
-			class="font-inter text-textAlternate select-none pointer-events-none"
-		>
+		<span class="font-inter text-textAlternate select-none pointer-events-none">
 			{{ t('Drop your output folder here.') }}
 		</span>
 	</div>

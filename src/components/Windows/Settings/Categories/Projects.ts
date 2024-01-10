@@ -1,6 +1,8 @@
 import { get, set } from 'idb-keyval'
 import OutputFolder from '../OutputFolder.vue'
 import { Category } from './Category'
+import { fileSystem, settings } from '@/App'
+import { PWAFileSystem } from '@/libs/fileSystem/PWAFileSystem'
 
 export class ProjectsCategory extends Category {
 	public name = 'Projects'
@@ -10,17 +12,25 @@ export class ProjectsCategory extends Category {
 	constructor() {
 		super()
 
-		this.addCustom(
-			OutputFolder,
-			'outputFolder',
-			undefined,
-			'Output Folder',
-			'Default Compile Location For Projects',
-			(value) => {
-				console.log('Output Folder', value)
-			},
-			async () => await get('defaultOutputFolder'),
-			(value) => set('defaultOutputFolder', value)
-		)
+		if (fileSystem instanceof PWAFileSystem) {
+			this.addCustom(OutputFolder, 'outputFolder')
+
+			this.addSetting(
+				'outputFolder',
+				undefined,
+				() => {},
+				async (value) => await set('defaultOutputFolder', value),
+				async () => await get('defaultOutputFolder')
+			)
+
+			this.addButton(
+				'clearOutputFolder',
+				'Clear Output Folder',
+				'Forget the current default output folder.',
+				() => {
+					settings.set('outputFolder', undefined)
+				}
+			)
+		}
 	}
 }

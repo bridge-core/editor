@@ -37,6 +37,8 @@ export class BedrockProject extends Project {
 	}
 
 	public async dispose() {
+		await super.dispose()
+
 		await this.dashService.dispose()
 	}
 
@@ -45,7 +47,9 @@ export class BedrockProject extends Project {
 
 		await this.dashService.setOutputFileSystem(fileSystem)
 
-		if (this.loadedBetterFileSystem) this.dashService.build()
+		if (!this.dashService.isSetup) return
+
+		this.dashService.build()
 	}
 
 	public async build() {

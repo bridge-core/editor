@@ -1,25 +1,52 @@
 import { Component, Ref, markRaw } from 'vue'
 
+type DropdownItem = {
+	type: 'dropdown'
+	id: string
+	name: string
+	description: string
+	items: string[] | Ref<string[]>
+}
+
+type SwitchItem = {
+	type: 'switch'
+	id: string
+	name: string
+	description: string
+}
+
+type CustomItem = {
+	type: 'custom'
+	id: string
+	component: Component
+}
+
+type ButtonItem = {
+	type: 'button'
+	id: string
+	text: string
+	description: string
+	trigger: () => void
+}
+
+type Setting = {
+	id: string
+	defaultValue: any
+	apply: (value: any) => void
+	load?: () => any
+	save?: (vale: any) => void
+}
+
 export class Category {
 	public name: string = 'Unkown Category'
 	public id = 'unkown'
 	public icon: string = 'help'
-	public items: {
-		type: 'dropdown' | 'switch' | 'custom'
-		id: string
-		defaultValue: any
-		name: string
-		description: string
-		apply: (value: any) => void
-		items?: string[] | Ref<string[]>
-		component?: Component
-		load?: () => any
-		save?: (vale: any) => void
-	}[] = []
+	public items: (DropdownItem | SwitchItem | CustomItem | ButtonItem)[] = []
+	public settings: Setting[] = []
 
 	public addDropdown(
 		id: string,
-		defaultValue: any,
+		defaultValue: string,
 		name: string,
 		description: string,
 		items: string[] | Ref<string[]>,
@@ -27,11 +54,15 @@ export class Category {
 	) {
 		this.items.push({
 			type: 'dropdown',
-			defaultValue,
 			id,
 			name,
 			description,
 			items,
+		})
+
+		this.settings.push({
+			id,
+			defaultValue,
 			apply,
 		})
 	}
@@ -45,40 +76,53 @@ export class Category {
 	) {
 		this.items.push({
 			type: 'switch',
-			defaultValue,
 			id,
 			name,
 			description,
+		})
+
+		this.settings.push({
+			id,
+			defaultValue,
 			apply,
 		})
 	}
 
-	public addCustom(
-		component: Component,
-		id: string,
-		defaultValue: any,
-		name: string,
-		description: string,
-		apply: (value: any) => void,
-		load?: () => any,
-		save?: (vale: any) => void
-	) {
+	public addButton(id: string, text: string, description: string, trigger: () => void) {
+		this.items.push({
+			type: 'button',
+			id,
+			text,
+			description,
+			trigger,
+		})
+	}
+
+	public addCustom(component: Component, id: string) {
 		this.items.push({
 			type: 'custom',
-			defaultValue,
 			id,
-			name,
-			description,
-			apply,
 			component: markRaw(component),
-			load,
+		})
+	}
+
+	public addSetting(
+		id: string,
+		defaultValue: any,
+		apply: (value: any) => void,
+		save: (value: any) => Promise<void>,
+		load: () => Promise<any>
+	) {
+		this.settings.push({
+			id,
+			defaultValue,
+			apply,
 			save,
+			load,
 		})
 	}
 
 	public getDefaults(): { [key: string]: any } {
-		return Object.fromEntries(
-			this.items.map((item) => [item.id, item.defaultValue])
-		)
+		return Object.fromEntries(this.settings.map((setting) => [setting.id, setting.defaultValue]))
 	}
 }

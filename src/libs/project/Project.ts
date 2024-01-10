@@ -1,5 +1,5 @@
 import { join } from '@/libs/path'
-import { confirmWindow, fileSystem, sidebar } from '@/App'
+import { confirmWindow, fileSystem, settings, sidebar } from '@/App'
 import { BaseFileSystem } from '@/libs/fileSystem/BaseFileSystem'
 import { PWAFileSystem } from '@/libs/fileSystem/PWAFileSystem'
 import { get, set } from 'idb-keyval'
@@ -14,7 +14,6 @@ export class Project {
 	public outputFileSystem: BaseFileSystem = new LocalFileSystem()
 	public eventSystem = new EventSystem(['outputFileSystemChanged'])
 	public packs: { [key: string]: string } = {}
-	public loadedBetterFileSystem: boolean = false
 
 	constructor(public name: string) {
 		this.path = join('projects', this.name)
@@ -25,9 +24,7 @@ export class Project {
 	}
 
 	public async load() {
-		this.config = await fileSystem.readFileJson(
-			join(this.path, 'config.json')
-		)
+		this.config = await fileSystem.readFileJson(join(this.path, 'config.json'))
 
 		if (!this.config) throw new Error('Failed to load project config!')
 
@@ -35,53 +32,55 @@ export class Project {
 			this.packs[packId] = join(this.path, packPath)
 		}
 
-		this.icon = await fileSystem.readFileDataUrl(
-			join(this.path, 'BP', 'pack_icon.png')
-		)
+		this.icon = await fileSystem.readFileDataUrl(join(this.path, 'BP', 'pack_icon.png'))
 
-		await this.loadBetterOutputFileSystemOrAsk()
+		settings.eventSystem.on('settingsChanged', this.settingsChanged.bind(this))
+
+		if (fileSystem instanceof PWAFileSystem) await this.loadPWAFileSystem()
 	}
 
-	public async dispose() {}
+	public async dispose() {
+		settings.eventSystem.off('settingsChanged', this.settingsChanged.bind(this))
+	}
 
-	// Should probably break this into something more managable at some point
-	private async loadBetterOutputFileSystemOrAsk() {
-		const savedHandle: undefined | FileSystemDirectoryHandle = await get(
-			`projectOutputFolderHandle-${this.name}`
-		)
+	protected async settingsChanged() {
+		if (!(fileSystem instanceof PWAFileSystem)) return
+
+		if (await this.getLocalProjectFolder()) return
+
+		const outputFolderHandle = settings.get('outputFolder')
+
+		if (!outputFolderHandle) return
+
+		if (outputFolderHandle === this.outputFileSystem) return
 
 		const newOutputFileSystem = new PWAFileSystem()
 
-		if (
-			savedHandle &&
-			(await newOutputFileSystem.ensurePermissions(savedHandle))
-		) {
+		if (!(await newOutputFileSystem.ensurePermissions(outputFolderHandle))) return
+
+		newOutputFileSystem.setBaseHandle(outputFolderHandle)
+
+		this.setOutputFileSystem(newOutputFileSystem)
+	}
+
+	private async loadPWAFileSystem() {
+		let savedHandle: FileSystemDirectoryHandle | undefined = await this.getLocalProjectFolder()
+
+		if (!savedHandle) savedHandle = settings.get('outputFolder')
+
+		const newOutputFileSystem = new PWAFileSystem()
+
+		if (savedHandle && (await newOutputFileSystem.ensurePermissions(savedHandle))) {
 			newOutputFileSystem.setBaseHandle(savedHandle)
 
 			await this.setOutputFileSystem(newOutputFileSystem)
-
-			this.loadedBetterFileSystem = true
 		} else {
 			sidebar.addNotification(
 				'warning',
 				() => {
 					confirmWindow.open(
 						'You have not set up your output folder yet. Do you want to set it up now?',
-						async () => {
-							try {
-								const handle = await window.showDirectoryPicker(
-									{
-										mode: 'readwrite',
-									}
-								)
-
-								if (!handle) return
-
-								this.setOutputFolder(handle)
-
-								this.loadedBetterFileSystem = true
-							} catch {}
-						}
+						() => settings.open('projects')
 					)
 				},
 				'warning'
@@ -96,12 +95,28 @@ export class Project {
 	}
 
 	public async setOutputFolder(handle: FileSystemDirectoryHandle) {
-		set(`projectOutputFolderHandle-${this.name}`, handle)
-
 		const newOutputFileSystem = new PWAFileSystem()
 		newOutputFileSystem.setBaseHandle(handle)
 
+		if (!(await newOutputFileSystem.ensurePermissions(handle))) return
+
 		await this.setOutputFileSystem(newOutputFileSystem)
+	}
+
+	public async setLocalProjectFolder(handle: FileSystemDirectoryHandle) {
+		await set(`projectOutputFolderHandle-${this.name}`, handle)
+
+		await this.setOutputFolder(handle)
+	}
+
+	public async getLocalProjectFolder(): Promise<FileSystemDirectoryHandle | undefined> {
+		return await get(`projectOutputFolderHandle-${this.name}`)
+	}
+
+	public async clearLocalProjectFolder() {
+		await set(`projectOutputFolderHandle-${this.name}`, undefined)
+
+		if (fileSystem instanceof PWAFileSystem) await this.loadPWAFileSystem()
 	}
 
 	public resolvePackPath(packId?: string, path?: string) {
@@ -112,8 +127,7 @@ export class Project {
 
 		if (packId === undefined) return join(this.path ?? '', path!)
 
-		if (path === undefined)
-			return join(this.path ?? '', (<any>this.config.packs)[packId])
+		if (path === undefined) return join(this.path ?? '', (<any>this.config.packs)[packId])
 
 		return join(this.path ?? '', (<any>this.config.packs)[packId], path)
 	}

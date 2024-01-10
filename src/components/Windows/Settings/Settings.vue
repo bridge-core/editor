@@ -1,44 +1,29 @@
 <template>
 	<SidebarWindow
-		:name="`${t('windows.settings.title')} - ${selectedCategory.name}`"
+		:name="`${t('windows.settings.title')} - ${settingsManager.selectedCategory.value?.name ?? ''}`"
 		id="settings"
 	>
 		<template #sidebar>
 			<div class="p-4">
-				<LabeledInput
-					v-slot="{ focus, blur }"
-					:label="t('Search Settings')"
-					class="bg-menuAlternate !mt-1"
-				>
+				<LabeledInput v-slot="{ focus, blur }" :label="t('Search Settings')" class="bg-menuAlternate !mt-1">
 					<div class="flex gap-1">
-						<Icon
-							icon="search"
-							class="transition-colors duration-100 ease-out"
-						/>
-						<input
-							@focus="focus"
-							@blur="blur"
-							class="outline-none border-none bg-transparent font-inter"
-						/>
+						<Icon icon="search" class="transition-colors duration-100 ease-out" />
+						<input @focus="focus" @blur="blur" class="outline-none border-none bg-transparent font-inter" />
 					</div>
 				</LabeledInput>
 
-				<div class="mt-4">
+				<div class="mt-4" v-if="settingsManager.selectedCategory.value">
 					<button
 						v-for="category in settingsManager.categories"
 						class="w-full flex gap-1 p-1 mt-1 border-2 border-transparent hover:border-text rounded transition-colors duration-100 ease-out"
 						:class="{
-							'bg-primary': selectedCategory.id === category.id,
+							'bg-primary': settingsManager.selectedCategory.value.id === category.id,
 						}"
-						@click="selectedCategory = category"
+						@click="settingsManager.selectedCategory.value = category"
 					>
 						<Icon
 							:icon="category.icon"
-							:color="
-								selectedCategory.id === category.id
-									? 'text'
-									: 'primary'
-							"
+							:color="settingsManager.selectedCategory.value.id === category.id ? 'text' : 'primary'"
 							class="text-base"
 						/>
 						<span class="font-inter">{{ t(category.name) }}</span>
@@ -47,28 +32,19 @@
 			</div>
 		</template>
 		<template #content>
-			<div
-				class="w-[64rem] h-[38rem] flex flex-col overflow-y-auto p-4 pt-0"
-			>
+			<div class="w-[64rem] h-[38rem] flex flex-col overflow-y-auto p-4 pt-0">
 				<div
-					v-for="item in selectedCategory.items"
+					v-if="settingsManager.selectedCategory.value"
+					v-for="item in settingsManager.selectedCategory.value.items"
 					class="flex gap-6 items-center"
 				>
-					<component :is="item.component!" :item="item" />
-					<Dropdown class="mb-4 w-48" v-if="item.type === 'dropdown'">
+					<component v-if="item.type === 'custom'" :is="item.component!" :item="item" />
+
+					<Dropdown v-if="item.type === 'dropdown'" class="mb-4 w-48">
 						<template #main="{ expanded, toggle }">
-							<LabeledInput
-								:label="t(item.name)"
-								:focused="expanded"
-								class="bg-background"
-							>
-								<div
-									class="flex items-center justify-between cursor-pointer"
-									@click="toggle"
-								>
-									<span class="font-inter">{{
-										settings[item.id]
-									}}</span>
+							<LabeledInput :label="t(item.name)" :focused="expanded" class="bg-background">
+								<div class="flex items-center justify-between cursor-pointer" @click="toggle">
+									<span class="font-inter">{{ settings[item.id] }}</span>
 
 									<Icon
 										icon="arrow_drop_down"
@@ -80,28 +56,19 @@
 						</template>
 
 						<template #choices="{ collapse }">
-							<div
-								class="mt-2 bg-menuAlternate w-full p-1 rounded"
-							>
-								<div
-									class="flex flex-col max-h-[12rem] overflow-y-auto p-1"
-								>
+							<div class="mt-2 bg-menuAlternate w-full p-1 rounded">
+								<div class="flex flex-col max-h-[12rem] overflow-y-auto p-1">
 									<button
 										v-for="dropdownItem in item.items"
 										@click="
 											() => {
-												settingsManager.set(
-													item.id,
-													dropdownItem
-												)
+												settingsManager.set(item.id, dropdownItem)
 												collapse()
 											}
 										"
 										class="hover:bg-primary text-start p-1 rounded transition-colors duration-100 ease-out font-inter"
 										:class="{
-											'bg-menu':
-												settings[item.id] ===
-												dropdownItem,
+											'bg-menu': settings[item.id] === dropdownItem,
 										}"
 									>
 										{{ dropdownItem }}
@@ -110,13 +77,15 @@
 							</div>
 						</template>
 					</Dropdown>
+
 					<Switch
-						:model-value="settings[item.id]"
-						@update:model-value="
-							(value) => settingsManager.set(item.id, value)
-						"
 						v-if="item.type === 'switch'"
+						:model-value="settings[item.id]"
+						@update:model-value="(value) => settingsManager.set(item.id, value)"
 					/>
+
+					<Button v-if="item.type === 'button'" @click="item.trigger" :text="item.text" />
+
 					<p v-if="item.type !== 'custom'" class="text-textAlternate">
 						{{ t(item.description) }}
 					</p>
@@ -132,14 +101,12 @@ import LabeledInput from '@/components/Common/LabeledInput.vue'
 import Icon from '@/components/Common/Icon.vue'
 import Dropdown from '@/components/Common/Dropdown.vue'
 import Switch from '@/components/Common/Switch.vue'
+import Button from '@/components/Common/Button.vue'
+
 import { settings as settingsManager } from '@/App'
-import { Ref, ref } from 'vue'
-import { Category } from './Categories/Category'
 import { useTranslate } from '@/libs/locales/Locales'
 
 const t = useTranslate()
-
-const selectedCategory: Ref<Category> = ref(settingsManager.categories[0])
 
 const settings = settingsManager.useSettings()
 </script>

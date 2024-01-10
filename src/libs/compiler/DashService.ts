@@ -9,6 +9,7 @@ import { Notification } from '@/components/Sidebar/Sidebar'
 
 export class DashService {
 	public logs: string[] = []
+	public isSetup: boolean = false
 
 	private worker = new DashWorker()
 	private inputFileSystem = new WorkerFileSystemEntryPoint(
@@ -59,6 +60,8 @@ export class DashService {
 			},
 			this.worker
 		)
+
+		this.isSetup = true
 	}
 
 	public async dispose() {

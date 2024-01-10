@@ -7,11 +7,13 @@ import { GeneralCategory } from './Categories/General'
 import { ProjectsCategory } from './Categories/Projects'
 import { EventSystem } from '@/libs/event/EventSystem'
 import { LocalFileSystem } from '@/libs/fileSystem/LocalFileSystem'
+import { windows } from '@/App'
 
 export class Settings {
 	public categories: Category[] = []
 	public settings: any = null
 	public eventSystem = new EventSystem(['settingsChanged'])
+	public selectedCategory: Ref<Category | null> = ref(null)
 
 	private fileSystem: LocalFileSystem = new LocalFileSystem()
 
@@ -23,6 +25,8 @@ export class Settings {
 		this.addCategory(new AppearanceCategory())
 		this.addCategory(new ProjectsCategory())
 		this.addCategory(new ActionsCategory())
+
+		this.selectedCategory.value = this.categories[0]
 	}
 
 	public async load() {
@@ -39,8 +43,8 @@ export class Settings {
 			this.eventSystem.dispatch('settingsChanged', null)
 
 			for (const category of this.categories) {
-				for (const item of category.items) {
-					item.apply(this.settings[item.id])
+				for (const setting of category.settings) {
+					setting.apply(this.settings[setting.id])
 				}
 			}
 
@@ -50,14 +54,14 @@ export class Settings {
 		this.settings = await this.fileSystem.readFileJson('settings.json')
 
 		for (const category of this.categories) {
-			for (const item of category.items) {
-				if (item.load) {
-					this.settings[item.id] = await item.load()
-				} else if (!this.settings[item.id]) {
-					this.settings[item.id] = item.defaultValue
+			for (const setting of category.settings) {
+				if (setting.load) {
+					this.settings[setting.id] = await setting.load()
+				} else if (!this.settings[setting.id]) {
+					this.settings[setting.id] = setting.defaultValue
 				}
 
-				item.apply(this.settings[item.id])
+				setting.apply(this.settings[setting.id])
 			}
 		}
 
@@ -78,23 +82,31 @@ export class Settings {
 		this.settings[id] = value
 
 		for (const category of this.categories) {
-			const item = category.items.find((item) => item.id === id)
-			if (!item) continue
+			const setting = category.settings.find((setting) => setting.id === id)
+			if (!setting) continue
 
-			if (item.save) {
-				await item.save(value)
+			if (setting.save) {
+				await setting.save(value)
 			} else {
-				this.fileSystem.writeFileJson(
-					'settings.json',
-					this.settings,
-					false
-				)
+				this.fileSystem.writeFileJson('settings.json', this.settings, false)
 			}
 
-			item.apply(value)
+			setting.apply(value)
 
-			this.eventSystem.dispatch('settingsChanged', value)
+			this.eventSystem.dispatch('settingsChanged', null)
 		}
+	}
+
+	public open(categoryId?: string) {
+		windows.open('settings')
+
+		if (!categoryId) return
+
+		const category = this.categories.find((category) => category.id === categoryId)
+
+		if (!category) return
+
+		this.selectedCategory.value = category
 	}
 
 	public useSettings(): Ref<any> {
