@@ -116,7 +116,26 @@ export class Project {
 	public async clearLocalProjectFolder() {
 		await set(`projectOutputFolderHandle-${this.name}`, undefined)
 
-		if (fileSystem instanceof PWAFileSystem) await this.loadPWAFileSystem()
+		let savedHandle: FileSystemDirectoryHandle | undefined = settings.get('outputFolder')
+
+		const newOutputFileSystem = new PWAFileSystem()
+
+		if (savedHandle && (await newOutputFileSystem.ensurePermissions(savedHandle))) {
+			newOutputFileSystem.setBaseHandle(savedHandle)
+
+			await this.setOutputFileSystem(newOutputFileSystem)
+		} else {
+			sidebar.addNotification(
+				'warning',
+				() => {
+					confirmWindow.open(
+						'You have not set up your output folder yet. Do you want to set it up now?',
+						() => settings.open('projects')
+					)
+				},
+				'warning'
+			)
+		}
 	}
 
 	public resolvePackPath(packId?: string, path?: string) {
