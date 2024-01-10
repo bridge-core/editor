@@ -103,10 +103,11 @@ import Dropdown from '@/components/Common/Dropdown.vue'
 import Switch from '@/components/Common/Switch.vue'
 import Button from '@/components/Common/Button.vue'
 
-import { settings as settingsManager } from '@/App'
 import { useTranslate } from '@/libs/locales/Locales'
+import { useSettings } from './Settings'
+import { settings as settingsManager } from '@/App'
 
 const t = useTranslate()
 
-const settings = settingsManager.useSettings()
+const settings = useSettings()
 </script>

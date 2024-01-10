@@ -12,6 +12,7 @@ export class Project {
 	public icon: string | null = null
 	public config: IConfigJson | null = null
 	public outputFileSystem: BaseFileSystem = new LocalFileSystem()
+	public localOutputFolder: boolean = false
 	public eventSystem = new EventSystem(['outputFileSystemChanged'])
 	public packs: { [key: string]: string } = {}
 
@@ -46,7 +47,7 @@ export class Project {
 	protected async settingsChanged() {
 		if (!(fileSystem instanceof PWAFileSystem)) return
 
-		if (await this.getLocalProjectFolder()) return
+		if (this.localOutputFolder) return
 
 		const outputFolderHandle = settings.get('outputFolder')
 
@@ -66,6 +67,8 @@ export class Project {
 	private async loadPWAFileSystem() {
 		let savedHandle: FileSystemDirectoryHandle | undefined = await this.getLocalProjectFolder()
 
+		this.localOutputFolder = savedHandle !== undefined
+
 		if (!savedHandle) savedHandle = settings.get('outputFolder')
 
 		const newOutputFileSystem = new PWAFileSystem()
@@ -74,18 +77,21 @@ export class Project {
 			newOutputFileSystem.setBaseHandle(savedHandle)
 
 			await this.setOutputFileSystem(newOutputFileSystem)
-		} else {
-			sidebar.addNotification(
-				'warning',
-				() => {
-					confirmWindow.open(
-						'You have not set up your output folder yet. Do you want to set it up now?',
-						() => settings.open('projects')
-					)
-				},
-				'warning'
-			)
+
+			return
 		}
+
+		this.localOutputFolder = false
+
+		sidebar.addNotification(
+			'warning',
+			() => {
+				confirmWindow.open('You have not set up your output folder yet. Do you want to set it up now?', () =>
+					settings.open('projects')
+				)
+			},
+			'warning'
+		)
 	}
 
 	protected async setOutputFileSystem(fileSystem: BaseFileSystem) {
@@ -106,6 +112,8 @@ export class Project {
 	public async setLocalProjectFolder(handle: FileSystemDirectoryHandle) {
 		await set(`projectOutputFolderHandle-${this.name}`, handle)
 
+		this.localOutputFolder = true
+
 		await this.setOutputFolder(handle)
 	}
 
@@ -114,7 +122,11 @@ export class Project {
 	}
 
 	public async clearLocalProjectFolder() {
+		if (!this.localOutputFolder) return
+
 		await set(`projectOutputFolderHandle-${this.name}`, undefined)
+
+		this.localOutputFolder = false
 
 		let savedHandle: FileSystemDirectoryHandle | undefined = settings.get('outputFolder')
 

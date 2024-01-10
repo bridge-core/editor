@@ -7,7 +7,7 @@ import { GeneralCategory } from './Categories/General'
 import { ProjectsCategory } from './Categories/Projects'
 import { EventSystem } from '@/libs/event/EventSystem'
 import { LocalFileSystem } from '@/libs/fileSystem/LocalFileSystem'
-import { windows } from '@/App'
+import { settings, windows } from '@/App'
 
 export class Settings {
 	public categories: Category[] = []
@@ -108,24 +108,22 @@ export class Settings {
 
 		this.selectedCategory.value = category
 	}
+}
 
-	public useSettings(): Ref<any> {
-		const settings = ref(this.settings)
+export function useSettings(): Ref<any> {
+	const currentSettings = ref(settings.settings)
 
-		const me = this
-
-		function updateSettings() {
-			settings.value = { ...me.settings }
-		}
-
-		onMounted(() => {
-			me.eventSystem.on('settingsChanged', updateSettings)
-		})
-
-		onUnmounted(() => {
-			me.eventSystem.off('settingsChanged', updateSettings)
-		})
-
-		return settings
+	function updateSettings() {
+		currentSettings.value = { ...settings.settings }
 	}
+
+	onMounted(() => {
+		settings.eventSystem.on('settingsChanged', updateSettings)
+	})
+
+	onUnmounted(() => {
+		settings.eventSystem.off('settingsChanged', updateSettings)
+	})
+
+	return currentSettings
 }

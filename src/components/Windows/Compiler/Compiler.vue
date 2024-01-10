@@ -2,13 +2,15 @@
 import SidebarWindow from '@/components/Windows/SidebarWindow.vue'
 import Icon from '@/components/Common/Icon.vue'
 import TextButton from '@/components/Common/Button.vue'
+import Warning from '@/components/Common/Warning.vue'
+import Info from '@/components/Common/Info.vue'
 
 import { useTranslate } from '@/libs/locales/Locales'
 import { ref } from 'vue'
 import { projectManager } from '@/App'
-import { LocalFileSystem } from '@/libs/fileSystem/LocalFileSystem'
 import { BedrockProject } from '@/libs/project/BedrockProject'
 import FileSystemDrop from '@/components/Common/FileSystemDrop.vue'
+import { PWAFileSystem } from '@/libs/fileSystem/PWAFileSystem'
 
 const t = useTranslate()
 
@@ -41,19 +43,8 @@ const categories: {
 
 const selectedCategory = ref(categories[0].id)
 
-const outputFolderInputHovered = ref(false)
-
-async function droppedOutputFolder(event: DragEvent) {
-	event.preventDefault()
-	event.stopPropagation()
-
-	outputFolderInputHovered.value = false
-
-	if (!event.dataTransfer) return
-
+async function droppedOutputFolder(items: DataTransferItemList) {
 	if (!projectManager.currentProject) return
-
-	const items = event.dataTransfer.items
 
 	const fileHandle = await items[0].getAsFileSystemHandle()
 
@@ -102,12 +93,17 @@ async function droppedOutputFolder(event: DragEvent) {
 				</div>
 
 				<div v-if="selectedCategory === 'outputFolder'">
-					<p
-						v-if="projectManager.currentProject?.outputFileSystem instanceof LocalFileSystem"
-						class="font-inter mt-2 text-center"
-					>
-						{{ t('You need to select an output folder.') }}
-					</p>
+					<Info
+						v-if="projectManager.currentProject!.localOutputFolder"
+						text="This project is using a local project folder."
+						class="mt-4 mb-4 ml-auto mr-auto"
+					/>
+
+					<Info
+						v-else
+						text="This project not is using a local project folder."
+						class="mt-4 mb-4 ml-auto mr-auto"
+					/>
 
 					<FileSystemDrop
 						class="mt-8 mb-8 w-full h-48"
