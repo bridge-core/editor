@@ -20,6 +20,8 @@ module.exports = {
 				resourcePack: 'var(--theme-color-resourcePack)',
 				skinPack: 'var(--theme-color-skinPack)',
 				worldTemplate: 'var(--theme-color-worldTemplate)',
+
+				warning: 'var(--theme-color-warning)',
 			},
 			height: {
 				toolbar: '1.5rem',
@@ -32,14 +34,7 @@ module.exports = {
 				window: '0 0 16px -2px rgb(0, 0, 0, 0.4)',
 			},
 			fontFamily: {
-				inter: [
-					'Inter',
-					'ui-sans-serif',
-					'system-ui',
-					'Segoe UI',
-					'Roboto',
-					'sans-serif',
-				],
+				inter: ['Inter', 'ui-sans-serif', 'system-ui', 'Segoe UI', 'Roboto', 'sans-serif'],
 			},
 		},
 	},
