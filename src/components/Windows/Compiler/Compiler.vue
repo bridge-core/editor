@@ -8,6 +8,7 @@ import { ref } from 'vue'
 import { projectManager } from '@/App'
 import { LocalFileSystem } from '@/libs/fileSystem/LocalFileSystem'
 import { BedrockProject } from '@/libs/project/BedrockProject'
+import FileSystemDrop from '@/components/Common/FileSystemDrop.vue'
 
 const t = useTranslate()
 
@@ -107,21 +108,12 @@ async function droppedOutputFolder(event: DragEvent) {
 					>
 						{{ t('You need to select an output folder.') }}
 					</p>
-					<div
-						class="mt-8 mb-8 w-full h-48 border-2 border-dashed rounded flex justify-center items-center transition-colors duration-100 ease-out"
-						:class="{
-							'border-primary': outputFolderInputHovered,
-							'border-menuAlternate': !outputFolderInputHovered,
-						}"
-						@dragenter="outputFolderInputHovered = true"
-						@dragleave="outputFolderInputHovered = false"
-						@dragover.prevent
+
+					<FileSystemDrop
+						class="mt-8 mb-8 w-full h-48"
+						text="Drop your project output folder here."
 						@drop="droppedOutputFolder"
-					>
-						<span class="font-inter text-textAlternate select-none pointer-events-none">
-							{{ t('Drop your project output folder here.') }}
-						</span>
-					</div>
+					/>
 
 					<div class="flex gap-6 items-center">
 						<TextButton
