@@ -7,3 +7,4 @@ export const basename = path.basename
 export const resolve = path.resolve
 export const relative = path.relative
 export const isAbsolute = path.isAbsolute
+export const parse = path.parse
