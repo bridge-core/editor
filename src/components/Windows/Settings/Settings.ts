@@ -1,4 +1,4 @@
-import { Ref, onMounted, onUnmounted, ref } from 'vue'
+import { Ref, ShallowRef, onMounted, onUnmounted, ref, shallowRef } from 'vue'
 import { ActionsCategory } from './Categories/Actions'
 import { AppearanceCategory } from './Categories/Appearance'
 import { Category } from './Categories/Category'
@@ -110,11 +110,14 @@ export class Settings {
 	}
 }
 
-export function useSettings(): Ref<any> {
-	const currentSettings = ref(settings.settings)
+export function useSettings(): Ref<Settings> {
+	//@ts-ignore for some reason ts doesn't like use to ref settings here
+	const currentSettings: ShallowRef<Settings> = shallowRef(settings)
 
 	function updateSettings() {
-		currentSettings.value = { ...settings.settings }
+		//@ts-ignore this value in't acutally read by any code, it just triggers an update
+		currentSettings.value = null
+		currentSettings.value = settings
 	}
 
 	onMounted(() => {
