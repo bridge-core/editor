@@ -4,10 +4,12 @@ import Warning from '@/components/Common/Warning.vue'
 import FileSystemDrop from '@/components/Common/FileSystemDrop.vue'
 import Info from '@/components/Common/Info.vue'
 import { useSettings } from './Settings'
+import { useUsingProjectOutputFolder } from '@/libs/project/Project'
 
 const { item } = defineProps(['item'])
 
 const settings = useSettings()
+const usingProjectOutputFolder = useUsingProjectOutputFolder()
 
 async function droppedOutputFolder(items: DataTransferItemList) {
 	const directoryHandle = await items[0].getAsFileSystemHandle()
@@ -28,8 +30,8 @@ async function droppedOutputFolder(items: DataTransferItemList) {
 		/>
 
 		<Info
-			v-if="settings.get('outputFolder')"
-			:text="`Your current output folder is '${settings.get('outputFolder').name}'`"
+			v-if="usingProjectOutputFolder"
+			text="The default output folder is being overwritten by a project ouput folder."
 			class="mt-4 mb-4 ml-auto mr-auto"
 		/>
 

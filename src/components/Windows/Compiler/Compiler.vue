@@ -10,9 +10,11 @@ import { ref } from 'vue'
 import { projectManager } from '@/App'
 import { BedrockProject } from '@/libs/project/BedrockProject'
 import FileSystemDrop from '@/components/Common/FileSystemDrop.vue'
-import { PWAFileSystem } from '@/libs/fileSystem/PWAFileSystem'
+import { useUsingProjectOutputFolder } from '@/libs/project/Project'
 
 const t = useTranslate()
+
+const usingProjectOutputFolder = useUsingProjectOutputFolder()
 
 const categories: {
 	name: string
@@ -51,7 +53,7 @@ async function droppedOutputFolder(items: DataTransferItemList) {
 	if (!fileHandle) return
 	if (!(fileHandle instanceof FileSystemDirectoryHandle)) return
 
-	await projectManager.currentProject.setLocalProjectFolder(fileHandle)
+	await projectManager.currentProject.setLocalProjectFolderHandle(fileHandle)
 }
 </script>
 
@@ -94,7 +96,7 @@ async function droppedOutputFolder(items: DataTransferItemList) {
 
 				<div v-if="selectedCategory === 'outputFolder'">
 					<Info
-						v-if="projectManager.currentProject!.localOutputFolder"
+						v-if="usingProjectOutputFolder"
 						text="This project is using a local project folder."
 						class="mt-4 mb-4 ml-auto mr-auto"
 					/>
