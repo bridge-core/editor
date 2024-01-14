@@ -12,11 +12,7 @@ export class DashService {
 	public isSetup: boolean = false
 
 	private worker = new DashWorker()
-	private inputFileSystem = new WorkerFileSystemEntryPoint(
-		this.worker,
-		fileSystem,
-		'inputFileSystem'
-	)
+	private inputFileSystem = new WorkerFileSystemEntryPoint(this.worker, fileSystem, 'inputFileSystem')
 	private outputFileSystem: WorkerFileSystemEntryPoint
 	private progressNotification: Notification | null = null
 
@@ -74,21 +70,11 @@ export class DashService {
 	public setOutputFileSystem(fileSystem: BaseFileSystem) {
 		this.outputFileSystem.dispose()
 
-		this.outputFileSystem = new WorkerFileSystemEntryPoint(
-			this.worker,
-			fileSystem,
-			'outputFileSystem'
-		)
+		this.outputFileSystem = new WorkerFileSystemEntryPoint(this.worker, fileSystem, 'outputFileSystem')
 	}
 
 	public async build() {
-		this.progressNotification = sidebar.addProgressNotification(
-			'manufacturing',
-			0,
-			1,
-			undefined,
-			undefined
-		)
+		this.progressNotification = sidebar.addProgressNotification('manufacturing', 0, 1, undefined, undefined)
 
 		await sendAndWait(
 			{

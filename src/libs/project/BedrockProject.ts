@@ -19,9 +19,7 @@ export class BedrockProject extends Project {
 	public async load() {
 		await super.load()
 
-		this.packDefinitions = await data.get(
-			'packages/minecraftBedrock/packDefinitions.json'
-		)
+		this.packDefinitions = await data.get('packages/minecraftBedrock/packDefinitions.json')
 
 		await this.fileTypeData.load()
 

@@ -4,9 +4,9 @@ import { BaseFileSystem } from '@/libs/fileSystem/BaseFileSystem'
 import { PWAFileSystem } from '@/libs/fileSystem/PWAFileSystem'
 import { get, set } from 'idb-keyval'
 import { EventSystem } from '@/libs/event/EventSystem'
-import { LocalFileSystem } from '../fileSystem/LocalFileSystem'
 import { IConfigJson } from 'mc-project-core'
 import { Ref, onMounted, onUnmounted, ref, watch } from 'vue'
+import { LocalFileSystem } from '@/libs/fileSystem/LocalFileSystem'
 
 export class Project {
 	public path: string
@@ -99,7 +99,6 @@ export class Project {
 
 	protected async settingsChanged() {
 		if (!(fileSystem instanceof PWAFileSystem)) return
-		if (!(this.outputFileSystem instanceof PWAFileSystem)) return
 
 		if (this.usingProjectOutputFolder) return
 
@@ -122,15 +121,13 @@ export class Project {
 	}
 
 	private async setupOutputFileSystemPWA() {
-		this.outputFileSystem = new LocalFileSystem()
-
 		const localProjectFolder = await this.getLocalProjectFolderHandle()
 
 		let newOutputFolderHandle: FileSystemDirectoryHandle | undefined = this.usingProjectOutputFolder
 			? localProjectFolder
 			: settings.get('outputFolder')
 
-		const newOutputFileSystem = new PWAFileSystem()
+		let newOutputFileSystem = new PWAFileSystem()
 
 		if (newOutputFolderHandle && (await newOutputFileSystem.ensurePermissions(newOutputFolderHandle))) {
 			if (
@@ -159,6 +156,11 @@ export class Project {
 			},
 			'warning'
 		)
+
+		const localFileSystem = new LocalFileSystem()
+		localFileSystem.setRootName(this.name)
+
+		this.setOutputFileSystem(localFileSystem)
 	}
 }
 
