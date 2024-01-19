@@ -1,0 +1,81 @@
+{
+	"build": {
+		"beforeBuildCommand": "npm run build",
+		"beforeDevCommand": "npm run dev",
+		"devPath": "http://localhost:8080",
+		"distDir": "../dist",
+		"withGlobalTauri": true
+	},
+	"package": {
+		"productName": "bridge",
+		"version": "2.8.0"
+	},
+	"tauri": {
+		"allowlist": {
+			"all": true,
+			"fs": {
+				"scope": {
+					"allow": ["**/*"],
+					"requireLiteralLeadingDot": false
+				}
+			}
+		},
+		"bundle": {
+			"active": true,
+			"category": "DeveloperTool",
+			"copyright": "",
+			"deb": {
+				"depends": []
+			},
+			"externalBin": [],
+			"icon": [
+				"icons/32x32.png",
+				"icons/128x128.png",
+				"icons/128x128@2x.png",
+				"icons/icon.icns",
+				"icons/icon.ico"
+			],
+			"identifier": "com.bridge.dev",
+			"longDescription": "",
+			"macOS": {
+				"entitlements": null,
+				"exceptionDomain": "",
+				"frameworks": [],
+				"providerShortName": null,
+				"signingIdentity": null
+			},
+			"resources": [],
+			"shortDescription": "",
+			"targets": "all",
+			"windows": {
+				"certificateThumbprint": null,
+				"digestAlgorithm": "sha256",
+				"timestampUrl": ""
+			}
+		},
+		"security": {
+			"csp": null
+		},
+		"updater": {
+			"active": true,
+			"dialog": false,
+			"endpoints": ["https://github.com/bridge-core/editor/releases/latest/download/latest.json"],
+			"pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDJFQkNGOUQ2REIzMUU5MDQKUldRRTZUSGIxdm04TGtiQzFEaE1GdVBPbUJYUjJDc25rQjg3RjlyKzdya2RUZVN1RkZ1azVBVmcK"
+		},
+		"windows": [
+			{
+				"label": "main",
+				"maximized": true,
+				"fullscreen": false,
+				"resizable": true,
+				"decorations": false,
+				"height": 900,
+				"width": 1200,
+				"title": "",
+				"titleBarStyle": "Overlay",
+				"fileDropEnabled": false,
+				"acceptFirstMouse": true
+			}
+		]
+	}
+}

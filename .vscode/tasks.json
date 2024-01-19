@@ -7,6 +7,13 @@
 			"problemMatcher": [],
 			"label": "npm: dev",
 			"detail": "vue-cli-service serve"
+		},
+		{
+			"type": "npm",
+			"script": "dev:native",
+			"problemMatcher": [],
+			"label": "npm: dev:native",
+			"detail": "cargo tauri dev"
 		}
 	]
 }

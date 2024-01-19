@@ -6,11 +6,13 @@
 		"dev": "vite",
 		"dev:force": "vite --force",
 		"dev:host": "vite --host",
+		"dev:native": "cargo tauri dev",
 		"serve": "vite preview",
 		"check": "tsc --project tsconfig.json --noEmit",
 		"build": "vue-tsc --noEmit && vite build"
 	},
 	"dependencies": {
+		"@tauri-apps/api": "^1.5.3",
 		"bridge-common-utils": "^0.3.3",
 		"bridge-js-runtime": "^0.4.1",
 		"color-convert": "^2.0.1",
@@ -21,7 +23,8 @@
 		"monaco-editor": "^0.44.0",
 		"path-browserify": "^1.0.1",
 		"uuid": "^9.0.1",
-		"vue": "^3.3.10"
+		"vue": "^3.3.10",
+		"vue-template-compiler": "^2.7.16"
 	},
 	"devDependencies": {
 		"@types/color-convert": "^2.0.3",
