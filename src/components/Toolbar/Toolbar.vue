@@ -14,7 +14,7 @@
 				<span class="text-sm text-textAlternate font-inter"> v{{ appVersion }} </span>
 			</div>
 
-			<div v-if="tauri" class="flex gap-2 items-center">
+			<div v-if="tauriBuild" class="flex gap-2 items-center">
 				<IconButton @click="appWindow.minimize()" icon="remove" class="text-base" />
 				<IconButton @click="appWindow.toggleMaximize()" icon="select_window" class="text-base" />
 				<IconButton @click="appWindow.close()" icon="close" class="text-base" />
@@ -31,10 +31,9 @@ import { toolbar, windows } from '@/App'
 import { appVersion } from '@/libs/app/AppEnv'
 import { useTranslate } from '@/libs/locales/Locales'
 import { appWindow } from '@tauri-apps/api/window'
+import { tauriBuild } from '@/libs/tauri/Tauri'
 
 const t = useTranslate()
-
-const tauri = (window as any).__TAURI__ !== undefined
 
 function openChangelog() {
 	windows.open('changelog')

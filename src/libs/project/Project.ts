@@ -165,6 +165,8 @@ export class Project {
 }
 
 export async function validProject(path: string) {
+	if (!(await fileSystem.exists(join(path, 'BP/pack_icon.png')))) return false
+
 	return await fileSystem.exists(join(path, 'config.json'))
 }
 

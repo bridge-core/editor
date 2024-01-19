@@ -32,10 +32,7 @@ export interface ProjectInfo {
 
 export class ProjectManager {
 	public projects: ProjectInfo[] = []
-	public eventSystem = new EventSystem([
-		'updatedProjects',
-		'updatedCurrentProject',
-	])
+	public eventSystem = new EventSystem(['updatedProjects', 'updatedCurrentProject'])
 	public currentProject: Project | null = null
 
 	private cacheFileSystem = new LocalFileSystem()
@@ -49,23 +46,18 @@ export class ProjectManager {
 			this.projects = []
 
 			if (await this.cacheFileSystem.exists('projects.json'))
-				this.projects = await this.cacheFileSystem.readFileJson(
-					'projects.json'
-				)
+				this.projects = await this.cacheFileSystem.readFileJson('projects.json')
 
 			this.eventSystem.dispatch('updatedProjects', null)
 
 			return
 		}
 
-		if (!(await fileSystem.exists('projects')))
-			await fileSystem.makeDirectory('projects')
+		if (!(await fileSystem.exists('projects'))) await fileSystem.makeDirectory('projects')
 
 		let items = await fileSystem.readDirectoryEntries('projects')
 
-		const foldersToLoad = items
-			.filter((item) => item.type === 'directory')
-			.map((item) => item.path)
+		const foldersToLoad = items.filter((item) => item.type === 'directory').map((item) => item.path)
 
 		this.projects = []
 
@@ -88,12 +80,10 @@ export class ProjectManager {
 		this.eventSystem.dispatch('updatedProjects', null)
 	}
 
-	public async createProject(
-		config: CreateProjectConfig,
-		fileSystem: BaseFileSystem
-	) {
-		const packDefinitions: { id: string; defaultPackPath: string }[] =
-			await data.get('packages/minecraftBedrock/packDefinitions.json')
+	public async createProject(config: CreateProjectConfig, fileSystem: BaseFileSystem) {
+		const packDefinitions: { id: string; defaultPackPath: string }[] = await data.get(
+			'packages/minecraftBedrock/packDefinitions.json'
+		)
 		packDefinitions.push({
 			id: 'bridge',
 			defaultPackPath: '.bridge',
@@ -106,18 +96,11 @@ export class ProjectManager {
 		await Promise.all(
 			config.packs.map(async (packId: string) => {
 				const pack = packs[packId]
-				const packDefinition = packDefinitions.find(
-					(pack) => pack.id === packId
-				)
+				const packDefinition = packDefinitions.find((pack) => pack.id === packId)
 
 				if (pack === undefined || packDefinition === undefined) return
 
-				await pack.create(
-					fileSystem,
-					projectPath,
-					config,
-					join(projectPath, packDefinition.defaultPackPath)
-				)
+				await pack.create(fileSystem, projectPath, config, join(projectPath, packDefinition.defaultPackPath))
 			})
 		)
 
@@ -137,35 +120,16 @@ export class ProjectManager {
 	}
 
 	public async getProjectInfo(path: string): Promise<ProjectInfo> {
-		let iconDataUrl =
-			'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw=='
+		let iconDataUrl = 'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw=='
 
-		if (
-			await fileSystem.exists(
-				join(path, defaultPackPaths['behaviorPack'], 'pack_icon.png')
-			)
-		)
-			iconDataUrl = await fileSystem.readFileDataUrl(
-				join(path, 'BP', 'pack_icon.png')
-			)
+		if (await fileSystem.exists(join(path, defaultPackPaths['behaviorPack'], 'pack_icon.png')))
+			iconDataUrl = await fileSystem.readFileDataUrl(join(path, 'BP', 'pack_icon.png'))
 
-		if (
-			await fileSystem.exists(
-				join(path, defaultPackPaths['resourcePack'], 'pack_icon.png')
-			)
-		)
-			iconDataUrl = await fileSystem.readFileDataUrl(
-				join(path, 'BP', 'pack_icon.png')
-			)
+		if (await fileSystem.exists(join(path, defaultPackPaths['resourcePack'], 'pack_icon.png')))
+			iconDataUrl = await fileSystem.readFileDataUrl(join(path, 'BP', 'pack_icon.png'))
 
-		if (
-			await fileSystem.exists(
-				join(path, defaultPackPaths['skinPack'], 'pack_icon.png')
-			)
-		)
-			iconDataUrl = await fileSystem.readFileDataUrl(
-				join(path, 'BP', 'pack_icon.png')
-			)
+		if (await fileSystem.exists(join(path, defaultPackPaths['skinPack'], 'pack_icon.png')))
+			iconDataUrl = await fileSystem.readFileDataUrl(join(path, 'BP', 'pack_icon.png'))
 
 		return {
 			name: basename(path),
@@ -191,9 +155,7 @@ export class ProjectManager {
 
 	public useCurrentProject(): Ref<Project | null> {
 		// ts typing for some reason doesn't like this type being in a ref
-		const currentProject: Ref<Project | null> = <any>(
-			ref(this.currentProject)
-		)
+		const currentProject: Ref<Project | null> = <any>ref(this.currentProject)
 
 		const me = this
 
@@ -201,21 +163,13 @@ export class ProjectManager {
 			currentProject.value = me.currentProject
 		}
 
-		onMounted(() =>
-			me.eventSystem.on('updatedCurrentProject', updateCurrentProject)
-		)
-		onUnmounted(() =>
-			me.eventSystem.off('updatedCurrentProject', updateCurrentProject)
-		)
+		onMounted(() => me.eventSystem.on('updatedCurrentProject', updateCurrentProject))
+		onUnmounted(() => me.eventSystem.off('updatedCurrentProject', updateCurrentProject))
 
 		return currentProject
 	}
 
 	private async updateProjectCache() {
-		await this.cacheFileSystem.writeFileJson(
-			'projects.json',
-			this.projects,
-			false
-		)
+		await this.cacheFileSystem.writeFileJson('projects.json', this.projects, false)
 	}
 }

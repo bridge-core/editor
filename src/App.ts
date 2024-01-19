@@ -11,7 +11,10 @@ import { FileExplorer } from '@/components/FileExplorer/FileExplorer'
 import { Settings } from '@/components/Windows/Settings/Settings'
 import { ConfirmWindow } from '@/components/Windows/Confirm/ConfirmWindow'
 import { PWAFileSystem } from '@/libs/fileSystem/PWAFileSystem'
+import { TauriFileSystem } from '@/libs/fileSystem/TauriFileSystem'
 import { get, set } from 'idb-keyval'
+import { appDataDir, appLocalDataDir, sep } from '@tauri-apps/api/path'
+import { join } from './libs/path'
 
 export const toolbar = new Toolbar()
 export const themeManager = new ThemeManager()
@@ -34,6 +37,8 @@ export async function setup() {
 		console.timeEnd('[App] Projects')
 	})
 
+	if (fileSystem instanceof TauriFileSystem) await setupTauriFileSystem()
+
 	console.time('[App] Locale')
 	await LocaleManager.applyDefaultLanguage()
 	console.timeEnd('[App] Locale')
@@ -53,18 +58,22 @@ export async function setup() {
 	console.timeEnd('[App] Setup')
 }
 
+async function setupTauriFileSystem() {
+	if (!(fileSystem instanceof TauriFileSystem)) return
+
+	const basePath = join(await (await appLocalDataDir()).replaceAll(sep, '/'), 'bridge/')
+
+	fileSystem.setBasePath(basePath)
+
+	await fileSystem.ensureDirectory('/')
+}
+
 export async function selectOrLoadBridgeFolder() {
 	if (!(fileSystem instanceof PWAFileSystem)) return
 
-	const savedHandle: undefined | FileSystemDirectoryHandle = await get(
-		'bridgeFolderHandle'
-	)
+	const savedHandle: undefined | FileSystemDirectoryHandle = await get('bridgeFolderHandle')
 
-	if (
-		!fileSystem.baseHandle &&
-		savedHandle &&
-		(await fileSystem.ensurePermissions(savedHandle))
-	) {
+	if (!fileSystem.baseHandle && savedHandle && (await fileSystem.ensurePermissions(savedHandle))) {
 		fileSystem.setBaseHandle(savedHandle)
 
 		return
