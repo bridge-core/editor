@@ -19,23 +19,23 @@ export class BaseFileSystem {
 		throw new Error('Not implemented!')
 	}
 
-	public async ensureDirectory(path: string) {
-		throw new Error('Not implemented!')
-	}
-
 	public async writeFile(path: string, content: FileSystemWriteChunkType) {
 		throw new Error('Not implemented!')
 	}
 
-	public async writeFileJson(
-		path: string,
-		content: object,
-		prettify: boolean
-	) {
-		throw new Error('Not implemented!')
+	public async writeFileJson(path: string, content: object, prettify: boolean) {
+		if (prettify) {
+			await this.writeFile(path, JSON.stringify(content, null, '\t'))
+		} else {
+			await this.writeFile(path, JSON.stringify(content))
+		}
 	}
 
 	public async readDirectoryEntries(path: string): Promise<BaseEntry[]> {
+		throw new Error('Not implemented!')
+	}
+
+	public async ensureDirectory(path: string) {
 		throw new Error('Not implemented!')
 	}
 

@@ -1,13 +1,39 @@
-import { createDir, exists, readBinaryFile, readDir, readTextFile } from '@tauri-apps/api/fs'
+import { createDir, exists, readBinaryFile, readDir, readTextFile, writeBinaryFile } from '@tauri-apps/api/fs'
 import { BaseEntry, BaseFileSystem } from './BaseFileSystem'
 import { join } from '@/libs/path'
 import { sep } from '@tauri-apps/api/path'
+import { isArrayBufferView } from 'util/types'
 
 export class TauriFileSystem extends BaseFileSystem {
 	private basePath: string | null = null
+	private textEncoder = new TextEncoder()
 
 	public setBasePath(newPath: string) {
 		this.basePath = newPath
+	}
+
+	public async readFile(path: string): Promise<ArrayBuffer> {
+		if (this.basePath === null) throw new Error('Base path not set!')
+
+		try {
+			return (await readBinaryFile(join(this.basePath, path))).buffer
+		} catch (error) {
+			console.error(`Failed to read "${path}"`)
+
+			throw error
+		}
+	}
+
+	public async readFileText(path: string): Promise<string> {
+		if (this.basePath === null) throw new Error('Base path not set!')
+
+		try {
+			return await readTextFile(join(this.basePath, path))
+		} catch (error) {
+			console.error(`Failed to read "${path}"`)
+
+			throw error
+		}
 	}
 
 	public async readFileDataUrl(path: string): Promise<string> {
@@ -46,6 +72,38 @@ export class TauriFileSystem extends BaseFileSystem {
 		}
 	}
 
+	public async writeFile(path: string, content: FileSystemWriteChunkType) {
+		if (this.basePath === null) throw new Error('Base path not set!')
+
+		let writeableContent: ArrayBuffer | null = null
+
+		if (typeof content === 'string') {
+			writeableContent = this.textEncoder.encode(content)
+		}
+
+		if (content instanceof ArrayBuffer) {
+			writeableContent = content
+		}
+
+		if ((content as ArrayBufferView).buffer) {
+			writeableContent = (content as ArrayBufferView).buffer
+		}
+
+		if (content instanceof Blob) {
+			writeableContent = await content.arrayBuffer()
+		}
+
+		if (!writeableContent) throw new Error('Can not convert content to writeable content!')
+
+		try {
+			await writeBinaryFile(join(this.basePath, path), writeableContent)
+		} catch (error) {
+			console.error(`Failed to write "${path}"`)
+
+			throw error
+		}
+	}
+
 	public async exists(path: string): Promise<boolean> {
 		if (this.basePath === null) throw new Error('Base path not set!')
 
@@ -56,6 +114,8 @@ export class TauriFileSystem extends BaseFileSystem {
 		if (this.basePath === null) throw new Error('Base path not set!')
 
 		try {
+			if (await this.exists(path)) return
+
 			await createDir(join(this.basePath, path))
 		} catch (error) {
 			console.error(`Failed to make directory "${path}"`)

@@ -61,7 +61,7 @@ export async function setup() {
 async function setupTauriFileSystem() {
 	if (!(fileSystem instanceof TauriFileSystem)) return
 
-	const basePath = join(await (await appLocalDataDir()).replaceAll(sep, '/'), 'bridge/')
+	const basePath = join(await (await appDataDir()).replaceAll(sep, '/'), 'bridge/')
 
 	fileSystem.setBasePath(basePath)
 

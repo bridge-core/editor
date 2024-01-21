@@ -20,17 +20,14 @@ export class PWAFileSystem extends BaseFileSystem {
 
 		const directoryNames = parse(path).dir.split(sep)
 
-		if (directoryNames[0] === '' || directoryNames[0] === '.')
-			directoryNames.shift()
+		if (directoryNames[0] === '' || directoryNames[0] === '.') directoryNames.shift()
 
 		let currentHandle = this.baseHandle
 
 		for (const directoryName of directoryNames) {
 			if (directoryName === '') continue
 
-			currentHandle = await currentHandle.getDirectoryHandle(
-				directoryName
-			)
+			currentHandle = await currentHandle.getDirectoryHandle(directoryName)
 		}
 
 		return currentHandle
@@ -40,9 +37,7 @@ export class PWAFileSystem extends BaseFileSystem {
 		if (this.baseHandle === null) throw new Error('Base handle not set!')
 
 		try {
-			const handle = await (
-				await this.traverse(path)
-			).getFileHandle(basename(path))
+			const handle = await (await this.traverse(path)).getFileHandle(basename(path))
 
 			const file = await handle.getFile()
 
@@ -66,9 +61,7 @@ export class PWAFileSystem extends BaseFileSystem {
 		if (this.baseHandle === null) throw new Error('Base handle not set!')
 
 		try {
-			const handle = await (
-				await this.traverse(path)
-			).getFileHandle(basename(path))
+			const handle = await (await this.traverse(path)).getFileHandle(basename(path))
 
 			const file = await handle.getFile()
 
@@ -92,9 +85,7 @@ export class PWAFileSystem extends BaseFileSystem {
 		if (this.baseHandle === null) throw new Error('Base handle not set!')
 
 		try {
-			const handle = await (
-				await this.traverse(path)
-			).getFileHandle(basename(path))
+			const handle = await (await this.traverse(path)).getFileHandle(basename(path))
 
 			const file = await handle.getFile()
 
@@ -118,9 +109,7 @@ export class PWAFileSystem extends BaseFileSystem {
 		if (this.baseHandle === null) throw new Error('Base handle not set!')
 
 		try {
-			const handle = await (
-				await this.traverse(path)
-			).getFileHandle(basename(path))
+			const handle = await (await this.traverse(path)).getFileHandle(basename(path))
 
 			const file = await handle.getFile()
 
@@ -146,20 +135,16 @@ export class PWAFileSystem extends BaseFileSystem {
 		try {
 			const directoryNames = parse(path).dir.split(sep)
 
-			if (directoryNames[0] === '' || directoryNames[0] === '.')
-				directoryNames.shift()
+			if (directoryNames[0] === '' || directoryNames[0] === '.') directoryNames.shift()
 
 			let currentHandle = this.baseHandle
 
 			for (const directoryName of directoryNames) {
 				if (directoryName === '') continue
 
-				currentHandle = await currentHandle.getDirectoryHandle(
-					directoryName,
-					{
-						create: true,
-					}
-				)
+				currentHandle = await currentHandle.getDirectoryHandle(directoryName, {
+					create: true,
+				})
 			}
 		} catch (error) {
 			console.error(`Failed to ensure directory "${path}"`)
@@ -178,8 +163,7 @@ export class PWAFileSystem extends BaseFileSystem {
 				create: true,
 			})
 
-			const writable: FileSystemWritableFileStream =
-				await handle.createWritable()
+			const writable: FileSystemWritableFileStream = await handle.createWritable()
 
 			await writable.write(content)
 			await writable.close()
@@ -190,39 +174,18 @@ export class PWAFileSystem extends BaseFileSystem {
 		}
 	}
 
-	public async writeFileJson(
-		path: string,
-		content: object,
-		prettify: boolean
-	) {
-		if (prettify) {
-			await this.writeFile(path, JSON.stringify(content, null, '\t'))
-		} else {
-			await this.writeFile(path, JSON.stringify(content))
-		}
-	}
-
 	public async readDirectoryEntries(path: string): Promise<BaseEntry[]> {
 		if (this.baseHandle === null) throw new Error('Base handle not set!')
 
 		try {
 			const handle =
-				path === '/'
-					? this.baseHandle
-					: await (
-							await this.traverse(path)
-					  ).getDirectoryHandle(basename(path))
+				path === '/' ? this.baseHandle : await (await this.traverse(path)).getDirectoryHandle(basename(path))
 			const handleEntries = handle.entries()
 
 			const entries = []
 
 			for await (const handleEntry of handleEntries) {
-				entries.push(
-					new BaseEntry(
-						join(path, handleEntry[0]),
-						handleEntry[1].kind
-					)
-				)
+				entries.push(new BaseEntry(join(path, handleEntry[0]), handleEntry[1].kind))
 			}
 
 			return entries
@@ -263,10 +226,7 @@ export class PWAFileSystem extends BaseFileSystem {
 			const name = itemNames[nameIndex]
 
 			const entries = await currentHandle.entries()
-			let newHandle:
-				| FileSystemDirectoryHandle
-				| FileSystemFileHandle
-				| null = null
+			let newHandle: FileSystemDirectoryHandle | FileSystemFileHandle | null = null
 
 			for await (const entry of entries) {
 				if (entry[0] !== name) continue
@@ -278,11 +238,7 @@ export class PWAFileSystem extends BaseFileSystem {
 
 			if (newHandle === null) return false
 
-			if (
-				nameIndex < itemNames.length - 1 &&
-				newHandle.kind !== 'directory'
-			)
-				return false
+			if (nameIndex < itemNames.length - 1 && newHandle.kind !== 'directory') return false
 
 			if (nameIndex === itemNames.length - 1) return true
 
@@ -292,27 +248,17 @@ export class PWAFileSystem extends BaseFileSystem {
 		return true
 	}
 
-	public async hasPermissions(
-		handle: FileSystemDirectoryHandle | FileSystemFileHandle
-	): Promise<boolean> {
-		if ((await handle.queryPermission({ mode: 'readwrite' })) === 'granted')
-			return true
+	public async hasPermissions(handle: FileSystemDirectoryHandle | FileSystemFileHandle): Promise<boolean> {
+		if ((await handle.queryPermission({ mode: 'readwrite' })) === 'granted') return true
 
 		return false
 	}
 
-	public async ensurePermissions(
-		handle: FileSystemDirectoryHandle | FileSystemFileHandle
-	): Promise<boolean> {
-		if ((await handle.queryPermission({ mode: 'readwrite' })) === 'granted')
-			return true
+	public async ensurePermissions(handle: FileSystemDirectoryHandle | FileSystemFileHandle): Promise<boolean> {
+		if ((await handle.queryPermission({ mode: 'readwrite' })) === 'granted') return true
 
 		try {
-			if (
-				(await handle.requestPermission({ mode: 'readwrite' })) ===
-				'granted'
-			)
-				return true
+			if ((await handle.requestPermission({ mode: 'readwrite' })) === 'granted') return true
 		} catch {}
 
 		return false
