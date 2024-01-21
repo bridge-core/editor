@@ -2,7 +2,6 @@ import { createDir, exists, readBinaryFile, readDir, readTextFile, writeBinaryFi
 import { BaseEntry, BaseFileSystem } from './BaseFileSystem'
 import { join } from '@/libs/path'
 import { sep } from '@tauri-apps/api/path'
-import { isArrayBufferView } from 'util/types'
 
 export class TauriFileSystem extends BaseFileSystem {
 	private basePath: string | null = null
