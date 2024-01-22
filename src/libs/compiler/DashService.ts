@@ -58,6 +58,8 @@ export class DashService {
 		)
 
 		this.isSetup = true
+
+		fileSystem.eventSystem.on('pathUpdated', this.pathUpdated.bind(this))
 	}
 
 	public async dispose() {
@@ -65,6 +67,8 @@ export class DashService {
 
 		this.inputFileSystem.dispose()
 		this.outputFileSystem.dispose()
+
+		fileSystem.eventSystem.off('pathUpdated', this.pathUpdated.bind(this))
 	}
 
 	public setOutputFileSystem(fileSystem: BaseFileSystem) {
@@ -84,5 +88,15 @@ export class DashService {
 		)
 
 		sidebar.clearNotification(this.progressNotification)
+	}
+
+	private async pathUpdated(path: unknown) {
+		if (typeof path !== 'string') return
+
+		if (!path.startsWith(this.project.path)) return
+
+		if (path === join(this.project.path, '.bridge/.dash.development.json')) return
+
+		await this.build()
 	}
 }

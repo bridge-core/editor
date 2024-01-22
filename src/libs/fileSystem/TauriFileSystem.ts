@@ -2,6 +2,7 @@ import { createDir, exists, readBinaryFile, readDir, readTextFile, writeBinaryFi
 import { BaseEntry, BaseFileSystem } from './BaseFileSystem'
 import { join } from '@/libs/path'
 import { sep } from '@tauri-apps/api/path'
+import { listen } from '@tauri-apps/api/event'
 
 export class TauriFileSystem extends BaseFileSystem {
 	private basePath: string | null = null
@@ -9,6 +10,20 @@ export class TauriFileSystem extends BaseFileSystem {
 
 	public setBasePath(newPath: string) {
 		this.basePath = newPath
+	}
+
+	public startFileWatching() {
+		listen('watch_event', (event) => {
+			if (this.basePath === null) throw new Error('Base path not set!')
+
+			const paths = (event.payload as string[])
+				.filter((path) => path.startsWith(this.basePath!))
+				.map((path) => path.substring(this.basePath!.length))
+
+			for (const path of paths) {
+				this.eventSystem.dispatch('pathUpdated', path)
+			}
+		})
 	}
 
 	public async readFile(path: string): Promise<ArrayBuffer> {

@@ -66,6 +66,8 @@ async function setupTauriFileSystem() {
 	fileSystem.setBasePath(basePath)
 
 	await fileSystem.ensureDirectory('/')
+
+	fileSystem.startFileWatching()
 }
 
 export async function selectOrLoadBridgeFolder() {
