@@ -1,5 +1,5 @@
 <template>
-	<div class="bg-toolbar h-toolbar flex justify-between items-center px-2">
+	<div data-tauri-drag-region class="bg-toolbar h-toolbar flex justify-between items-center px-2">
 		<div class="flex gap-4">
 			<button v-for="item in toolbar.items" class="flex items-center gap-1 group" @click="item.action">
 				<span
