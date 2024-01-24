@@ -1,6 +1,7 @@
 import { sep, parse, basename, join } from '@/libs/path'
 import { BaseEntry, BaseFileSystem } from './BaseFileSystem'
 import { Ref, onMounted, onUnmounted, ref } from 'vue'
+import { md5 } from 'js-md5'
 
 export class PWAFileSystem extends BaseFileSystem {
 	public baseHandle: FileSystemDirectoryHandle | null = null
@@ -22,7 +23,7 @@ export class PWAFileSystem extends BaseFileSystem {
 
 		setInterval(() => {
 			this.checkForUpdate('/')
-		}, 5000)
+		}, 1000)
 
 		// window.addEventListener('keydown', (event) => {
 		// 	if (event.key === '`') {
@@ -295,6 +296,13 @@ export class PWAFileSystem extends BaseFileSystem {
 		return setup
 	}
 
+	private async generateFileHash(path: string): Promise<string> {
+		const hash = md5.create()
+		hash.update(await this.readFile(path))
+
+		return hash.hex()
+	}
+
 	private async indexPath(path: string) {
 		const entries = await this.readDirectoryEntries(path)
 
@@ -303,7 +311,7 @@ export class PWAFileSystem extends BaseFileSystem {
 		for (const entry of entries) {
 			hash += '_' + entry.path
 
-			if (entry.type === 'file') this.cache[entry.path] = 'hash_' + entry.path
+			if (entry.type === 'file') this.cache[entry.path] = await this.generateFileHash(entry.path)
 
 			if (entry.type === 'directory') await this.indexPath(entry.path)
 		}
@@ -320,7 +328,7 @@ export class PWAFileSystem extends BaseFileSystem {
 			hash += '_' + entry.path
 
 			if (entry.type === 'file') {
-				let fileHash = 'hash_' + entry.path
+				let fileHash = await this.generateFileHash(entry.path)
 
 				if (this.cache[entry.path] !== fileHash) this.eventSystem.dispatch('pathUpdated', entry.path)
 
