@@ -5,6 +5,8 @@ import { Ref, onMounted, onUnmounted, ref } from 'vue'
 export class PWAFileSystem extends BaseFileSystem {
 	public baseHandle: FileSystemDirectoryHandle | null = null
 
+	private cache: { [key: string]: string } = {}
+
 	public get setup(): boolean {
 		return this.baseHandle !== null
 	}
@@ -13,6 +15,20 @@ export class PWAFileSystem extends BaseFileSystem {
 		this.baseHandle = handle
 
 		this.eventSystem.dispatch('reloaded', null)
+	}
+
+	public async startCache() {
+		await this.indexPath('/')
+
+		setInterval(() => {
+			this.checkForUpdate('/')
+		}, 5000)
+
+		// window.addEventListener('keydown', (event) => {
+		// 	if (event.key === '`') {
+		// 		this.checkForUpdate('/')
+		// 	}
+		// })
 	}
 
 	protected async traverse(path: string): Promise<FileSystemDirectoryHandle> {
@@ -277,5 +293,49 @@ export class PWAFileSystem extends BaseFileSystem {
 		onUnmounted(() => me.eventSystem.off('reloaded', updatedFileSystem))
 
 		return setup
+	}
+
+	private async indexPath(path: string) {
+		const entries = await this.readDirectoryEntries(path)
+
+		let hash = 'hash'
+
+		for (const entry of entries) {
+			hash += '_' + entry.path
+
+			if (entry.type === 'file') this.cache[entry.path] = 'hash_' + entry.path
+
+			if (entry.type === 'directory') await this.indexPath(entry.path)
+		}
+
+		this.cache[path] = hash
+	}
+
+	private async checkForUpdate(path: string) {
+		const entries = await this.readDirectoryEntries(path)
+
+		let hash = 'hash'
+
+		for (const entry of entries) {
+			hash += '_' + entry.path
+
+			if (entry.type === 'file') {
+				let fileHash = 'hash_' + entry.path
+
+				if (this.cache[entry.path] !== fileHash) this.eventSystem.dispatch('pathUpdated', entry.path)
+
+				if (this.cache[entry.path] !== fileHash) console.warn(entry.path)
+
+				this.cache[entry.path] = fileHash
+			}
+
+			if (entry.type === 'directory') await this.checkForUpdate(entry.path)
+		}
+
+		if (this.cache[path] !== hash) this.eventSystem.dispatch('pathUpdated', path)
+
+		if (this.cache[path] !== hash) console.warn(path)
+
+		this.cache[path] = hash
 	}
 }

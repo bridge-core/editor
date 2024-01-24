@@ -93,7 +93,7 @@ export class DashService {
 	private async pathUpdated(path: unknown) {
 		if (typeof path !== 'string') return
 
-		if (!path.startsWith(this.project.path)) return
+		if (!path.startsWith(this.project.path) && !path.startsWith('/' + this.project.path)) return
 
 		if (path === join(this.project.path, '.bridge/.dash.development.json')) return
 
