@@ -27,8 +27,6 @@ const expanded = ref(false)
 async function updateEntries(path: unknown) {
 	if (typeof path !== 'string') return
 
-	console.warn(path, props.path)
-
 	if (!path.startsWith(props.path)) return
 
 	entries.value = await fileSystem.readDirectoryEntries(props.path)

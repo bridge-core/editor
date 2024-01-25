@@ -339,7 +339,7 @@ export class PWAFileSystem extends BaseFileSystem {
 		}
 
 		if (this.cache[path] !== hash) {
-			const previousPaths = this.cache[path].split('\n').filter((path) => path.length > 0)
+			const previousPaths = (this.cache[path] ?? '').split('\n').filter((path) => path.length > 0)
 			const newPaths = hash.split('\n').filter((path) => path.length > 0)
 
 			for (const previousPath of previousPaths) {
