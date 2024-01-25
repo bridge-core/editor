@@ -184,8 +184,6 @@ export class PWAFileSystem extends BaseFileSystem {
 
 			await writable.write(content)
 			await writable.close()
-
-			this.eventSystem.dispatch('updated', path)
 		} catch (error) {
 			console.error(`Failed to write "${path}"`, error)
 		}
@@ -222,8 +220,6 @@ export class PWAFileSystem extends BaseFileSystem {
 			await rootHandle.getDirectoryHandle(basename(path), {
 				create: true,
 			})
-
-			this.eventSystem.dispatch('updated', path)
 		} catch (error) {
 			console.error(`Failed to make directory "${path}"`)
 
@@ -306,10 +302,10 @@ export class PWAFileSystem extends BaseFileSystem {
 	private async indexPath(path: string) {
 		const entries = await this.readDirectoryEntries(path)
 
-		let hash = 'hash'
+		let hash = ''
 
 		for (const entry of entries) {
-			hash += '_' + entry.path
+			hash += entry.path + '\n'
 
 			if (entry.type === 'file') this.cache[entry.path] = await this.generateFileHash(entry.path)
 
@@ -322,17 +318,19 @@ export class PWAFileSystem extends BaseFileSystem {
 	private async checkForUpdate(path: string) {
 		const entries = await this.readDirectoryEntries(path)
 
-		let hash = 'hash'
+		let hash = ''
 
 		for (const entry of entries) {
-			hash += '_' + entry.path
+			hash += entry.path + '\n'
 
 			if (entry.type === 'file') {
 				let fileHash = await this.generateFileHash(entry.path)
 
-				if (this.cache[entry.path] !== fileHash) this.eventSystem.dispatch('pathUpdated', entry.path)
-
-				if (this.cache[entry.path] !== fileHash) console.warn(entry.path)
+				if (this.cache[entry.path] !== fileHash)
+					this.eventSystem.dispatch(
+						'pathUpdated',
+						entry.path.startsWith('/') ? entry.path.substring(1) : entry.path
+					)
 
 				this.cache[entry.path] = fileHash
 			}
@@ -340,9 +338,25 @@ export class PWAFileSystem extends BaseFileSystem {
 			if (entry.type === 'directory') await this.checkForUpdate(entry.path)
 		}
 
-		if (this.cache[path] !== hash) this.eventSystem.dispatch('pathUpdated', path)
+		if (this.cache[path] !== hash) {
+			const previousPaths = this.cache[path].split('\n').filter((path) => path.length > 0)
+			const newPaths = hash.split('\n').filter((path) => path.length > 0)
 
-		if (this.cache[path] !== hash) console.warn(path)
+			for (const previousPath of previousPaths) {
+				if (!newPaths.includes(previousPath))
+					this.eventSystem.dispatch(
+						'pathUpdated',
+						previousPath.startsWith('/') ? previousPath.substring(1) : previousPath
+					)
+			}
+
+			for (const newPath of newPaths) {
+				if (!previousPaths.includes(newPath))
+					this.eventSystem.dispatch('pathUpdated', newPath.startsWith('/') ? newPath.substring(1) : newPath)
+			}
+
+			this.eventSystem.dispatch('pathUpdated', path)
+		}
 
 		this.cache[path] = hash
 	}

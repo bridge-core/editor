@@ -26,49 +26,38 @@ const expanded = ref(false)
 
 async function updateEntries(path: unknown) {
 	if (typeof path !== 'string') return
+
+	console.warn(path, props.path)
+
+	if (!path.startsWith(props.path)) return
+
 	entries.value = await fileSystem.readDirectoryEntries(props.path)
 }
 
 const contextMenu: Ref<typeof FreeContextMenu | null> = ref(null)
 
 onMounted(async () => {
-	fileSystem.eventSystem.on('updated', updateEntries)
+	fileSystem.eventSystem.on('pathUpdated', updateEntries)
 
 	updateEntries(props.path)
 })
 
 onUnmounted(() => {
-	fileSystem.eventSystem.off('updated', updateEntries)
+	fileSystem.eventSystem.off('pathUpdated', updateEntries)
 })
 </script>
 
 <template>
-	<div
-		class="flex items-center gap-2"
-		@click="expanded = !expanded"
-		@contextmenu.prevent="contextMenu?.open"
-	>
-		<Icon
-			:icon="expanded ? 'folder_open' : 'folder'"
-			:color="color"
-			class="text-sm"
-		/>
+	<div class="flex items-center gap-2" @click="expanded = !expanded" @contextmenu.prevent="contextMenu?.open">
+		<Icon :icon="expanded ? 'folder_open' : 'folder'" :color="color" class="text-sm" />
 
 		<span class="select-none font-inter"> {{ basename(path) }} </span>
 	</div>
 
 	<div class="ml-1 border-l pl-1 border-menu min-h-[1rem]" v-show="expanded">
 		<div v-for="entry in entries" :key="entry.path">
-			<File
-				:path="entry.path"
-				:color="color"
-				v-if="entry.type === 'file'"
-			/>
-			<Directory
-				:path="entry.path"
-				:color="color"
-				v-if="entry.type === 'directory'"
-			/>
+			<File :path="entry.path" :color="color" v-if="entry.type === 'file'" />
+			<Directory :path="entry.path" :color="color" v-if="entry.type === 'directory'" />
 		</div>
 	</div>
 
