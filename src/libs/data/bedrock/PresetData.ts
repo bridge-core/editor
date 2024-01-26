@@ -14,8 +14,7 @@ export class PresetData {
 		this.presets = await data.get('packages/minecraftBedrock/presets.json')
 
 		for (const [presetPath, preset] of Object.entries(this.presets)) {
-			if (!this.categories[preset.category])
-				this.categories[preset.category] = []
+			if (!this.categories[preset.category]) this.categories[preset.category] = []
 
 			this.categories[preset.category].push(presetPath)
 		}
@@ -38,10 +37,7 @@ export class PresetData {
 
 		if (!project) return
 
-		if (
-			!presetOptions.PRESET_PATH.endsWith('/') &&
-			presetOptions.PRESET_PATH !== ''
-		)
+		if (!presetOptions.PRESET_PATH.endsWith('/') && presetOptions.PRESET_PATH !== '')
 			presetOptions.PRESET_PATH += '/'
 
 		presetOptions.PROJECT_PREFIX = project.config?.namespace
@@ -72,40 +68,36 @@ export class PresetData {
 
 				module.exports({
 					// We are just faking filehandles here since the file system doesn't necesarily use file handles
-					createFile: async (
-						path: string,
-						handle: any,
-						options: any
-					) => {
+					createFile: async (path: string, handle: any, options: any) => {
 						const packPath = project.packs[options.packPath]
 						const filePath = join(packPath, path)
 
 						await fileSystem.ensureDirectory(filePath)
 						await fileSystem.writeFile(filePath, handle.content)
 					},
+					createJSONFile: async (path: string, data: any, options: any) => {
+						const packPath = project.packs[options.packPath]
+						const filePath = join(packPath, path)
+
+						await fileSystem.ensureDirectory(filePath)
+						await fileSystem.writeFileJson(filePath, data, true)
+					},
 					loadPresetFile: async (path: string) => {
 						return {
 							name: basename(path),
 							content: await data.getRaw(
-								join(
-									dirname(
-										presetPath.substring(
-											'file:///data/'.length
-										)
-									),
-									path
-								)
+								join(dirname(presetPath.substring('file:///data/'.length)), path)
 							),
+							async text() {
+								return await data.getText(
+									join(dirname(presetPath.substring('file:///data/'.length)), path)
+								)
+							},
 						}
 					},
 					models: presetOptions,
 					expandFile: (path: string, content: any, options: any) =>
-						console.log(
-							'Trying to expand file',
-							path,
-							content,
-							options
-						),
+						console.log('Trying to expand file', path, content, options),
 				})
 
 				continue
@@ -113,33 +105,23 @@ export class PresetData {
 
 			let [templatePath, targetPath, templateOptions] = createFileOptions
 
-			templatePath = join(
-				dirname(presetPath.substring('file:///data/'.length)),
-				templatePath
-			)
+			templatePath = join(dirname(presetPath.substring('file:///data/'.length)), templatePath)
 
 			let templateContent = await data.getText(templatePath)
 
-			console.log(templateOptions.inject)
+			console.log(templatePath, templateOptions)
 
 			if (templateOptions.inject) {
 				for (const inject of templateOptions.inject) {
-					targetPath = targetPath.replace(
-						'{{' + inject + '}}',
-						presetOptions[inject]
-					)
+					targetPath = targetPath.replaceAll('{{' + inject + '}}', presetOptions[inject])
 
-					templateContent = templateContent.replace(
-						'{{' + inject + '}}',
-						presetOptions[inject]
-					)
+					templateContent = templateContent.replaceAll('{{' + inject + '}}', presetOptions[inject])
 				}
 			}
 
-			targetPath = join(
-				project.packs[templateOptions.packPath],
-				targetPath
-			)
+			console.log(targetPath, presetOptions)
+
+			targetPath = join(project.packs[templateOptions.packPath], targetPath)
 
 			await fileSystem.ensureDirectory(targetPath)
 
@@ -156,8 +138,7 @@ export class PresetData {
 
 				if (preset.requires.packTypes) {
 					for (const pack of preset.requires.packTypes) {
-						if (!projectManager.currentProject.packs[pack])
-							return false
+						if (!projectManager.currentProject.packs[pack]) return false
 					}
 				}
 
@@ -165,8 +146,7 @@ export class PresetData {
 					if (Array.isArray(preset.requires.targetVersion)) {
 						if (
 							!compareVersions(
-								projectManager.currentProject.config
-									?.targetVersion ?? '',
+								projectManager.currentProject.config?.targetVersion ?? '',
 								preset.requires.targetVersion[1],
 								preset.requires.targetVersion[0]
 							)
@@ -176,8 +156,7 @@ export class PresetData {
 						if (
 							preset.requires.targetVersion.min &&
 							!compareVersions(
-								projectManager.currentProject.config
-									?.targetVersion ?? '',
+								projectManager.currentProject.config?.targetVersion ?? '',
 								preset.requires.targetVersion.min ?? '',
 								'>='
 							)
@@ -187,8 +166,7 @@ export class PresetData {
 						if (
 							preset.requires.targetVersion.max &&
 							!compareVersions(
-								projectManager.currentProject.config
-									?.targetVersion ?? '',
+								projectManager.currentProject.config?.targetVersion ?? '',
 								preset.requires.targetVersion.max ?? '',
 								'<='
 							)
