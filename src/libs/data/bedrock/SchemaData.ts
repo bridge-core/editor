@@ -41,24 +41,17 @@ export class SchemaData {
 
 	private fixPaths(schemas: { [key: string]: any }) {
 		return Object.fromEntries(
-			Object.entries(schemas).map(([path, schema]) => [
-				path.substring('file:///'.length),
-				schema,
-			])
+			Object.entries(schemas).map(([path, schema]) => [path.substring('file:///'.length), schema])
 		)
 	}
 
 	public async load() {
 		this.schemas = {
 			...this.fixPaths(await data.get('packages/common/schemas.json')),
-			...this.fixPaths(
-				await data.get('packages/minecraftBedrock/schemas.json')
-			),
+			...this.fixPaths(await data.get('packages/minecraftBedrock/schemas.json')),
 		}
 
-		this.schemaScripts = this.fixPaths(
-			await data.get('packages/minecraftBedrock/schemaScripts.json')
-		)
+		this.schemaScripts = this.fixPaths(await data.get('packages/minecraftBedrock/schemaScripts.json'))
 
 		await this.generateStaticGeneratedSchemas()
 	}
@@ -72,11 +65,7 @@ export class SchemaData {
 
 		if (Array.isArray(schemaPart)) {
 			for (let index = 0; index < schemaPart.length; index++) {
-				const result = this.rebaseReferences(
-					schemaPart[index],
-					schemaPath,
-					basePath
-				)
+				const result = this.rebaseReferences(schemaPart[index], schemaPath, basePath)
 
 				schemaPart[index] = result.rebasedSchemaPart
 				references = references.concat(result.references)
@@ -88,9 +77,9 @@ export class SchemaData {
 
 					if (reference.startsWith('#')) {
 					} else if (reference.startsWith('/')) {
-						references.push(reference)
+						references.push(reference.substring(1))
 
-						reference = join(basePath, reference)
+						reference = 'file:///' + join(basePath, reference.substring(1))
 					} else {
 						references.push(join(dirname(schemaPath), reference))
 					}
@@ -100,11 +89,7 @@ export class SchemaData {
 					continue
 				}
 
-				const result = this.rebaseReferences(
-					schemaPart[key],
-					schemaPath,
-					basePath
-				)
+				const result = this.rebaseReferences(schemaPart[key], schemaPath, basePath)
 
 				schemaPart[key] = result.rebasedSchemaPart
 				references = references.concat(result.references)
@@ -118,8 +103,7 @@ export class SchemaData {
 	}
 
 	public async applySchemaForFile(path: string, schemaUri: string) {
-		if (schemaUri.startsWith('file:///'))
-			schemaUri = schemaUri.substring('file:///'.length)
+		if (schemaUri.startsWith('file:///')) schemaUri = schemaUri.substring('file:///'.length)
 
 		const generatedDynamicSchemas: { [key: string]: any } = {}
 
@@ -138,12 +122,8 @@ export class SchemaData {
 				scriptData.data = scriptResult.result
 			}
 
-			generatedDynamicSchemas[
-				join(
-					'data/packages/minecraftBedrock/schema/',
-					scriptData.generateFile
-				)
-			] = this.processScriptData(scriptData)
+			generatedDynamicSchemas[join('data/packages/minecraftBedrock/schema/', scriptData.generateFile)] =
+				this.processScriptData(scriptData)
 		}
 
 		const localSchemas: { [key: string]: any } = {}
@@ -155,26 +135,27 @@ export class SchemaData {
 			const schemaPathToRebase = schemasToRebaseQueue.shift()!
 			rebasedSchemas.push(schemaPathToRebase)
 
-			const schema =
+			let schema =
 				generatedDynamicSchemas[schemaPathToRebase] ??
 				this.staticGeneratedSchemas[schemaPathToRebase] ??
 				this.schemas[schemaPathToRebase]
 
-			const result = this.rebaseReferences(
-				JSON.parse(JSON.stringify(schema)),
-				schemaPathToRebase,
-				path
-			)
+			if (schema === undefined) {
+				console.warn('Failed to load schema reference', schemaPathToRebase)
 
-			for (const reference of result.references) {
+				schema = {}
+			}
+
+			const result = this.rebaseReferences(JSON.parse(JSON.stringify(schema)), schemaPathToRebase, path)
+
+			for (let reference of result.references) {
 				if (rebasedSchemas.includes(reference)) continue
 
 				schemasToRebaseQueue.push(reference)
 				rebasedSchemas.push(reference)
 			}
 
-			localSchemas[join(path, schemaPathToRebase)] =
-				result.rebasedSchemaPart
+			localSchemas[join(path, schemaPathToRebase)] = result.rebasedSchemaPart
 		}
 
 		this.fileSchemas[path] = {
@@ -189,16 +170,11 @@ export class SchemaData {
 		setSchemas(
 			Object.entries(this.fileSchemas)
 				.map(([filePath, schemaInfo]) => {
-					return Object.entries(schemaInfo.localSchemas).map(
-						([schemaPath, schema]) => ({
-							uri: schemaPath,
-							fileMatch:
-								schemaPath === schemaInfo.main
-									? [filePath]
-									: undefined,
-							schema,
-						})
-					)
+					return Object.entries(schemaInfo.localSchemas).map(([schemaPath, schema]) => ({
+						uri: schemaPath,
+						fileMatch: schemaPath === schemaInfo.main ? [filePath] : undefined,
+						schema,
+					}))
 				})
 				.flat()
 		)
@@ -211,12 +187,7 @@ export class SchemaData {
 		const promises = []
 
 		for (const scriptPath of Object.keys(this.schemaScripts)) {
-			promises.push(
-				this.generateStaticSchema(
-					scriptPath,
-					this.schemaScripts[scriptPath]
-				)
-			)
+			promises.push(this.generateStaticSchema(scriptPath, this.schemaScripts[scriptPath]))
 		}
 
 		await Promise.all(promises)
@@ -242,12 +213,8 @@ export class SchemaData {
 
 		if (scriptData === undefined) return
 
-		this.staticGeneratedSchemas[
-			join(
-				'data/packages/minecraftBedrock/schema/',
-				scriptData.generateFile
-			)
-		] = this.processScriptData(scriptData)
+		this.staticGeneratedSchemas[join('data/packages/minecraftBedrock/schema/', scriptData.generateFile)] =
+			this.processScriptData(scriptData)
 	}
 
 	private processScriptData(scriptData: any): any {
@@ -268,9 +235,7 @@ export class SchemaData {
 	): Promise<{ dynamic: boolean; result?: any }> {
 		const compatabilityFileSystem = new CompatabilityFileSystem(fileSystem)
 
-		const formatVersions = (
-			await data.get('packages/minecraftBedrock/formatVersions.json')
-		).formatVersions
+		const formatVersions = (await data.get('packages/minecraftBedrock/formatVersions.json')).formatVersions
 
 		let dynamicSchema = false
 
@@ -290,28 +255,17 @@ export class SchemaData {
 				await this.runtime.run(
 					scriptPath,
 					{
-						readdir: compatabilityFileSystem.readdir.bind(
-							compatabilityFileSystem
-						),
+						readdir: compatabilityFileSystem.readdir.bind(compatabilityFileSystem),
 						resolvePackPath(packId: string, path?: string) {
 							if (!projectManager.currentProject) return ''
 
-							return projectManager.currentProject.resolvePackPath(
-								packId,
-								path
-							)
+							return projectManager.currentProject.resolvePackPath(packId, path)
 						},
 						getFormatVersions() {
 							return formatVersions
 						},
-						getCacheDataFor(
-							fileType: string,
-							filePath?: string,
-							cacheKey?: string
-						) {
-							return (
-								projectManager.currentProject as BedrockProject
-							).indexerService.getCachedData(
+						getCacheDataFor(fileType: string, filePath?: string, cacheKey?: string) {
+							return (projectManager.currentProject as BedrockProject).indexerService.getCachedData(
 								fileType,
 								filePath,
 								cacheKey
@@ -321,8 +275,7 @@ export class SchemaData {
 							return projectManager.currentProject?.config
 						},
 						getProjectPrefix() {
-							return projectManager.currentProject?.config
-								?.namespace
+							return projectManager.currentProject?.config?.namespace
 						},
 						getFileName() {
 							dynamicSchema = true
@@ -348,17 +301,9 @@ export class SchemaData {
 							return {}
 						},
 						getIndexedPaths(fileType: string, sort: boolean) {
-							if (
-								!(
-									projectManager.currentProject instanceof
-									BedrockProject
-								)
-							)
-								return Promise.resolve([])
+							if (!(projectManager.currentProject instanceof BedrockProject)) return Promise.resolve([])
 
-							return Promise.resolve(
-								projectManager.currentProject.indexerService.getIndexedFiles()
-							)
+							return Promise.resolve(projectManager.currentProject.indexerService.getIndexedFiles())
 						},
 						failedCurrentFileLoad() {
 							dynamicSchema = true
