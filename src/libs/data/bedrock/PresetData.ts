@@ -1,7 +1,7 @@
 import { data, fileSystem, projectManager } from '@/App'
-import { basename, dirname, join } from '@/libs/path'
+import { basename, dirname, extname, join } from '@/libs/path'
 import { Runtime } from '@/libs/runtime/Runtime'
-import { compareVersions } from 'bridge-common-utils'
+import { compareVersions, deepMerge } from 'bridge-common-utils'
 import { Ref, ref } from 'vue'
 
 export class PresetData {
@@ -82,6 +82,30 @@ export class PresetData {
 						await fileSystem.ensureDirectory(filePath)
 						await fileSystem.writeFileJson(filePath, data, true)
 					},
+					expandFile: async (path: string, data: any, options: any) => {
+						const packPath = project.packs[options.packPath]
+						const filePath = join(packPath, path)
+
+						await fileSystem.ensureDirectory(filePath)
+
+						if (await fileSystem.exists(filePath)) {
+							let existingContent = await fileSystem.readFileText(filePath)
+
+							if (typeof data !== 'string') {
+								await fileSystem.writeFile(
+									filePath,
+									JSON.stringify(deepMerge(JSON.parse(existingContent), JSON.parse(data)), null, '\t')
+								)
+							} else {
+								await fileSystem.writeFile(filePath, `${existingContent}\n${data}`)
+							}
+						} else {
+							await fileSystem.writeFile(
+								filePath,
+								typeof data === 'string' ? data : JSON.stringify(data, null, '\t')
+							)
+						}
+					},
 					loadPresetFile: async (path: string) => {
 						return {
 							name: basename(path),
@@ -96,8 +120,6 @@ export class PresetData {
 						}
 					},
 					models: presetOptions,
-					expandFile: (path: string, content: any, options: any) =>
-						console.log('Trying to expand file', path, content, options),
 				})
 
 				continue
@@ -109,7 +131,29 @@ export class PresetData {
 
 			let templateContent = await data.getText(templatePath)
 
-			console.log(templatePath, templateOptions)
+			if (templateOptions.inject) {
+				for (const inject of templateOptions.inject) {
+					targetPath = targetPath.replaceAll('{{' + inject + '}}', presetOptions[inject])
+
+					templateContent = templateContent.replaceAll('{{' + inject + '}}', presetOptions[inject])
+				}
+			}
+
+			targetPath = join(project.packs[templateOptions.packPath], targetPath)
+
+			await fileSystem.ensureDirectory(targetPath)
+
+			await fileSystem.writeFile(targetPath, templateContent)
+		}
+
+		const expandFiles = preset.expandFiles ?? []
+
+		for (const expandFileOptions of expandFiles) {
+			let [templatePath, targetPath, templateOptions] = expandFileOptions
+
+			templatePath = join(dirname(presetPath.substring('file:///data/'.length)), templatePath)
+
+			let templateContent = await data.getText(templatePath)
 
 			if (templateOptions.inject) {
 				for (const inject of templateOptions.inject) {
@@ -119,13 +163,24 @@ export class PresetData {
 				}
 			}
 
-			console.log(targetPath, presetOptions)
-
 			targetPath = join(project.packs[templateOptions.packPath], targetPath)
 
 			await fileSystem.ensureDirectory(targetPath)
 
-			await fileSystem.writeFile(targetPath, templateContent)
+			if (await fileSystem.exists(targetPath)) {
+				let existingContent = await fileSystem.readFileText(targetPath)
+
+				if (extname(templatePath) === '.json') {
+					await fileSystem.writeFile(
+						targetPath,
+						JSON.stringify(deepMerge(JSON.parse(existingContent), JSON.parse(templateContent)), null, '\t')
+					)
+				} else {
+					await fileSystem.writeFile(targetPath, `${existingContent}\n${templateContent}`)
+				}
+			} else {
+				await fileSystem.writeFile(targetPath, templateContent)
+			}
 		}
 	}
 
