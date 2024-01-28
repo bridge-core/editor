@@ -200,6 +200,8 @@ export class PWAFileSystem extends BaseFileSystem {
 			const entries = []
 
 			for await (const handleEntry of handleEntries) {
+				if (handleEntry[0].endsWith('.crswap')) continue
+
 				entries.push(new BaseEntry(join(path, handleEntry[0]), handleEntry[1].kind))
 			}
 
