@@ -15,6 +15,8 @@ export class DashService {
 	private inputFileSystem = new WorkerFileSystemEntryPoint(this.worker, fileSystem, 'inputFileSystem')
 	private outputFileSystem: WorkerFileSystemEntryPoint
 	private progressNotification: Notification | null = null
+	private inFlightBuildRequest: boolean = false
+	private building: boolean = false
 
 	constructor(public project: BedrockProject) {
 		this.worker.onmessage = this.onWorkerMessage.bind(this)
@@ -78,6 +80,14 @@ export class DashService {
 	}
 
 	public async build() {
+		if (this.building) {
+			this.inFlightBuildRequest = true
+
+			return
+		}
+
+		this.building = true
+
 		this.progressNotification = sidebar.addProgressNotification('manufacturing', 0, 1, undefined, undefined)
 
 		await sendAndWait(
@@ -88,6 +98,14 @@ export class DashService {
 		)
 
 		sidebar.clearNotification(this.progressNotification)
+
+		this.building = false
+
+		if (this.inFlightBuildRequest) {
+			this.inFlightBuildRequest = false
+
+			this.build()
+		}
 	}
 
 	private async pathUpdated(path: unknown) {
