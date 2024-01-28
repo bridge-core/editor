@@ -79,9 +79,9 @@ export class SchemaData {
 					} else if (reference.startsWith('/')) {
 						references.push(reference.substring(1))
 
-						reference = 'file:///' + join(basePath, reference.substring(1))
+						reference = 'file:///' + join(basePath, reference.substring(1).split('#')[0])
 					} else {
-						references.push(join(dirname(schemaPath), reference))
+						references.push(join(dirname(schemaPath), reference.split('#')[0]))
 					}
 
 					schemaPart[key] = reference
