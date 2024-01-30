@@ -14,7 +14,9 @@ import { PWAFileSystem } from '@/libs/fileSystem/PWAFileSystem'
 import { TauriFileSystem } from '@/libs/fileSystem/TauriFileSystem'
 import { get, set } from 'idb-keyval'
 import { appDataDir, appLocalDataDir, sep } from '@tauri-apps/api/path'
-import { join } from './libs/path'
+import { join } from '@/libs/path'
+import { Extensions } from '@/libs/extensions/Extensions'
+import { ExtensionLibrary } from '@/components/Windows/ExtensionLibrary/ExtensionLibrary'
 
 export const toolbar = new Toolbar()
 export const themeManager = new ThemeManager()
@@ -27,6 +29,8 @@ export const sidebar = new Sidebar()
 export const fileExplorer = new FileExplorer()
 export const settings = new Settings()
 export const confirmWindow = new ConfirmWindow()
+export const extensions = new Extensions()
+export const extensionLibrary = new ExtensionLibrary()
 
 export async function setup() {
 	console.time('[App] Setup')
@@ -54,6 +58,10 @@ export async function setup() {
 	console.time('[App] Data')
 	await data.load()
 	console.timeEnd('[App] Data')
+
+	console.time('[App] Extensions')
+	await extensions.load()
+	console.timeEnd('[App] Extensions')
 
 	console.timeEnd('[App] Setup')
 }

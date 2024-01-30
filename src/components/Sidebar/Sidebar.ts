@@ -1,4 +1,4 @@
-import { fileExplorer, windows } from '@/App'
+import { extensionLibrary, fileExplorer, windows } from '@/App'
 import { Ref, ref } from 'vue'
 import { v4 as uuid } from 'uuid'
 
@@ -29,7 +29,9 @@ export class Sidebar {
 		this.addButton('manufacturing', () => {
 			windows.open('compiler')
 		})
-		this.addButton('extension', () => {})
+		this.addButton('extension', () => {
+			extensionLibrary.open()
+		})
 		this.addDivider()
 
 		this.addNotification(
@@ -59,11 +61,7 @@ export class Sidebar {
 		})
 	}
 
-	public addNotification(
-		icon: string,
-		callback?: () => void,
-		color?: string
-	): Notification {
+	public addNotification(icon: string, callback?: () => void, color?: string): Notification {
 		const notification: Notification = {
 			icon,
 			callback,
@@ -103,10 +101,7 @@ export class Sidebar {
 
 	public activateNotification(notification: Notification) {
 		if (notification.type === 'button') {
-			this.notifications.value.splice(
-				this.notifications.value.indexOf(notification),
-				1
-			)
+			this.notifications.value.splice(this.notifications.value.indexOf(notification), 1)
 			this.notifications.value = [...this.notifications.value]
 		}
 
@@ -117,20 +112,14 @@ export class Sidebar {
 		if (notification.type === 'progress') {
 			// Allow time for the progress bar to reach full value
 			setTimeout(() => {
-				this.notifications.value.splice(
-					this.notifications.value.indexOf(notification),
-					1
-				)
+				this.notifications.value.splice(this.notifications.value.indexOf(notification), 1)
 				this.notifications.value = [...this.notifications.value]
 			}, 300)
 
 			return
 		}
 
-		this.notifications.value.splice(
-			this.notifications.value.indexOf(notification),
-			1
-		)
+		this.notifications.value.splice(this.notifications.value.indexOf(notification), 1)
 		this.notifications.value = [...this.notifications.value]
 	}
 
