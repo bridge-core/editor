@@ -19,6 +19,7 @@ export const dark = {
 		background: '#121212',
 		menu: '#252525',
 		menuAlternate: '#1D1D1D',
+		menuAlternate2: '#303030',
 		toolbar: '#1D1D1D',
 
 		sidebarNavigation: '#1F1F1F',

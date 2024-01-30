@@ -13,6 +13,7 @@ export const colorNames = [
 	'background',
 	'menu',
 	'menuAlternate',
+	'menuAlternate2',
 
 	'expandedSidebar',
 	'sidebarNavigation',

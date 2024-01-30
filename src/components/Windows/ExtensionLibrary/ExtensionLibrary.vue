@@ -47,7 +47,33 @@ const t = useTranslate()
 			</div>
 		</template>
 		<template #content>
-			<div class="w-[64rem] h-[38rem] flex flex-col overflow-y-auto p-4 pt-0"></div>
+			<div class="w-[64rem] h-[38rem] flex flex-col overflow-y-auto p-4 pt-0 mr-2">
+				<div v-for="extension in extensionLibrary.extensions" class="bg-menuAlternate rounded mb-4 p-2">
+					<div class="flex gap-2 mb-4">
+						<Icon :icon="'data_object'" color="primary" />
+						<h1 class="font-inter font-bold">{{ extension.name }}</h1>
+					</div>
+
+					<div class="mb-4 flex gap-4">
+						<span class="font-inter text-sm py-1 px-2 bg-primary rounded-full">
+							{{ extension.author }}
+						</span>
+
+						<span class="font-inter text-sm py-1 px-2 bg-menuAlternate2 rounded-full">
+							{{ extension.version }}
+						</span>
+
+						<span
+							v-for="tag in extension.tags"
+							class="font-inter text-sm py-1 px-2 bg-primary rounded-full"
+						>
+							{{ tag }}
+						</span>
+					</div>
+
+					<p class="font-inter text-textAlternate">{{ extension.description }}</p>
+				</div>
+			</div>
 		</template>
 	</SidebarWindow>
 </template>
