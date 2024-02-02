@@ -1,4 +1,5 @@
-import { data, windows } from '@/App'
+import { data, fileSystem, windows } from '@/App'
+import { join } from '@/libs/path'
 import { Ref, ref } from 'vue'
 
 export interface ExtensionLibraryEntry {
@@ -35,5 +36,13 @@ export class ExtensionLibrary {
 		await this.load()
 
 		windows.open('extensionLibrary')
+	}
+
+	public async download(extension: ExtensionLibraryEntry) {
+		const arrayBuffer = await (
+			await fetch('https://raw.githubusercontent.com/bridge-core/plugins/master' + extension.link)
+		).arrayBuffer()
+
+		await fileSystem.writeFile(join('/extensions', extension.name.replace(/\s+/g, '') + '.zip'), arrayBuffer)
 	}
 }

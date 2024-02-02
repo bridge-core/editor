@@ -67,7 +67,11 @@ const t = useTranslate()
 						<div class="flex gap-2 items-center">
 							<span class="material-symbols-rounded text-base">share</span>
 
-							<Button icon="vertical_align_bottom" :text="t('Download')" />
+							<Button
+								icon="vertical_align_bottom"
+								:text="t('Download')"
+								@click="extensionLibrary.download(extension)"
+							/>
 						</div>
 					</div>
 
