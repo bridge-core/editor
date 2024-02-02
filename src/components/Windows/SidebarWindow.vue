@@ -35,33 +35,20 @@ defineExpose({
 
 <template>
 	<Transition>
-		<div
-			class="w-screen h-app flex justify-center items-center absolute top-toolbar left-0"
-			v-if="opened"
-		>
-			<div
-				class="bg-menu w-screen h-app absolute top-0 left-0 z-0 opacity-30"
-			></div>
+		<div class="w-screen h-app flex justify-center items-center absolute top-toolbar left-0" v-if="opened">
+			<div class="bg-menu w-screen h-app absolute top-0 left-0 z-0 opacity-30"></div>
 
-			<div
-				class="bg-background shadow-window rounded-md overflow-hidden z-10 flex items-stretch window"
-			>
+			<div class="bg-background shadow-window rounded-md overflow-hidden z-10 flex items-stretch window">
 				<div class="bg-menuAlternate w-96">
 					<slot name="sidebar" />
 				</div>
 
 				<div class="flex-1">
 					<div class="flex justify-between align-center p-2">
-						<span
-							class="select-none ml-1 text-textAlternate font-inter"
-						>
+						<span class="select-none ml-1 text-textAlternate font-inter">
 							{{ name }}
 						</span>
-						<IconButton
-							icon="close"
-							class="text-sm"
-							@click="close"
-						/>
+						<IconButton icon="close" class="text-sm" @click="close" />
 					</div>
 					<slot name="content" />
 				</div>

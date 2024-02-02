@@ -5,6 +5,7 @@ import Icon from '@/components/Common/Icon.vue'
 
 import { extensionLibrary } from '@/App'
 import { useTranslate } from '@/libs/locales/Locales'
+import Button from '@/components/Common/Button.vue'
 
 const t = useTranslate()
 </script>
@@ -13,7 +14,7 @@ const t = useTranslate()
 	<SidebarWindow :name="t('windows.extensionLibrary.title')" id="extensionLibrary">
 		<template #sidebar>
 			<div class="p-4">
-				<LabeledInput v-slot="{ focus, blur }" :label="t('Search Settings')" class="bg-menuAlternate !mt-1">
+				<LabeledInput v-slot="{ focus, blur }" :label="t('Search Extensions')" class="bg-menuAlternate !mt-1">
 					<div class="flex gap-1">
 						<Icon icon="search" class="transition-colors duration-100 ease-out" />
 						<input @focus="focus" @blur="blur" class="outline-none border-none bg-transparent font-inter" />
@@ -48,14 +49,37 @@ const t = useTranslate()
 		</template>
 		<template #content>
 			<div class="w-[64rem] h-[38rem] flex flex-col overflow-y-auto p-4 pt-0 mr-2">
-				<div v-for="extension in extensionLibrary.extensions" class="bg-menuAlternate rounded mb-4 p-2">
-					<div class="flex gap-2 mb-4">
-						<Icon :icon="'data_object'" color="primary" />
-						<h1 class="font-inter font-bold">{{ extension.name }}</h1>
+				<div
+					v-for="extension in extensionLibrary.extensions.filter(
+						(extension) =>
+							extensionLibrary.selectedTag.value === 'All' ||
+							extension.tags.includes(extensionLibrary.selectedTag.value)
+					)"
+					:key="extension.id"
+					class="bg-menuAlternate rounded mb-4 p-2"
+				>
+					<div class="flex justify-between mb-4">
+						<div class="flex gap-2">
+							<Icon :icon="'data_object'" color="primary" />
+							<h1 class="font-inter font-bold">{{ extension.name }}</h1>
+						</div>
+
+						<div class="flex gap-2 items-center">
+							<span class="material-symbols-rounded text-base">share</span>
+
+							<Button icon="vertical_align_bottom" :text="t('Download')" />
+						</div>
 					</div>
 
 					<div class="mb-4 flex gap-4">
-						<span class="font-inter text-sm py-1 px-2 bg-primary rounded-full">
+						<span
+							class="font-inter text-sm py-1 px-2 bg-primary hover:bg-text rounded-full flex items-center gap-1 group hover:text-background transition-colors duration-100 ease-out cursor-pointer"
+						>
+							<span
+								class="material-symbols-rounded text-sm group-hover:text-background transition-colors duration-100 ease-out"
+								>person</span
+							>
+
 							{{ extension.author }}
 						</span>
 
@@ -65,8 +89,16 @@ const t = useTranslate()
 
 						<span
 							v-for="tag in extension.tags"
-							class="font-inter text-sm py-1 px-2 bg-primary rounded-full"
+							class="font-inter text-sm py-1 px-2 bg-[var(--color)] hover:bg-text rounded-full flex items-center gap-1 group hover:text-background transition-colors duration-100 ease-out cursor-pointer"
+							:style="{
+								'--color': `var(--theme-color-${extensionLibrary.tags[tag].color ?? 'primary'})`,
+							}"
 						>
+							<span
+								class="material-symbols-rounded text-sm group-hover:text-background transition-colors duration-100 ease-out"
+								>{{ extensionLibrary.tags[tag].icon }}</span
+							>
+
 							{{ tag }}
 						</span>
 					</div>

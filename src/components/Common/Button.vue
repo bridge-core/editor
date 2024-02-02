@@ -1,12 +1,12 @@
 <template>
 	<button
-		class="bg-menu px-2 py-1 rounded transition-[colors, opacity] duration-100 ease-out select-none flex items-center gap-1 font-inter"
+		class="bg-primary px-2 py-1 rounded transition-[colors, opacity] duration-100 ease-out select-none flex items-center gap-1 font-inter group hover:text-background"
 		:class="{
-			'opacity-100 hover:bg-primary': enabled,
-			'opacity-50 cursor-default': !enabled,
+			'hover:bg-text': enabled,
+			'bg-menu cursor-default': !enabled,
 		}"
 	>
-		<Icon v-if="icon" :icon="icon" class="text-base -ml-0.5" />
+		<Icon v-if="icon" :icon="icon" class="text-base -ml-0.5 group-hover:text-background" />
 		{{ text }}
 	</button>
 </template>

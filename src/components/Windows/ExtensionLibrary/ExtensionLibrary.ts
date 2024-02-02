@@ -16,7 +16,7 @@ export interface ExtensionLibraryEntry {
 
 export class ExtensionLibrary {
 	public tags: Record<string, { icon: string; color?: string }> = {}
-	public selectedTag: Ref<string> = ref('none')
+	public selectedTag: Ref<string> = ref('All')
 	public extensions: ExtensionLibraryEntry[] = []
 
 	public async load() {
