@@ -1,6 +1,7 @@
 import { data, fileSystem, windows } from '@/App'
 import { join } from '@/libs/path'
 import { Ref, ref } from 'vue'
+import { Unzipped, unzip } from 'fflate'
 
 export interface ExtensionLibraryEntry {
 	author: string
@@ -43,6 +44,27 @@ export class ExtensionLibrary {
 			await fetch('https://raw.githubusercontent.com/bridge-core/plugins/master' + extension.link)
 		).arrayBuffer()
 
-		await fileSystem.writeFile(join('/extensions', extension.name.replace(/\s+/g, '') + '.zip'), arrayBuffer)
+		const unzipped = await new Promise<Unzipped>(async (resolve, reject) =>
+			unzip(new Uint8Array(arrayBuffer), (err, data) => {
+				if (err) reject(err)
+				else resolve(data)
+			})
+		)
+
+		const path = join('/extensions', extension.name.replace(/\s+/g, ''))
+
+		for (const filePath in unzipped) {
+			if (filePath.startsWith('.')) continue
+
+			await fileSystem.ensureDirectory(join(path, filePath))
+
+			if (filePath.endsWith('/')) {
+				await fileSystem.makeDirectory(join(path, filePath))
+
+				continue
+			}
+
+			await fileSystem.writeFile(join(path, filePath), unzipped[filePath])
+		}
 	}
 }
