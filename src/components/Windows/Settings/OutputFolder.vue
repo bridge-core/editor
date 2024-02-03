@@ -5,6 +5,9 @@ import FileSystemDrop from '@/components/Common/FileSystemDrop.vue'
 import Info from '@/components/Common/Info.vue'
 import { useSettings } from './Settings'
 import { useUsingProjectOutputFolder } from '@/libs/project/Project'
+import { useTranslate } from '@/libs/locales/Locales'
+
+const t = useTranslate()
 
 const { item } = defineProps(['item'])
 
@@ -35,6 +38,10 @@ async function droppedOutputFolder(items: DataTransferItemList) {
 			class="mt-4 mb-4 ml-auto mr-auto"
 		/>
 
-		<FileSystemDrop class="mb-8 h-48" text="Drop your output folder here." @drop="droppedOutputFolder" />
+		<FileSystemDrop
+			class="mb-8 h-48"
+			:text="t('windows.settings.projects.outputFolder.description')"
+			@drop="droppedOutputFolder"
+		/>
 	</div>
 </template>

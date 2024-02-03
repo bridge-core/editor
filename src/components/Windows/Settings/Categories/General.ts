@@ -2,7 +2,7 @@ import { Category } from './Category'
 import { LocaleManager } from '@/libs/locales/Locales'
 
 export class GeneralCategory extends Category {
-	public name = 'General'
+	public name = 'windows.settings.general.name'
 	public id = 'general'
 	public icon = 'circle'
 
@@ -12,8 +12,8 @@ export class GeneralCategory extends Category {
 		this.addDropdown(
 			'language',
 			'English',
-			'Language',
-			'Choose a language for bridge. to use.',
+			'windows.settings.general.language.name',
+			'windows.settings.general.language.description',
 			LocaleManager.getAvailableLanguages().map((language) => language.text)
 		)
 	}

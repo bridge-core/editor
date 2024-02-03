@@ -1005,7 +1005,7 @@
 			"title": "プロジェクトフォルダー",
 			"content": "bridge. を正常に動作するためには、プロジェクトフォルダーにアクセスする必要があります。"
 		},
-		"extensionStore": {
+		"extensionLibrary": {
 			"title": "拡張機能ストア",
 			"searchExtensions": "拡張機能を検索...",
 			"deleteExtension": "拡張機能を削除",

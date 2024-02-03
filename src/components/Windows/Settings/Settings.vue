@@ -1,11 +1,15 @@
 <template>
 	<SidebarWindow
-		:name="`${t('windows.settings.title')} - ${settings.selectedCategory.value?.name ?? 'No Category'}`"
+		:name="`${t('windows.settings.title')} - ${t(settings.selectedCategory.value?.name ?? 'No Category')}`"
 		id="settings"
 	>
 		<template #sidebar>
 			<div class="p-4">
-				<LabeledInput v-slot="{ focus, blur }" :label="t('Search Settings')" class="bg-menuAlternate !mt-1">
+				<LabeledInput
+					v-slot="{ focus, blur }"
+					:label="t('windows.settings.searchSettings')"
+					class="bg-menuAlternate !mt-1"
+				>
 					<div class="flex gap-1">
 						<Icon icon="search" class="transition-colors duration-100 ease-out" />
 						<input @focus="focus" @blur="blur" class="outline-none border-none bg-transparent font-inter" />
@@ -84,7 +88,7 @@
 						@update:model-value="(value) => settings.set(item.id, value)"
 					/>
 
-					<Button v-if="item.type === 'button'" @click="item.trigger" :text="item.text" />
+					<Button v-if="item.type === 'button'" @click="item.trigger" :text="t(item.text)" />
 
 					<p v-if="item.type !== 'custom'" class="text-textAlternate">
 						{{ t(item.description) }}

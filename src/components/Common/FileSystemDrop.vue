@@ -1,8 +1,5 @@
 <script setup lang="ts">
-import { useTranslate } from '@/libs/locales/Locales'
 import { ref } from 'vue'
-
-const t = useTranslate()
 
 defineProps({
 	text: {
@@ -41,7 +38,7 @@ async function dropped(event: DragEvent) {
 		@drop="dropped"
 	>
 		<span class="font-inter text-textAlternate select-none pointer-events-none">
-			{{ t(text) }}
+			{{ text }}
 		</span>
 	</div>
 </template>

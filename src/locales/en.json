@@ -965,9 +965,18 @@
 				"addGeneratedWith": {
 					"name": "Add \"generated_with\"",
 					"description": "Add the \"generated_with\" metadata to your projects' manifests"
+				},
+				"clearOutputFolder": {
+					"name": "Clear Output Folder",
+					"description": "Forget the current default output folder."
+				},
+				"outputFolder": {
+					"name": "Output Folder",
+					"description": "Drop your output folder here."
 				}
 			},
 			"editor": {
+				"name": "Editor",
 				"jsonEditor": {
 					"name": "JSON Editor",
 					"description": "Choose how you want to edit JSON files"
@@ -1031,7 +1040,7 @@
 			"title": "Project Folder",
 			"content": "bridge. needs access to its project folder in order to work correctly."
 		},
-		"extensionStore": {
+		"extensionLibrary": {
 			"title": "Extension Store",
 			"searchExtensions": "Search Extension...",
 			"deleteExtension": "Delete Extension",

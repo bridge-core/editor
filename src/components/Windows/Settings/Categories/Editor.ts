@@ -1,7 +1,7 @@
 import { Category } from './Category'
 
 export class EditorCategory extends Category {
-	public name = 'Editor'
+	public name = 'windows.settings.editor.name'
 	public id = 'editor'
 	public icon = 'edit'
 
@@ -11,8 +11,8 @@ export class EditorCategory extends Category {
 		this.addToggle(
 			'bracketPairColorization',
 			false,
-			'Bracket Pair Colorization',
-			'Enable bracket pair colorization'
+			'windows.settings.editor.bracketPairColorization.name',
+			'windows.settings.editor.bracketPairColorization.description'
 		)
 	}
 }

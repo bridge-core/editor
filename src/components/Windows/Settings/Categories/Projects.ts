@@ -5,7 +5,7 @@ import { fileSystem, settings } from '@/App'
 import { PWAFileSystem } from '@/libs/fileSystem/PWAFileSystem'
 
 export class ProjectsCategory extends Category {
-	public name = 'Projects'
+	public name = 'windows.settings.projects.name'
 	public id = 'projects'
 	public icon = 'folder'
 
@@ -24,8 +24,8 @@ export class ProjectsCategory extends Category {
 
 			this.addButton(
 				'clearOutputFolder',
-				'Clear Output Folder',
-				'Forget the current default output folder.',
+				'windows.settings.projects.clearOutputFolder.name',
+				'windows.settings.projects.clearOutputFolder.description',
 				() => {
 					settings.set('outputFolder', undefined)
 				}
