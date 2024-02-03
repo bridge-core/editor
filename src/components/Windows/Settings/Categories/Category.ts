@@ -18,6 +18,8 @@ type SwitchItem = {
 type CustomItem = {
 	type: 'custom'
 	id: string
+	name: string
+	description: string
 	component: Component
 }
 
@@ -25,6 +27,7 @@ type ButtonItem = {
 	type: 'button'
 	id: string
 	text: string
+	name: string
 	description: string
 	trigger: () => void
 }
@@ -32,6 +35,8 @@ type ButtonItem = {
 type Setting = {
 	id: string
 	defaultValue: any
+	name: string
+	description: string
 	load?: () => any
 	save?: (vale: any) => void
 }
@@ -61,6 +66,8 @@ export class Category {
 		this.settings.push({
 			id,
 			defaultValue,
+			name,
+			description,
 		})
 	}
 
@@ -75,6 +82,8 @@ export class Category {
 		this.settings.push({
 			id,
 			defaultValue,
+			name,
+			description,
 		})
 	}
 
@@ -83,6 +92,7 @@ export class Category {
 			type: 'button',
 			id,
 			text,
+			name: text,
 			description,
 			trigger,
 		})
@@ -92,14 +102,25 @@ export class Category {
 		this.items.push({
 			type: 'custom',
 			id,
+			name: id,
+			description: id,
 			component: markRaw(component),
 		})
 	}
 
-	public addSetting(id: string, defaultValue: any, save: (value: any) => Promise<void>, load: () => Promise<any>) {
+	public addSetting(
+		id: string,
+		defaultValue: any,
+		name: string,
+		description: string,
+		save: (value: any) => Promise<void>,
+		load: () => Promise<any>
+	) {
 		this.settings.push({
 			id,
 			defaultValue,
+			name,
+			description,
 			save,
 			load,
 		})

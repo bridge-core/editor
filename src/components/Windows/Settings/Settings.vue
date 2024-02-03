@@ -1,3 +1,22 @@
+<script setup lang="ts">
+import SidebarWindow from '@/components/Windows/SidebarWindow.vue'
+import LabeledInput from '@/components/Common/LabeledInput.vue'
+import Icon from '@/components/Common/Icon.vue'
+import Dropdown from '@/components/Common/Dropdown.vue'
+import Switch from '@/components/Common/Switch.vue'
+import Button from '@/components/Common/Button.vue'
+
+import { useTranslate } from '@/libs/locales/Locales'
+import { useSettings } from './Settings'
+import { ref } from 'vue'
+
+const t = useTranslate()
+
+const settings = useSettings()
+
+const search = ref('')
+</script>
+
 <template>
 	<SidebarWindow
 		:name="`${t('windows.settings.title')} - ${t(settings.selectedCategory.value?.name ?? 'No Category')}`"
@@ -12,13 +31,24 @@
 				>
 					<div class="flex gap-1">
 						<Icon icon="search" class="transition-colors duration-100 ease-out" />
-						<input @focus="focus" @blur="blur" class="outline-none border-none bg-transparent font-inter" />
+						<input
+							@focus="focus"
+							@blur="blur"
+							class="outline-none border-none bg-transparent font-inter"
+							v-model="search"
+						/>
 					</div>
 				</LabeledInput>
 
 				<div class="mt-4" v-if="settings.selectedCategory.value">
 					<button
-						v-for="category in settings.categories"
+						v-for="category in settings.categories.filter(
+							(category) =>
+								category.settings.find(
+									(setting) =>
+										t(setting.name).includes(search) || t(setting.description).includes(search)
+								) !== undefined
+						)"
 						class="w-full flex gap-1 p-1 mt-1 border-2 border-transparent hover:border-text rounded transition-colors duration-100 ease-out"
 						:class="{
 							'bg-primary': settings.selectedCategory.value.id === category.id,
@@ -35,11 +65,14 @@
 				</div>
 			</div>
 		</template>
+
 		<template #content>
 			<div class="w-[64rem] h-[38rem] flex flex-col overflow-y-auto p-4 pt-0">
 				<div
 					v-if="settings.selectedCategory.value"
-					v-for="item in settings.selectedCategory.value.items"
+					v-for="item in settings.selectedCategory.value.items.filter(
+						(item) => t(item.name).includes(search) || t(item.description).includes(search)
+					)"
 					class="flex gap-6 items-center"
 				>
 					<component v-if="item.type === 'custom'" :is="item.component!" :item="item" />
@@ -98,19 +131,3 @@
 		</template>
 	</SidebarWindow>
 </template>
-
-<script setup lang="ts">
-import SidebarWindow from '@/components/Windows/SidebarWindow.vue'
-import LabeledInput from '@/components/Common/LabeledInput.vue'
-import Icon from '@/components/Common/Icon.vue'
-import Dropdown from '@/components/Common/Dropdown.vue'
-import Switch from '@/components/Common/Switch.vue'
-import Button from '@/components/Common/Button.vue'
-
-import { useTranslate } from '@/libs/locales/Locales'
-import { useSettings } from './Settings'
-
-const t = useTranslate()
-
-const settings = useSettings()
-</script>
