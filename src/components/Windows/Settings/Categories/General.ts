@@ -14,15 +14,7 @@ export class GeneralCategory extends Category {
 			'English',
 			'Language',
 			'Choose a language for bridge. to use.',
-			LocaleManager.getAvailableLanguages().map(
-				(language) => language.text
-			),
-			(value) =>
-				LocaleManager.applyLanguage(
-					LocaleManager.getAvailableLanguages().find(
-						(language) => language.text === value
-					)?.value || LocaleManager.getCurrentLanguageId()
-				)
+			LocaleManager.getAvailableLanguages().map((language) => language.text)
 		)
 	}
 }

@@ -18,7 +18,6 @@ export class ProjectsCategory extends Category {
 			this.addSetting(
 				'outputFolder',
 				undefined,
-				() => {},
 				async (value) => await set('defaultOutputFolder', value),
 				async () => await get('defaultOutputFolder')
 			)

@@ -4,16 +4,15 @@ import enLang from '@/locales/en.json'
 import allLanguages from '@/locales/languages.json'
 import { Ref, onMounted, onUnmounted, ref } from 'vue'
 import { EventSystem } from '@/libs/event/EventSystem'
+import { settings } from '@/App'
 
 // loads all languages, exclude the language file and en file since en is a special case
 // en is a special case since it is the default and other languages override it
 const languages = Object.fromEntries(
-	Object.entries(
-		import.meta.glob([
-			'../../locales/*.json',
-			'!../../locales/languages.json',
-		])
-	).map(([key, val]) => [key.split('/').pop(), val])
+	Object.entries(import.meta.glob(['../../locales/*.json', '!../../locales/languages.json'])).map(([key, val]) => [
+		key.split('/').pop(),
+		val,
+	])
 )
 
 export class LocaleManager {
@@ -21,6 +20,19 @@ export class LocaleManager {
 
 	protected static currentLanguage: any = enLang
 	protected static currentLanuageId = 'english'
+
+	constructor() {
+		settings.eventSystem.on('updated', (event) => {
+			const { id, value } = event as { id: string; value: string }
+
+			if (id !== 'language') return
+
+			LocaleManager.applyLanguage(
+				LocaleManager.getAvailableLanguages().find((language) => language.text === value)?.value ||
+					LocaleManager.getCurrentLanguageId()
+			)
+		})
+	}
 
 	static getAvailableLanguages() {
 		return allLanguages
@@ -44,9 +56,7 @@ export class LocaleManager {
 		} else {
 			// Set language based on browser language
 			for (const langCode of navigator.languages) {
-				const lang = allLanguages.find(({ codes }) =>
-					codes.includes(langCode)
-				)
+				const lang = allLanguages.find(({ codes }) => codes.includes(langCode))
 				if (!lang) continue
 
 				await this.applyLanguage(lang.id)
@@ -67,14 +77,11 @@ export class LocaleManager {
 		}
 
 		const fetchName = allLanguages.find((l) => l.id === id)?.file
-		if (!fetchName)
-			throw new Error(`[Locales] Language with id "${id}" not found`)
+		if (!fetchName) throw new Error(`[Locales] Language with id "${id}" not found`)
 
 		const language = (await languages[fetchName]()).default
 		if (!language)
-			throw new Error(
-				`[Locales] Language with id "${id}" not found: File "${fetchName}" does not exist`
-			)
+			throw new Error(`[Locales] Language with id "${id}" not found: File "${fetchName}" does not exist`)
 
 		this.currentLanguage = deepMerge(clone(enLang), clone({ ...language }))
 
@@ -112,8 +119,7 @@ export class LocaleManager {
 }
 
 function clone(obj: any) {
-	if (typeof window.structuredClone === 'function')
-		return window.structuredClone(obj)
+	if (typeof window.structuredClone === 'function') return window.structuredClone(obj)
 
 	return JSON.parse(JSON.stringify(obj))
 }

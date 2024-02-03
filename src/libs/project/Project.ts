@@ -45,7 +45,7 @@ export class Project {
 
 		this.icon = await fileSystem.readFileDataUrl(join(this.path, 'BP', 'pack_icon.png'))
 
-		settings.eventSystem.on('settingsChanged', this.settingsChanged.bind(this))
+		settings.eventSystem.on('updated', this.settingsChanged.bind(this))
 
 		this.usingProjectOutputFolder = (await get(this.usingProjectOutputFolderKey)) ?? false
 		this.eventSystem.dispatch('usingProjectOutputFolderChanged', undefined)
@@ -54,7 +54,7 @@ export class Project {
 	}
 
 	public async dispose() {
-		settings.eventSystem.off('settingsChanged', this.settingsChanged.bind(this))
+		settings.eventSystem.off('updated', this.settingsChanged.bind(this))
 	}
 
 	public resolvePackPath(packId?: string, path?: string) {
@@ -97,7 +97,9 @@ export class Project {
 		this.outputFileSystem = fileSystem
 	}
 
-	protected async settingsChanged() {
+	protected async settingsChanged(event: unknown) {
+		if ((event as { id: string; value: unknown }).value !== 'outputFolder') return
+
 		if (!(fileSystem instanceof PWAFileSystem)) return
 
 		if (this.usingProjectOutputFolder) return

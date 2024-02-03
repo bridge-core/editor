@@ -12,8 +12,7 @@ export class EditorCategory extends Category {
 			'bracketPairColorization',
 			false,
 			'Bracket Pair Colorization',
-			'Enable bracket pair colorization',
-			(value) => {}
+			'Enable bracket pair colorization'
 		)
 	}
 }

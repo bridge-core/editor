@@ -31,6 +31,7 @@ export const settings = new Settings()
 export const confirmWindow = new ConfirmWindow()
 export const extensions = new Extensions()
 export const extensionLibrary = new ExtensionLibrary()
+export const localeManager = new LocaleManager()
 
 export async function setup() {
 	console.time('[App] Setup')

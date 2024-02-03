@@ -32,7 +32,6 @@ type ButtonItem = {
 type Setting = {
 	id: string
 	defaultValue: any
-	apply: (value: any) => void
 	load?: () => any
 	save?: (vale: any) => void
 }
@@ -49,8 +48,7 @@ export class Category {
 		defaultValue: string,
 		name: string,
 		description: string,
-		items: string[] | Ref<string[]>,
-		apply: (value: string) => void
+		items: string[] | Ref<string[]>
 	) {
 		this.items.push({
 			type: 'dropdown',
@@ -63,17 +61,10 @@ export class Category {
 		this.settings.push({
 			id,
 			defaultValue,
-			apply,
 		})
 	}
 
-	public addToggle(
-		id: string,
-		defaultValue: boolean,
-		name: string,
-		description: string,
-		apply: (value: boolean) => void
-	) {
+	public addToggle(id: string, defaultValue: boolean, name: string, description: string) {
 		this.items.push({
 			type: 'switch',
 			id,
@@ -84,7 +75,6 @@ export class Category {
 		this.settings.push({
 			id,
 			defaultValue,
-			apply,
 		})
 	}
 
@@ -106,17 +96,10 @@ export class Category {
 		})
 	}
 
-	public addSetting(
-		id: string,
-		defaultValue: any,
-		apply: (value: any) => void,
-		save: (value: any) => Promise<void>,
-		load: () => Promise<any>
-	) {
+	public addSetting(id: string, defaultValue: any, save: (value: any) => Promise<void>, load: () => Promise<any>) {
 		this.settings.push({
 			id,
 			defaultValue,
-			apply,
 			save,
 			load,
 		})

@@ -12,7 +12,7 @@ import { settings, windows } from '@/App'
 export class Settings {
 	public categories: Category[] = []
 	public settings: any = null
-	public eventSystem = new EventSystem(['settingsChanged'])
+	public eventSystem = new EventSystem(['updated'])
 	public selectedCategory: Ref<Category | null> = ref(null)
 
 	private fileSystem: LocalFileSystem = new LocalFileSystem()
@@ -40,11 +40,9 @@ export class Settings {
 				}
 			}
 
-			this.eventSystem.dispatch('settingsChanged', null)
-
 			for (const category of this.categories) {
 				for (const setting of category.settings) {
-					setting.apply(this.settings[setting.id])
+					this.eventSystem.dispatch('updated', { id: setting.id, value: this.settings[setting.id] })
 				}
 			}
 
@@ -61,11 +59,9 @@ export class Settings {
 					this.settings[setting.id] = setting.defaultValue
 				}
 
-				setting.apply(this.settings[setting.id])
+				this.eventSystem.dispatch('updated', { id: setting.id, value: this.settings[setting.id] })
 			}
 		}
-
-		this.eventSystem.dispatch('settingsChanged', null)
 	}
 
 	public addCategory(category: Category) {
@@ -91,9 +87,7 @@ export class Settings {
 				this.fileSystem.writeFileJson('settings.json', this.settings, false)
 			}
 
-			setting.apply(value)
-
-			this.eventSystem.dispatch('settingsChanged', null)
+			this.eventSystem.dispatch('updated', { id, value })
 		}
 	}
 
@@ -111,7 +105,6 @@ export class Settings {
 }
 
 export function useSettings(): Ref<Settings> {
-	//@ts-ignore for some reason ts doesn't like use to ref settings here
 	const currentSettings: ShallowRef<Settings> = shallowRef(settings)
 
 	function updateSettings() {
@@ -121,11 +114,11 @@ export function useSettings(): Ref<Settings> {
 	}
 
 	onMounted(() => {
-		settings.eventSystem.on('settingsChanged', updateSettings)
+		settings.eventSystem.on('updated', updateSettings)
 	})
 
 	onUnmounted(() => {
-		settings.eventSystem.off('settingsChanged', updateSettings)
+		settings.eventSystem.off('updated', updateSettings)
 	})
 
 	return currentSettings
