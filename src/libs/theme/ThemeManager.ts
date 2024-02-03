@@ -2,13 +2,23 @@ import { Theme, colorNames } from './Theme'
 import { dark } from './DefaultThemes'
 
 export class ThemeManager {
+	public themes: Theme[] = []
 	public currentTheme: Theme = dark
 
 	constructor() {
-		this.applyTheme(dark)
+		this.addTheme(dark)
+		this.applyTheme(dark.id)
 	}
 
-	protected applyTheme(theme?: Theme) {
+	public addTheme(theme: Theme) {
+		this.themes.push(theme)
+
+		this.applyTheme(theme.id)
+	}
+
+	private applyTheme(themeId: string) {
+		const theme = this.themes.find((theme) => theme.id === themeId)
+
 		if (!theme) return
 
 		const root = <HTMLElement>document.querySelector(':root')

@@ -3,7 +3,7 @@ import SidebarWindow from '../SidebarWindow.vue'
 import LabeledInput from '@/components/Common/LabeledInput.vue'
 import Icon from '@/components/Common/Icon.vue'
 
-import { extensionLibrary } from '@/App'
+import { extensionLibrary, extensions } from '@/App'
 import { useTranslate } from '@/libs/locales/Locales'
 import Button from '@/components/Common/Button.vue'
 
@@ -70,7 +70,7 @@ const t = useTranslate()
 							<Button
 								icon="vertical_align_bottom"
 								:text="t('Download')"
-								@click="extensionLibrary.download(extension)"
+								@click="extensions.install(extension)"
 							/>
 						</div>
 					</div>
