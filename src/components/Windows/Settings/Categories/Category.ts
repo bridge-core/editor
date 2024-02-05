@@ -37,8 +37,9 @@ type Setting = {
 	defaultValue: any
 	name: string
 	description: string
-	load?: () => any
-	save?: (vale: any) => void
+	load?: () => Promise<any>
+	save?: (value: any) => Promise<void>
+	update?: (value: any) => Promise<void>
 }
 
 export class Category {
@@ -53,7 +54,8 @@ export class Category {
 		defaultValue: string,
 		name: string,
 		description: string,
-		items: string[] | Ref<string[]>
+		items: string[] | Ref<string[]>,
+		update?: (value: any) => Promise<void>
 	) {
 		this.items.push({
 			type: 'dropdown',
@@ -68,6 +70,7 @@ export class Category {
 			defaultValue,
 			name,
 			description,
+			update,
 		})
 	}
 

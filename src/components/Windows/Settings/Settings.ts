@@ -81,6 +81,8 @@ export class Settings {
 			const setting = category.settings.find((setting) => setting.id === id)
 			if (!setting) continue
 
+			if (setting.update) await setting.update(value)
+
 			if (setting.save) {
 				await setting.save(value)
 			} else {
