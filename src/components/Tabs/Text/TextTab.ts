@@ -50,9 +50,7 @@ export class TextTab extends Tab {
 		this.editor = monaco.create(element, {
 			fontFamily: 'Consolas',
 			//@ts-ignore Monaco types have not been update yet
-			'bracketPairColorization.enabled': settings.get(
-				'bracketPairColorization'
-			),
+			'bracketPairColorization.enabled': settings.get('bracketPairColorization'),
 			automaticLayout: true,
 			contextmenu: false,
 		})
@@ -62,17 +60,12 @@ export class TextTab extends Tab {
 		this.model = monaco.getModel(Uri.file(this.path))
 
 		if (this.model === null) {
-			this.model = monaco.createModel(
-				fileContent,
-				this.fileType?.type ?? 'json',
-				Uri.file(this.path)
-			)
+			this.model = monaco.createModel(fileContent, this.fileType?.type ?? 'json', Uri.file(this.path))
 		}
 
 		this.editor.setModel(this.model)
 
-		if (this.fileType && this.fileType.schema)
-			await schemaData.applySchemaForFile(this.path, this.fileType.schema)
+		if (this.fileType && this.fileType.schema) await schemaData.applySchemaForFile(this.path, this.fileType.schema)
 
 		this.updateEditorTheme()
 
@@ -108,7 +101,7 @@ export class TextTab extends Tab {
 	private getColor(name: string): string {
 		return this.convertColor(
 			//@ts-ignore  Typescript doesn't like indexing the colors for some reason
-			themeManager.currentTheme.colors[<any>name] ?? 'red'
+			themeManager.get(themeManager.currentTheme).colors[<any>name] ?? 'red'
 		)
 	}
 
@@ -125,68 +118,34 @@ export class TextTab extends Tab {
 	}
 
 	private updateEditorTheme() {
-		const theme = themeManager.currentTheme
+		const theme = themeManager.get(themeManager.currentTheme)
 
 		monaco.defineTheme(`bridge`, {
 			base: theme.colorScheme === 'light' ? 'vs' : 'vs-dark',
 			inherit: false,
 			colors: {
-				'editor.background': this.convertColor(
-					this.getColor('background')
-				),
-				'editor.lineHighlightBackground': this.convertColor(
-					this.getColor('lineHighlightBackground')
-				),
-				'editorWidget.background': this.convertColor(
-					this.getColor('background')
-				),
-				'editorWidget.border': this.convertColor(
-					this.getColor('sidebarNavigation')
-				),
-				'pickerGroup.background': this.convertColor(
-					this.getColor('background')
-				),
-				'pickerGroup.border': this.convertColor(
-					this.getColor('sidebarNavigation')
-				),
-				'badge.background': this.convertColor(
-					this.getColor('background')
-				),
+				'editor.background': this.convertColor(this.getColor('background')),
+				'editor.lineHighlightBackground': this.convertColor(this.getColor('lineHighlightBackground')),
+				'editorWidget.background': this.convertColor(this.getColor('background')),
+				'editorWidget.border': this.convertColor(this.getColor('sidebarNavigation')),
+				'pickerGroup.background': this.convertColor(this.getColor('background')),
+				'pickerGroup.border': this.convertColor(this.getColor('sidebarNavigation')),
+				'badge.background': this.convertColor(this.getColor('background')),
 
-				'input.background': this.convertColor(
-					this.getColor('sidebarNavigation')
-				),
+				'input.background': this.convertColor(this.getColor('sidebarNavigation')),
 				'input.border': this.convertColor(this.getColor('menu')),
-				'inputOption.activeBorder': this.convertColor(
-					this.getColor('primary')
-				),
+				'inputOption.activeBorder': this.convertColor(this.getColor('primary')),
 				focusBorder: this.convertColor(this.getColor('primary')),
-				'list.focusBackground': this.convertColor(
-					this.getColor('menu')
-				),
-				'list.hoverBackground': this.convertColor(
-					this.getColor('sidebarNavigation')
-				),
-				contrastBorder: this.convertColor(
-					this.getColor('sidebarNavigation')
-				),
+				'list.focusBackground': this.convertColor(this.getColor('menu')),
+				'list.hoverBackground': this.convertColor(this.getColor('sidebarNavigation')),
+				contrastBorder: this.convertColor(this.getColor('sidebarNavigation')),
 
-				'peekViewTitle.background': this.convertColor(
-					this.getColor('background')
-				),
+				'peekViewTitle.background': this.convertColor(this.getColor('background')),
 				'peekView.border': this.convertColor(this.getColor('primary')),
-				'peekViewResult.background': this.convertColor(
-					this.getColor('sidebarNavigation')
-				),
-				'peekViewResult.selectionBackground': this.convertColor(
-					this.getColor('menu')
-				),
-				'peekViewEditor.background': this.convertColor(
-					this.getColor('background')
-				),
-				'peekViewEditor.matchHighlightBackground': this.convertColor(
-					this.getColor('menu')
-				),
+				'peekViewResult.background': this.convertColor(this.getColor('sidebarNavigation')),
+				'peekViewResult.selectionBackground': this.convertColor(this.getColor('menu')),
+				'peekViewEditor.background': this.convertColor(this.getColor('background')),
+				'peekViewEditor.matchHighlightBackground': this.convertColor(this.getColor('menu')),
 				...theme.monaco,
 			},
 			rules: [
@@ -196,21 +155,12 @@ export class TextTab extends Tab {
 					foreground: this.getColor('text'),
 				},
 				...Object.entries(theme.highlighter ?? {})
-					.map(
-						([
-							token,
-							{ color, background, textDecoration, isItalic },
-						]) => ({
-							token: token,
-							foreground: this.convertColor(color as string),
-							background: background
-								? this.convertColor(background as string)
-								: undefined,
-							fontStyle: `${
-								isItalic ? 'italic ' : ''
-							}${textDecoration}`,
-						})
-					)
+					.map(([token, { color, background, textDecoration, isItalic }]) => ({
+						token: token,
+						foreground: this.convertColor(color as string),
+						background: background ? this.convertColor(background as string) : undefined,
+						fontStyle: `${isItalic ? 'italic ' : ''}${textDecoration}`,
+					}))
 					.filter(({ foreground }) => foreground !== undefined),
 			],
 		})
@@ -221,8 +171,7 @@ export class TextTab extends Tab {
 		let variables: string[] = []
 
 		if (this.fileType && this.fileType.highlighterConfiguration) {
-			typeIdentifiers =
-				this.fileType.highlighterConfiguration.typeIdentifiers ?? []
+			typeIdentifiers = this.fileType.highlighterConfiguration.typeIdentifiers ?? []
 			variables = this.fileType.highlighterConfiguration.variables ?? []
 		}
 
@@ -236,8 +185,7 @@ export class TextTab extends Tab {
 			variables,
 
 			symbols: /[=><!~?:&|+\-*\/\^%]+/,
-			escapes:
-				/\\(?:[abfnrtv\\"']|x[0-9A-Fa-f]{1,4}|u[0-9A-Fa-f]{4}|U[0-9A-Fa-f]{8})/,
+			escapes: /\\(?:[abfnrtv\\"']|x[0-9A-Fa-f]{1,4}|u[0-9A-Fa-f]{4}|U[0-9A-Fa-f]{8})/,
 			digits: /\d+(_+\d+)*/,
 
 			tokenizer: {
@@ -291,10 +239,7 @@ export class TextTab extends Tab {
 				number: [
 					[/(@digits)[eE]([\-+]?(@digits))?/, 'number.float'],
 
-					[
-						/(@digits)\.(@digits)([eE][\-+]?(@digits))?/,
-						'number.float',
-					],
+					[/(@digits)\.(@digits)([eE][\-+]?(@digits))?/, 'number.float'],
 
 					[/(@digits)/, 'number'],
 				],

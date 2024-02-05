@@ -39,6 +39,13 @@ export class ThemeManager {
 		this.applyTheme(this.currentTheme)
 	}
 
+	get(currentTheme: string) {
+		return {
+			...dark,
+			...this.themes.find((theme) => theme.id === this.currentTheme),
+		}
+	}
+
 	public useThemes() {
 		const themes = ref(this.themes)
 
