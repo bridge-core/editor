@@ -4,22 +4,22 @@ import { onMounted, onUnmounted, ref } from 'vue'
 import { EventSystem } from '@/libs/event/EventSystem'
 
 export class ThemeManager {
-	public themes: Theme[] = []
-	public currentTheme: string = dark.id
-	public eventSystem = new EventSystem(['themesUpdated'])
+	public static themes: Theme[] = []
+	public static currentTheme: string = dark.id
+	public static eventSystem = new EventSystem(['themesUpdated'])
 
-	constructor() {
+	public static setup() {
 		this.addTheme(dark)
 		this.applyTheme(dark.id)
 	}
 
-	public addTheme(theme: Theme) {
+	public static addTheme(theme: Theme) {
 		this.themes.push(theme)
 
 		this.eventSystem.dispatch('themesUpdated', null)
 	}
 
-	public applyTheme(themeId: string) {
+	public static applyTheme(themeId: string) {
 		const theme = this.themes.find((theme) => theme.id === themeId)
 
 		this.currentTheme = themeId
@@ -33,20 +33,18 @@ export class ThemeManager {
 		}
 	}
 
-	public reloadTheme() {
-		console.warn('reloading theme', this.currentTheme)
-
+	public static reloadTheme() {
 		this.applyTheme(this.currentTheme)
 	}
 
-	get(currentTheme: string) {
+	public static get(currentTheme: string): Theme {
 		return {
 			...dark,
 			...this.themes.find((theme) => theme.id === this.currentTheme),
 		}
 	}
 
-	public useThemes() {
+	public static useThemes() {
 		const themes = ref(this.themes)
 
 		const me = this
@@ -66,7 +64,7 @@ export class ThemeManager {
 		return themes
 	}
 
-	public useThemesImmediate() {
+	public static useThemesImmediate() {
 		const themes = ref(this.themes)
 
 		const me = this

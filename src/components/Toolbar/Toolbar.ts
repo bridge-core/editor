@@ -1,13 +1,11 @@
 import { windows } from '@/App'
 
 export class Toolbar {
-	public items: { name: string; icon: string; action: () => void }[] = []
+	public static items: { name: string; icon: string; action: () => void }[] = []
 
-	constructor() {
+	public static setup() {
 		this.addItem('toolbar.project.name', 'space_dashboard', () => null)
-		this.addItem('toolbar.settings.name', 'help', () =>
-			windows.open('settings')
-		)
+		this.addItem('toolbar.settings.name', 'help', () => windows.open('settings'))
 		this.addItem('toolbar.file.name', 'draft', () => null)
 		this.addItem('toolbar.tools.name', 'build', () => null)
 		this.addItem('toolbar.help.name', 'help', () => null)
@@ -16,7 +14,7 @@ export class Toolbar {
 		})
 	}
 
-	public addItem(name: string, icon: string, action: () => void) {
+	public static addItem(name: string, icon: string, action: () => void) {
 		this.items.push({ name, icon, action })
 	}
 }

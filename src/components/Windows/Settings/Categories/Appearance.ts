@@ -1,4 +1,4 @@
-import { themeManager } from '@/App'
+import { ThemeManager } from '@/libs/theme/ThemeManager'
 import { Category } from './Category'
 import { computed } from 'vue'
 
@@ -10,7 +10,7 @@ export class AppearanceCategory extends Category {
 	constructor() {
 		super()
 
-		const themes = themeManager.useThemesImmediate()
+		const themes = ThemeManager.useThemesImmediate()
 		this.addDropdown(
 			'theme',
 			'Default Dark',
@@ -18,7 +18,7 @@ export class AppearanceCategory extends Category {
 			'windows.settings.appearance.darkTheme.description',
 			computed(() => themes.value.map((theme) => theme.id)),
 			async (theme: any) => {
-				themeManager.applyTheme(theme)
+				ThemeManager.applyTheme(theme)
 			}
 		)
 	}

@@ -18,8 +18,6 @@ import { join } from '@/libs/path'
 import { Extensions } from '@/libs/extensions/Extensions'
 import { ExtensionLibrary } from '@/components/Windows/ExtensionLibrary/ExtensionLibrary'
 
-export const toolbar = new Toolbar()
-export const themeManager = new ThemeManager()
 export const projectManager = new ProjectManager()
 export const fileSystem = getFileSystem()
 export const data = new Data()
@@ -35,6 +33,9 @@ export const localeManager = new LocaleManager()
 
 export async function setup() {
 	console.time('[App] Setup')
+
+	ThemeManager.setup()
+	Toolbar.setup()
 
 	fileSystem.eventSystem.on('reloaded', () => {
 		console.time('[App] Projects')

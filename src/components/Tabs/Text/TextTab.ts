@@ -3,10 +3,11 @@ import { Tab } from '@/components/TabSystem/Tab'
 import TextTabComponent from '@/components/Tabs/Text/TextTab.vue'
 import { Uri, editor as monaco } from 'monaco-editor'
 import { keyword } from 'color-convert'
-import { fileSystem, projectManager, settings, themeManager } from '@/App'
+import { fileSystem, projectManager, settings } from '@/App'
 import { basename } from '@/libs/path'
 import { setMonarchTokensProvider } from '@/libs/monaco/Json'
 import { BedrockProject } from '@/libs/project/BedrockProject'
+import { ThemeManager } from '@/libs/theme/ThemeManager'
 
 export class TextTab extends Tab {
 	public component: Component | null = TextTabComponent
@@ -118,7 +119,7 @@ export class TextTab extends Tab {
 	}
 
 	private updateEditorTheme() {
-		const theme = themeManager.get(themeManager.currentTheme)
+		const theme = ThemeManager.get(ThemeManager.currentTheme)
 
 		monaco.defineTheme(`bridge`, {
 			base: theme.colorScheme === 'light' ? 'vs' : 'vs-dark',

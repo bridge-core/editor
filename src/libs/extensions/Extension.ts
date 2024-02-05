@@ -1,6 +1,7 @@
-import { fileSystem, themeManager } from '@/App'
+import { fileSystem } from '@/App'
 import { join } from '@/libs/path'
 import { dark } from '@/libs/theme/DefaultThemes'
+import { ThemeManager } from '@/libs/theme/ThemeManager'
 
 export class Extension {
 	constructor(public path: string) {}
@@ -18,12 +19,12 @@ export class Extension {
 					...theme.colors,
 				}
 
-				themeManager.addTheme(theme)
+				ThemeManager.addTheme(theme)
 
 				break
 			}
 
-			themeManager.reloadTheme()
+			ThemeManager.reloadTheme()
 		}
 	}
 }

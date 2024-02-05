@@ -1,7 +1,7 @@
 <template>
 	<div data-tauri-drag-region class="bg-toolbar h-toolbar flex justify-between items-center px-2">
 		<div class="flex gap-4">
-			<button v-for="item in toolbar.items" class="flex items-center gap-1 group" @click="item.action">
+			<button v-for="item in Toolbar.items" class="flex items-center gap-1 group" @click="item.action">
 				<span
 					class="text-sm group-hover:text-primary transition-colors duration-100 ease-out font-inter select-none"
 					>{{ t(item.name) }}</span
@@ -27,11 +27,12 @@
 import Logo from '@/components/Common/Logo.vue'
 import IconButton from '@/components/Common/IconButton.vue'
 
-import { toolbar, windows } from '@/App'
+import { windows } from '@/App'
 import { appVersion } from '@/libs/app/AppEnv'
 import { useTranslate } from '@/libs/locales/Locales'
 import { appWindow } from '@tauri-apps/api/window'
 import { tauriBuild } from '@/libs/tauri/Tauri'
+import { Toolbar } from './Toolbar'
 
 const t = useTranslate()
 
