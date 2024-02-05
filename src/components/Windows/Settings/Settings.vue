@@ -77,7 +77,7 @@ const search = ref('')
 				>
 					<component v-if="item.type === 'custom'" :is="item.component!" :item="item" />
 
-					<Dropdown v-if="item.type === 'dropdown'" class="mb-4 w-48">
+					<Dropdown v-if="item.type === 'dropdown'" class="mb-4 flex-1">
 						<template #main="{ expanded, toggle }">
 							<LabeledInput :label="t(item.name)" :focused="expanded" class="bg-background">
 								<div class="flex items-center justify-between cursor-pointer" @click="toggle">
@@ -123,7 +123,7 @@ const search = ref('')
 
 					<Button v-if="item.type === 'button'" @click="item.trigger" :text="t(item.text)" />
 
-					<p v-if="item.type !== 'custom'" class="text-textAlternate">
+					<p v-if="item.type !== 'custom'" class="text-textAlternate mr-6">
 						{{ t(item.description) }}
 					</p>
 				</div>

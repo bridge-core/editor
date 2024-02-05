@@ -22,6 +22,8 @@ export class Extension {
 
 				break
 			}
+
+			themeManager.reloadTheme()
 		}
 	}
 }
