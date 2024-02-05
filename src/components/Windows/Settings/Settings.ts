@@ -42,6 +42,8 @@ export class Settings {
 
 			for (const category of this.categories) {
 				for (const setting of category.settings) {
+					if (setting.update) await setting.update(this.settings[setting.id])
+
 					this.eventSystem.dispatch('updated', { id: setting.id, value: this.settings[setting.id] })
 				}
 			}
@@ -58,6 +60,8 @@ export class Settings {
 				} else if (!this.settings[setting.id]) {
 					this.settings[setting.id] = setting.defaultValue
 				}
+
+				if (setting.update) await setting.update(this.settings[setting.id])
 
 				this.eventSystem.dispatch('updated', { id: setting.id, value: this.settings[setting.id] })
 			}
