@@ -18,7 +18,6 @@ import { join } from '@/libs/path'
 import { Extensions } from '@/libs/extensions/Extensions'
 import { ExtensionLibrary } from '@/components/Windows/ExtensionLibrary/ExtensionLibrary'
 
-export const projectManager = new ProjectManager()
 export const fileSystem = getFileSystem()
 export const data = new Data()
 export const windows = new Windows()
@@ -31,15 +30,17 @@ export const extensions = new Extensions()
 export const extensionLibrary = new ExtensionLibrary()
 export const localeManager = new LocaleManager()
 
+// Setup static singletons early so components can use them properly
+ProjectManager.setup()
+ThemeManager.setup()
+Toolbar.setup()
+
 export async function setup() {
 	console.time('[App] Setup')
 
-	ThemeManager.setup()
-	Toolbar.setup()
-
 	fileSystem.eventSystem.on('reloaded', () => {
 		console.time('[App] Projects')
-		projectManager.loadProjects()
+		ProjectManager.loadProjects()
 		console.timeEnd('[App] Projects')
 	})
 
@@ -54,7 +55,7 @@ export async function setup() {
 	console.timeEnd('[App] Settings')
 
 	console.time('[App] Projects')
-	await projectManager.loadProjects()
+	await ProjectManager.loadProjects()
 	console.timeEnd('[App] Projects')
 
 	console.time('[App] Data')

@@ -1,5 +1,6 @@
-import { data, fileSystem, projectManager } from '@/App'
+import { data, fileSystem } from '@/App'
 import { basename, dirname, extname, join } from '@/libs/path'
+import { ProjectManager } from '@/libs/project/ProjectManager'
 import { Runtime } from '@/libs/runtime/Runtime'
 import { compareVersions, deepMerge } from 'bridge-common-utils'
 import { Ref, ref } from 'vue'
@@ -33,7 +34,7 @@ export class PresetData {
 	}
 
 	public async createPreset(presetPath: string, presetOptions: any) {
-		const project = projectManager.currentProject
+		const project = ProjectManager.currentProject
 
 		if (!project) return
 
@@ -189,11 +190,11 @@ export class PresetData {
 			Object.entries(this.presets).filter(([presetPath, preset]) => {
 				if (!preset.requires) return true
 
-				if (!projectManager.currentProject) return true
+				if (!ProjectManager.currentProject) return true
 
 				if (preset.requires.packTypes) {
 					for (const pack of preset.requires.packTypes) {
-						if (!projectManager.currentProject.packs[pack]) return false
+						if (!ProjectManager.currentProject.packs[pack]) return false
 					}
 				}
 
@@ -201,7 +202,7 @@ export class PresetData {
 					if (Array.isArray(preset.requires.targetVersion)) {
 						if (
 							!compareVersions(
-								projectManager.currentProject.config?.targetVersion ?? '',
+								ProjectManager.currentProject.config?.targetVersion ?? '',
 								preset.requires.targetVersion[1],
 								preset.requires.targetVersion[0]
 							)
@@ -211,7 +212,7 @@ export class PresetData {
 						if (
 							preset.requires.targetVersion.min &&
 							!compareVersions(
-								projectManager.currentProject.config?.targetVersion ?? '',
+								ProjectManager.currentProject.config?.targetVersion ?? '',
 								preset.requires.targetVersion.min ?? '',
 								'>='
 							)
@@ -221,7 +222,7 @@ export class PresetData {
 						if (
 							preset.requires.targetVersion.max &&
 							!compareVersions(
-								projectManager.currentProject.config?.targetVersion ?? '',
+								ProjectManager.currentProject.config?.targetVersion ?? '',
 								preset.requires.targetVersion.max ?? '',
 								'<='
 							)

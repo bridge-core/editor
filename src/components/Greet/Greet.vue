@@ -2,16 +2,16 @@
 import Logo from '@/components/Common/Logo.vue'
 import IconButton from '@/components/Common/IconButton.vue'
 
-import { projectManager, fileSystem, windows, selectOrLoadBridgeFolder } from '@/App'
+import { fileSystem, windows, selectOrLoadBridgeFolder } from '@/App'
 import { PWAFileSystem } from '@/libs/fileSystem/PWAFileSystem'
 import { computed, ref } from 'vue'
 import { useTranslate } from '@/libs/locales/Locales'
-import { ProjectInfo } from '@/libs/project/ProjectManager'
+import { ProjectInfo, ProjectManager } from '@/libs/project/ProjectManager'
 
 const t = useTranslate()
 
-const projects = projectManager.useProjects()
-const currentProject = projectManager.useCurrentProject()
+const projects = ProjectManager.useProjects()
+const currentProject = ProjectManager.useCurrentProject()
 let fileSystemSetup = ref(true)
 if (fileSystem instanceof PWAFileSystem) fileSystemSetup = fileSystem.useSetup()
 
@@ -28,7 +28,7 @@ async function createProject() {
 async function openProject(project: ProjectInfo) {
 	if (fileSystem instanceof PWAFileSystem && !fileSystem.setup) await selectOrLoadBridgeFolder()
 
-	projectManager.loadProject(project.name)
+	ProjectManager.loadProject(project.name)
 }
 </script>
 

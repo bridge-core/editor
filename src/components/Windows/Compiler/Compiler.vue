@@ -2,15 +2,14 @@
 import SidebarWindow from '@/components/Windows/SidebarWindow.vue'
 import Icon from '@/components/Common/Icon.vue'
 import TextButton from '@/components/Common/Button.vue'
-import Warning from '@/components/Common/Warning.vue'
 import Info from '@/components/Common/Info.vue'
 
 import { useTranslate } from '@/libs/locales/Locales'
 import { ref } from 'vue'
-import { projectManager } from '@/App'
 import { BedrockProject } from '@/libs/project/BedrockProject'
 import FileSystemDrop from '@/components/Common/FileSystemDrop.vue'
 import { useUsingProjectOutputFolder } from '@/libs/project/Project'
+import { ProjectManager } from '@/libs/project/ProjectManager'
 
 const t = useTranslate()
 
@@ -46,14 +45,14 @@ const categories: {
 const selectedCategory = ref(categories[0].id)
 
 async function droppedOutputFolder(items: DataTransferItemList) {
-	if (!projectManager.currentProject) return
+	if (!ProjectManager.currentProject) return
 
 	const fileHandle = await items[0].getAsFileSystemHandle()
 
 	if (!fileHandle) return
 	if (!(fileHandle instanceof FileSystemDirectoryHandle)) return
 
-	await projectManager.currentProject.setLocalProjectFolderHandle(fileHandle)
+	await ProjectManager.currentProject.setLocalProjectFolderHandle(fileHandle)
 }
 </script>
 
@@ -89,7 +88,7 @@ async function droppedOutputFolder(items: DataTransferItemList) {
 					<TextButton
 						text="Compile"
 						@click="() =>
-							(projectManager.currentProject as BedrockProject).dashService.build()
+							(ProjectManager.currentProject as BedrockProject).dashService.build()
 						"
 					/>
 				</div>
@@ -116,7 +115,7 @@ async function droppedOutputFolder(items: DataTransferItemList) {
 					<div class="flex gap-6 items-center">
 						<TextButton
 							text="Clear Output Folder"
-							@click="projectManager.currentProject!.clearLocalProjectFolder()"
+							@click="ProjectManager.currentProject!.clearLocalProjectFolder()"
 						/>
 						<p class="text-textAlternate">{{ t('Forget the current project output folder.') }}</p>
 					</div>
@@ -125,7 +124,7 @@ async function droppedOutputFolder(items: DataTransferItemList) {
 				<div v-if="selectedCategory === 'logs'">
 					<div>
 						<p
-							v-for="log in (<BedrockProject>projectManager.currentProject).dashService.logs"
+							v-for="log in (<BedrockProject>ProjectManager.currentProject).dashService.logs"
 							class="font-inter border-b border-menuAlternate pb-2 mb-2 text-sm"
 						>
 							{{ log }}

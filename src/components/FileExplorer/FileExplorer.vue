@@ -5,17 +5,18 @@ import Icon from '@/components/Common/Icon.vue'
 import ContextMenu from '@/components/Common/ContextMenu.vue'
 import ContextMenuItem from '../Common/ContextMenuItem.vue'
 
-import { projectManager, fileSystem, fileExplorer, tabManager, windows } from '@/App'
+import { fileSystem, fileExplorer, tabManager, windows } from '@/App'
 import { BaseEntry } from '@/libs/fileSystem/BaseFileSystem'
 import { ComputedRef, Ref, computed, onMounted, onUnmounted, ref, watch } from 'vue'
 import { join } from '@/libs/path'
 import { IPackType } from 'mc-project-core'
 import { BedrockProject } from '@/libs/project/BedrockProject'
 import { useTranslate } from '@/libs/locales/Locales'
+import { ProjectManager } from '@/libs/project/ProjectManager'
 
 const t = useTranslate()
 
-const currentProject = projectManager.useCurrentProject()
+const currentProject = ProjectManager.useCurrentProject()
 
 const currentProjectPackDefinitions: Ref<IPackType[]> = computed(() => {
 	if (!currentProject.value) return []

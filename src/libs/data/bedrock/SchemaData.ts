@@ -1,11 +1,12 @@
 import { setSchemas } from '@/libs/monaco/Json'
 import { Runtime } from '@/libs/runtime/Runtime'
-import { data, fileSystem, projectManager } from '@/App'
+import { data, fileSystem } from '@/App'
 import { basename, dirname, join } from '@/libs/path'
 import { CompatabilityFileSystem } from '@/libs/fileSystem/CompatabilityFileSystem'
 import { BedrockProject } from '@/libs/project/BedrockProject'
 import { v4 as uuid } from 'uuid'
 import { walkObject } from 'bridge-common-utils'
+import { ProjectManager } from '@/libs/project/ProjectManager'
 
 /*
 Building the schema for a file is a little complicated.
@@ -257,25 +258,25 @@ export class SchemaData {
 					{
 						readdir: compatabilityFileSystem.readdir.bind(compatabilityFileSystem),
 						resolvePackPath(packId: string, path?: string) {
-							if (!projectManager.currentProject) return ''
+							if (!ProjectManager.currentProject) return ''
 
-							return projectManager.currentProject.resolvePackPath(packId, path)
+							return ProjectManager.currentProject.resolvePackPath(packId, path)
 						},
 						getFormatVersions() {
 							return formatVersions
 						},
 						getCacheDataFor(fileType: string, filePath?: string, cacheKey?: string) {
-							return (projectManager.currentProject as BedrockProject).indexerService.getCachedData(
+							return (ProjectManager.currentProject as BedrockProject).indexerService.getCachedData(
 								fileType,
 								filePath,
 								cacheKey
 							)
 						},
 						getProjectConfig() {
-							return projectManager.currentProject?.config
+							return ProjectManager.currentProject?.config
 						},
 						getProjectPrefix() {
-							return projectManager.currentProject?.config?.namespace
+							return ProjectManager.currentProject?.config?.namespace
 						},
 						getFileName() {
 							dynamicSchema = true
@@ -301,9 +302,9 @@ export class SchemaData {
 							return {}
 						},
 						getIndexedPaths(fileType: string, sort: boolean) {
-							if (!(projectManager.currentProject instanceof BedrockProject)) return Promise.resolve([])
+							if (!(ProjectManager.currentProject instanceof BedrockProject)) return Promise.resolve([])
 
-							return Promise.resolve(projectManager.currentProject.indexerService.getIndexedFiles())
+							return Promise.resolve(ProjectManager.currentProject.indexerService.getIndexedFiles())
 						},
 						failedCurrentFileLoad() {
 							dynamicSchema = true

@@ -10,9 +10,8 @@
 import Sidebar from '@/components/Sidebar/Sidebar.vue'
 import FileExplorer from '@/components/FileExplorer/FileExplorer.vue'
 import Tabs from '@/components/TabSystem/Tabs.vue'
+import { ProjectManager } from '@/libs/project/ProjectManager'
 
-import { projectManager } from '@/App'
-
-const currentProject = projectManager.useCurrentProject()
+const currentProject = ProjectManager.useCurrentProject()
 </script>
 ../FileExplorer/FileExplorer.vue../Sidebar/Sidebar.vue

@@ -5,9 +5,9 @@ import Expandable from '@/components/Common/Expandable.vue'
 import Icon from '@/components/Common/Icon.vue'
 import Button from '@/components/Common/Button.vue'
 import { useTranslate } from '@/libs/locales/Locales'
-import { projectManager } from '@/App'
 import { ComputedRef, Ref, computed, ref, watch } from 'vue'
 import { BedrockProject } from '@/libs/project/BedrockProject'
+import { ProjectManager } from '@/libs/project/ProjectManager'
 
 const t = useTranslate()
 
@@ -22,14 +22,13 @@ const selectedPreset: ComputedRef<null | any> = computed(() => {
 const createPresetOptions: Ref<any> = ref({})
 
 watch(selectedPreset, () => {
-	if (!projectManager.currentProject) return
-	if (!(projectManager.currentProject instanceof BedrockProject)) return
+	if (!ProjectManager.currentProject) return
+	if (!(ProjectManager.currentProject instanceof BedrockProject)) return
 	if (!selectedPresetPath.value) return
 
-	createPresetOptions.value =
-		projectManager.currentProject.presetData.getDefaultPresetOptions(
-			selectedPresetPath.value
-		)
+	createPresetOptions.value = ProjectManager.currentProject.presetData.getDefaultPresetOptions(
+		selectedPresetPath.value
+	)
 })
 
 let availablePresets: Ref<{ [key: string]: any }> = ref({})
@@ -49,11 +48,10 @@ const categories: ComputedRef<{ [key: string]: string[] }> = computed(() => {
 const window = ref<Window | null>(null)
 
 function opened() {
-	if (!projectManager.currentProject) return
-	if (!(projectManager.currentProject instanceof BedrockProject)) return
+	if (!ProjectManager.currentProject) return
+	if (!(ProjectManager.currentProject instanceof BedrockProject)) return
 
-	availablePresets =
-		projectManager.currentProject.presetData.useAvailablePresets()
+	availablePresets = ProjectManager.currentProject.presetData.useAvailablePresets()
 
 	selectedPresetPath.value = Object.keys(availablePresets.value)[0] ?? null
 }
@@ -63,58 +61,35 @@ async function create() {
 
 	if (selectedPresetPath.value === null) return
 
-	if (!projectManager.currentProject) return
+	if (!ProjectManager.currentProject) return
 
-	if (!(projectManager.currentProject instanceof BedrockProject)) return
+	if (!(ProjectManager.currentProject instanceof BedrockProject)) return
 
 	window.value.close()
 
-	await projectManager.currentProject.presetData.createPreset(
-		selectedPresetPath.value,
-		createPresetOptions.value
-	)
+	await ProjectManager.currentProject.presetData.createPreset(selectedPresetPath.value, createPresetOptions.value)
 }
 </script>
 
 <template>
-	<SidebarWindow
-		:name="t('windows.createPreset.title')"
-		id="presets"
-		ref="window"
-		@open="opened"
-	>
+	<SidebarWindow :name="t('windows.createPreset.title')" id="presets" ref="window" @open="opened">
 		<template #sidebar>
 			<div class="p-4">
-				<LabeledInput
-					v-slot="{ focus, blur }"
-					:label="t('Search Presets')"
-					class="bg-menuAlternate !mt-1 mb-2"
-				>
+				<LabeledInput v-slot="{ focus, blur }" :label="t('Search Presets')" class="bg-menuAlternate !mt-1 mb-2">
 					<div class="flex gap-1">
-						<Icon
-							icon="search"
-							class="transition-colors duration-100 ease-out"
-						/>
-						<input
-							@focus="focus"
-							@blur="blur"
-							class="outline-none border-none bg-transparent font-inter"
-						/>
+						<Icon icon="search" class="transition-colors duration-100 ease-out" />
+						<input @focus="focus" @blur="blur" class="outline-none border-none bg-transparent font-inter" />
 					</div>
 				</LabeledInput>
 
 				<div class="overflow-y-scroll max-h-[34rem]">
-					<Expandable
-						v-for="category of Object.keys(categories)"
-						:name="t(category)"
-					>
+					<Expandable v-for="category of Object.keys(categories)" :name="t(category)">
 						<div class="flex flex-col">
 							<button
 								v-for="presetPath of categories[category]"
 								class="flex align-center gap-2 border-transparent hover:border-text border-2 transition-colors duration-100 ease-out rounded p-2 mt-1"
 								:class="{
-									'bg-primary':
-										selectedPresetPath === presetPath,
+									'bg-primary': selectedPresetPath === presetPath,
 								}"
 								@click="selectedPresetPath = presetPath"
 							>
@@ -122,15 +97,11 @@ async function create() {
 									:icon="availablePresets[presetPath].icon"
 									class="text-base transition-colors duration-100 ease-out"
 									:class="{
-										'text-text':
-											selectedPresetPath === presetPath,
-										'text-primary':
-											selectedPresetPath !== presetPath,
+										'text-text': selectedPresetPath === presetPath,
+										'text-primary': selectedPresetPath !== presetPath,
 									}"
 								/>
-								<span class="font-inter select-none">{{
-									availablePresets[presetPath].name
-								}}</span>
+								<span class="font-inter select-none">{{ availablePresets[presetPath].name }}</span>
 							</button>
 						</div>
 					</Expandable>
@@ -138,34 +109,23 @@ async function create() {
 			</div>
 		</template>
 		<template #content>
-			<div
-				class="window-content h-[38rem] flex flex-col overflow-y-auto p-4 pt-0"
-			>
-				<div
-					v-if="selectedPreset !== null"
-					class="flex flex-col h-full"
-				>
+			<div class="window-content h-[38rem] flex flex-col overflow-y-auto p-4 pt-0">
+				<div v-if="selectedPreset !== null" class="flex flex-col h-full">
 					<div>
 						<div class="flex items-center gap-2 mb-2">
 							<Icon :icon="selectedPreset.icon" />
 
-							<span
-								class="text-3xl font-bold font-inter select-none"
-								>{{ selectedPreset.name }}</span
-							>
+							<span class="text-3xl font-bold font-inter select-none">{{ selectedPreset.name }}</span>
 						</div>
 
-						<p
-							class="font-inter text-textAlternate mb-12 select-none"
-						>
+						<p class="font-inter text-textAlternate mb-12 select-none">
 							{{ selectedPreset.description }}
 						</p>
 
 						<LabeledInput
 							v-if="
 								selectedPreset.additionalModels &&
-								selectedPreset.additionalModels.PRESET_PATH !==
-									undefined
+								selectedPreset.additionalModels.PRESET_PATH !== undefined
 							"
 							:label="t('Folders')"
 							class="mb-6 flex-1 bg-background"
@@ -184,14 +144,7 @@ async function create() {
 							/>
 						</LabeledInput>
 
-						<div
-							v-for="[
-								fieldName,
-								fieldId,
-								fieldOptions,
-							] of selectedPreset.fields"
-							:key="fieldId"
-						>
+						<div v-for="[fieldName, fieldId, fieldOptions] of selectedPreset.fields" :key="fieldId">
 							<LabeledInput
 								v-if="!fieldOptions.type"
 								:label="fieldName"
@@ -224,11 +177,7 @@ async function create() {
 									@mouseenter="focus"
 									@mouseleave="blur"
 								>
-									<Icon
-										icon="image"
-										class="no-fill"
-										color="text-textAlternate"
-									/>
+									<Icon icon="image" class="no-fill" color="text-textAlternate" />
 									{{ fieldName }}
 								</button>
 							</LabeledInput>
@@ -236,11 +185,7 @@ async function create() {
 					</div>
 
 					<div class="flex-1 flex flex-col justify-end">
-						<Button
-							:text="t('Create')"
-							class="self-end"
-							@click="create"
-						/>
+						<Button :text="t('Create')" class="self-end" @click="create" />
 					</div>
 				</div>
 			</div>

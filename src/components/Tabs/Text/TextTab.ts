@@ -3,11 +3,12 @@ import { Tab } from '@/components/TabSystem/Tab'
 import TextTabComponent from '@/components/Tabs/Text/TextTab.vue'
 import { Uri, editor as monaco } from 'monaco-editor'
 import { keyword } from 'color-convert'
-import { fileSystem, projectManager, settings } from '@/App'
+import { fileSystem, settings } from '@/App'
 import { basename } from '@/libs/path'
 import { setMonarchTokensProvider } from '@/libs/monaco/Json'
 import { BedrockProject } from '@/libs/project/BedrockProject'
 import { ThemeManager } from '@/libs/theme/ThemeManager'
+import { ProjectManager } from '@/libs/project/ProjectManager'
 
 export class TextTab extends Tab {
 	public component: Component | null = TextTabComponent
@@ -26,10 +27,10 @@ export class TextTab extends Tab {
 	}
 
 	public async setup() {
-		if (!projectManager.currentProject) return
-		if (!(projectManager.currentProject instanceof BedrockProject)) return
+		if (!ProjectManager.currentProject) return
+		if (!(ProjectManager.currentProject instanceof BedrockProject)) return
 
-		const fileTypeData = projectManager.currentProject.fileTypeData
+		const fileTypeData = ProjectManager.currentProject.fileTypeData
 
 		this.fileType = fileTypeData.get(this.path)
 
@@ -41,12 +42,12 @@ export class TextTab extends Tab {
 	}
 
 	public async mountEditor(element: HTMLElement) {
-		if (!projectManager.currentProject) return
-		if (!(projectManager.currentProject instanceof BedrockProject)) return
+		if (!ProjectManager.currentProject) return
+		if (!(ProjectManager.currentProject instanceof BedrockProject)) return
 
 		this.updateEditorTheme()
 
-		const schemaData = projectManager.currentProject.schemaData
+		const schemaData = ProjectManager.currentProject.schemaData
 
 		this.editor = monaco.create(element, {
 			fontFamily: 'Consolas',

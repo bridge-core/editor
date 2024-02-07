@@ -1,5 +1,5 @@
 import { join } from '@/libs/path'
-import { confirmWindow, fileSystem, projectManager, settings, sidebar } from '@/App'
+import { confirmWindow, fileSystem, settings, sidebar } from '@/App'
 import { BaseFileSystem } from '@/libs/fileSystem/BaseFileSystem'
 import { PWAFileSystem } from '@/libs/fileSystem/PWAFileSystem'
 import { get, set } from 'idb-keyval'
@@ -7,6 +7,7 @@ import { EventSystem } from '@/libs/event/EventSystem'
 import { IConfigJson } from 'mc-project-core'
 import { Ref, onMounted, onUnmounted, ref, watch } from 'vue'
 import { LocalFileSystem } from '@/libs/fileSystem/LocalFileSystem'
+import { ProjectManager } from './ProjectManager'
 
 export class Project {
 	public path: string
@@ -176,16 +177,16 @@ export function useUsingProjectOutputFolder(): Ref<boolean> {
 	const usingProjectOutputFolder: Ref<boolean> = ref(false)
 
 	function update() {
-		if (!projectManager.currentProject) {
+		if (!ProjectManager.currentProject) {
 			usingProjectOutputFolder.value = false
 
 			return
 		}
 
-		usingProjectOutputFolder.value = projectManager.currentProject.usingProjectOutputFolder
+		usingProjectOutputFolder.value = ProjectManager.currentProject.usingProjectOutputFolder
 	}
 
-	watch(projectManager.useCurrentProject(), (newProject, oldProject) => {
+	watch(ProjectManager.useCurrentProject(), (newProject, oldProject) => {
 		if (oldProject) oldProject.eventSystem.off('usingProjectOutputFolderChanged', update)
 
 		if (newProject) {
@@ -196,14 +197,14 @@ export function useUsingProjectOutputFolder(): Ref<boolean> {
 	})
 
 	onMounted(() => {
-		if (projectManager.currentProject)
-			projectManager.currentProject.eventSystem.on('usingProjectOutputFolderChanged', update)
+		if (ProjectManager.currentProject)
+			ProjectManager.currentProject.eventSystem.on('usingProjectOutputFolderChanged', update)
 
 		update()
 	})
 	onUnmounted(() => {
-		if (projectManager.currentProject)
-			projectManager.currentProject.eventSystem.off('usingProjectOutputFolderChanged', update)
+		if (ProjectManager.currentProject)
+			ProjectManager.currentProject.eventSystem.off('usingProjectOutputFolderChanged', update)
 	})
 
 	return usingProjectOutputFolder

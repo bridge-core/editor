@@ -1,13 +1,7 @@
 <template>
-	<Window
-		:name="t('windows.createProject.title')"
-		id="createProject"
-		ref="window"
-	>
+	<Window :name="t('windows.createProject.title')" id="createProject" ref="window">
 		<div class="flex flex-col">
-			<div
-				class="max-h-[36rem] overflow-y-scroll p-4 pt-2 m-4 mt-0 max-width overflow-x-auto"
-			>
+			<div class="max-h-[36rem] overflow-y-scroll p-4 pt-2 m-4 mt-0 max-width overflow-x-auto">
 				<!-- Pack Types -->
 				<div class="flex gap-3 mb-4">
 					<InformativeToggle
@@ -19,47 +13,32 @@
 						:selected="selectedPackTypes.includes(packType)"
 						@click="selectPackType(packType)"
 					>
-						<div
-							class="flex items-center my-4"
-							v-if="packType.id === 'behaviorPack'"
-						>
+						<div class="flex items-center my-4" v-if="packType.id === 'behaviorPack'">
 							<Switch
 								class="mr-2"
 								:model-value="linkResourcePack"
 								@update:model-value="setLinkResourcePack"
 							/>
-							<span
-								class="text-xs text-textAlternate select-none font-inter"
-								>{{
-									t('windows.createProject.rpAsBpDependency')
-								}}</span
-							>
+							<span class="text-xs text-textAlternate select-none font-inter">{{
+								t('windows.createProject.rpAsBpDependency')
+							}}</span>
 						</div>
 
-						<div
-							class="flex items-center my-4"
-							v-if="packType.id === 'resourcePack'"
-						>
+						<div class="flex items-center my-4" v-if="packType.id === 'resourcePack'">
 							<Switch
 								class="mr-2"
 								:model-value="linkBehaviourPack"
 								@update:model-value="setLinkBehaviourPack"
 							/>
-							<span
-								class="text-xs text-textAlternate select-none font-inter"
-								>{{
-									t('windows.createProject.bpAsRpDependency')
-								}}</span
-							>
+							<span class="text-xs text-textAlternate select-none font-inter">{{
+								t('windows.createProject.bpAsRpDependency')
+							}}</span>
 						</div>
 					</InformativeToggle>
 				</div>
 
 				<!-- Experiment Toggles -->
-				<Expandable
-					:name="t('general.experimentalGameplay')"
-					class="mt-6"
-				>
+				<Expandable :name="t('general.experimentalGameplay')" class="mt-6">
 					<div class="flex flex-wrap gap-2">
 						<InformativeToggle
 							v-for="toggle in experimentalToggles"
@@ -67,40 +46,23 @@
 							color="primary"
 							background="background"
 							:name="t(`experimentalGameplay.${toggle.id}.name`)"
-							:description="
-								t(
-									`experimentalGameplay.${toggle.id}.description`
-								)
-							"
-							:selected="
-								selectedExperimentalToggles.includes(toggle)
-							"
+							:description="t(`experimentalGameplay.${toggle.id}.description`)"
+							:selected="selectedExperimentalToggles.includes(toggle)"
 							@click="selectExperimentalToggle(toggle)"
 						/>
 					</div>
 				</Expandable>
 
 				<!-- Files -->
-				<Expandable
-					:name="t('windows.createProject.individualFiles.name')"
-					class="mt-6"
-				>
+				<Expandable :name="t('windows.createProject.individualFiles.name')" class="mt-6">
 					<div class="flex flex-wrap gap-2">
 						<InformativeToggle
 							v-for="file in availableConfigurableFiles"
 							icon="draft"
 							color="primary"
 							background="background"
-							:name="
-								t(
-									`windows.createProject.individualFiles.file.${file.id}.name`
-								)
-							"
-							:description="
-								t(
-									`windows.createProject.individualFiles.file.${file.id}.description`
-								)
-							"
+							:name="t(`windows.createProject.individualFiles.file.${file.id}.name`)"
+							:description="t(`windows.createProject.individualFiles.file.${file.id}.description`)"
 							:selected="selectedFiles.includes(file)"
 							@click="selectFile(file)"
 						/>
@@ -113,12 +75,7 @@
 						class="mb-4 flex bg-background"
 						v-slot="{ focus, blur }"
 					>
-						<input
-							type="file"
-							class="hidden"
-							ref="projectIconInput"
-							@:change="chooseProjectIcon"
-						/>
+						<input type="file" class="hidden" ref="projectIconInput" @:change="chooseProjectIcon" />
 
 						<button
 							class="flex align-center gap-2 text-textAlternate font-inter"
@@ -126,11 +83,7 @@
 							@mouseleave="blur"
 							@click="projectIconInput?.click()"
 						>
-							<Icon
-								icon="image"
-								class="no-fill"
-								color="text-textAlternate"
-							/>
+							<Icon icon="image" class="no-fill" color="text-textAlternate" />
 							{{ t('windows.createProject.icon.placeholder') }}
 						</button>
 					</LabeledInput>
@@ -145,9 +98,7 @@
 							@focus="focus"
 							@blur="blur"
 							v-model="projectName"
-							:placeholder="
-								t('windows.createProject.name.placeholder')
-							"
+							:placeholder="t('windows.createProject.name.placeholder')"
 						/>
 					</LabeledInput>
 				</div>
@@ -162,9 +113,7 @@
 						@focus="focus"
 						@blur="blur"
 						v-model="projectDescription"
-						:placeholder="
-							t('windows.createProject.description.placeholder')
-						"
+						:placeholder="t('windows.createProject.description.placeholder')"
 					/>
 				</LabeledInput>
 
@@ -179,9 +128,7 @@
 							@focus="focus"
 							@blur="blur"
 							v-model="projectNamespace"
-							:placeholder="
-								t('windows.createProject.namespace.placeholder')
-							"
+							:placeholder="t('windows.createProject.namespace.placeholder')"
 						/>
 					</LabeledInput>
 
@@ -195,30 +142,19 @@
 							@focus="focus"
 							@blur="blur"
 							v-model="projectAuthor"
-							:placeholder="
-								t('windows.createProject.author.placeholder')
-							"
+							:placeholder="t('windows.createProject.author.placeholder')"
 						/>
 					</LabeledInput>
 
 					<Dropdown class="mb-4 flex-1">
 						<template #main="{ expanded, toggle }">
 							<LabeledInput
-								:label="
-									t(
-										'windows.createProject.targetVersion.label'
-									)
-								"
+								:label="t('windows.createProject.targetVersion.label')"
 								:focused="expanded"
 								class="bg-background"
 							>
-								<div
-									class="flex items-center justify-between cursor-pointer"
-									@click="toggle"
-								>
-									<span class="font-inter">{{
-										projectTargetVersion
-									}}</span>
+								<div class="flex items-center justify-between cursor-pointer" @click="toggle">
+									<span class="font-inter">{{ projectTargetVersion }}</span>
 
 									<Icon
 										icon="arrow_drop_down"
@@ -230,16 +166,10 @@
 						</template>
 
 						<template #choices="{ collapse }">
-							<div
-								class="mt-2 bg-menuAlternate w-full p-1 rounded"
-							>
-								<div
-									class="flex flex-col max-h-[12rem] overflow-y-auto p-1"
-								>
+							<div class="mt-2 bg-menuAlternate w-full p-1 rounded">
+								<div class="flex flex-col max-h-[12rem] overflow-y-auto p-1">
 									<button
-										v-for="version in formatVersionDefinitions?.formatVersions
-											.slice()
-											.reverse()"
+										v-for="version in formatVersionDefinitions?.formatVersions.slice().reverse()"
 										@click="
 											() => {
 												projectTargetVersion = version
@@ -248,9 +178,7 @@
 										"
 										class="hover:bg-primary text-start p-1 rounded transition-colors duration-100 ease-out font-inter"
 										:class="{
-											'bg-menu':
-												projectTargetVersion ===
-												version,
+											'bg-menu': projectTargetVersion === version,
 										}"
 									>
 										{{ version }}
@@ -285,16 +213,12 @@ import Dropdown from '@/components/Common/Dropdown.vue'
 
 import { Ref, computed, onMounted, ref, watch } from 'vue'
 import { IPackType } from 'mc-project-core'
-import { packs } from '@/libs/project/ProjectManager'
+import { ProjectManager, packs } from '@/libs/project/ProjectManager'
 import { ConfigurableFile } from '@/libs/project/create/files/configurable/ConfigurableFile'
-import {
-	FormatVersionDefinitions,
-	ExperimentalToggle,
-	useGetData,
-} from '@/libs/data/Data'
+import { FormatVersionDefinitions, ExperimentalToggle, useGetData } from '@/libs/data/Data'
 import { v4 as uuid } from 'uuid'
 import { useTranslate } from '@/libs/locales/Locales'
-import { data, fileSystem, projectManager } from '@/App'
+import { data, fileSystem } from '@/App'
 
 const t = useTranslate()
 const getData = useGetData()
@@ -339,18 +263,12 @@ const experimentalToggles: Ref<ExperimentalToggle[]> = ref([])
 const selectedExperimentalToggles: Ref<ExperimentalToggle[]> = ref([])
 
 watch(getData, async (getData) => {
-	packTypes.value =
-		(await getData('packages/minecraftBedrock/packDefinitions.json')) || []
+	packTypes.value = (await getData('packages/minecraftBedrock/packDefinitions.json')) || []
 
-	experimentalToggles.value =
-		(await getData(
-			'packages/minecraftBedrock/experimentalGameplay.json'
-		)) || []
+	experimentalToggles.value = (await getData('packages/minecraftBedrock/experimentalGameplay.json')) || []
 
 	formatVersionDefinitions.value =
-		<FormatVersionDefinitions>(
-			await getData('packages/minecraftBedrock/formatVersions.json')
-		) || []
+		<FormatVersionDefinitions>await getData('packages/minecraftBedrock/formatVersions.json') || []
 
 	if (!formatVersionDefinitions.value) return
 
@@ -376,12 +294,10 @@ const formatVersionDefinitions: Ref<FormatVersionDefinitions | null> = ref(null)
 
 const dataValid = computed(() => {
 	if (projectName.value === '') return false
-	if (projectName.value.match(/"|\\|\/|:|\||<|>|\*|\?|~/g) !== null)
-		return false
+	if (projectName.value.match(/"|\\|\/|:|\||<|>|\*|\?|~/g) !== null) return false
 	if (projectName.value.endsWith('.')) return false
 
-	if (projectNamespace.value.toLocaleLowerCase() !== projectNamespace.value)
-		return false
+	if (projectNamespace.value.toLocaleLowerCase() !== projectNamespace.value) return false
 	if (projectNamespace.value.includes(' ')) return false
 	if (projectNamespace.value.includes(':')) return false
 	if (projectNamespace.value === '') return false
@@ -392,29 +308,20 @@ const dataValid = computed(() => {
 async function create() {
 	if (!dataValid.value) return
 
-	projectManager.createProject(
+	ProjectManager.createProject(
 		{
 			name: projectName.value,
 			description: projectDescription.value,
 			namespace: projectNamespace.value,
 			author: projectAuthor.value,
 			targetVersion: projectTargetVersion.value,
-			icon:
-				projectIcon.value ??
-				(await data.getRaw(`packages/common/packIcon.png`)),
-			packs: [
-				'bridge',
-				...selectedPackTypes.value.map((pack) => pack.id),
-			],
+			icon: projectIcon.value ?? (await data.getRaw(`packages/common/packIcon.png`)),
+			packs: ['bridge', ...selectedPackTypes.value.map((pack) => pack.id)],
 			configurableFiles: selectedFiles.value.map((file) => file.id),
 			rpAsBpDependency: linkResourcePack.value,
 			bpAsRpDependency: linkBehaviourPack.value,
-			uuids: Object.fromEntries(
-				selectedPackTypes.value.map((packType) => [packType.id, uuid()])
-			),
-			experiments: selectedExperimentalToggles.value.map(
-				(toggle) => toggle.id
-			),
+			uuids: Object.fromEntries(selectedPackTypes.value.map((packType) => [packType.id, uuid()])),
+			experiments: selectedExperimentalToggles.value.map((toggle) => toggle.id),
 		},
 		fileSystem
 	)
@@ -424,10 +331,7 @@ async function create() {
 
 function selectPackType(packType: IPackType) {
 	if (selectedPackTypes.value.includes(packType)) {
-		selectedPackTypes.value.splice(
-			selectedPackTypes.value.indexOf(packType),
-			1
-		)
+		selectedPackTypes.value.splice(selectedPackTypes.value.indexOf(packType), 1)
 		selectedPackTypes.value = selectedPackTypes.value
 
 		if (packType.id === 'behaviorPack' || packType.id === 'resourcePack') {
@@ -453,10 +357,7 @@ function selectPackType(packType: IPackType) {
 
 function selectExperimentalToggle(toggle: ExperimentalToggle) {
 	if (selectedExperimentalToggles.value.includes(toggle)) {
-		selectedExperimentalToggles.value.splice(
-			selectedExperimentalToggles.value.indexOf(toggle),
-			1
-		)
+		selectedExperimentalToggles.value.splice(selectedExperimentalToggles.value.indexOf(toggle), 1)
 		selectedExperimentalToggles.value = selectedExperimentalToggles.value
 	} else {
 		selectedExperimentalToggles.value.push(toggle)

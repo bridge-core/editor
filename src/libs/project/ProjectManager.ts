@@ -31,17 +31,17 @@ export interface ProjectInfo {
 }
 
 export class ProjectManager {
-	public projects: ProjectInfo[] = []
-	public eventSystem = new EventSystem(['updatedProjects', 'updatedCurrentProject'])
-	public currentProject: Project | null = null
+	public static projects: ProjectInfo[] = []
+	public static eventSystem = new EventSystem(['updatedProjects', 'updatedCurrentProject'])
+	public static currentProject: Project | null = null
 
-	private cacheFileSystem = new LocalFileSystem()
+	private static cacheFileSystem = new LocalFileSystem()
 
-	constructor() {
+	public static setup() {
 		this.cacheFileSystem.setRootName('projectCache')
 	}
 
-	public async loadProjects() {
+	public static async loadProjects() {
 		if (fileSystem instanceof PWAFileSystem && !fileSystem.setup) {
 			this.projects = []
 
@@ -72,7 +72,7 @@ export class ProjectManager {
 		this.eventSystem.dispatch('updatedProjects', null)
 	}
 
-	private addProject(project: ProjectInfo) {
+	private static addProject(project: ProjectInfo) {
 		this.projects.push(project)
 
 		this.updateProjectCache()
@@ -80,7 +80,7 @@ export class ProjectManager {
 		this.eventSystem.dispatch('updatedProjects', null)
 	}
 
-	public async createProject(config: CreateProjectConfig, fileSystem: BaseFileSystem) {
+	public static async createProject(config: CreateProjectConfig, fileSystem: BaseFileSystem) {
 		const packDefinitions: { id: string; defaultPackPath: string }[] = await data.get(
 			'packages/minecraftBedrock/packDefinitions.json'
 		)
@@ -107,7 +107,7 @@ export class ProjectManager {
 		this.addProject(await this.getProjectInfo(projectPath))
 	}
 
-	public async loadProject(name: string) {
+	public static async loadProject(name: string) {
 		console.time('[APP] Load Project')
 
 		this.currentProject = new BedrockProject(name)
@@ -119,7 +119,7 @@ export class ProjectManager {
 		console.timeEnd('[APP] Load Project')
 	}
 
-	public async getProjectInfo(path: string): Promise<ProjectInfo> {
+	public static async getProjectInfo(path: string): Promise<ProjectInfo> {
 		let iconDataUrl = 'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw=='
 
 		if (await fileSystem.exists(join(path, defaultPackPaths['behaviorPack'], 'pack_icon.png')))
@@ -138,7 +138,7 @@ export class ProjectManager {
 		}
 	}
 
-	public useProjects(): Ref<ProjectInfo[]> {
+	public static useProjects(): Ref<ProjectInfo[]> {
 		const projects: Ref<ProjectInfo[]> = ref(this.projects)
 
 		const me = this
@@ -153,7 +153,7 @@ export class ProjectManager {
 		return projects
 	}
 
-	public useCurrentProject(): Ref<Project | null> {
+	public static useCurrentProject(): Ref<Project | null> {
 		// ts typing for some reason doesn't like this type being in a ref
 		const currentProject: Ref<Project | null> = <any>ref(this.currentProject)
 
@@ -169,7 +169,7 @@ export class ProjectManager {
 		return currentProject
 	}
 
-	private async updateProjectCache() {
+	private static async updateProjectCache() {
 		await this.cacheFileSystem.writeFileJson('projects.json', this.projects, false)
 	}
 }
