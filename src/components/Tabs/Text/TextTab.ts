@@ -103,7 +103,7 @@ export class TextTab extends Tab {
 	private getColor(name: string): string {
 		return this.convertColor(
 			//@ts-ignore  Typescript doesn't like indexing the colors for some reason
-			themeManager.get(themeManager.currentTheme).colors[<any>name] ?? 'red'
+			ThemeManager.get(ThemeManager.currentTheme).colors[<any>name] ?? 'red'
 		)
 	}
 
