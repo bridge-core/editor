@@ -70,7 +70,7 @@ const t = useTranslate()
 							<Button
 								icon="vertical_align_bottom"
 								:text="t('Download')"
-								@click="extensions.install(extension)"
+								@click="extensionLibrary.requestInstall(extension)"
 							/>
 						</div>
 					</div>

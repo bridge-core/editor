@@ -3,6 +3,7 @@ import { join } from '@/libs/path'
 import { Unzipped, unzip } from 'fflate'
 import { Extension } from './Extension'
 import { PWAFileSystem } from '@/libs/fileSystem/PWAFileSystem'
+import { ProjectManager } from '@/libs/project/ProjectManager'
 
 export interface ExtensionManifest {
 	author: string
@@ -32,21 +33,12 @@ export class Extensions {
 		}
 	}
 
-	public async install(extension: ExtensionManifest) {
-		const arrayBuffer = await (
-			await fetch('https://raw.githubusercontent.com/bridge-core/plugins/master' + extension.link)
-		).arrayBuffer()
+	public async installGlobal(extension: ExtensionManifest) {
+		const unzippedExtension = await this.downloadExtension(extension)
 
-		const unzipped = await new Promise<Unzipped>(async (resolve, reject) =>
-			unzip(new Uint8Array(arrayBuffer), (err, data) => {
-				if (err) reject(err)
-				else resolve(data)
-			})
-		)
+		const path = join('extensions', extension.name.replace(/\s+/g, ''))
 
-		const path = join('/extensions', extension.name.replace(/\s+/g, ''))
-
-		for (const filePath in unzipped) {
+		for (const filePath in unzippedExtension) {
 			if (filePath.startsWith('.')) continue
 
 			await fileSystem.ensureDirectory(join(path, filePath))
@@ -57,10 +49,47 @@ export class Extensions {
 				continue
 			}
 
-			await fileSystem.writeFile(join(path, filePath), unzipped[filePath])
+			await fileSystem.writeFile(join(path, filePath), unzippedExtension[filePath])
 		}
 
 		await this.loadExtension(path)
+	}
+
+	public async installProject(extension: ExtensionManifest) {
+		if (ProjectManager.currentProject === null) return
+
+		const unzippedExtension = await this.downloadExtension(extension)
+
+		const path = join(ProjectManager.currentProject.path, '.bridge/extensions', extension.name.replace(/\s+/g, ''))
+
+		for (const filePath in unzippedExtension) {
+			if (filePath.startsWith('.')) continue
+
+			await fileSystem.ensureDirectory(join(path, filePath))
+
+			if (filePath.endsWith('/')) {
+				await fileSystem.makeDirectory(join(path, filePath))
+
+				continue
+			}
+
+			await fileSystem.writeFile(join(path, filePath), unzippedExtension[filePath])
+		}
+
+		await this.loadExtension(path)
+	}
+
+	private async downloadExtension(extension: ExtensionManifest): Promise<Unzipped> {
+		const arrayBuffer = await (
+			await fetch('https://raw.githubusercontent.com/bridge-core/plugins/master' + extension.link)
+		).arrayBuffer()
+
+		return await new Promise<Unzipped>(async (resolve, reject) =>
+			unzip(new Uint8Array(arrayBuffer), (err, data) => {
+				if (err) reject(err)
+				else resolve(data)
+			})
+		)
 	}
 
 	private async fileSystemReloaded() {

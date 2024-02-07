@@ -9,6 +9,7 @@ import Confirm from '@/components/Windows/Confirm/Confirm.vue'
 import Presets from '@/components/Windows/Presets/Presets.vue'
 import Compiler from '@/components/Windows/Compiler/Compiler.vue'
 import ExtensionLibrary from './components/Windows/ExtensionLibrary/ExtensionLibrary.vue'
+import ExtensionInstallLocation from './components/Windows/ExtensionLibrary/ExtensionInstallLocation.vue'
 
 import { onMounted } from 'vue'
 import { setup } from '@/App'
@@ -28,6 +29,7 @@ onMounted(() => {
 		<Presets />
 		<Compiler />
 		<ExtensionLibrary />
+		<ExtensionInstallLocation />
 		<Settings />
 		<Confirm />
 	</main>

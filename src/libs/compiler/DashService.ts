@@ -113,7 +113,7 @@ export class DashService {
 
 		if (!path.startsWith(this.project.path)) return
 
-		if (path === join(this.project.path, '.bridge/.dash.development.json')) return
+		if (path.startsWith(join(this.project.path, '.bridge/'))) return
 
 		await this.build()
 	}
