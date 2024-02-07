@@ -17,6 +17,7 @@ import { appDataDir, appLocalDataDir, sep } from '@tauri-apps/api/path'
 import { join } from '@/libs/path'
 import { Extensions } from '@/libs/extensions/Extensions'
 import { ExtensionLibrary } from '@/components/Windows/ExtensionLibrary/ExtensionLibrary'
+import { Actions } from '@/libs/actions/Actions'
 
 export const fileSystem = getFileSystem()
 export const data = new Data()
@@ -34,6 +35,7 @@ export const localeManager = new LocaleManager()
 ProjectManager.setup()
 ThemeManager.setup()
 Toolbar.setup()
+Actions.setup()
 
 export async function setup() {
 	console.time('[App] Setup')
