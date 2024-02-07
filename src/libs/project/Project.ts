@@ -1,5 +1,5 @@
 import { join } from '@/libs/path'
-import { confirmWindow, fileSystem, settings, sidebar } from '@/App'
+import { confirmWindow, extensions, fileSystem, settings, sidebar } from '@/App'
 import { BaseFileSystem } from '@/libs/fileSystem/BaseFileSystem'
 import { PWAFileSystem } from '@/libs/fileSystem/PWAFileSystem'
 import { get, set } from 'idb-keyval'
@@ -52,10 +52,14 @@ export class Project {
 		this.eventSystem.dispatch('usingProjectOutputFolderChanged', undefined)
 
 		await this.setupOutputFileSystem()
+
+		await extensions.loadProjectExtensions()
 	}
 
 	public async dispose() {
 		settings.eventSystem.off('updated', this.settingsChanged.bind(this))
+
+		extensions.disposeProjectExtensions()
 	}
 
 	public resolvePackPath(packId?: string, path?: string) {

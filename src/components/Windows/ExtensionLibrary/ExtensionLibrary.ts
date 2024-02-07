@@ -17,8 +17,6 @@ export class ExtensionLibrary {
 		this.extensions = await (
 			await fetch('https://raw.githubusercontent.com/bridge-core/plugins/master/extensions.json')
 		).json()
-
-		console.log(this.extensions)
 	}
 
 	public async open() {

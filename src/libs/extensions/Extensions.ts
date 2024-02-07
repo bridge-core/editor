@@ -19,7 +19,8 @@ export interface ExtensionManifest {
 }
 
 export class Extensions {
-	private extensions: Extension[] = []
+	private globalExtensions: Extension[] = []
+	private projectExtensions: Extension[] = []
 
 	constructor() {
 		fileSystem.eventSystem.on('reloaded', this.fileSystemReloaded.bind(this))
@@ -28,9 +29,23 @@ export class Extensions {
 	public async load() {
 		if (fileSystem instanceof PWAFileSystem && !fileSystem.setup) return
 
-		for (const entry of await fileSystem.readDirectoryEntries('/extensions')) {
+		for (const entry of await fileSystem.readDirectoryEntries('extensions')) {
 			await this.loadExtension(entry.path)
 		}
+	}
+
+	public async loadProjectExtensions() {
+		if (ProjectManager.currentProject === null) return
+
+		for (const entry of await fileSystem.readDirectoryEntries(
+			join(ProjectManager.currentProject.path, '.bridge/extensions')
+		)) {
+			await this.loadProjectExtension(entry.path)
+		}
+	}
+
+	public disposeProjectExtensions() {
+		this.projectExtensions = []
 	}
 
 	public async installGlobal(extension: ExtensionManifest) {
@@ -79,6 +94,18 @@ export class Extensions {
 		await this.loadExtension(path)
 	}
 
+	public isInstalledGlobal(id: string): boolean {
+		return this.globalExtensions.find((extension) => id === extension.id) !== undefined
+	}
+
+	public isInstalledProject(id: string): boolean {
+		return this.projectExtensions.find((extension) => id === extension.id) !== undefined
+	}
+
+	public isInstalled(id: string): boolean {
+		return this.isInstalledGlobal(id) || this.isInstalledProject(id)
+	}
+
 	private async downloadExtension(extension: ExtensionManifest): Promise<Unzipped> {
 		const arrayBuffer = await (
 			await fetch('https://raw.githubusercontent.com/bridge-core/plugins/master' + extension.link)
@@ -100,6 +127,13 @@ export class Extensions {
 		const extension = new Extension(path)
 		await extension.load()
 
-		this.extensions.push(extension)
+		this.globalExtensions.push(extension)
+	}
+
+	private async loadProjectExtension(path: string) {
+		const extension = new Extension(path)
+		await extension.load()
+
+		this.projectExtensions.push(extension)
 	}
 }

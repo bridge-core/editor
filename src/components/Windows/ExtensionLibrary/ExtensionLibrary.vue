@@ -2,10 +2,13 @@
 import SidebarWindow from '../SidebarWindow.vue'
 import LabeledInput from '@/components/Common/LabeledInput.vue'
 import Icon from '@/components/Common/Icon.vue'
+import IconButton from '@/components/Common/IconButton.vue'
 
 import { extensionLibrary, extensions } from '@/App'
 import { useTranslate } from '@/libs/locales/Locales'
 import Button from '@/components/Common/Button.vue'
+import ContextMenu from '@/components/Common/ContextMenu.vue'
+import ContextMenuItem from '@/components/Common/ContextMenuItem.vue'
 
 const t = useTranslate()
 </script>
@@ -65,13 +68,39 @@ const t = useTranslate()
 						</div>
 
 						<div class="flex gap-2 items-center">
-							<span class="material-symbols-rounded text-base">share</span>
+							<IconButton icon="share" class="text-base" />
 
 							<Button
+								v-if="!extensions.isInstalled(extension.id)"
 								icon="vertical_align_bottom"
-								:text="t('Download')"
+								:text="t('Install')"
 								@click="extensionLibrary.requestInstall(extension)"
 							/>
+
+							<ContextMenu v-else>
+								<template #main="{ toggle }">
+									<IconButton icon="more_vert" class="text-base" @click="toggle" />
+								</template>
+
+								<template #menu="{ close }">
+									<div
+										class="w-56 bg-menuAlternate rounded mt-2 shadow-window overflow-hidden relative z-10 -translate-x-52"
+									>
+										<ContextMenuItem text="Uninstall" icon="delete" class="pt-4" />
+										<ContextMenuItem
+											text="Install in Project"
+											icon="add"
+											v-if="extensions.isInstalledGlobal(extension.id)"
+										/>
+										<ContextMenuItem
+											text="Install Globaly"
+											icon="add"
+											class="pb-4"
+											v-if="extensions.isInstalledProject(extension.id)"
+										/>
+									</div>
+								</template>
+							</ContextMenu>
 						</div>
 					</div>
 
