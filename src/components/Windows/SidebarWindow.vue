@@ -36,7 +36,7 @@ defineExpose({
 <template>
 	<Transition>
 		<div class="w-screen h-app flex justify-center items-center absolute top-toolbar left-0" v-if="opened">
-			<div class="bg-menu w-screen h-app absolute top-0 left-0 opacity-30"></div>
+			<div class="bg-menu w-screen h-app absolute top-0 left-0 opacity-30" @click="close" />
 
 			<div class="bg-background shadow-window rounded-md overflow-hidden flex items-stretch window relative">
 				<div class="bg-menuAlternate w-96">
