@@ -1,4 +1,12 @@
-import { createDir, exists, readBinaryFile, readDir, readTextFile, writeBinaryFile } from '@tauri-apps/api/fs'
+import {
+	createDir,
+	exists,
+	readBinaryFile,
+	readDir,
+	readTextFile,
+	removeDir,
+	writeBinaryFile,
+} from '@tauri-apps/api/fs'
 import { BaseEntry, BaseFileSystem } from './BaseFileSystem'
 import { join } from '@/libs/path'
 import { sep } from '@tauri-apps/api/path'
@@ -145,6 +153,20 @@ export class TauriFileSystem extends BaseFileSystem {
 			await createDir(join(this.basePath, path), { recursive: true })
 		} catch (error) {
 			console.error(`Failed to ensure directory "${path}"`)
+
+			throw error
+		}
+	}
+
+	public async removeDirectory(path: string) {
+		if (this.basePath === null) throw new Error('Base path not set!')
+
+		try {
+			if (await this.exists(path)) return
+
+			await removeDir(join(this.basePath, path))
+		} catch (error) {
+			console.error(`Failed to remove directory "${path}"`)
 
 			throw error
 		}

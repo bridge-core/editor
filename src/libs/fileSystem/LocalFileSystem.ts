@@ -1,5 +1,5 @@
 import { BaseFileSystem } from './BaseFileSystem'
-import { get, keys, set } from 'idb-keyval'
+import { del, get, keys, set } from 'idb-keyval'
 
 export class LocalFileSystem extends BaseFileSystem {
 	private textDecoder = new TextDecoder()
@@ -45,6 +45,12 @@ export class LocalFileSystem extends BaseFileSystem {
 		await set(`localFileSystem/${this.rootName}/${path}`, {
 			kind: 'directory',
 		})
+	}
+
+	public async removeDirectory(path: string) {
+		if (this.rootName === null) throw new Error('Root name not set')
+
+		await del(`localFileSystem/${this.rootName}/${path}`)
 	}
 
 	public async exists(path: string): Promise<boolean> {

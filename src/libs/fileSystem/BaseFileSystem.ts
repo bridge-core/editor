@@ -43,6 +43,10 @@ export class BaseFileSystem {
 		throw new Error('Not implemented!')
 	}
 
+	public async removeDirectory(path: string) {
+		throw new Error('Not implemented!')
+	}
+
 	public async exists(path: string): Promise<boolean> {
 		throw new Error('Not implemented!')
 	}

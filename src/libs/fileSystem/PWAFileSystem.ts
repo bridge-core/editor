@@ -229,6 +229,22 @@ export class PWAFileSystem extends BaseFileSystem {
 		}
 	}
 
+	public async removeDirectory(path: string) {
+		if (this.baseHandle === null) throw new Error('Base handle not set!')
+
+		try {
+			const rootHandle = await await this.traverse(path)
+
+			rootHandle.removeEntry(basename(path), {
+				recursive: true,
+			})
+		} catch (error) {
+			console.error(`Failed to remove directory "${path}"`)
+
+			throw error
+		}
+	}
+
 	public async exists(path: string): Promise<boolean> {
 		if (this.baseHandle === null) throw new Error('Base handle not set!')
 
