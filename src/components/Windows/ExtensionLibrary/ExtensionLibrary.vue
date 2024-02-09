@@ -11,6 +11,10 @@ import ContextMenu from '@/components/Common/ContextMenu.vue'
 import ContextMenuItem from '@/components/Common/ContextMenuItem.vue'
 
 const t = useTranslate()
+
+const isInstalledGlobal = extensions.useIsInstalledGlobal()
+const isInstalledProject = extensions.useIsInstalledProject()
+const isInstalled = extensions.useIsInstalled()
 </script>
 
 <template>
@@ -71,7 +75,7 @@ const t = useTranslate()
 							<IconButton icon="share" class="text-base" />
 
 							<Button
-								v-if="!extensions.isInstalled(extension.id)"
+								v-if="!isInstalled(extension.id)"
 								icon="vertical_align_bottom"
 								:text="t('Install')"
 								@click="extensionLibrary.requestInstall(extension)"
@@ -84,19 +88,24 @@ const t = useTranslate()
 
 								<template #menu="{ close }">
 									<div
-										class="w-56 bg-menuAlternate rounded mt-2 shadow-window overflow-hidden relative z-10 -translate-x-52"
+										class="w-56 bg-menuAlternate rounded mt-2 shadow-window overflow-hidden relative z-10 -ml-52"
 									>
-										<ContextMenuItem text="Uninstall" icon="delete" class="pt-4" />
+										<ContextMenuItem
+											text="Uninstall"
+											icon="delete"
+											class="pt-4"
+											@click="extensions.uninstall(extension.id)"
+										/>
 										<ContextMenuItem
 											text="Install in Project"
 											icon="add"
-											v-if="extensions.isInstalledGlobal(extension.id)"
+											v-if="isInstalledGlobal(extension.id)"
 										/>
 										<ContextMenuItem
-											text="Install Globaly"
+											text="Install Globally"
 											icon="add"
 											class="pb-4"
-											v-if="extensions.isInstalledProject(extension.id)"
+											v-if="isInstalledProject(extension.id)"
 										/>
 									</div>
 								</template>

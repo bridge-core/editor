@@ -33,4 +33,6 @@ export class Extension {
 			ThemeManager.reloadTheme()
 		}
 	}
+
+	public async unload() {}
 }
