@@ -6,8 +6,8 @@ import { EditorCategory } from './Categories/Editor'
 import { GeneralCategory } from './Categories/General'
 import { ProjectsCategory } from './Categories/Projects'
 import { EventSystem } from '@/libs/event/EventSystem'
-import { LocalFileSystem } from '@/libs/fileSystem/LocalFileSystem'
 import { settings, windows } from '@/App'
+import { get, set } from 'idb-keyval'
 
 export class Settings {
 	public categories: Category[] = []
@@ -15,11 +15,7 @@ export class Settings {
 	public eventSystem = new EventSystem(['updated'])
 	public selectedCategory: Ref<Category | null> = ref(null)
 
-	private fileSystem: LocalFileSystem = new LocalFileSystem()
-
 	constructor() {
-		this.fileSystem.setRootName('settings')
-
 		this.addCategory(new GeneralCategory())
 		this.addCategory(new EditorCategory())
 		this.addCategory(new AppearanceCategory())
@@ -30,7 +26,11 @@ export class Settings {
 	}
 
 	public async load() {
-		if (!(await this.fileSystem.exists('settings.json'))) {
+		try {
+			this.settings = JSON.parse((await get('settings')) as string)
+		} catch {}
+
+		if (this.settings === null) {
 			this.settings = {}
 
 			for (const category of this.categories) {
@@ -50,8 +50,6 @@ export class Settings {
 
 			return
 		}
-
-		this.settings = await this.fileSystem.readFileJson('settings.json')
 
 		for (const category of this.categories) {
 			for (const setting of category.settings) {
@@ -90,7 +88,7 @@ export class Settings {
 			if (setting.save) {
 				await setting.save(value)
 			} else {
-				this.fileSystem.writeFileJson('settings.json', this.settings, false)
+				set('settings', JSON.stringify(this.settings))
 			}
 
 			this.eventSystem.dispatch('updated', { id, value })
