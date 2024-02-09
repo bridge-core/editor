@@ -2,9 +2,12 @@ import { fileSystem } from '@/App'
 import { join } from '@/libs/path'
 import { dark } from '@/libs/theme/DefaultThemes'
 import { ThemeManager } from '@/libs/theme/ThemeManager'
+import { Theme } from '@/libs/theme/Theme'
 
 export class Extension {
 	public id: string = 'unloaded'
+
+	private themes: Theme[] = []
 
 	constructor(public path: string) {}
 
@@ -26,6 +29,7 @@ export class Extension {
 				}
 
 				ThemeManager.addTheme(theme)
+				this.themes.push(theme)
 
 				break
 			}
@@ -34,5 +38,9 @@ export class Extension {
 		}
 	}
 
-	public async unload() {}
+	public async unload() {
+		for (const theme of this.themes) {
+			ThemeManager.removeTheme(theme)
+		}
+	}
 }

@@ -40,6 +40,9 @@ Actions.setup()
 export async function setup() {
 	console.time('[App] Setup')
 
+	ThemeManager.load()
+	LocaleManager.applyDefaultLanguage()
+
 	fileSystem.eventSystem.on('reloaded', () => {
 		console.time('[App] Projects')
 		ProjectManager.loadProjects()
@@ -48,21 +51,17 @@ export async function setup() {
 
 	if (fileSystem instanceof TauriFileSystem) await setupTauriFileSystem()
 
-	console.time('[App] Locale')
-	await LocaleManager.applyDefaultLanguage()
-	console.timeEnd('[App] Locale')
-
 	console.time('[App] Settings')
 	await settings.load()
 	console.timeEnd('[App] Settings')
 
-	console.time('[App] Projects')
-	await ProjectManager.loadProjects()
-	console.timeEnd('[App] Projects')
-
 	console.time('[App] Data')
 	await data.load()
 	console.timeEnd('[App] Data')
+
+	console.time('[App] Projects')
+	await ProjectManager.loadProjects()
+	console.timeEnd('[App] Projects')
 
 	console.time('[App] Extensions')
 	await extensions.load()

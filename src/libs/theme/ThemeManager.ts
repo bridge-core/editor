@@ -2,6 +2,7 @@ import { Theme, colorNames } from './Theme'
 import { dark } from './DefaultThemes'
 import { onMounted, onUnmounted, ref } from 'vue'
 import { EventSystem } from '@/libs/event/EventSystem'
+import { get, set } from 'idb-keyval'
 
 export class ThemeManager {
 	public static themes: Theme[] = []
@@ -10,13 +11,36 @@ export class ThemeManager {
 
 	public static setup() {
 		this.addTheme(dark)
-		this.applyTheme(dark.id)
+	}
+
+	public static async load() {
+		let lastUsedTheme: Theme = dark
+		try {
+			lastUsedTheme = JSON.parse((await get('lastUsedTheme')) as string)
+		} catch {}
+
+		this.addTheme(lastUsedTheme)
+		this.applyTheme(lastUsedTheme.id)
 	}
 
 	public static addTheme(theme: Theme) {
-		this.themes.push(theme)
+		const duplicateIndex = this.themes.findIndex((otherTheme) => otherTheme.id === theme.id)
+
+		if (duplicateIndex !== -1) {
+			this.themes[duplicateIndex] = theme
+		} else {
+			this.themes.push(theme)
+		}
 
 		this.eventSystem.dispatch('themesUpdated', null)
+	}
+
+	public static removeTheme(theme: Theme) {
+		this.themes = this.themes.filter((otherTheme) => otherTheme.id !== theme.id)
+
+		this.eventSystem.dispatch('themesUpdated', null)
+
+		if (this.currentTheme === theme.id) this.applyTheme(dark.id)
 	}
 
 	public static applyTheme(themeId: string) {
@@ -31,6 +55,8 @@ export class ThemeManager {
 		for (const name of colorNames) {
 			root.style.setProperty(`--theme-color-${name}`, theme.colors[name])
 		}
+
+		set('lastUsedTheme', JSON.stringify(theme))
 	}
 
 	public static reloadTheme() {
