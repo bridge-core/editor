@@ -1,7 +1,7 @@
 import { Component, ref } from 'vue'
 import { Tab } from '@/components/TabSystem/Tab'
 import TextTabComponent from '@/components/Tabs/Text/TextTab.vue'
-import { Uri, editor as monaco } from 'monaco-editor'
+import { Uri, languages, editor as monaco } from 'monaco-editor'
 import { keyword } from 'color-convert'
 import { fileSystem, settings } from '@/App'
 import { basename } from '@/libs/path'
@@ -49,8 +49,6 @@ export class TextTab extends Tab {
 
 		ThemeManager.eventSystem.on('themeChanged', this.updateEditorTheme.bind(this))
 
-		const schemaData = ProjectManager.currentProject.schemaData
-
 		this.editor = monaco.create(element, {
 			fontFamily: 'Consolas',
 			//@ts-ignore Monaco types have not been update yet
@@ -64,12 +62,20 @@ export class TextTab extends Tab {
 		this.model = monaco.getModel(Uri.file(this.path))
 
 		if (this.model === null) {
-			this.model = monaco.createModel(fileContent, this.fileType?.type ?? 'json', Uri.file(this.path))
+			this.model = monaco.createModel(
+				fileContent,
+				this.fileType?.meta.language ?? 'plaintext',
+				Uri.file(this.path)
+			)
 		}
 
 		this.editor.setModel(this.model)
 
+		const schemaData = ProjectManager.currentProject.schemaData
+		const scriptTypeData = ProjectManager.currentProject.scriptTypeData
+
 		if (this.fileType && this.fileType.schema) await schemaData.applySchemaForFile(this.path, this.fileType.schema)
+		if (this.fileType && this.fileType.types) await scriptTypeData.applyTypesForFile(this.path, this.fileType.types)
 
 		this.updateEditorTheme()
 

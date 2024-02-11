@@ -18,6 +18,7 @@ import { join } from '@/libs/path'
 import { Extensions } from '@/libs/extensions/Extensions'
 import { ExtensionLibrary } from '@/components/Windows/ExtensionLibrary/ExtensionLibrary'
 import { Actions } from '@/libs/actions/Actions'
+import { setupTypescript } from './libs/monaco/TypeScript'
 
 export const fileSystem = getFileSystem()
 export const data = new Data()
@@ -50,6 +51,8 @@ export async function setup() {
 	})
 
 	if (fileSystem instanceof TauriFileSystem) await setupTauriFileSystem()
+
+	setupTypescript()
 
 	console.time('[App] Settings')
 	await settings.load()

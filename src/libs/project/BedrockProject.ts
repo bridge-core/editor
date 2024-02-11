@@ -6,13 +6,15 @@ import { FileTypeData } from '@/libs/data/bedrock/FileTypeData'
 import { data } from '@/App'
 import { SchemaData } from '@/libs/data/bedrock/SchemaData'
 import { PresetData } from '@/libs/data/bedrock/PresetData'
-import { IndexerService } from '../indexer/bedrock/IndexerService'
+import { ScriptTypeData } from '@/libs/data/bedrock/ScriptTypeData'
+import { IndexerService } from '@/libs/indexer/bedrock/IndexerService'
 
 export class BedrockProject extends Project {
 	public packDefinitions: IPackType[] = []
 	public fileTypeData = new FileTypeData()
 	public schemaData = new SchemaData()
 	public presetData = new PresetData()
+	public scriptTypeData = new ScriptTypeData(this)
 	public indexerService = new IndexerService(this)
 	public dashService = new DashService(this)
 
@@ -28,6 +30,8 @@ export class BedrockProject extends Project {
 		await this.schemaData.load()
 
 		await this.presetData.load()
+
+		await this.scriptTypeData.load()
 
 		await this.dashService.setup()
 
