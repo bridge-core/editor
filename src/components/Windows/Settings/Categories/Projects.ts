@@ -20,6 +20,7 @@ export class ProjectsCategory extends Category {
 				undefined,
 				'windows.settings.projects.outputFolder.name',
 				'windows.settings.projects.outputFolder.description',
+				undefined,
 				async (value) => await set('defaultOutputFolder', value),
 				async () => await get('defaultOutputFolder')
 			)

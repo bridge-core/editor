@@ -1,6 +1,6 @@
 import { Ref, ShallowRef, onMounted, onUnmounted, ref, shallowRef } from 'vue'
 import { ActionsCategory } from './Categories/Actions'
-import { AppearanceCategory } from './Categories/Appearance'
+import { AppearanceCategory } from './Categories/Appearance/Appearance'
 import { Category } from './Categories/Category'
 import { EditorCategory } from './Categories/Editor'
 import { GeneralCategory } from './Categories/General'
@@ -42,7 +42,7 @@ export class Settings {
 
 			for (const category of this.categories) {
 				for (const setting of category.settings) {
-					if (setting.update) await setting.update(this.settings[setting.id])
+					if (setting.update) await setting.update(this.settings[setting.id], true)
 
 					this.eventSystem.dispatch('updated', { id: setting.id, value: this.settings[setting.id] })
 				}
@@ -59,7 +59,7 @@ export class Settings {
 					this.settings[setting.id] = setting.defaultValue
 				}
 
-				if (setting.update) await setting.update(this.settings[setting.id])
+				if (setting.update) await setting.update(this.settings[setting.id], true)
 
 				this.eventSystem.dispatch('updated', { id: setting.id, value: this.settings[setting.id] })
 			}
@@ -83,7 +83,7 @@ export class Settings {
 			const setting = category.settings.find((setting) => setting.id === id)
 			if (!setting) continue
 
-			if (setting.update) await setting.update(value)
+			if (setting.update) await setting.update(value, false)
 
 			if (setting.save) {
 				await setting.save(value)

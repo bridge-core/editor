@@ -1,5 +1,5 @@
 import { Theme, colorNames } from './Theme'
-import { dark } from './DefaultThemes'
+import { dark, light } from './DefaultThemes'
 import { onMounted, onUnmounted, ref } from 'vue'
 import { EventSystem } from '@/libs/event/EventSystem'
 import { get, set } from 'idb-keyval'
@@ -11,10 +11,11 @@ export class ThemeManager {
 
 	public static setup() {
 		this.addTheme(dark)
+		this.addTheme(light)
 	}
 
 	public static async load() {
-		let lastUsedTheme: Theme = dark
+		let lastUsedTheme: Theme = this.prefersDarkMode() ? dark : light
 		try {
 			lastUsedTheme = JSON.parse((await get('lastUsedTheme')) as string)
 		} catch {}
@@ -102,5 +103,9 @@ export class ThemeManager {
 		this.eventSystem.on('themesUpdated', update)
 
 		return themes
+	}
+
+	public static prefersDarkMode(): boolean {
+		return window.matchMedia('(prefers-color-scheme: dark)').matches
 	}
 }

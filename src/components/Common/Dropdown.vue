@@ -31,7 +31,7 @@ onMounted(() => {
 			<slot name="main" :expanded="expanded" :toggle="toggleExpanded" />
 		</div>
 
-		<div class="absolute" ref="container">
+		<div class="absolute z-10" ref="container">
 			<div v-if="expanded">
 				<slot name="choices" :collapse="toggleExpanded" />
 			</div>
