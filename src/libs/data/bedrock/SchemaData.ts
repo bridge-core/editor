@@ -298,7 +298,6 @@ export class SchemaData {
 							return data
 						},
 						customComponents(fileType: any) {
-							console.warn('Not Implemented yet!')
 							return {}
 						},
 						getIndexedPaths(fileType: string, sort: boolean) {

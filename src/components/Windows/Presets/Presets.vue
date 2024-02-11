@@ -69,6 +69,17 @@ async function create() {
 
 	await ProjectManager.currentProject.presetData.createPreset(selectedPresetPath.value, createPresetOptions.value)
 }
+
+const search = ref('')
+
+const filteredCategories = computed(() => {
+	return Object.keys(categories.value).filter(
+		(category) =>
+			categories.value[category].filter((presetPath) =>
+				availablePresets.value[presetPath].name.toLowerCase().includes(search.value.toLowerCase())
+			).length > 0
+	)
+})
 </script>
 
 <template>
@@ -78,15 +89,22 @@ async function create() {
 				<LabeledInput v-slot="{ focus, blur }" :label="t('Search Presets')" class="bg-menuAlternate !mt-1 mb-2">
 					<div class="flex gap-1">
 						<Icon icon="search" class="transition-colors duration-100 ease-out" />
-						<input @focus="focus" @blur="blur" class="outline-none border-none bg-transparent font-inter" />
+						<input
+							@focus="focus"
+							@blur="blur"
+							class="outline-none border-none bg-transparent font-inter"
+							v-model="search"
+						/>
 					</div>
 				</LabeledInput>
 
 				<div class="overflow-y-scroll max-h-[34rem]">
-					<Expandable v-for="category of Object.keys(categories)" :name="t(category)">
+					<Expandable v-for="category of filteredCategories" :name="t(category)">
 						<div class="flex flex-col">
 							<button
-								v-for="presetPath of categories[category]"
+								v-for="presetPath of categories[category].filter((presetPath) =>
+									availablePresets[presetPath].name.toLowerCase().includes(search.toLowerCase())
+								)"
 								class="flex align-center gap-2 border-transparent hover:border-text border-2 transition-colors duration-100 ease-out rounded p-2 mt-1"
 								:class="{
 									'bg-primary': selectedPresetPath === presetPath,
