@@ -19,11 +19,17 @@ export class LocalFileSystem extends BaseFileSystem {
 	public async readFileText(path: string): Promise<string> {
 		if (this.rootName === null) throw new Error('Root name not set')
 
-		const content = (await get(`localFileSystem/${this.rootName}/${path}`)).content
+		try {
+			const content = (await get(`localFileSystem/${this.rootName}/${path}`)).content
 
-		if (typeof content === 'string') return content
+			if (typeof content === 'string') return content
 
-		return this.textDecoder.decode(new Uint8Array(content))
+			return this.textDecoder.decode(new Uint8Array(content))
+		} catch (error) {
+			console.error(`Failed to read file text "${path}"`)
+
+			throw error
+		}
 	}
 
 	public async readFileJson(path: string): Promise<any> {

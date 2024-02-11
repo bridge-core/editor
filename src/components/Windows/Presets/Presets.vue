@@ -4,6 +4,9 @@ import LabeledInput from '@/components/Common/LabeledInput.vue'
 import Expandable from '@/components/Common/Expandable.vue'
 import Icon from '@/components/Common/Icon.vue'
 import Button from '@/components/Common/Button.vue'
+import Switch from '@/components/Common/Switch.vue'
+import Dropdown from '@/components/Common/Dropdown.vue'
+
 import { useTranslate } from '@/libs/locales/Locales'
 import { ComputedRef, Ref, computed, ref, watch } from 'vue'
 import { BedrockProject } from '@/libs/project/BedrockProject'
@@ -99,12 +102,13 @@ const filteredCategories = computed(() => {
 				</LabeledInput>
 
 				<div class="overflow-y-scroll max-h-[34rem]">
-					<Expandable v-for="category of filteredCategories" :name="t(category)">
+					<Expandable v-for="category of filteredCategories" :key="category" :name="t(category)">
 						<div class="flex flex-col">
 							<button
 								v-for="presetPath of categories[category].filter((presetPath) =>
 									availablePresets[presetPath].name.toLowerCase().includes(search.toLowerCase())
 								)"
+								:key="presetPath"
 								class="flex align-center gap-2 border-transparent hover:border-text border-2 transition-colors duration-100 ease-out rounded p-2 mt-1"
 								:class="{
 									'bg-primary': selectedPresetPath === presetPath,
@@ -199,6 +203,59 @@ const filteredCategories = computed(() => {
 									{{ fieldName }}
 								</button>
 							</LabeledInput>
+
+							<div v-if="fieldOptions.type === 'switch'" class="mb-6 flex gap-4 items-center">
+								<Switch
+									:model-value="createPresetOptions[fieldId]"
+									@update:modelValue="
+									(value: boolean) =>
+										(createPresetOptions[fieldId] = value)"
+								/>
+
+								<p class="font-inter text-textAlternate">{{ fieldName }}</p>
+							</div>
+
+							<Dropdown v-if="fieldOptions.type === 'selectInput'" class="mb-6 flex-1">
+								<template #main="{ expanded, toggle }">
+									<LabeledInput :label="t(fieldName)" :focused="expanded" class="bg-background">
+										<div class="flex items-center justify-between cursor-pointer" @click="toggle">
+											<span class="font-inter">{{
+												fieldOptions.options.find(
+													(option: any) => option.value === createPresetOptions[fieldId]
+												).text
+											}}</span>
+
+											<Icon
+												icon="arrow_drop_down"
+												class="transition-transform duration-200 ease-out"
+												:class="{ '-rotate-180': expanded }"
+											/>
+										</div>
+									</LabeledInput>
+								</template>
+
+								<template #choices="{ collapse }">
+									<div class="mb-4 bg-menuAlternate w-full p-1 rounded">
+										<div class="flex flex-col max-h-[12rem] overflow-y-auto p-1">
+											<button
+												v-for="dropdownItem in fieldOptions.options"
+												@click="
+													() => {
+														createPresetOptions[fieldId] = dropdownItem.value
+														collapse()
+													}
+												"
+												class="hover:bg-primary text-start p-1 rounded transition-colors duration-100 ease-out font-inter"
+												:class="{
+													'bg-menu': createPresetOptions[fieldId] === dropdownItem.value,
+												}"
+											>
+												{{ dropdownItem.text }}
+											</button>
+										</div>
+									</div>
+								</template>
+							</Dropdown>
 						</div>
 					</div>
 

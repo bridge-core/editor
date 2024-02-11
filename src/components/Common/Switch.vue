@@ -1,8 +1,5 @@
 <template>
-	<div
-		class="relative text-base"
-		@click.stop="$emit('update:modelValue', !modelValue)"
-	>
+	<div class="relative text-base" @click.stop="$emit('update:modelValue', !modelValue)">
 		<div class="w-[2.5rem] h-5">
 			<div
 				class="w-full h-full rounded-full transition-colors duration-100 ease-out opacity-20"
@@ -27,7 +24,6 @@
 defineProps({
 	modelValue: {
 		type: Boolean,
-		required: true,
 	},
 })
 defineEmits(['update:modelValue'])

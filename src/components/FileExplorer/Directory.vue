@@ -29,6 +29,8 @@ async function updateEntries(path: unknown) {
 
 	if (!path.startsWith(props.path)) return
 
+	if (!(await fileSystem.exists(props.path))) return
+
 	entries.value = await fileSystem.readDirectoryEntries(props.path)
 }
 

@@ -30,6 +30,12 @@ export class PresetData {
 			options[key] = value
 		}
 
+		for (const [name, key, fieldOptions] of preset.fields) {
+			if (!fieldOptions.default) continue
+
+			options[key] = fieldOptions.default
+		}
+
 		return options
 	}
 
@@ -53,11 +59,14 @@ export class PresetData {
 			if (isScript) {
 				let templatePath = createFileOptions
 
-				templatePath = join('packages/minecraftBedrock/', templatePath)
+				templatePath = join(dirname(presetPath.substring('file:///data/'.length)), templatePath)
 
 				const script = await data.getText(templatePath)
 
 				const module: any = {}
+
+				// For some reason if this script runs twice no module exports will exist unless we clear the cache
+				this.runtime.clearCache()
 
 				const result = await this.runtime.run(
 					templatePath,
@@ -69,12 +78,12 @@ export class PresetData {
 
 				module.exports({
 					// We are just faking filehandles here since the file system doesn't necesarily use file handles
-					createFile: async (path: string, handle: any, options: any) => {
+					createFile: async (path: string, handle: any | string, options: any) => {
 						const packPath = project.packs[options.packPath]
 						const filePath = join(packPath, path)
 
 						await fileSystem.ensureDirectory(filePath)
-						await fileSystem.writeFile(filePath, handle.content)
+						await fileSystem.writeFile(filePath, typeof handle === 'string' ? handle : handle.content)
 					},
 					createJSONFile: async (path: string, data: any, options: any) => {
 						const packPath = project.packs[options.packPath]
