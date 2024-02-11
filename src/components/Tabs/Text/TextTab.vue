@@ -60,6 +60,12 @@ function paste() {
 
 	contextMenu.value?.close()
 }
+
+function save() {
+	Actions.trigger('save')
+
+	contextMenu.value?.close()
+}
 </script>
 
 <template>
@@ -75,8 +81,12 @@ function paste() {
 
 			<div class="bg-menu h-px m-2" />
 
+			<ContextMenuItem text="Save" icon="save" @click="save" />
+
+			<div class="bg-menu h-px m-2" />
+
 			<ContextMenuItem text="View Documentation" icon="menu_book" @click="Actions.trigger('viewDocumentation')" />
-			<ContextMenuItem text="Format Document" icon="edit_note" @click="Actions.trigger('formatDocumentation')" />
+			<ContextMenuItem text="Format Document" icon="edit_note" @click="Actions.trigger('formatDocument')" />
 			<ContextMenuItem text="Change All Occurances" icon="edit" @click="Actions.trigger('changeAllOccurances')" />
 			<ContextMenuItem text="Go to Definition" icon="search" @click="Actions.trigger('goToDefinition')" />
 			<ContextMenuItem
