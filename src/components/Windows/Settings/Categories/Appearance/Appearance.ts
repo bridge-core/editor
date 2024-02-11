@@ -20,7 +20,7 @@ export class AppearanceCategory extends Category {
 			'windows.settings.appearance.colorScheme.name',
 			'windows.settings.appearance.colorScheme.description',
 			async (value, initial) => {
-				console.log(value, settings.get('darkTheme'), settings.get('lightTheme'))
+				if (initial) return
 
 				if (value === 'auto') value = ThemeManager.prefersDarkMode() ? 'dark' : 'light'
 

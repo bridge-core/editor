@@ -26,6 +26,16 @@ export const dark = {
 		resourcePack: '#0073FF',
 		skinPack: '#fb8c00',
 		worldTemplate: '#4caf50',
+
+		sidebarNavigation: '#1F1F1F',
+		expandedSidebar: '#1F1F1F',
+		sidebarSelection: '#151515',
+		footer: '#111111',
+		tooltip: '#1F1F1F',
+		tabActive: '#121212',
+		tabInactive: '#1F1F1F',
+		lineHighlightBackground: '#292929',
+		scrollbarThumb: '#000000',
 	},
 	highlighter: {
 		invalid: {
@@ -91,6 +101,16 @@ export const light = {
 		resourcePack: '#0073FF',
 		skinPack: '#fb8c00',
 		worldTemplate: '#4caf50',
+
+		sidebarNavigation: '#e8e8e8',
+		expandedSidebar: '#e8e8e8',
+		sidebarSelection: '#FFFFFF',
+		tooltip: '#424242',
+		footer: '#f5f5f5',
+		tabActive: '#fafafa',
+		tabInactive: '#e0e0e0',
+		lineHighlightBackground: '#e0e0e0',
+		scrollbarThumb: '#c8c8c8',
 	},
 	highlighter: {
 		type: {

@@ -47,6 +47,8 @@ export class TextTab extends Tab {
 
 		this.updateEditorTheme()
 
+		ThemeManager.eventSystem.on('themeChanged', this.updateEditorTheme.bind(this))
+
 		const schemaData = ProjectManager.currentProject.schemaData
 
 		this.editor = monaco.create(element, {
@@ -89,6 +91,8 @@ export class TextTab extends Tab {
 	public unmountEditor() {
 		this.model?.dispose()
 		this.editor?.dispose()
+
+		ThemeManager.eventSystem.off('themeChanged', this.updateEditorTheme)
 	}
 
 	private async save() {
@@ -103,12 +107,13 @@ export class TextTab extends Tab {
 	private getColor(name: string): string {
 		return this.convertColor(
 			//@ts-ignore  Typescript doesn't like indexing the colors for some reason
-			ThemeManager.get(ThemeManager.currentTheme).colors[<any>name] ?? 'red'
+			ThemeManager.get(ThemeManager.currentTheme).colors[<any>name] ?? 'pink'
 		)
 	}
 
 	private convertColor(color: string): string {
 		if (!color) return color
+
 		if (color.startsWith('#')) {
 			if (color.length === 4) {
 				return `#${color[1]}${color[1]}${color[2]}${color[2]}${color[3]}${color[3]}`
@@ -116,7 +121,7 @@ export class TextTab extends Tab {
 			return color
 		}
 
-		return keyword.hex(color as any)
+		return '#' + keyword.hex(color as any)
 	}
 
 	private updateEditorTheme() {
@@ -126,28 +131,28 @@ export class TextTab extends Tab {
 			base: theme.colorScheme === 'light' ? 'vs' : 'vs-dark',
 			inherit: false,
 			colors: {
-				'editor.background': this.convertColor(this.getColor('background')),
-				'editor.lineHighlightBackground': this.convertColor(this.getColor('lineHighlightBackground')),
-				'editorWidget.background': this.convertColor(this.getColor('background')),
-				'editorWidget.border': this.convertColor(this.getColor('sidebarNavigation')),
-				'pickerGroup.background': this.convertColor(this.getColor('background')),
-				'pickerGroup.border': this.convertColor(this.getColor('sidebarNavigation')),
-				'badge.background': this.convertColor(this.getColor('background')),
+				'editor.background': this.getColor('background'),
+				'editor.lineHighlightBackground': this.getColor('lineHighlightBackground'),
+				'editorWidget.background': this.getColor('background'),
+				'editorWidget.border': this.getColor('sidebarNavigation'),
+				'pickerGroup.background': this.getColor('background'),
+				'pickerGroup.border': this.getColor('sidebarNavigation'),
+				'badge.background': this.getColor('background'),
 
-				'input.background': this.convertColor(this.getColor('sidebarNavigation')),
-				'input.border': this.convertColor(this.getColor('menu')),
-				'inputOption.activeBorder': this.convertColor(this.getColor('primary')),
-				focusBorder: this.convertColor(this.getColor('primary')),
-				'list.focusBackground': this.convertColor(this.getColor('menu')),
-				'list.hoverBackground': this.convertColor(this.getColor('sidebarNavigation')),
-				contrastBorder: this.convertColor(this.getColor('sidebarNavigation')),
+				'input.background': this.getColor('sidebarNavigation'),
+				'input.border': this.getColor('menu'),
+				'inputOption.activeBorder': this.getColor('primary'),
+				focusBorder: this.getColor('primary'),
+				'list.focusBackground': this.getColor('menu'),
+				'list.hoverBackground': this.getColor('sidebarNavigation'),
+				contrastBorder: this.getColor('sidebarNavigation'),
 
-				'peekViewTitle.background': this.convertColor(this.getColor('background')),
-				'peekView.border': this.convertColor(this.getColor('primary')),
-				'peekViewResult.background': this.convertColor(this.getColor('sidebarNavigation')),
-				'peekViewResult.selectionBackground': this.convertColor(this.getColor('menu')),
-				'peekViewEditor.background': this.convertColor(this.getColor('background')),
-				'peekViewEditor.matchHighlightBackground': this.convertColor(this.getColor('menu')),
+				'peekViewTitle.background': this.getColor('background'),
+				'peekView.border': this.getColor('primary'),
+				'peekViewResult.background': this.getColor('sidebarNavigation'),
+				'peekViewResult.selectionBackground': this.getColor('menu'),
+				'peekViewEditor.background': this.getColor('background'),
+				'peekViewEditor.matchHighlightBackground': this.getColor('menu'),
 				...theme.monaco,
 			},
 			rules: [

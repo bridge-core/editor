@@ -7,7 +7,7 @@ import { get, set } from 'idb-keyval'
 export class ThemeManager {
 	public static themes: Theme[] = []
 	public static currentTheme: string = dark.id
-	public static eventSystem = new EventSystem(['themesUpdated'])
+	public static eventSystem = new EventSystem(['themesUpdated', 'themeChanged'])
 
 	public static setup() {
 		this.addTheme(dark)
@@ -58,6 +58,8 @@ export class ThemeManager {
 		}
 
 		set('lastUsedTheme', JSON.stringify(theme))
+
+		this.eventSystem.dispatch('themeChanged', undefined)
 	}
 
 	public static reloadTheme() {

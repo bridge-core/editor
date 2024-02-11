@@ -15,6 +15,11 @@ export const colorNames = [
 	'menuAlternate',
 	'menuAlternate2',
 
+	'behaviorPack',
+	'resourcePack',
+	'worldTemplate',
+	'skinPack',
+
 	'expandedSidebar',
 	'sidebarNavigation',
 	'toolbar',
@@ -25,10 +30,6 @@ export const colorNames = [
 	'tabActive',
 	'tabInactive',
 	'lineHighlightBackground',
-	'behaviorPack',
-	'resourcePack',
-	'worldTemplate',
-	'skinPack',
 ]
 
 export interface Theme {
