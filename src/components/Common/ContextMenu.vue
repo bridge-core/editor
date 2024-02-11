@@ -10,9 +10,9 @@ function toggle() {
 	isOpen.value = !isOpen.value
 
 	if (isOpen.value) {
-		window.addEventListener('click', click)
+		window.addEventListener('mousedown', click)
 	} else {
-		window.removeEventListener('click', click)
+		window.removeEventListener('mousedown', click)
 	}
 }
 
@@ -21,7 +21,7 @@ function open() {
 
 	isOpen.value = true
 
-	window.addEventListener('click', click)
+	window.addEventListener('mousedown', click)
 }
 
 function close() {
@@ -29,7 +29,7 @@ function close() {
 
 	isOpen.value = false
 
-	window.removeEventListener('click', click)
+	window.removeEventListener('mousedown', click)
 }
 
 function click(event: Event) {
@@ -44,7 +44,7 @@ function click(event: Event) {
 onUnmounted(() => {
 	if (!isOpen.value) return
 
-	window.removeEventListener('click', click)
+	window.removeEventListener('mousedown', click)
 })
 
 defineExpose({ open, close })

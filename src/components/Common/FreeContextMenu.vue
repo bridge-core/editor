@@ -16,16 +16,15 @@ watch(openContextMenuId, () => {
 
 	if (!isOpen.value) return
 
-	window.removeEventListener('click', hideContextMenu)
+	window.removeEventListener('mousedown', hideContextMenu)
 
 	isOpen.value = false
 })
 
 function hideContextMenu(event: Event) {
-	if (isElementOrChild(<HTMLElement>event.target, contextMenuElement.value!))
-		return
+	if (isElementOrChild(<HTMLElement>event.target, contextMenuElement.value!)) return
 
-	window.removeEventListener('click', hideContextMenu)
+	window.removeEventListener('mousedown', hideContextMenu)
 
 	isOpen.value = false
 }
@@ -48,16 +47,24 @@ async function open(event: MouseEvent) {
 
 	isOpen.value = true
 
-	window.addEventListener('click', hideContextMenu)
+	window.addEventListener('mousedown', hideContextMenu)
+}
+
+function close() {
+	if (!isOpen.value) return
+
+	window.removeEventListener('mousedown', hideContextMenu)
+
+	isOpen.value = false
 }
 
 onUnmounted(() => {
 	if (!isOpen.value) return
 
-	window.removeEventListener('click', hideContextMenu)
+	window.removeEventListener('mousedown', hideContextMenu)
 })
 
-defineExpose({ open })
+defineExpose({ open, close })
 </script>
 
 <template>
@@ -79,11 +86,11 @@ defineExpose({ open })
 
 <style scoped>
 .v-enter-active {
-	transition: opacity 0.15s ease, scale 0.2s ease, translate 0.2s ease;
+	transition: opacity 0.05s ease, scale 0.1s ease, translate 0.1s ease;
 }
 
 .v-leave-active {
-	transition: opacity 0.15s ease, scale 0.2s ease, translate 0.2s ease;
+	transition: opacity 0.05s ease, scale 0.1s ease, translate 0.1s ease;
 }
 
 .v-enter-to,

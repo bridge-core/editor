@@ -96,6 +96,30 @@ export class TextTab extends Tab {
 		this.icon.value = this.fileTypeIcon
 	}
 
+	public copy() {
+		if (!this.model) return
+		if (!this.editor) return
+
+		this.editor.focus()
+		this.editor.trigger('action', 'editor.action.clipboardCopyAction', undefined)
+	}
+
+	public cut() {
+		if (!this.model) return
+		if (!this.editor) return
+
+		this.editor.focus()
+		this.editor.trigger('action', 'editor.action.clipboardCutAction', undefined)
+	}
+
+	public paste() {
+		if (!this.model) return
+		if (!this.editor) return
+
+		this.editor.focus()
+		this.editor.trigger('action', 'editor.action.clipboardPasteAction', undefined)
+	}
+
 	private getColor(name: string): string {
 		return this.convertColor(
 			//@ts-ignore  Typescript doesn't like indexing the colors for some reason

@@ -42,6 +42,24 @@ onUnmounted(() => {
 
 	instance.unmountEditor()
 })
+
+function copy() {
+	Actions.trigger('copy')
+
+	contextMenu.value?.close()
+}
+
+function cut() {
+	Actions.trigger('cut')
+
+	contextMenu.value?.close()
+}
+
+function paste() {
+	Actions.trigger('paste')
+
+	contextMenu.value?.close()
+}
 </script>
 
 <template>
@@ -51,9 +69,9 @@ onUnmounted(() => {
 		</div>
 
 		<FreeContextMenu class="w-56" ref="contextMenu">
-			<ContextMenuItem text="Copy" icon="content_copy" class="pt-4" @click="Actions.trigger('copy')" />
-			<ContextMenuItem text="Cut" icon="content_cut" @click="Actions.trigger('cut')" />
-			<ContextMenuItem text="Paste" icon="content_paste" @click="Actions.trigger('paste')" />
+			<ContextMenuItem text="Copy" icon="content_copy" class="pt-4" @click="copy" />
+			<ContextMenuItem text="Cut" icon="content_cut" @click="cut" />
+			<ContextMenuItem text="Paste" icon="content_paste" @click="paste" />
 
 			<div class="bg-menu h-px m-2" />
 

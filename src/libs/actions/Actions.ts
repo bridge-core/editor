@@ -10,8 +10,6 @@ export class Actions {
 	}
 
 	public static trigger(id: string) {
-		console.warn('Triggering action', id)
-
 		if (this.actions[id] === undefined) return
 
 		this.actions[id].trigger()
@@ -31,6 +29,54 @@ export class Actions {
 					focusedTab.save()
 				},
 				keyBinding: 'Ctrl + S',
+			})
+		)
+
+		this.addAction(
+			new Action({
+				id: 'copy',
+				trigger: () => {
+					const focusedTab = tabManager.getFocusedTab()
+
+					if (focusedTab === null) return
+
+					if (!(focusedTab instanceof TextTab)) return
+
+					focusedTab.copy()
+				},
+				keyBinding: 'Ctrl + C',
+			})
+		)
+
+		this.addAction(
+			new Action({
+				id: 'paste',
+				trigger: () => {
+					const focusedTab = tabManager.getFocusedTab()
+
+					if (focusedTab === null) return
+
+					if (!(focusedTab instanceof TextTab)) return
+
+					focusedTab.paste()
+				},
+				keyBinding: 'Ctrl + V',
+			})
+		)
+
+		this.addAction(
+			new Action({
+				id: 'cut',
+				trigger: () => {
+					const focusedTab = tabManager.getFocusedTab()
+
+					if (focusedTab === null) return
+
+					if (!(focusedTab instanceof TextTab)) return
+
+					focusedTab.cut()
+				},
+				keyBinding: 'Ctrl + X',
 			})
 		)
 	}
