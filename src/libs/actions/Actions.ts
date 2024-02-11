@@ -1,4 +1,6 @@
+import { tabManager } from '@/App'
 import { Action } from './Action'
+import { TextTab } from '@/components/Tabs/Text/TextTab'
 
 export class Actions {
 	private static actions: Record<string, Action> = {}
@@ -15,5 +17,21 @@ export class Actions {
 		this.actions[id].trigger()
 	}
 
-	public static setup() {}
+	public static setup() {
+		this.addAction(
+			new Action({
+				id: 'save',
+				trigger: () => {
+					const focusedTab = tabManager.getFocusedTab()
+
+					if (focusedTab === null) return
+
+					if (!(focusedTab instanceof TextTab)) return
+
+					focusedTab.save()
+				},
+				keyBinding: 'Ctrl + S',
+			})
+		)
+	}
 }

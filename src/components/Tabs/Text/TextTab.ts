@@ -73,18 +73,6 @@ export class TextTab extends Tab {
 
 		this.updateEditorTheme()
 
-		window.addEventListener('keydown', async (event) => {
-			if (event.ctrlKey && event.key === 's') {
-				event.preventDefault()
-
-				this.icon.value = 'loading'
-
-				await this.save()
-
-				this.icon.value = this.fileTypeIcon
-			}
-		})
-
 		this.icon.value = this.fileTypeIcon
 	}
 
@@ -95,13 +83,17 @@ export class TextTab extends Tab {
 		ThemeManager.eventSystem.off('themeChanged', this.updateEditorTheme)
 	}
 
-	private async save() {
+	public async save() {
 		if (!this.model) return
 		if (!this.editor) return
+
+		this.icon.value = 'loading'
 
 		this.editor.trigger('contextmenu', 'editor.action.formatDocument', null)
 
 		await fileSystem.writeFile(this.path, this.model.getValue())
+
+		this.icon.value = this.fileTypeIcon
 	}
 
 	private getColor(name: string): string {
