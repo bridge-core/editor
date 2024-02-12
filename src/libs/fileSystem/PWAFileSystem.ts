@@ -2,6 +2,7 @@ import { sep, parse, basename, join } from '@/libs/path'
 import { BaseEntry, BaseFileSystem } from './BaseFileSystem'
 import { Ref, onMounted, onUnmounted, ref } from 'vue'
 import { md5 } from 'js-md5'
+import { dirname } from 'path'
 
 export class PWAFileSystem extends BaseFileSystem {
 	public baseHandle: FileSystemDirectoryHandle | null = null
@@ -146,6 +147,37 @@ export class PWAFileSystem extends BaseFileSystem {
 		}
 	}
 
+	public async writeFile(path: string, content: FileSystemWriteChunkType) {
+		if (this.baseHandle === null) throw new Error('Base handle not set!')
+
+		try {
+			const handle = await (
+				await this.traverse(path)
+			).getFileHandle(basename(path), {
+				create: true,
+			})
+
+			const writable: FileSystemWritableFileStream = await handle.createWritable()
+
+			await writable.write(content)
+			await writable.close()
+		} catch (error) {
+			console.error(`Failed to write "${path}"`, error)
+		}
+	}
+
+	public async removeFile(path: string) {
+		if (this.baseHandle === null) throw new Error('Base handle not set!')
+
+		try {
+			const baseHandle = await await this.traverse(path)
+
+			await baseHandle.removeEntry(basename(path))
+		} catch (error) {
+			console.error(`Failed to remove "${path}"`, error)
+		}
+	}
+
 	public async ensureDirectory(path: string) {
 		if (this.baseHandle === null) throw new Error('Base handle not set!')
 
@@ -167,25 +199,6 @@ export class PWAFileSystem extends BaseFileSystem {
 			console.error(`Failed to ensure directory "${path}"`)
 
 			throw error
-		}
-	}
-
-	public async writeFile(path: string, content: FileSystemWriteChunkType) {
-		if (this.baseHandle === null) throw new Error('Base handle not set!')
-
-		try {
-			const handle = await (
-				await this.traverse(path)
-			).getFileHandle(basename(path), {
-				create: true,
-			})
-
-			const writable: FileSystemWritableFileStream = await handle.createWritable()
-
-			await writable.write(content)
-			await writable.close()
-		} catch (error) {
-			console.error(`Failed to write "${path}"`, error)
 		}
 	}
 

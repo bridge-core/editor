@@ -1,4 +1,4 @@
-import { tabManager } from '@/App'
+import { fileSystem, tabManager } from '@/App'
 import { Action } from './Action'
 import { TextTab } from '@/components/Tabs/Text/TextTab'
 
@@ -9,10 +9,10 @@ export class Actions {
 		this.actions[action.id] = action
 	}
 
-	public static trigger(id: string) {
+	public static trigger(id: string, data?: any) {
 		if (this.actions[id] === undefined) return
 
-		this.actions[id].trigger()
+		this.actions[id].trigger(data)
 	}
 
 	public static setup() {
@@ -75,6 +75,28 @@ export class Actions {
 					if (!(focusedTab instanceof TextTab)) return
 
 					focusedTab.cut()
+				},
+				keyBinding: 'Ctrl + X',
+			})
+		)
+
+		this.addAction(
+			new Action({
+				id: 'deleteFileSystemEntry',
+				trigger: async (data: unknown) => {
+					if (typeof data !== 'string') return
+
+					if (!(await fileSystem.exists(data))) return
+
+					const entry = await fileSystem.getEntry(data)
+
+					if (entry.type === 'directory') {
+						await fileSystem.removeDirectory(data)
+					}
+
+					if (entry.type === 'file') {
+						await fileSystem.removeFile(data)
+					}
 				},
 				keyBinding: 'Ctrl + X',
 			})

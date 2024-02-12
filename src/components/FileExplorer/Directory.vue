@@ -8,6 +8,7 @@ import { BaseEntry } from '@/libs/fileSystem/BaseFileSystem'
 import { fileSystem } from '@/App'
 import FreeContextMenu from '../Common/FreeContextMenu.vue'
 import ContextMenuItem from '../Common/ContextMenuItem.vue'
+import { Actions } from '@/libs/actions/Actions'
 
 const props = defineProps({
 	path: {
@@ -45,6 +46,14 @@ onMounted(async () => {
 onUnmounted(() => {
 	fileSystem.eventSystem.off('pathUpdated', updateEntries)
 })
+
+function executeContextMenuAction(action: string, data: any) {
+	if (!contextMenu.value) return
+
+	Actions.trigger(action, data)
+
+	contextMenu.value.close()
+}
 </script>
 
 <template>
@@ -55,13 +64,52 @@ onUnmounted(() => {
 	</div>
 
 	<div class="ml-1 border-l pl-1 border-menu min-h-[1rem]" v-show="expanded">
-		<div v-for="entry in entries" :key="entry.path">
+		<div
+			v-for="entry in entries.toSorted((a, b) => (a.type === 'file' ? 1 : 0) - (b.type === 'file' ? 1 : 0))"
+			:key="entry.path"
+		>
 			<File :path="entry.path" :color="color" v-if="entry.type === 'file'" />
 			<Directory :path="entry.path" :color="color" v-if="entry.type === 'directory'" />
 		</div>
 	</div>
 
 	<FreeContextMenu ref="contextMenu">
-		<ContextMenuItem icon="help" text="test" />
+		<ContextMenuItem
+			icon="note_add"
+			text="Create File"
+			class="pt-4"
+			@click.stop="executeContextMenuAction('createFile', path)"
+		/>
+		<ContextMenuItem
+			icon="folder"
+			text="Create Folder"
+			@click.stop="executeContextMenuAction('createFolder', path)"
+		/>
+		<ContextMenuItem
+			icon="edit"
+			text="Rename"
+			@click.stop="executeContextMenuAction('renameFileSystemEntry', path)"
+		/>
+		<ContextMenuItem
+			icon="delete"
+			text="Delete"
+			@click.stop="executeContextMenuAction('deleteFileSystemEntry', path)"
+		/>
+		<ContextMenuItem
+			icon="folder_copy"
+			text="Duplicate"
+			@click.stop="executeContextMenuAction('duplicateFileSystemEntry', path)"
+		/>
+		<ContextMenuItem
+			icon="content_copy"
+			text="Copy"
+			@click.stop="executeContextMenuAction('copyFileSystemEntry', path)"
+		/>
+		<ContextMenuItem
+			icon="content_paste"
+			text="Pase"
+			class="pb-4"
+			@click.stop="executeContextMenuAction('pasteFileSystemEntry', path)"
+		/>
 	</FreeContextMenu>
 </template>

@@ -159,7 +159,10 @@ async function contextMenuOpenProjectConfig(close: any) {
 				</ContextMenu>
 			</div>
 
-			<div v-for="entry in entries" :key="entry.path">
+			<div
+				v-for="entry in entries.toSorted((a, b) => (a.type === 'file' ? 1 : 0) - (b.type === 'file' ? 1 : 0))"
+				:key="entry.path"
+			>
 				<File :path="entry.path" :color="selectedPackDefinition!.color" v-if="entry.type === 'file'" />
 				<Directory
 					:path="entry.path"

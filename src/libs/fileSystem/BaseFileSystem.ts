@@ -1,4 +1,5 @@
 import { EventSystem } from '@/libs/event/EventSystem'
+import { dirname } from '@/libs/path'
 
 export class BaseFileSystem {
 	public eventSystem = new EventSystem(['reloaded', 'pathUpdated'])
@@ -31,8 +32,28 @@ export class BaseFileSystem {
 		}
 	}
 
+	public async removeFile(path: string) {
+		throw new Error('Not implemented!')
+	}
+
 	public async readDirectoryEntries(path: string): Promise<BaseEntry[]> {
 		throw new Error('Not implemented!')
+	}
+
+	public async getEntry(path: string): Promise<BaseEntry> {
+		try {
+			const entries = await this.readDirectoryEntries(dirname(path))
+
+			const entry = entries.find((entry) => entry.path === path)
+
+			if (!entry) throw new Error('Entry does not exist')
+
+			return entry
+		} catch (error) {
+			console.error(`Failed to get entry "${path}"`)
+
+			throw error
+		}
 	}
 
 	public async ensureDirectory(path: string) {

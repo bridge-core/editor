@@ -86,11 +86,11 @@ defineExpose({ open, close })
 
 <style scoped>
 .v-enter-active {
-	transition: opacity 0.05s ease, scale 0.1s ease, translate 0.1s ease;
+	transition: opacity 0.05s ease-out, scale 0.05s ease-out, translate 0.05s ease-out;
 }
 
 .v-leave-active {
-	transition: opacity 0.05s ease, scale 0.1s ease, translate 0.1s ease;
+	transition: opacity 0.05s ease-in, scale 0.05s ease-in, translate 0.05s ease-in;
 }
 
 .v-enter-to,

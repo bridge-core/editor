@@ -5,6 +5,7 @@ import {
 	readDir,
 	readTextFile,
 	removeDir,
+	removeFile,
 	writeBinaryFile,
 } from '@tauri-apps/api/fs'
 import { BaseEntry, BaseFileSystem } from './BaseFileSystem'
@@ -121,6 +122,18 @@ export class TauriFileSystem extends BaseFileSystem {
 			await writeBinaryFile(join(this.basePath, path), writeableContent)
 		} catch (error) {
 			console.error(`Failed to write "${path}"`)
+
+			throw error
+		}
+	}
+
+	public async removeFile(path: string) {
+		if (this.basePath === null) throw new Error('Base path not set!')
+
+		try {
+			await removeFile(join(this.basePath, path))
+		} catch (error) {
+			console.error(`Failed to remove "${path}"`)
 
 			throw error
 		}

@@ -1,13 +1,13 @@
 interface ActionConfig {
 	id: string
-	trigger: () => void
+	trigger: (data?: unknown) => void
 	keyBinding?: string
 }
 
 export class Action {
 	public id: string
 	public keyBinding?: string
-	public trigger: () => void
+	public trigger: (data?: unknown) => void
 
 	constructor(config: ActionConfig) {
 		this.id = config.id
@@ -31,7 +31,7 @@ export class Action {
 
 			event.preventDefault()
 
-			this.trigger()
+			this.trigger(undefined)
 		})
 	}
 }
