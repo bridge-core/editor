@@ -15,9 +15,9 @@ export class ScriptTypeData {
 		}
 
 		const validTypes = types.filter((type) => {
-			//TODO: matcher
+			if (!type.requires) return true
 
-			return true
+			return this.project.requirementsMatcher.matches(type.requires)
 		})
 
 		const builtTypes = []

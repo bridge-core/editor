@@ -8,6 +8,7 @@ import { SchemaData } from '@/libs/data/bedrock/SchemaData'
 import { PresetData } from '@/libs/data/bedrock/PresetData'
 import { ScriptTypeData } from '@/libs/data/bedrock/ScriptTypeData'
 import { IndexerService } from '@/libs/indexer/bedrock/IndexerService'
+import { RequirementsMatcher } from '../data/bedrock/RequirementsMatcher'
 
 export class BedrockProject extends Project {
 	public packDefinitions: IPackType[] = []
@@ -17,6 +18,7 @@ export class BedrockProject extends Project {
 	public scriptTypeData = new ScriptTypeData(this)
 	public indexerService = new IndexerService(this)
 	public dashService = new DashService(this)
+	public requirementsMatcher = new RequirementsMatcher(this)
 
 	public async load() {
 		await super.load()
@@ -34,6 +36,8 @@ export class BedrockProject extends Project {
 		await this.scriptTypeData.load()
 
 		await this.dashService.setup()
+
+		await this.requirementsMatcher.setup()
 
 		this.dashService.build()
 	}
