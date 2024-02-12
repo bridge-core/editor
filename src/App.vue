@@ -13,6 +13,7 @@ import ExtensionInstallLocation from './components/Windows/ExtensionLibrary/Exte
 
 import { onMounted } from 'vue'
 import { setup } from '@/App'
+import Prompt from './components/Windows/Prompt/Prompt.vue'
 
 onMounted(() => {
 	setup()
@@ -32,5 +33,6 @@ onMounted(() => {
 		<ExtensionInstallLocation />
 		<Settings />
 		<Confirm />
+		<Prompt />
 	</main>
 </template>

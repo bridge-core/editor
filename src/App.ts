@@ -18,7 +18,8 @@ import { join } from '@/libs/path'
 import { Extensions } from '@/libs/extensions/Extensions'
 import { ExtensionLibrary } from '@/components/Windows/ExtensionLibrary/ExtensionLibrary'
 import { Actions } from '@/libs/actions/Actions'
-import { setupTypescript } from './libs/monaco/TypeScript'
+import { setupTypescript } from '@/libs/monaco/TypeScript'
+import { PromptWindow } from '@/components/Windows/Prompt/PromptWindow'
 
 export const fileSystem = getFileSystem()
 export const data = new Data()
@@ -28,6 +29,7 @@ export const sidebar = new Sidebar()
 export const fileExplorer = new FileExplorer()
 export const settings = new Settings()
 export const confirmWindow = new ConfirmWindow()
+export const promptWindow = new PromptWindow()
 export const extensions = new Extensions()
 export const extensionLibrary = new ExtensionLibrary()
 export const localeManager = new LocaleManager()

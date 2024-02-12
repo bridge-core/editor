@@ -1,6 +1,7 @@
-import { fileSystem, tabManager } from '@/App'
+import { fileSystem, promptWindow, tabManager } from '@/App'
 import { Action } from './Action'
 import { TextTab } from '@/components/Tabs/Text/TextTab'
+import { dirname, join, parse } from '@/libs/path'
 
 export class Actions {
 	private static actions: Record<string, Action> = {}
@@ -83,22 +84,123 @@ export class Actions {
 		this.addAction(
 			new Action({
 				id: 'deleteFileSystemEntry',
-				trigger: async (data: unknown) => {
-					if (typeof data !== 'string') return
+				trigger: async (path: unknown) => {
+					if (typeof path !== 'string') return
 
-					if (!(await fileSystem.exists(data))) return
+					if (!(await fileSystem.exists(path))) return
 
-					const entry = await fileSystem.getEntry(data)
+					const entry = await fileSystem.getEntry(path)
 
 					if (entry.type === 'directory') {
-						await fileSystem.removeDirectory(data)
+						await fileSystem.removeDirectory(path)
 					}
 
 					if (entry.type === 'file') {
-						await fileSystem.removeFile(data)
+						await fileSystem.removeFile(path)
 					}
 				},
-				keyBinding: 'Ctrl + X',
+			})
+		)
+
+		this.addAction(
+			new Action({
+				id: 'createFile',
+				trigger: async (path: unknown) => {
+					if (typeof path !== 'string') return
+
+					promptWindow.open('Create File', 'File Name', 'File Name', (name) => {
+						fileSystem.writeFile(join(path, name), '')
+					})
+				},
+			})
+		)
+
+		this.addAction(
+			new Action({
+				id: 'createFolder',
+				trigger: async (path: unknown) => {
+					if (typeof path !== 'string') return
+
+					promptWindow.open('Create Folder', 'Folder Name', 'Folder Name', (name) => {
+						fileSystem.makeDirectory(join(path, name))
+					})
+				},
+			})
+		)
+
+		this.addAction(
+			new Action({
+				id: 'renameFileSystemEntry',
+				trigger: async (path: unknown) => {
+					if (typeof path !== 'string') return
+
+					promptWindow.open('Rename', 'Name', 'Name', async (newPath) => {
+						if (!(await fileSystem.exists(path))) return
+
+						const entry = await fileSystem.getEntry(path)
+
+						if (entry.type === 'directory') {
+							await fileSystem.copyDirectory(path, join(dirname(path), newPath))
+							await fileSystem.removeDirectory(path)
+						}
+
+						if (entry.type === 'file') {
+							await fileSystem.copyFile(path, join(dirname(path), newPath))
+							await fileSystem.removeFile(path)
+						}
+					})
+				},
+			})
+		)
+
+		this.addAction(
+			new Action({
+				id: 'duplicateFileSystemEntry',
+				trigger: async (path: unknown) => {
+					if (typeof path !== 'string') return
+
+					if (!(await fileSystem.exists(path))) return
+
+					const entry = await fileSystem.getEntry(path)
+
+					const parsedPath = parse(path)
+					let newPathBase = path.substring(0, path.length - parsedPath.ext.length)
+
+					let additionalName = ' copy'
+					let newPath = newPathBase + additionalName + parsedPath.ext
+
+					while (await fileSystem.exists(newPath)) {
+						additionalName += ' copy'
+
+						newPath = newPathBase + additionalName + parsedPath.ext
+					}
+
+					if (entry.type === 'directory') {
+						await fileSystem.copyDirectory(path, newPath)
+					}
+
+					if (entry.type === 'file') {
+						await fileSystem.copyFile(path, newPath)
+					}
+				},
+			})
+		)
+
+		this.addAction(
+			new Action({
+				id: 'copyFileSystemEntry',
+				trigger: async (path: unknown) => {
+					if (typeof path !== 'string') return
+				},
+			})
+		)
+
+		this.addAction(
+			new Action({
+				id: 'pasteFileSystemEntry',
+				trigger: async (path: unknown) => {
+					if (typeof path !== 'string') return
+				},
 			})
 		)
 	}

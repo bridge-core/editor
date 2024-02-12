@@ -36,6 +36,12 @@ export class BaseFileSystem {
 		throw new Error('Not implemented!')
 	}
 
+	public async copyFile(path: string, newPath: string) {
+		const contents = await this.readFile(path)
+
+		await this.writeFile(newPath, contents)
+	}
+
 	public async readDirectoryEntries(path: string): Promise<BaseEntry[]> {
 		throw new Error('Not implemented!')
 	}
@@ -67,6 +73,8 @@ export class BaseFileSystem {
 	public async removeDirectory(path: string) {
 		throw new Error('Not implemented!')
 	}
+
+	public async copyDirectory(path: string, newPath: string) {}
 
 	public async exists(path: string): Promise<boolean> {
 		throw new Error('Not implemented!')
