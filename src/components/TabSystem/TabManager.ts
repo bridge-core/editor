@@ -2,10 +2,13 @@ import { ShallowRef, shallowRef } from 'vue'
 import { Tab } from './Tab'
 import { TabSystem } from './TabSystem'
 import { TextTab } from '@/components/Tabs/Text/TextTab'
+import { ImageTab } from '../Tabs/Image/ImageTab'
 
 export class TabManager {
 	public tabSystems: TabSystem[] = [new TabSystem()]
 	public focusedTabSystem: ShallowRef<TabSystem | null> = shallowRef(null)
+
+	private tabTypes: (typeof Tab)[] = [ImageTab, TextTab]
 
 	public async openTab(tab: Tab) {
 		await this.getDefaultTabSystem().addTab(tab)
@@ -16,19 +19,23 @@ export class TabManager {
 	public openFile(path: string) {
 		for (const tabSystem of this.tabSystems) {
 			for (const tab of tabSystem.tabs.value) {
-				if (tab instanceof TextTab) {
-					if (tab.path === path) {
-						tabSystem.selectTab(tab)
+				if (tab.is(path)) {
+					tabSystem.selectTab(tab)
 
-						this.focusedTabSystem.value = tabSystem
+					this.focusedTabSystem.value = tabSystem
 
-						return
-					}
+					return
 				}
 			}
 		}
 
-		this.openTab(new TextTab(path))
+		for (const TabType of this.tabTypes) {
+			if (TabType.canEdit(path)) {
+				this.openTab(new TabType(path))
+
+				return
+			}
+		}
 	}
 
 	public getDefaultTabSystem(): TabSystem {

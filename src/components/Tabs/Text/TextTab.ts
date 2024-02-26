@@ -1,10 +1,9 @@
 import { Component, ref } from 'vue'
 import { Tab } from '@/components/TabSystem/Tab'
 import TextTabComponent from '@/components/Tabs/Text/TextTab.vue'
-import { Uri, languages, editor as monaco } from 'monaco-editor'
+import { Uri, editor as monaco } from 'monaco-editor'
 import { keyword } from 'color-convert'
 import { fileSystem, settings } from '@/App'
-import { basename } from '@/libs/path'
 import { setMonarchTokensProvider } from '@/libs/monaco/Json'
 import { BedrockProject } from '@/libs/project/BedrockProject'
 import { ThemeManager } from '@/libs/theme/ThemeManager'
@@ -20,10 +19,12 @@ export class TextTab extends Tab {
 
 	private fileType: any | null = null
 
-	constructor(public path: string) {
-		super()
+	public static canEdit(path: string): boolean {
+		return true
+	}
 
-		this.name.value = basename(path)
+	public is(path: string) {
+		return path === this.path
 	}
 
 	public async setup() {
