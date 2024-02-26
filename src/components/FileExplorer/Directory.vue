@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import Icon from '@/components/Common/Icon.vue'
 import File from './File.vue'
+import FreeContextMenu from '@/components/Common/FreeContextMenu.vue'
+import ContextMenuItem from '@/components/Common/ContextMenuItem.vue'
 
 import { Ref, onMounted, onUnmounted, ref } from 'vue'
 import { basename } from '@/libs/path'
 import { BaseEntry } from '@/libs/fileSystem/BaseFileSystem'
 import { fileSystem } from '@/App'
-import FreeContextMenu from '../Common/FreeContextMenu.vue'
-import ContextMenuItem from '../Common/ContextMenuItem.vue'
 import { Actions } from '@/libs/actions/Actions'
 
 const props = defineProps({
@@ -35,8 +35,6 @@ async function updateEntries(path: unknown) {
 	entries.value = await fileSystem.readDirectoryEntries(props.path)
 }
 
-const contextMenu: Ref<typeof FreeContextMenu | null> = ref(null)
-
 onMounted(async () => {
 	fileSystem.eventSystem.on('pathUpdated', updateEntries)
 
@@ -46,6 +44,8 @@ onMounted(async () => {
 onUnmounted(() => {
 	fileSystem.eventSystem.off('pathUpdated', updateEntries)
 })
+
+const contextMenu: Ref<typeof FreeContextMenu | null> = ref(null)
 
 function executeContextMenuAction(action: string, data: any) {
 	if (!contextMenu.value) return
@@ -57,7 +57,7 @@ function executeContextMenuAction(action: string, data: any) {
 </script>
 
 <template>
-	<div class="flex items-center gap-2" @click="expanded = !expanded" @contextmenu.prevent="contextMenu?.open">
+	<div class="flex items-center gap-2" @click="expanded = !expanded" @contextmenu.prevent.stop="contextMenu?.open">
 		<Icon :icon="expanded ? 'folder_open' : 'folder'" :color="color" class="text-sm" />
 
 		<span class="select-none font-inter"> {{ basename(path) }} </span>
@@ -107,7 +107,7 @@ function executeContextMenuAction(action: string, data: any) {
 		/>
 		<ContextMenuItem
 			icon="content_paste"
-			text="Pase"
+			text="Paste"
 			class="pb-4"
 			@click.stop="executeContextMenuAction('pasteFileSystemEntry', path)"
 		/>

@@ -35,7 +35,7 @@ function executeContextMenuAction(action: string, data: any) {
 </script>
 
 <template>
-	<div class="flex items-center gap-2" @click="click" @contextmenu.prevent="contextMenu?.open">
+	<div class="flex items-center gap-2" @click="click" @contextmenu.prevent.stop="contextMenu?.open">
 		<Icon icon="draft" :color="color" class="text-sm" />
 
 		<span class="select-none font-inter"> {{ basename(path) }} </span>
@@ -63,7 +63,7 @@ function executeContextMenuAction(action: string, data: any) {
 			/>
 			<ContextMenuItem
 				icon="content_paste"
-				text="Pase"
+				text="Paste"
 				class="pb-4"
 				@click.stop="executeContextMenuAction('pasteFileSystemEntry', path)"
 			/>

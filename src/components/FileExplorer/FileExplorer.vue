@@ -3,7 +3,8 @@ import File from './File.vue'
 import Directory from './Directory.vue'
 import Icon from '@/components/Common/Icon.vue'
 import ContextMenu from '@/components/Common/ContextMenu.vue'
-import ContextMenuItem from '../Common/ContextMenuItem.vue'
+import ContextMenuItem from '@/components/Common/ContextMenuItem.vue'
+import FreeContextMenu from '@/components/Common/FreeContextMenu.vue'
 
 import { fileSystem, fileExplorer, tabManager, windows } from '@/App'
 import { BaseEntry } from '@/libs/fileSystem/BaseFileSystem'
@@ -13,6 +14,7 @@ import { IPackType } from 'mc-project-core'
 import { BedrockProject } from '@/libs/project/BedrockProject'
 import { useTranslate } from '@/libs/locales/Locales'
 import { ProjectManager } from '@/libs/project/ProjectManager'
+import { Actions } from '@/libs/actions/Actions'
 
 const t = useTranslate()
 
@@ -98,6 +100,16 @@ async function contextMenuOpenProjectConfig(close: any) {
 
 	tabManager.openFile(join(currentProject.value!.path, 'config.json'))
 }
+
+const contextMenu: Ref<typeof FreeContextMenu | null> = ref(null)
+
+function executeContextMenuAction(action: string, data: any) {
+	if (!contextMenu.value) return
+
+	Actions.trigger(action, data)
+
+	contextMenu.value.close()
+}
 </script>
 
 <template>
@@ -159,17 +171,41 @@ async function contextMenuOpenProjectConfig(close: any) {
 				</ContextMenu>
 			</div>
 
-			<div
-				v-for="entry in entries.toSorted((a, b) => (a.type === 'file' ? 1 : 0) - (b.type === 'file' ? 1 : 0))"
-				:key="entry.path"
-			>
-				<File :path="entry.path" :color="selectedPackDefinition!.color" v-if="entry.type === 'file'" />
-				<Directory
-					:path="entry.path"
-					:color="selectedPackDefinition!.color"
-					v-if="entry.type === 'directory'"
-				/>
+			<div class="h-full" @contextmenu.prevent="contextMenu?.open">
+				<div
+					v-for="entry in entries.toSorted(
+						(a, b) => (a.type === 'file' ? 1 : 0) - (b.type === 'file' ? 1 : 0)
+					)"
+					:key="entry.path"
+				>
+					<File :path="entry.path" :color="selectedPackDefinition!.color" v-if="entry.type === 'file'" />
+					<Directory
+						:path="entry.path"
+						:color="selectedPackDefinition!.color"
+						v-if="entry.type === 'directory'"
+					/>
+				</div>
 			</div>
 		</div>
 	</div>
+
+	<FreeContextMenu ref="contextMenu">
+		<ContextMenuItem
+			icon="note_add"
+			text="Create File"
+			class="pt-4"
+			@click.stop="executeContextMenuAction('createFile', selectedPackPath)"
+		/>
+		<ContextMenuItem
+			icon="folder"
+			text="Create Folder"
+			@click.stop="executeContextMenuAction('createFolder', selectedPackPath)"
+		/>
+		<ContextMenuItem
+			icon="content_paste"
+			text="Paste"
+			class="pb-4"
+			@click.stop="executeContextMenuAction('pasteFileSystemEntry', selectedPackPath)"
+		/>
+	</FreeContextMenu>
 </template>

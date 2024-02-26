@@ -1,5 +1,5 @@
 import { EventSystem } from '@/libs/event/EventSystem'
-import { dirname } from '@/libs/path'
+import { basename, dirname, join } from '@/libs/path'
 
 export class BaseFileSystem {
 	public eventSystem = new EventSystem(['reloaded', 'pathUpdated'])
@@ -74,7 +74,19 @@ export class BaseFileSystem {
 		throw new Error('Not implemented!')
 	}
 
-	public async copyDirectory(path: string, newPath: string) {}
+	public async copyDirectory(path: string, newPath: string) {
+		await this.makeDirectory(newPath)
+
+		for (const entry of await this.readDirectoryEntries(path)) {
+			if (entry.type === 'file') {
+				await this.copyFile(entry.path, join(newPath, basename(entry.path)))
+			}
+
+			if (entry.type === 'directory') {
+				await this.copyDirectory(entry.path, join(newPath, basename(entry.path)))
+			}
+		}
+	}
 
 	public async exists(path: string): Promise<boolean> {
 		throw new Error('Not implemented!')

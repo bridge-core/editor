@@ -2,6 +2,8 @@ import { fileSystem, promptWindow, tabManager } from '@/App'
 import { Action } from './Action'
 import { TextTab } from '@/components/Tabs/Text/TextTab'
 import { dirname, join, parse } from '@/libs/path'
+import { getClipboard, setClipboard } from '@/libs/Clipboard'
+import { BaseEntry } from '@/libs/fileSystem/BaseFileSystem'
 
 export class Actions {
 	private static actions: Record<string, Action> = {}
@@ -164,7 +166,7 @@ export class Actions {
 					const entry = await fileSystem.getEntry(path)
 
 					const parsedPath = parse(path)
-					let newPathBase = path.substring(0, path.length - parsedPath.ext.length)
+					const newPathBase = path.substring(0, path.length - parsedPath.ext.length)
 
 					let additionalName = ' copy'
 					let newPath = newPathBase + additionalName + parsedPath.ext
@@ -191,6 +193,10 @@ export class Actions {
 				id: 'copyFileSystemEntry',
 				trigger: async (path: unknown) => {
 					if (typeof path !== 'string') return
+
+					if (!(await fileSystem.exists(path))) return
+
+					setClipboard(await fileSystem.getEntry(path))
 				},
 			})
 		)
@@ -200,6 +206,32 @@ export class Actions {
 				id: 'pasteFileSystemEntry',
 				trigger: async (path: unknown) => {
 					if (typeof path !== 'string') return
+
+					const clipboardEntry = getClipboard()
+
+					if (!(clipboardEntry instanceof BaseEntry)) return
+
+					const sourceEntry = await fileSystem.getEntry(path)
+
+					const parsedPath = parse(clipboardEntry.path)
+					const newPathBase = join(sourceEntry.type === 'directory' ? path : dirname(path), parsedPath.name)
+
+					let additionalName = ' copy'
+					let newPath = newPathBase + additionalName + parsedPath.ext
+
+					while (await fileSystem.exists(newPath)) {
+						additionalName += ' copy'
+
+						newPath = newPathBase + additionalName + parsedPath.ext
+					}
+
+					if (clipboardEntry.type === 'directory') {
+						await fileSystem.copyDirectory(clipboardEntry.path, newPath)
+					}
+
+					if (clipboardEntry.type === 'file') {
+						await fileSystem.copyFile(clipboardEntry.path, newPath)
+					}
 				},
 			})
 		)
