@@ -67,7 +67,7 @@ const search = ref('')
 		</template>
 
 		<template #content>
-			<div class="w-[64rem] h-[38rem] flex flex-col overflow-y-auto p-4 pt-0">
+			<div class="max-w-[64rem] w-[50vw] h-[38rem] flex flex-col overflow-y-auto p-4 pt-0">
 				<div
 					v-if="settings.selectedCategory.value"
 					v-for="item in settings.selectedCategory.value.items.filter(

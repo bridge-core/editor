@@ -55,7 +55,7 @@ const isInstalled = extensions.useIsInstalled()
 			</div>
 		</template>
 		<template #content>
-			<div class="w-[64rem] h-[38rem] flex flex-col overflow-y-auto p-4 pt-0 mr-2">
+			<div class="max-w-[64rem] w-[50vw] h-[38rem] flex flex-col overflow-y-auto p-4 pt-0 mr-2">
 				<div
 					v-for="extension in extensionLibrary.extensions.filter(
 						(extension) =>

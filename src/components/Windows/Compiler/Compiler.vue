@@ -83,7 +83,7 @@ async function droppedOutputFolder(items: DataTransferItemList) {
 			</div>
 		</template>
 		<template #content>
-			<div class="w-[64rem] h-[38rem] flex flex-col overflow-y-auto p-3 pt-0">
+			<div class="max-w-[64rem] w-[50vw] h-[38rem] flex flex-col overflow-y-auto p-3 pt-0">
 				<div v-if="selectedCategory === 'general'">
 					<TextButton
 						text="Compile"

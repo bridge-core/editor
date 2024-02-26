@@ -43,7 +43,7 @@ defineExpose({
 					<slot name="sidebar" />
 				</div>
 
-				<div class="flex-1">
+				<div class="flex-1 w-min">
 					<div class="flex justify-between align-center p-2">
 						<span class="select-none ml-1 text-textAlternate font-inter">
 							{{ name }}
