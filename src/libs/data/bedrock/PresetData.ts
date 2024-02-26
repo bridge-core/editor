@@ -57,9 +57,13 @@ export class PresetData {
 			const isScript = typeof createFileOptions === 'string'
 
 			if (isScript) {
-				let templatePath = createFileOptions
+				let templatePath: string = createFileOptions
 
-				templatePath = join(dirname(presetPath.substring('file:///data/'.length)), templatePath)
+				if (templatePath.startsWith('presetScript/')) {
+					templatePath = join(presetPath.substring('file:///data/'.length).split('/preset/')[0], templatePath)
+				} else {
+					templatePath = join(dirname(presetPath.substring('file:///data/'.length)), templatePath)
+				}
 
 				const script = await data.getText(templatePath)
 
@@ -139,13 +143,20 @@ export class PresetData {
 
 			templatePath = join(dirname(presetPath.substring('file:///data/'.length)), templatePath)
 
-			let templateContent = await data.getText(templatePath)
+			let templateContent = null
+
+			if (templatePath.endsWith('.png')) {
+				templateContent = await data.getRaw(templatePath)
+			} else {
+				templateContent = await data.getText(templatePath)
+			}
 
 			if (templateOptions.inject) {
 				for (const inject of templateOptions.inject) {
 					targetPath = targetPath.replaceAll('{{' + inject + '}}', presetOptions[inject])
 
-					templateContent = templateContent.replaceAll('{{' + inject + '}}', presetOptions[inject])
+					if (typeof templateContent === 'string')
+						templateContent = templateContent.replaceAll('{{' + inject + '}}', presetOptions[inject])
 				}
 			}
 
