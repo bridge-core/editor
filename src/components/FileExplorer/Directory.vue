@@ -58,7 +58,7 @@ function executeContextMenuAction(action: string, data: any) {
 
 <template>
 	<div
-		class="flex items-center gap-2 cursor-pointer hover:py-1 transition-padding duration-100 ease-out"
+		class="flex items-center gap-2 cursor-pointer"
 		@click="expanded = !expanded"
 		@contextmenu.prevent.stop="contextMenu?.open"
 	>

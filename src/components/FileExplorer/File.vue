@@ -35,11 +35,7 @@ function executeContextMenuAction(action: string, data: any) {
 </script>
 
 <template>
-	<div
-		class="flex items-center gap-2 cursor-pointer hover:py-1 transition-padding duration-100 ease-out"
-		@click="click"
-		@contextmenu.prevent.stop="contextMenu?.open"
-	>
+	<div class="flex items-center gap-2 cursor-pointer" @click="click" @contextmenu.prevent.stop="contextMenu?.open">
 		<Icon icon="draft" :color="color" class="text-sm" />
 
 		<span class="select-none font-inter"> {{ basename(path) }} </span>
