@@ -1,5 +1,4 @@
 import { Component, ref } from 'vue'
-import { Tab } from '@/components/TabSystem/Tab'
 import TextTabComponent from '@/components/Tabs/Text/TextTab.vue'
 import { Uri, editor as monaco } from 'monaco-editor'
 import { keyword } from 'color-convert'
@@ -8,8 +7,9 @@ import { setMonarchTokensProvider } from '@/libs/monaco/Json'
 import { BedrockProject } from '@/libs/project/BedrockProject'
 import { ThemeManager } from '@/libs/theme/ThemeManager'
 import { ProjectManager } from '@/libs/project/ProjectManager'
+import { FileTab } from '@/components/TabSystem/FileTab'
 
-export class TextTab extends Tab {
+export class TextTab extends FileTab {
 	public component: Component | null = TextTabComponent
 	public icon = ref('loading')
 

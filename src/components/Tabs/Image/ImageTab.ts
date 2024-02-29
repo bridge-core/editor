@@ -1,9 +1,9 @@
 import { fileSystem } from '@/App'
-import { Tab } from '@/components/TabSystem/Tab'
 import { Component, Ref, ref } from 'vue'
 import ImageTabComponent from './ImageTab.vue'
+import { FileTab } from '@/components/TabSystem/FileTab'
 
-export class ImageTab extends Tab {
+export class ImageTab extends FileTab {
 	public component: Component | null = ImageTabComponent
 	public image: Ref<string | null> = ref(null)
 

@@ -1,6 +1,7 @@
-import { extensionLibrary, fileExplorer, windows } from '@/App'
+import { extensionLibrary, fileExplorer, tabManager, windows } from '@/App'
 import { Ref, ref } from 'vue'
 import { v4 as uuid } from 'uuid'
+import { FindAndReplaceTab } from '../Tabs/FindAnReplace/FindAndReplaceTab'
 
 export interface Notification {
 	icon?: string
@@ -25,7 +26,11 @@ export class Sidebar {
 		this.addButton('folder', () => {
 			fileExplorer.toggle()
 		})
-		this.addButton('quick_reference_all', () => {})
+
+		this.addButton('quick_reference_all', () => {
+			tabManager.openTab(new FindAndReplaceTab())
+		})
+
 		this.addButton('manufacturing', () => {
 			windows.open('compiler')
 		})

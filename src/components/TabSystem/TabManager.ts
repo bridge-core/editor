@@ -3,12 +3,13 @@ import { Tab } from './Tab'
 import { TabSystem } from './TabSystem'
 import { TextTab } from '@/components/Tabs/Text/TextTab'
 import { ImageTab } from '../Tabs/Image/ImageTab'
+import { FileTab } from './FileTab'
 
 export class TabManager {
 	public tabSystems: TabSystem[] = [new TabSystem()]
 	public focusedTabSystem: ShallowRef<TabSystem | null> = shallowRef(null)
 
-	private tabTypes: (typeof Tab)[] = [ImageTab, TextTab]
+	private tabTypes: (typeof FileTab)[] = [ImageTab, TextTab]
 
 	public async openTab(tab: Tab) {
 		await this.getDefaultTabSystem().addTab(tab)
@@ -19,7 +20,7 @@ export class TabManager {
 	public openFile(path: string) {
 		for (const tabSystem of this.tabSystems) {
 			for (const tab of tabSystem.tabs.value) {
-				if (tab.is(path)) {
+				if (tab instanceof FileTab && tab.is(path)) {
 					tabSystem.selectTab(tab)
 
 					this.focusedTabSystem.value = tabSystem
