@@ -3,6 +3,7 @@ import { join } from '@/libs/path'
 import { dark } from '@/libs/theme/DefaultThemes'
 import { ThemeManager } from '@/libs/theme/ThemeManager'
 import { Theme } from '@/libs/theme/Theme'
+import { ExtensionManifest } from './Extensions'
 
 export class Extension {
 	public id: string = 'unloaded'
@@ -12,7 +13,7 @@ export class Extension {
 	constructor(public path: string) {}
 
 	public async load() {
-		const manifest = await fileSystem.readFileJson(join(this.path, 'manifest.json'))
+		const manifest: ExtensionManifest = await fileSystem.readFileJson(join(this.path, 'manifest.json'))
 
 		this.id = manifest.id
 

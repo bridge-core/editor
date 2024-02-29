@@ -28,11 +28,11 @@ export class Data {
 	}
 
 	public async load() {
-		// if (await this.fileSystem.exists('loaded')) {
-		// 	this.eventSystem.dispatch('loaded', null)
+		if (await this.fileSystem.exists('loaded')) {
+			this.eventSystem.dispatch('loaded', null)
 
-		// 	return
-		// }
+			return
+		}
 
 		const rawData = await fetch(baseUrl + 'packages.zip').then((response) => response.arrayBuffer())
 

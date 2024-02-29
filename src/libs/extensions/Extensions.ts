@@ -18,6 +18,7 @@ export interface ExtensionManifest {
 	target: string
 	version: string
 	releaseTimestamp: number
+	contributeFiles: Record<string, { path: string; pack: string }>
 }
 
 export class Extensions {
@@ -56,53 +57,17 @@ export class Extensions {
 	}
 
 	public async installGlobal(extension: ExtensionManifest) {
-		const unzippedExtension = await this.downloadExtension(extension)
-
 		const path = join('extensions', extension.name.replace(/\s+/g, ''))
 
-		for (const filePath in unzippedExtension) {
-			if (filePath.startsWith('.')) continue
-
-			await fileSystem.ensureDirectory(join(path, filePath))
-
-			if (filePath.endsWith('/')) {
-				await fileSystem.makeDirectory(join(path, filePath))
-
-				continue
-			}
-
-			await fileSystem.writeFile(join(path, filePath), unzippedExtension[filePath])
-		}
-
-		await this.loadExtension(path)
-
-		this.eventSystem.dispatch('extensionsUpdated', undefined)
+		await this.installExtension(extension, path)
 	}
 
 	public async installProject(extension: ExtensionManifest) {
 		if (ProjectManager.currentProject === null) return
 
-		const unzippedExtension = await this.downloadExtension(extension)
-
 		const path = join(ProjectManager.currentProject.path, '.bridge/extensions', extension.name.replace(/\s+/g, ''))
 
-		for (const filePath in unzippedExtension) {
-			if (filePath.startsWith('.')) continue
-
-			await fileSystem.ensureDirectory(join(path, filePath))
-
-			if (filePath.endsWith('/')) {
-				await fileSystem.makeDirectory(join(path, filePath))
-
-				continue
-			}
-
-			await fileSystem.writeFile(join(path, filePath), unzippedExtension[filePath])
-		}
-
-		await this.loadExtension(path)
-
-		this.eventSystem.dispatch('extensionsUpdated', undefined)
+		await this.installExtension(extension, path)
 	}
 
 	public async uninstall(id: string) {
@@ -191,6 +156,43 @@ export class Extensions {
 		})
 
 		return isInstalled
+	}
+
+	private async installExtension(extension: ExtensionManifest, path: string) {
+		const unzippedExtension = await this.downloadExtension(extension)
+
+		for (const filePath in unzippedExtension) {
+			if (filePath.startsWith('.')) continue
+
+			await fileSystem.ensureDirectory(join(path, filePath))
+
+			if (filePath.endsWith('/')) {
+				await fileSystem.makeDirectory(join(path, filePath))
+
+				continue
+			}
+
+			await fileSystem.writeFile(join(path, filePath), unzippedExtension[filePath])
+		}
+
+		if (ProjectManager.currentProject !== null) {
+			const contributeFiles = extension.contributeFiles
+
+			if (contributeFiles !== undefined) {
+				for (const [extensionPath, { pack, path: projectPath }] of Object.entries(contributeFiles)) {
+					const resultPath = ProjectManager.currentProject.resolvePackPath(pack, projectPath)
+
+					await fileSystem.ensureDirectory(resultPath)
+					await fileSystem.copyDirectory(join(path, extensionPath), resultPath)
+
+					console.log(contributeFiles, resultPath)
+				}
+			}
+		}
+
+		await this.loadExtension(path)
+
+		this.eventSystem.dispatch('extensionsUpdated', undefined)
 	}
 
 	private async downloadExtension(extension: ExtensionManifest): Promise<Unzipped> {
