@@ -28,7 +28,7 @@ export class Sidebar {
 		})
 
 		this.addButton('quick_reference_all', () => {
-			tabManager.openTab(new FindAndReplaceTab())
+			tabManager.openTab(tabManager.getTabByType(FindAndReplaceTab) ?? new FindAndReplaceTab())
 		})
 
 		this.addButton('manufacturing', () => {

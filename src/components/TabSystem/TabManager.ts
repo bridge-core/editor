@@ -12,16 +12,28 @@ export class TabManager {
 	private tabTypes: (typeof FileTab)[] = [ImageTab, TextTab]
 
 	public async openTab(tab: Tab) {
+		for (const tabSystem of this.tabSystems) {
+			for (const otherTab of tabSystem.tabs.value) {
+				if (otherTab === tab) {
+					await tabSystem.selectTab(tab)
+
+					this.focusedTabSystem.value = tabSystem
+
+					return
+				}
+			}
+		}
+
 		await this.getDefaultTabSystem().addTab(tab)
 
 		this.focusedTabSystem.value = this.getDefaultTabSystem()
 	}
 
-	public openFile(path: string) {
+	public async openFile(path: string) {
 		for (const tabSystem of this.tabSystems) {
 			for (const tab of tabSystem.tabs.value) {
 				if (tab instanceof FileTab && tab.is(path)) {
-					tabSystem.selectTab(tab)
+					await tabSystem.selectTab(tab)
 
 					this.focusedTabSystem.value = tabSystem
 
@@ -32,11 +44,23 @@ export class TabManager {
 
 		for (const TabType of this.tabTypes) {
 			if (TabType.canEdit(path)) {
-				this.openTab(new TabType(path))
+				await this.openTab(new TabType(path))
 
 				return
 			}
 		}
+	}
+
+	public getTabByType<T extends Tab>(tabType: { new (...args: any[]): T }): T | null {
+		for (const tabSystem of this.tabSystems) {
+			for (const tab of tabSystem.tabs.value) {
+				if (tab instanceof tabType) {
+					return tab
+				}
+			}
+		}
+
+		return null
 	}
 
 	public getDefaultTabSystem(): TabSystem {

@@ -17,6 +17,7 @@
 		"bridge-js-runtime": "^0.4.1",
 		"color-convert": "^2.0.1",
 		"dash-compiler": "github:bridge-core/dash-compiler#8fa35c73292f6382747d0f411fca26431a6d2c8e",
+		"escape-string-regexp": "^5.0.0",
 		"fflate": "^0.8.1",
 		"idb-keyval": "^6.2.1",
 		"js-md5": "^0.8.3",

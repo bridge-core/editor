@@ -3,9 +3,10 @@ import LabeledInput from '@/components/Common/LabeledInput.vue'
 import Icon from '@/components/Common/Icon.vue'
 
 import { type FindAndReplaceTab } from './FindAndReplaceTab'
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import { useTranslate } from '@/libs/locales/Locales'
 import Button from '@/components/Common/Button.vue'
+import IconButton from '@/components/Common/IconButton.vue'
 
 const t = useTranslate()
 
@@ -17,6 +18,19 @@ const { instance }: { instance: FindAndReplaceTab } = <any>defineProps({
 
 const search = ref('')
 const replace = ref('')
+const matchWord = ref(false)
+const matchCase = ref(false)
+const useRegex = ref(false)
+
+watch(search, startSearch)
+watch(replace, startSearch)
+watch(matchWord, startSearch)
+watch(matchCase, startSearch)
+watch(useRegex, startSearch)
+
+function startSearch() {
+	instance.startSearch(search.value, matchCase.value, useRegex.value)
+}
 </script>
 
 <template>
@@ -48,9 +62,57 @@ const replace = ref('')
 				</div>
 			</LabeledInput>
 
-			<Button :text="t('Replace')" class="mt-3" />
+			<div class="flex mt-3">
+				<Button :text="t('Replace')" />
+
+				<button
+					class="p-1 rounded transition-colors duration-100 ease-out select-none group hover:bg-text flex items-center ml-2"
+					:class="{
+						'bg-primary': matchWord,
+						'bg-menu': !matchWord,
+					}"
+					@click="matchWord = !matchWord"
+				>
+					<span
+						class="material-symbols-rounded group-hover:text-background transition-colors duration-100 ease-out"
+						>text_format</span
+					>
+				</button>
+
+				<button
+					class="p-1 rounded transition-colors duration-100 ease-out select-none group hover:bg-text flex items-center ml-2"
+					:class="{
+						'bg-primary': matchCase,
+						'bg-menu': !matchCase,
+					}"
+					@click="matchCase = !matchCase"
+				>
+					<span
+						class="material-symbols-rounded group-hover:text-background transition-colors duration-100 ease-out"
+						>match_case</span
+					>
+				</button>
+
+				<button
+					class="p-1 rounded transition-colors duration-100 ease-out select-none group hover:bg-text flex items-center ml-2"
+					:class="{
+						'bg-primary': useRegex,
+						'bg-menu': !useRegex,
+					}"
+					@click="useRegex = !useRegex"
+				>
+					<span
+						class="material-symbols-rounded group-hover:text-background transition-colors duration-100 ease-out"
+						>asterisk</span
+					>
+				</button>
+			</div>
 		</div>
 
-		<div class="mt-2"></div>
+		<div class="mt-2">
+			<p v-for="result of instance.queryResult.value">
+				{{ result }}
+			</p>
+		</div>
 	</div>
 </template>
