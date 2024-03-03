@@ -7,6 +7,7 @@ import { ref, watch } from 'vue'
 import { useTranslate } from '@/libs/locales/Locales'
 import Button from '@/components/Common/Button.vue'
 import IconButton from '@/components/Common/IconButton.vue'
+import { tabManager } from '@/App'
 
 const t = useTranslate()
 
@@ -63,7 +64,7 @@ function startSearch() {
 			</LabeledInput>
 
 			<div class="flex mt-3">
-				<Button :text="t('Replace')" />
+				<Button :text="t('Replace')" @click="() => instance.replace(replace)" />
 
 				<button
 					class="p-1 rounded transition-colors duration-100 ease-out select-none group hover:bg-text flex items-center ml-2"
@@ -110,10 +111,38 @@ function startSearch() {
 		</div>
 
 		<div class="mt-2 h-full flex-1 overflow-auto box-border">
-			<div v-for="result of instance.queryResult.value">
-				<span class="text-textAlternate">{{ result.previousContext ?? '' }}</span>
-				<span class="text-primary font-bold">{{ result.value }}</span>
-				<span class="text-textAlternate">{{ result.nextContext ?? '' }}</span>
+			<div v-for="path of Object.keys(instance.queryResult.value)">
+				<div class="flex items-center gap-2 cursor-pointer" @click="tabManager.openFile(path)">
+					<Icon
+						:icon="instance.queryResult.value[path].icon"
+						class="text-[var(--color)]"
+						:style="{
+							'--color': `var(--theme-color-${instance.queryResult.value[path].color})`,
+						}"
+					/>
+
+					<p class="text-lg font-bold">{{ instance.queryResult.value[path].prettyPath }}</p>
+				</div>
+
+				<div
+					v-for="result of instance.queryResult.value[path].results"
+					class="cursor-pointer"
+					@click="tabManager.openFile(path)"
+				>
+					<span class="text-textAlternate">{{ result.previousContext ?? '' }}</span>
+
+					<span v-if="replace === '' || replace === search" class="text-primary font-bold">{{
+						result.value
+					}}</span>
+
+					<span v-else>
+						<span class="text-textAlternate line-through">{{ result.value }}</span>
+
+						<span class="text-primary font-bold">{{ replace }}</span>
+					</span>
+
+					<span class="text-textAlternate">{{ result.nextContext ?? '' }}</span>
+				</div>
 			</div>
 		</div>
 	</div>

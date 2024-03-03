@@ -5,6 +5,7 @@ import { v4 as uuid } from 'uuid'
 import { fileSystem } from '@/App'
 import { ProjectManager } from '@/libs/project/ProjectManager'
 import escapeRegExpString from 'escape-string-regexp'
+import { BedrockProject } from '@/libs/project/BedrockProject'
 
 interface QueryResult {
 	value: string
@@ -15,8 +16,21 @@ interface QueryResult {
 export class FindAndReplaceTab extends Tab {
 	public name = ref('Find and Replace')
 	public component: Component | null = FindAndReplaceTabComponent
-	public queryResult: Ref<QueryResult[]> = ref([])
-	public currentQueryId: string | null = null
+	public queryResult: Ref<
+		Record<
+			string,
+			{
+				prettyPath: string
+				icon: string
+				color: string
+				results: QueryResult[]
+			}
+		>
+	> = ref({})
+
+	private currentQueryId: string | null = null
+	private currentSearch: Promise<void> | null = null
+	private currentRegex: RegExp | null = null
 
 	public async startSearch(query: string, matchCase: boolean, useRegex: boolean) {
 		if (ProjectManager.currentProject === null) return
@@ -24,8 +38,7 @@ export class FindAndReplaceTab extends Tab {
 		const searchId = uuid()
 		const regex = this.createRegExp(query, matchCase, useRegex)
 
-		this.queryResult.value = []
-		this.queryResult.value = [...this.queryResult.value]
+		this.queryResult.value = {}
 
 		this.currentQueryId = searchId
 
@@ -33,7 +46,8 @@ export class FindAndReplaceTab extends Tab {
 
 		if (query.length === 0) return
 
-		this.searchDirectory(ProjectManager.currentProject.path, regex, searchId)
+		this.currentRegex = regex
+		this.currentSearch = this.searchDirectory(ProjectManager.currentProject.path, regex, searchId)
 	}
 
 	private async searchDirectory(path: string, regex: RegExp, searchId: string) {
@@ -63,20 +77,70 @@ export class FindAndReplaceTab extends Tab {
 							  )
 							: null
 
-					this.queryResult.value.push({
+					if (ProjectManager.currentProject === null) return
+
+					let prettyPath = entry.path.substring(ProjectManager.currentProject.path.length + 1)
+
+					if (!this.queryResult.value[entry.path]) {
+						let icon = 'data_object'
+						let color = 'text'
+
+						if (ProjectManager.currentProject instanceof BedrockProject) {
+							const [packId, _] = Object.entries(ProjectManager.currentProject.packs).find(([id, path]) =>
+								entry.path.startsWith(path)
+							) ?? [null, null]
+
+							if (packId) {
+								const definition = ProjectManager.currentProject.packDefinitions.find(
+									(definition) => definition.id === packId
+								)
+
+								if (definition) color = definition.color
+							}
+
+							const fileType = await ProjectManager.currentProject.fileTypeData.get(entry.path)
+
+							if (fileType && fileType.icon) icon = fileType.icon
+						}
+
+						this.queryResult.value[entry.path] = {
+							prettyPath: prettyPath,
+							icon,
+							color,
+							results: [],
+						}
+					}
+
+					this.queryResult.value[entry.path].results.push({
 						value,
 						previousContext,
 						nextContext,
 					})
-
-					console.log(match)
 
 					match = regex.exec(content)
 				}
 			}
 		}
 
-		this.queryResult.value = [...this.queryResult.value]
+		this.queryResult.value = { ...this.queryResult.value }
+	}
+
+	public async replace(value: string) {
+		await this.currentSearch
+
+		if (!this.currentRegex) return
+
+		for (const path of Object.keys(this.queryResult.value)) {
+			const content = await fileSystem.readFileText(path)
+
+			await fileSystem.writeFile(path, content.replaceAll(this.currentRegex, value))
+
+			for (const result of this.queryResult.value[path].results) {
+				result.value = value
+			}
+
+			this.queryResult.value = { ...this.queryResult.value }
+		}
 	}
 
 	private createRegExp(searchFor: string, matchCase: boolean, useRegex: boolean) {
