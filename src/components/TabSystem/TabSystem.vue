@@ -17,7 +17,7 @@
 			</div>
 		</div>
 
-		<div class="flex-1">
+		<div class="w-full tab-content mb-2">
 			<component
 				v-if="instance.selectedTab.value"
 				:instance="instance.selectedTab.value"
@@ -41,3 +41,9 @@ defineProps({
 	},
 })
 </script>
+
+<style scoped>
+.tab-content {
+	height: calc(100% - 2.5rem - 0.5rem);
+}
+</style>

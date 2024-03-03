@@ -34,7 +34,7 @@ function startSearch() {
 </script>
 
 <template>
-	<div class="w-full h-full flex">
+	<div class="w-full h-full flex gap-4 items-stretch">
 		<div class="mt-2">
 			<LabeledInput v-slot="{ focus, blur }" :label="t('Search')" class="bg-background !mt-1">
 				<div class="flex gap-1">
@@ -109,10 +109,12 @@ function startSearch() {
 			</div>
 		</div>
 
-		<div class="mt-2">
-			<p v-for="result of instance.queryResult.value">
-				{{ result }}
-			</p>
+		<div class="mt-2 h-full flex-1 overflow-auto box-border">
+			<div v-for="result of instance.queryResult.value">
+				<span class="text-textAlternate">{{ result.previousContext ?? '' }}</span>
+				<span class="text-primary font-bold">{{ result.value }}</span>
+				<span class="text-textAlternate">{{ result.nextContext ?? '' }}</span>
+			</div>
 		</div>
 	</div>
 </template>

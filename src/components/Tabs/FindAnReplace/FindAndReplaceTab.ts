@@ -6,10 +6,17 @@ import { fileSystem } from '@/App'
 import { ProjectManager } from '@/libs/project/ProjectManager'
 import escapeRegExpString from 'escape-string-regexp'
 
+interface QueryResult {
+	value: string
+	previousContext: string | null
+	nextContext: string | null
+}
+
 export class FindAndReplaceTab extends Tab {
 	public name = ref('Find and Replace')
 	public component: Component | null = FindAndReplaceTabComponent
-	public queryResult: Ref<string[]> = ref([])
+	public queryResult: Ref<QueryResult[]> = ref([])
+	public currentQueryId: string | null = null
 
 	public async startSearch(query: string, matchCase: boolean, useRegex: boolean) {
 		if (ProjectManager.currentProject === null) return
@@ -18,8 +25,13 @@ export class FindAndReplaceTab extends Tab {
 		const regex = this.createRegExp(query, matchCase, useRegex)
 
 		this.queryResult.value = []
+		this.queryResult.value = [...this.queryResult.value]
+
+		this.currentQueryId = searchId
 
 		if (regex === undefined) return
+
+		if (query.length === 0) return
 
 		this.searchDirectory(ProjectManager.currentProject.path, regex, searchId)
 	}
@@ -31,17 +43,35 @@ export class FindAndReplaceTab extends Tab {
 			if (entry.type === 'file' && (entry.path.endsWith('.txt') || entry.path.endsWith('.json'))) {
 				const content = await fileSystem.readFileText(entry.path)
 
-				const matches = content.matchAll(regex)
+				if (this.currentQueryId !== searchId) return
 
-				for (const match of matches) {
-					this.queryResult.value.push(
-						content.slice(
-							Math.max(0, (match.index ?? 0) - 50),
-							Math.min(content.length, (match.index ?? 0) + 50)
-						)
-					)
+				let match = regex.exec(content)
+
+				while (match !== null) {
+					if (!match.index) continue
+
+					const value = match[0]
+
+					let previousContext =
+						match.index !== 0 ? content.slice(Math.max(0, match.index - 50), match.index) : null
+
+					let nextContext =
+						match.index !== content.length - 1
+							? content.slice(
+									match.index + value.length,
+									Math.min(content.length, match.index + value.length + 50)
+							  )
+							: null
+
+					this.queryResult.value.push({
+						value,
+						previousContext,
+						nextContext,
+					})
 
 					console.log(match)
+
+					match = regex.exec(content)
 				}
 			}
 		}
