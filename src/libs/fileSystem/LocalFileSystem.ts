@@ -43,6 +43,8 @@ export class LocalFileSystem extends BaseFileSystem {
 			kind: 'file',
 			content,
 		})
+
+		this.eventSystem.dispatch('pathUpdated', path)
 	}
 
 	public async makeDirectory(path: string) {
@@ -51,12 +53,16 @@ export class LocalFileSystem extends BaseFileSystem {
 		await set(`localFileSystem/${this.rootName}/${path}`, {
 			kind: 'directory',
 		})
+
+		this.eventSystem.dispatch('pathUpdated', path)
 	}
 
 	public async removeDirectory(path: string) {
 		if (this.rootName === null) throw new Error('Root name not set')
 
 		await del(`localFileSystem/${this.rootName}/${path}`)
+
+		this.eventSystem.dispatch('pathUpdated', path)
 	}
 
 	public async exists(path: string): Promise<boolean> {
