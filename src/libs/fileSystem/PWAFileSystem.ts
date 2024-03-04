@@ -2,7 +2,6 @@ import { sep, parse, basename, join } from '@/libs/path'
 import { BaseEntry, BaseFileSystem } from './BaseFileSystem'
 import { Ref, onMounted, onUnmounted, ref } from 'vue'
 import { md5 } from 'js-md5'
-import { dirname } from 'path'
 
 export class PWAFileSystem extends BaseFileSystem {
 	public baseHandle: FileSystemDirectoryHandle | null = null
@@ -25,12 +24,6 @@ export class PWAFileSystem extends BaseFileSystem {
 		setInterval(() => {
 			this.checkForUpdate('/')
 		}, 1000)
-
-		// window.addEventListener('keydown', (event) => {
-		// 	if (event.key === '`') {
-		// 		this.checkForUpdate('/')
-		// 	}
-		// })
 	}
 
 	protected async traverse(path: string): Promise<FileSystemDirectoryHandle> {

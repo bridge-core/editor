@@ -6,6 +6,7 @@ import { data, fileSystem, sidebar } from '@/App'
 import { BaseFileSystem } from '@/libs/fileSystem/BaseFileSystem'
 import { sendAndWait } from '@/libs/worker/Communication'
 import { Notification } from '@/components/Sidebar/Sidebar'
+import { v4 as uuid } from 'uuid'
 
 export class DashService {
 	public logs: string[] = []
@@ -17,6 +18,7 @@ export class DashService {
 	private progressNotification: Notification | null = null
 	private inFlightBuildRequest: boolean = false
 	private building: boolean = false
+	private watchRebuildRequestId: string | null = null
 
 	constructor(public project: BedrockProject) {
 		this.worker.onmessage = this.onWorkerMessage.bind(this)
@@ -108,13 +110,21 @@ export class DashService {
 		}
 	}
 
-	private async pathUpdated(path: unknown) {
+	private pathUpdated(path: unknown) {
 		if (typeof path !== 'string') return
 
 		if (!path.startsWith(this.project.path)) return
 
 		if (path.startsWith(join(this.project.path, '.bridge/'))) return
 
-		await this.build()
+		const requestId = uuid()
+
+		this.watchRebuildRequestId = requestId
+
+		setTimeout(() => {
+			if (this.watchRebuildRequestId !== requestId) return
+
+			this.build()
+		}, 10)
 	}
 }
