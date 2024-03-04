@@ -1,6 +1,6 @@
 import { fileSystem } from '@/App'
 import { join } from '@/libs/path'
-import { dark } from '@/libs/theme/DefaultThemes'
+import { dark, light } from '@/libs/theme/DefaultThemes'
 import { ThemeManager } from '@/libs/theme/ThemeManager'
 import { Theme } from '@/libs/theme/Theme'
 import { ExtensionManifest } from './Extensions'
@@ -8,6 +8,7 @@ import { ExtensionManifest } from './Extensions'
 export class Extension {
 	public id: string = 'unloaded'
 
+	private manifest: ExtensionManifest | null = null
 	private themes: Theme[] = []
 
 	constructor(public path: string) {}
@@ -16,23 +17,24 @@ export class Extension {
 		const manifest: ExtensionManifest = await fileSystem.readFileJson(join(this.path, 'manifest.json'))
 
 		this.id = manifest.id
+		this.manifest = manifest
 
 		const themesPath = join(this.path, 'themes')
 		if (await fileSystem.exists(themesPath)) {
 			for (const entry of await fileSystem.readDirectoryEntries(themesPath)) {
-				const theme = await fileSystem.readFileJson(entry.path)
+				const theme: Theme = await fileSystem.readFileJson(entry.path)
 
-				theme.colors.menuAlternate = theme.colors.sidebarNavigation
+				if (manifest.target != 'v2.1') {
+					theme.colors.menuAlternate = theme.colors.sidebarNavigation
+				}
 
 				theme.colors = {
-					...dark.colors,
+					...(theme.colorScheme === 'dark' ? dark.colors : light.colors),
 					...theme.colors,
 				}
 
 				ThemeManager.addTheme(theme)
 				this.themes.push(theme)
-
-				break
 			}
 
 			ThemeManager.reloadTheme()

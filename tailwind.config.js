@@ -10,10 +10,10 @@ module.exports = {
 
 				menu: 'var(--theme-color-menu)',
 				menuAlternate: 'var(--theme-color-menuAlternate)',
-				menuAlternate2: 'var(--theme-color-menuAlternate2)',
 
 				text: 'var(--theme-color-text)',
 				textAlternate: 'var(--theme-color-textAlternate)',
+				accent: 'var(--theme-color-accent)',
 
 				toolbar: 'var(--theme-color-toolbar)',
 

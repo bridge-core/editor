@@ -15,7 +15,7 @@ export interface ExtensionManifest {
 	link: string
 	name: string
 	tags: string[]
-	target: string
+	target: 'v1' | 'v2' | 'both' | 'v2.1'
 	version: string
 	releaseTimestamp: number
 	contributeFiles: Record<string, { path: string; pack: string }>

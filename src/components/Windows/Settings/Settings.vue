@@ -49,7 +49,7 @@ const search = ref('')
 										t(setting.name).includes(search) || t(setting.description).includes(search)
 								) !== undefined
 						)"
-						class="w-full flex gap-1 p-1 mt-1 border-2 border-transparent hover:border-text rounded transition-colors duration-100 ease-out"
+						class="w-full flex gap-1 p-1 mt-1 border-2 border-transparent hover:border-accent rounded transition-colors duration-100 ease-out"
 						:class="{
 							'bg-primary': settings.selectedCategory.value.id === category.id,
 						}"
@@ -57,10 +57,17 @@ const search = ref('')
 					>
 						<Icon
 							:icon="category.icon"
-							:color="settings.selectedCategory.value.id === category.id ? 'text' : 'primary'"
+							:color="settings.selectedCategory.value.id === category.id ? 'accent' : 'primary'"
 							class="text-base"
 						/>
-						<span class="font-inter">{{ t(category.name) }}</span>
+						<span
+							class="font-inter"
+							:class="{
+								'text-accent': settings.selectedCategory.value.id === category.id,
+								'text-text': settings.selectedCategory.value.id !== category.id,
+							}"
+							>{{ t(category.name) }}</span
+						>
 					</button>
 				</div>
 			</div>

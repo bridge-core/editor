@@ -5,37 +5,27 @@ export const dark = {
 	name: 'Default Dark',
 	colorScheme: 'dark',
 	colors: {
-		text: '#f2f2f2',
-		textAlternate: '#f2f2f2AA',
-
 		primary: '#0073FF',
 		secondary: '#0073FF',
-		accent: '#0073FF',
 		error: '#ff5252',
 		info: '#2196f3',
 		warning: '#fb8c00',
 		success: '#4caf50',
+		accent: '#f2f2f2',
 
+		text: '#f2f2f2',
+		textAlternate: '#f2f2f2AA',
 		background: '#121212',
 		menu: '#252525',
 		menuAlternate: '#1D1D1D',
-		menuAlternate2: '#303030',
-		toolbar: '#1D1D1D',
 
 		behaviorPack: '#ff5252',
 		resourcePack: '#0073FF',
 		skinPack: '#fb8c00',
 		worldTemplate: '#4caf50',
 
-		sidebarNavigation: '#1F1F1F',
-		expandedSidebar: '#1F1F1F',
-		sidebarSelection: '#151515',
-		footer: '#111111',
-		tooltip: '#1F1F1F',
-		tabActive: '#121212',
-		tabInactive: '#1F1F1F',
+		toolbar: '#1D1D1D',
 		lineHighlightBackground: '#292929',
-		scrollbarThumb: '#000000',
 	},
 	highlighter: {
 		invalid: {
@@ -80,37 +70,27 @@ export const light = {
 	name: 'Default Light',
 	colorScheme: 'light',
 	colors: {
-		text: '#000000',
-		textAlternate: '#000000AA',
-
 		primary: '#0073FF',
 		secondary: '#0073FF',
-		accent: '#0073FF',
 		error: '#ff5252',
 		info: '#2196f3',
 		warning: '#fb8c00',
 		success: '#4caf50',
+		accent: '#ffffff',
 
+		text: '#000000',
+		textAlternate: '#000000AA',
 		background: '#fafafa',
 		menu: '#e8e8e8',
 		menuAlternate: '#e0e0e0',
-		menuAlternate2: '#d9d9d9',
-		toolbar: '#fafafa',
 
 		behaviorPack: '#ff5252',
 		resourcePack: '#0073FF',
 		skinPack: '#fb8c00',
 		worldTemplate: '#4caf50',
 
-		sidebarNavigation: '#e8e8e8',
-		expandedSidebar: '#e8e8e8',
-		sidebarSelection: '#FFFFFF',
-		tooltip: '#424242',
-		footer: '#f5f5f5',
-		tabActive: '#fafafa',
-		tabInactive: '#e0e0e0',
+		toolbar: '#fafafa',
 		lineHighlightBackground: '#e0e0e0',
-		scrollbarThumb: '#c8c8c8',
 	},
 	highlighter: {
 		type: {

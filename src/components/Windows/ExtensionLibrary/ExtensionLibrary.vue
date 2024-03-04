@@ -125,7 +125,7 @@ const isInstalled = extensions.useIsInstalled()
 							{{ extension.author }}
 						</span>
 
-						<span class="font-inter text-sm py-1 px-2 bg-menuAlternate2 rounded-full">
+						<span class="font-inter text-sm py-1 px-2 bg-menu rounded-full">
 							{{ extension.version }}
 						</span>
 

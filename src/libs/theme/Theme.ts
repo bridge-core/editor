@@ -1,34 +1,25 @@
 export const colorNames = [
+	'primary',
+	'secondary',
+	'error',
+	'warning',
+	'success',
+	'accent',
+
 	'text',
 	'textAlternate',
 
-	'primary',
-	'secondary',
-	'accent',
-	'error',
-	'info',
-	'warning',
-	'success',
-
 	'background',
+
 	'menu',
 	'menuAlternate',
-	'menuAlternate2',
 
 	'behaviorPack',
 	'resourcePack',
 	'worldTemplate',
 	'skinPack',
 
-	'expandedSidebar',
-	'sidebarNavigation',
 	'toolbar',
-	'footer',
-	'tooltip',
-	'sidebarSelection',
-	'scrollbarThumb',
-	'tabActive',
-	'tabInactive',
 	'lineHighlightBackground',
 ]
 
