@@ -1,5 +1,5 @@
 import { fileSystem } from '@/App'
-import { join } from '@/libs/path'
+import { extname, join } from '@/libs/path'
 import { Unzipped, unzip } from 'fflate'
 import { Extension } from './Extension'
 import { PWAFileSystem } from '@/libs/fileSystem/PWAFileSystem'
@@ -179,11 +179,16 @@ export class Extensions {
 			const contributeFiles = extension.contributeFiles
 
 			if (contributeFiles !== undefined) {
-				for (const [extensionPath, { pack, path: projectPath }] of Object.entries(contributeFiles)) {
+				for (const [entryPath, { pack, path: projectPath }] of Object.entries(contributeFiles)) {
 					const resultPath = ProjectManager.currentProject.resolvePackPath(pack, projectPath)
 
 					await fileSystem.ensureDirectory(resultPath)
-					await fileSystem.copyDirectory(join(path, extensionPath), resultPath)
+
+					if (extname(entryPath) === '') {
+						await fileSystem.copyDirectory(join(path, entryPath), resultPath)
+					} else {
+						await fileSystem.copyFile(join(path, entryPath), resultPath)
+					}
 
 					console.log(contributeFiles, resultPath)
 				}

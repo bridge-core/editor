@@ -10,6 +10,8 @@ export class Extension {
 
 	private manifest: ExtensionManifest | null = null
 	private themes: Theme[] = []
+	private presets: any[] = []
+	private snippets: any[] = []
 
 	constructor(public path: string) {}
 
@@ -38,6 +40,24 @@ export class Extension {
 			}
 
 			ThemeManager.reloadTheme()
+		}
+
+		const presetsPath = join(this.path, 'presets')
+		if (await fileSystem.exists(presetsPath)) {
+			for (const entry of await fileSystem.readDirectoryEntries(presetsPath)) {
+				const preset: any = await fileSystem.readFileJson(entry.path)
+
+				this.presets.push(preset)
+			}
+		}
+
+		const snippetsPath = join(this.path, 'snippets')
+		if (await fileSystem.exists(snippetsPath)) {
+			for (const entry of await fileSystem.readDirectoryEntries(snippetsPath)) {
+				const snippet: any = await fileSystem.readFileJson(entry.path)
+
+				this.snippets.push(snippet)
+			}
 		}
 	}
 
