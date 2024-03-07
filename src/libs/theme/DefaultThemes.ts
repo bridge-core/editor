@@ -6,7 +6,7 @@ export const dark = {
 	colorScheme: 'dark',
 	colors: {
 		primary: '#0073FF',
-		accent: '#f2f2f2',
+		accent: '#ffffff',
 		accentSecondary: '#121212',
 
 		error: '#ff5252',
@@ -14,7 +14,7 @@ export const dark = {
 		warning: '#fb8c00',
 		success: '#4caf50',
 
-		text: '#f2f2f2',
+		text: '#ffffff',
 		textSecondary: '#f2f2f2AA',
 
 		background: '#121212',

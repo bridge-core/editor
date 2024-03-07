@@ -6,16 +6,16 @@ module.exports = {
 		extend: {
 			colors: {
 				primary: 'var(--theme-color-primary)',
-				background: 'var(--theme-color-background)',
 
-				menu: 'var(--theme-color-menu)',
-				menuAlternate: 'var(--theme-color-menuAlternate)',
+				accent: 'var(--theme-color-accent)',
+				'accent-secondary': 'var(--theme-color-accentSecondary)',
+
+				background: 'var(--theme-color-background)',
+				'background-secondary': 'var(--theme-color-backgroundSecondary)',
+				'background-tertiary': 'var(--theme-color-backgroundTertiary)',
 
 				text: 'var(--theme-color-text)',
-				textAlternate: 'var(--theme-color-textAlternate)',
-				accent: 'var(--theme-color-accent)',
-
-				toolbar: 'var(--theme-color-toolbar)',
+				'text-secondary': 'var(--theme-color-textSecondary)',
 
 				behaviorPack: 'var(--theme-color-behaviorPack)',
 				resourcePack: 'var(--theme-color-resourcePack)',
@@ -23,6 +23,11 @@ module.exports = {
 				worldTemplate: 'var(--theme-color-worldTemplate)',
 
 				warning: 'var(--theme-color-warning)',
+				info: 'var(--theme-color-info)',
+				error: 'var(--theme-color-error)',
+				success: 'var(--theme-color-success)',
+
+				toolbar: 'var(--theme-color-toolbar)',
 			},
 			height: {
 				toolbar: '1.5rem',
