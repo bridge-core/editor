@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import Logo from '@/components/Common/Logo.vue'
 import IconButton from '@/components/Common/IconButton.vue'
+import ProjectGalleryEntry from './ProjectGalleryEntry.vue'
+import TextButton from '@/components/Common/TextButton.vue'
 
 import { fileSystem, windows, selectOrLoadBridgeFolder } from '@/App'
 import { PWAFileSystem } from '@/libs/fileSystem/PWAFileSystem'
@@ -53,46 +55,32 @@ async function openProject(project: ProjectInfo) {
 				</div>
 			</div>
 
-			<div class="h-px w-full bg-menu mb-1" />
+			<div class="h-px w-full bg-background-secondary mb-1" />
 
 			<div class="flex flex-wrap gap-2 overflow-x-hidden overflow-y-hidden mt-2">
-				<div
-					class="flex flex-col bg-menu rounded relative w-36 h-36 cursor-pointer border-transparent border-2 group hover:border-text transition-colors duration-100 ease-out"
+				<ProjectGalleryEntry
 					v-for="(project, index) in projects"
 					:key="index"
+					:icon="project.icon"
+					:name="project.name"
 					@click="openProject(project)"
-				>
-					<div class="w-full rounded overflow-hidden aspect-video">
-						<img
-							:src="project.icon"
-							class="w-full object-cover group-hover:scale-110 transition-transform duration-100 ease-out -translate-y-1/4 pixelated"
-						/>
-					</div>
-					<p class="text-sm text-center mt-auto mb-auto ml-0.5 mr-0.5 font-inter font-medium">
-						{{ project.name }}
-					</p>
-				</div>
+				/>
 			</div>
 
 			<div class="flex items-center flex-col mt-6" v-if="!suggestSelectBridgeFolder && projects.length === 0">
-				<p class="opacity-30 text-text mb-2 font-inter">
+				<p class="opacity-30 text-text mb-4 font-inter">
 					{{ t('greet.noProjects') }}
 				</p>
-				<p class="text-primary cursor-pointer hover:underline font-inter font-medium" @click="createProject">
-					{{ t('greet.createOne') }}
-				</p>
+
+				<TextButton :text="t('greet.createOne')" @click="createProject" />
 			</div>
 
 			<div class="flex items-center flex-col mt-6" v-if="suggestSelectBridgeFolder">
-				<p class="opacity-30 text-text mb-2 font-inter">
+				<p class="opacity-30 text-text mb-4 font-inter">
 					{{ t('greet.noBridgeFolderSelected') }}
 				</p>
-				<p
-					class="text-primary cursor-pointer hover:underline font-inter font-medium"
-					@click="selectOrLoadBridgeFolder"
-				>
-					{{ t('greet.selectBridgeFolder') }}
-				</p>
+
+				<TextButton :text="t('greet.selectBridgeFolder')" @click="selectOrLoadBridgeFolder" />
 			</div>
 		</div>
 	</main>
