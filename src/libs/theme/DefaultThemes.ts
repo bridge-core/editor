@@ -6,26 +6,28 @@ export const dark = {
 	colorScheme: 'dark',
 	colors: {
 		primary: '#0073FF',
-		secondary: '#0073FF',
+		accent: '#f2f2f2',
+		accentSecondary: '#121212',
+
 		error: '#ff5252',
 		info: '#2196f3',
 		warning: '#fb8c00',
 		success: '#4caf50',
-		accent: '#f2f2f2',
 
 		text: '#f2f2f2',
-		textAlternate: '#f2f2f2AA',
+		textSecondary: '#f2f2f2AA',
+
 		background: '#121212',
-		menu: '#252525',
-		menuAlternate: '#1D1D1D',
+		backgroundSecondary: '#1F1F1F',
+		backgroundTertiary: '#373737',
 
 		behaviorPack: '#ff5252',
 		resourcePack: '#0073FF',
 		skinPack: '#fb8c00',
 		worldTemplate: '#4caf50',
 
-		toolbar: '#1D1D1D',
-		lineHighlightBackground: '#292929',
+		toolbar: '#1F1F1F',
+		lineHighlightBackground: '#373737',
 	},
 	highlighter: {
 		invalid: {

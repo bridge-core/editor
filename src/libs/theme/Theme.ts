@@ -1,18 +1,20 @@
 export const colorNames = [
 	'primary',
-	'secondary',
+
+	'accent',
+	'accentSecondary',
+
 	'error',
+	'info',
 	'warning',
 	'success',
-	'accent',
 
 	'text',
-	'textAlternate',
+	'textSecondary',
 
 	'background',
-
-	'menu',
-	'menuAlternate',
+	'backgroundSecondary',
+	'backgroundTertiary',
 
 	'behaviorPack',
 	'resourcePack',
