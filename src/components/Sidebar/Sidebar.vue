@@ -1,14 +1,12 @@
 <script setup lang="ts">
 import Icon from '@/components/Common/Icon.vue'
-import Progress from '@/components/Common/Progress.vue'
+import Notification from './Notification.vue'
 
 import { sidebar } from '@/App'
 </script>
 
 <template>
-	<div
-		class="self-stretch w-16 bg-menuAlternate rounded my-2 flex flex-col gap-2 items-center p-3"
-	>
+	<div class="self-stretch w-16 bg-background-secondary rounded my-2 flex flex-col gap-2 items-center p-3">
 		<div v-for="item in sidebar.items">
 			<div
 				class="w-10 h-10 bg-background rounded flex justify-center items-center hover:bg-primary transition-colors duration-100 ease-out cursor-pointer"
@@ -17,64 +15,22 @@ import { sidebar } from '@/App'
 			>
 				<Icon :icon="item.icon!" />
 			</div>
-			<div
-				class="w-10 border border-menu my-2"
-				v-if="item.type === 'divider'"
-			/>
-		</div>
-		<div v-for="item in sidebar.notifications.value" :key="item.id">
-			<div
-				class="w-10 h-10 rounded flex justify-center items-center bg-[var(--color)] hover:bg-[var(--hover-color)] transition-colors duration-100 ease-out cursor-pointer group"
-				:style="{
-					'--color': item.color
-						? `var(--theme-color-${item.color})`
-						: 'var(--theme-color-background)',
-					'--hover-color': item.color
-						? `var(--theme-color-text)`
-						: 'var(--theme-color-primary)',
-				}"
-				@click="() => sidebar.activateNotification(item)"
-			>
-				<Icon
-					v-if="item.type === 'button'"
-					:icon="item.icon!"
-					:color="undefined"
-					class="group-hover:text-[var(--hover-color)] text-text transition-colors duration-100 ease-out"
-					:style="{
-						'--hover-color': item.color
-							? `var(--theme-color-background)`
-							: 'var(--theme-color-text)',
-					}"
-				/>
 
-				<div v-if="item.type === 'progress'" class="w-10 h-10 relative">
-					<Progress
-						class="w-7 h-7 absolute left-[0.375rem] top-[0.375rem] group-hover:stroke-[var(--hover-color)] stroke-text transition-colors duration-100 ease-out"
-						:progress="
-							(item.progress ?? 0) / (item.maxProgress ?? 100)
-						"
-						:style="{
-							'--color': item.color
-								? `var(--theme-color-${item.color})`
-								: 'var(--theme-color-background)',
-							'--hover-color': item.color
-								? `var(--theme-color-background)`
-								: 'var(--theme-color-text)',
-						}"
-					/>
-
-					<Icon
-						:icon="item.icon!"
-						:color="undefined"
-						class="text-xs absolute left-[0.88rem] top-[0.75rem] group-hover:text-[var(--hover-color)] text-text transition-colors duration-100 ease-out"
-						:style="{
-							'--hover-color': item.color
-								? `var(--theme-color-background)`
-								: 'var(--theme-color-text)',
-						}"
-					/>
-				</div>
-			</div>
+			<div class="w-10 border border-background-tertiary my-2" v-if="item.type === 'divider'" />
 		</div>
+
+		<Notification
+			v-for="item in sidebar.notifications.value"
+			:key="item.id"
+			@click="() => sidebar.activateNotification(item)"
+			:icon="item.icon"
+			:type="item.type"
+			:progress="item.progress"
+			:max-progress="item.progress"
+			:color="item.color"
+			:color-hover="item.color ? 'accent' : undefined"
+			icon-color="accent"
+			:icon-color-hover="item.color ? 'accentSecondary' : undefined"
+		/>
 	</div>
 </template>
