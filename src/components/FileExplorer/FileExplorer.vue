@@ -114,18 +114,18 @@ function executeContextMenuAction(action: string, data: any) {
 
 <template>
 	<div class="self-stretch my-2 w-96 flex flex-col gap-2" v-if="fileExplorer.open.value">
-		<div class="bg-menuAlternate rounded h-16 flex items-center p-3 gap-3">
+		<div class="bg-background-secondary rounded h-16 flex items-center p-3 gap-3">
 			<img :src="currentProject?.icon ?? ''" class="w-10 h-10 select-none" />
 			<p class="text-3xl select-none font-inter font-medium">
 				{{ currentProject?.name }}
 			</p>
 		</div>
 
-		<div class="bg-menuAlternate rounded flex-1 p-2">
+		<div class="bg-background-secondary rounded flex-1 p-2">
 			<div class="flex gap-2 mb-2" v-if="currentProject">
 				<button
 					v-for="packDefinition in currentProjectPackDefinitions"
-					class="flex-1 flex items-center justify-center p-2 rounded border-2 hover:border-text transition-colors duration-100 ease-out"
+					class="flex-1 flex items-center justify-center p-2 rounded border-2 hover:border-accent transition-colors duration-100 ease-out"
 					:class="{
 						'bg-background border-background': packDefinition.id !== selectedPack,
 						'bg-[var(--color)] border-[var(--color)]': packDefinition.id === selectedPack,
@@ -152,7 +152,9 @@ function executeContextMenuAction(action: string, data: any) {
 					</template>
 
 					<template #menu="{ close }">
-						<div class="w-56 bg-menuAlternate rounded mt-2 shadow-window overflow-hidden relative z-10">
+						<div
+							class="w-56 bg-background-secondary rounded mt-2 shadow-window overflow-hidden relative z-10"
+						>
 							<ContextMenuItem
 								text="New File"
 								icon="add"

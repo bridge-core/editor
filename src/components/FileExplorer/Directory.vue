@@ -67,7 +67,7 @@ function executeContextMenuAction(action: string, data: any) {
 		<span class="select-none font-inter"> {{ basename(path) }} </span>
 	</div>
 
-	<div class="ml-1 border-l pl-1 border-menu min-h-[1rem]" v-show="expanded">
+	<div class="ml-1 border-l pl-1 border-background-tertiary min-h-[1rem]" v-show="expanded">
 		<div
 			v-for="entry in entries.toSorted((a, b) => (a.type === 'file' ? 1 : 0) - (b.type === 'file' ? 1 : 0))"
 			:key="entry.path"

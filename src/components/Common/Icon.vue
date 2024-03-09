@@ -3,7 +3,7 @@
 		v-if="icon !== 'loading'"
 		class="material-symbols-rounded select-none"
 		ref="element"
-		:style="color ? { color: `var(--theme-color-${color})` } : {}"
+		:style="{ color: color ? `var(--theme-color-${color})` : undefined }"
 		v-bind="$attrs"
 	>
 		{{ mdiMap[icon] ?? icon }}
