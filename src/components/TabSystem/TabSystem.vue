@@ -5,7 +5,8 @@
 				v-for="tab in instance.tabs.value"
 				class="flex items-center gap-1 p-2 rounded cursor-pointer"
 				:style="{
-					background: instance.selectedTab.value == tab ? 'var(--theme-color-menuAlternate)' : 'transparent',
+					background:
+						instance.selectedTab.value == tab ? 'var(--theme-color-backgroundSecondary)' : 'transparent',
 				}"
 				@click="() => instance.selectTab(tab)"
 			>

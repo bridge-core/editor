@@ -27,7 +27,7 @@ export const dark = {
 		worldTemplate: '#4caf50',
 
 		toolbar: '#1F1F1F',
-		lineHighlightBackground: '#373737',
+		lineHighlightBackground: '#222222',
 	},
 	highlighter: {
 		invalid: {
