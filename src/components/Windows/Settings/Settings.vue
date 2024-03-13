@@ -8,7 +8,7 @@ import Button from '@/components/Common/Button.vue'
 
 import { useTranslate } from '@/libs/locales/Locales'
 import { Settings, useSettings } from '@/libs/settings/Settings'
-import { selectedCategory } from './SettingsWindow'
+import { SettingsWindow } from './SettingsWindow'
 import { computed, ref } from 'vue'
 
 const t = useTranslate()
@@ -16,19 +16,23 @@ const t = useTranslate()
 const settings = useSettings()
 
 const search = ref('')
-
-const definitions = Object.values(Settings.definitions).map((definition) => definition.category)
-const categories = ref(definitions.filter((definition, index) => definitions.indexOf(definition) === index))
 </script>
 
 <template>
-	<SidebarWindow :name="`${t('windows.settings.title')} - ${t(selectedCategory ?? 'No Category')}`" id="settings">
+	<SidebarWindow
+		:name="`${t('windows.settings.title')} - ${t(
+			SettingsWindow.selectedCategory.value
+				? SettingsWindow.categories[SettingsWindow.selectedCategory.value].label
+				: ''
+		)}`"
+		id="settings"
+	>
 		<template #sidebar>
 			<div class="p-4">
 				<LabeledInput
 					v-slot="{ focus, blur }"
 					:label="t('windows.settings.searchSettings')"
-					class="bg-menuAlternate !mt-1"
+					class="bg-background-secondary !mt-1"
 				>
 					<div class="flex gap-1">
 						<Icon icon="search" class="transition-colors duration-100 ease-out" />
@@ -41,30 +45,30 @@ const categories = ref(definitions.filter((definition, index) => definitions.ind
 					</div>
 				</LabeledInput>
 
-				<!-- <div class="mt-4" v-if="selectedCategory">
+				<div class="mt-4">
 					<button
-						v-for="category in categories"
+						v-for="[categoryId, categoryDefinition] in Object.entries(SettingsWindow.categories)"
 						class="w-full flex gap-1 p-1 mt-1 border-2 border-transparent hover:border-accent rounded transition-colors duration-100 ease-out"
 						:class="{
-							'bg-primary': selectedCategory === category,
+							'bg-primary': SettingsWindow.selectedCategory.value === categoryId,
 						}"
-						@click="selectedCategory = category"
+						@click="SettingsWindow.selectedCategory.value = categoryId"
 					>
 						<Icon
-							:icon="category.icon"
-							:color="settings.selectedCategory.value.id === category.id ? 'accent' : 'primary'"
+							:icon="categoryDefinition.icon"
+							:color="SettingsWindow.selectedCategory.value === categoryId ? 'accent' : 'primary'"
 							class="text-base"
 						/>
 						<span
 							class="font-inter"
 							:class="{
-								'text-accent': settings.selectedCategory.value.id === category.id,
-								'text-text': settings.selectedCategory.value.id !== category.id,
+								'text-accent': SettingsWindow.selectedCategory.value === categoryId,
+								'text-text': SettingsWindow.selectedCategory.value !== categoryId,
 							}"
-							>{{ t(category.name) }}</span
+							>{{ t(categoryDefinition.label) }}</span
 						>
 					</button>
-				</div> -->
+				</div>
 			</div>
 		</template>
 
