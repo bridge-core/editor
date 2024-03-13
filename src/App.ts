@@ -22,7 +22,6 @@ import { setupTypescript } from '@/libs/monaco/TypeScript'
 import { PromptWindow } from '@/components/Windows/Prompt/PromptWindow'
 
 export const fileSystem = getFileSystem()
-export const data = new Data()
 export const windows = new Windows()
 export const tabManager = new TabManager()
 export const sidebar = new Sidebar()
@@ -61,7 +60,7 @@ export async function setup() {
 	console.timeEnd('[App] Settings')
 
 	console.time('[App] Data')
-	await data.load()
+	await Data.load()
 	console.timeEnd('[App] Data')
 
 	console.time('[App] Projects')

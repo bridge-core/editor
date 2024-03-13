@@ -2,11 +2,12 @@ import { join } from '@/libs/path'
 import DashWorker from './DashWorker?worker'
 import { BedrockProject } from '@/libs/project/BedrockProject'
 import { WorkerFileSystemEntryPoint } from '@/libs/fileSystem/WorkerFileSystem'
-import { data, fileSystem, sidebar } from '@/App'
+import { fileSystem, sidebar } from '@/App'
 import { BaseFileSystem } from '@/libs/fileSystem/BaseFileSystem'
 import { sendAndWait } from '@/libs/worker/Communication'
 import { Notification } from '@/components/Sidebar/Sidebar'
 import { v4 as uuid } from 'uuid'
+import { Data } from '@/libs/data/Data'
 
 export class DashService {
 	public logs: string[] = []
@@ -36,7 +37,7 @@ export class DashService {
 		if (event.data.action === 'getJsonData') {
 			this.worker.postMessage({
 				id: event.data.id,
-				data: await data.get(event.data.path),
+				data: await Data.get(event.data.path),
 			})
 		}
 

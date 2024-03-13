@@ -1,15 +1,10 @@
 import { sendAndWait } from '@/libs/worker/Communication'
 import { BaseEntry, BaseFileSystem } from './BaseFileSystem'
-import { v4 as uuid } from 'uuid'
 
 export class WorkerFileSystemEntryPoint {
 	public boundOnWorkerMessage: (event: MessageEvent) => void
 
-	constructor(
-		public worker: Worker,
-		private fileSystem: BaseFileSystem,
-		private name: string = 'fileSystem'
-	) {
+	constructor(public worker: Worker, private fileSystem: BaseFileSystem, private name: string = 'fileSystem') {
 		this.boundOnWorkerMessage = this.onWorkerMessage.bind(this)
 
 		worker.addEventListener('message', this.boundOnWorkerMessage)
@@ -43,9 +38,7 @@ export class WorkerFileSystemEntryPoint {
 
 		if (event.data.action === 'readDirectoryEntries') {
 			this.worker.postMessage({
-				entries: await this.fileSystem.readDirectoryEntries(
-					event.data.path
-				),
+				entries: await this.fileSystem.readDirectoryEntries(event.data.path),
 				id: event.data.id,
 				fileSystemName: this.name,
 			})

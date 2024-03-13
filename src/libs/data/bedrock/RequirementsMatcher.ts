@@ -1,7 +1,8 @@
-import { data, fileSystem } from '@/App'
+import { fileSystem } from '@/App'
 import { BedrockProject } from '@/libs/project/BedrockProject'
 import { TCompareOperator, compareVersions } from 'bridge-common-utils'
 import { TPackTypeId } from 'mc-project-core'
+import { Data } from '@/libs/data/Data'
 
 export interface Requirements {
 	/**
@@ -33,7 +34,7 @@ export class RequirementsMatcher {
 	constructor(public project: BedrockProject) {}
 
 	public async setup() {
-		this.latestFormatVersion = (await data.get('packages/minecraftBedrock/formatVersions.json'))[0]
+		this.latestFormatVersion = (await Data.get('packages/minecraftBedrock/formatVersions.json'))[0]
 
 		const behaviorPackPath = this.project.resolvePackPath('behaviorPack', 'manifest.json')
 		if (this.project.packs['behaviorPack'] && (await fileSystem.exists(behaviorPackPath))) {

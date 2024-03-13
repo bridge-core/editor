@@ -1,5 +1,5 @@
 import { EventSystem } from '@/libs/event/EventSystem'
-import { fileSystem, data } from '@/App'
+import { fileSystem } from '@/App'
 import { Project, validProject } from './Project'
 import { basename, join } from '@/libs/path'
 import { PWAFileSystem } from '@/libs/fileSystem/PWAFileSystem'
@@ -14,6 +14,7 @@ import { SkinPack } from './create/packs/SkinPack'
 import { BedrockProject } from './BedrockProject'
 import { IConfigJson, defaultPackPaths } from 'mc-project-core'
 import { LocalFileSystem } from '@/libs/fileSystem/LocalFileSystem'
+import { Data } from '@/libs/data/Data'
 
 export const packs: {
 	[key: string]: Pack | undefined
@@ -81,7 +82,7 @@ export class ProjectManager {
 	}
 
 	public static async createProject(config: CreateProjectConfig, fileSystem: BaseFileSystem) {
-		const packDefinitions: { id: string; defaultPackPath: string }[] = await data.get(
+		const packDefinitions: { id: string; defaultPackPath: string }[] = await Data.get(
 			'packages/minecraftBedrock/packDefinitions.json'
 		)
 		packDefinitions.push({

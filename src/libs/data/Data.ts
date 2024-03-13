@@ -4,7 +4,6 @@ import { unzip, Unzipped } from 'fflate'
 import { LocalFileSystem } from '@/libs/fileSystem/LocalFileSystem'
 import { EventSystem } from '@/libs/event/EventSystem'
 import { onMounted, onUnmounted, ref, Ref } from 'vue'
-import { data } from '@/App'
 
 export interface FormatVersionDefinitions {
 	currentStable: string
@@ -19,17 +18,15 @@ export interface ExperimentalToggle {
 }
 
 export class Data {
-	public eventSystem = new EventSystem(['loaded'])
+	public static eventSystem = new EventSystem(['loaded'])
 
-	private fileSystem = new LocalFileSystem()
+	private static fileSystem = new LocalFileSystem()
 
-	constructor() {
-		this.fileSystem.setRootName('data')
-	}
+	public static async load() {
+		Data.fileSystem.setRootName('data')
 
-	public async load() {
-		if (await this.fileSystem.exists('loaded')) {
-			this.eventSystem.dispatch('loaded', null)
+		if (await Data.fileSystem.exists('loaded')) {
+			Data.eventSystem.dispatch('loaded', null)
 
 			return
 		}
@@ -52,27 +49,27 @@ export class Data {
 
 		for (const path in unzipped) {
 			if (path.endsWith('/')) {
-				this.fileSystem.makeDirectory(path)
+				Data.fileSystem.makeDirectory(path)
 			} else {
-				this.fileSystem.writeFile(path, unzipped[path])
+				Data.fileSystem.writeFile(path, unzipped[path])
 			}
 		}
 
-		await this.fileSystem.writeFile('loaded', '')
+		await Data.fileSystem.writeFile('loaded', '')
 
-		this.eventSystem.dispatch('loaded', null)
+		Data.eventSystem.dispatch('loaded', null)
 	}
 
-	public async get(path: string): Promise<any> {
-		return await this.fileSystem.readFileJson(path)
+	public static async get(path: string): Promise<any> {
+		return await Data.fileSystem.readFileJson(path)
 	}
 
-	public async getText(path: string): Promise<string> {
-		return await this.fileSystem.readFileText(path)
+	public static async getText(path: string): Promise<string> {
+		return await Data.fileSystem.readFileText(path)
 	}
 
-	public async getRaw(path: string): Promise<ArrayBuffer> {
-		return await this.fileSystem.readFile(path)
+	public static async getRaw(path: string): Promise<ArrayBuffer> {
+		return await Data.fileSystem.readFile(path)
 	}
 }
 
@@ -80,15 +77,15 @@ export function useGetData(): Ref<(path: string) => undefined | any> {
 	const get = ref((path: string) => Promise.resolve(undefined))
 
 	function updateGet() {
-		get.value = (path: string) => data.get(path)
+		get.value = (path: string) => Data.get(path)
 	}
 
 	onMounted(() => {
-		data.eventSystem.on('loaded', updateGet)
+		Data.eventSystem.on('loaded', updateGet)
 	})
 
 	onUnmounted(() => {
-		data.eventSystem.off('loaded', updateGet)
+		Data.eventSystem.off('loaded', updateGet)
 	})
 
 	return get

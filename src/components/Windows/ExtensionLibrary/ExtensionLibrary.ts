@@ -1,6 +1,7 @@
-import { data, extensions, windows } from '@/App'
+import { extensions, windows } from '@/App'
 import { Ref, ref } from 'vue'
 import { ExtensionManifest } from '@/libs/extensions/Extensions'
+import { Data } from '@/libs/data/Data'
 
 export class ExtensionLibrary {
 	public tags: Record<string, { icon: string; color?: string }> = {}
@@ -10,7 +11,7 @@ export class ExtensionLibrary {
 	private extensionToInstall?: ExtensionManifest
 
 	public async load() {
-		this.tags = await data.get('packages/common/extensionTags.json')
+		this.tags = await Data.get('packages/common/extensionTags.json')
 
 		this.selectedTag.value = Object.keys(this.tags)[0]
 

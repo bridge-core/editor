@@ -1,13 +1,13 @@
 import { extname, sep } from '@/libs/path'
 import { isMatch } from 'bridge-common-utils'
-import { data } from '@/App'
 import { ProjectManager } from '@/libs/project/ProjectManager'
+import { Data } from '@/libs/data/Data'
 
 export class FileTypeData {
 	public fileTypes: any[] = []
 
 	public async load() {
-		this.fileTypes = await data.get('packages/minecraftBedrock/fileDefinitions.json')
+		this.fileTypes = await Data.get('packages/minecraftBedrock/fileDefinitions.json')
 	}
 
 	private generateMatchers(packTypes: string[], matchers: string[]) {

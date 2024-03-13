@@ -1,12 +1,13 @@
 import { setSchemas } from '@/libs/monaco/Json'
 import { Runtime } from '@/libs/runtime/Runtime'
-import { data, fileSystem } from '@/App'
+import { fileSystem } from '@/App'
 import { basename, dirname, join } from '@/libs/path'
 import { CompatabilityFileSystem } from '@/libs/fileSystem/CompatabilityFileSystem'
 import { BedrockProject } from '@/libs/project/BedrockProject'
 import { v4 as uuid } from 'uuid'
 import { walkObject } from 'bridge-common-utils'
 import { ProjectManager } from '@/libs/project/ProjectManager'
+import { Data } from '@/libs/data/Data'
 
 /*
 Building the schema for a file is a little complicated.
@@ -48,11 +49,11 @@ export class SchemaData {
 
 	public async load() {
 		this.schemas = {
-			...this.fixPaths(await data.get('packages/common/schemas.json')),
-			...this.fixPaths(await data.get('packages/minecraftBedrock/schemas.json')),
+			...this.fixPaths(await Data.get('packages/common/schemas.json')),
+			...this.fixPaths(await Data.get('packages/minecraftBedrock/schemas.json')),
 		}
 
-		this.schemaScripts = this.fixPaths(await data.get('packages/minecraftBedrock/schemaScripts.json'))
+		this.schemaScripts = this.fixPaths(await Data.get('packages/minecraftBedrock/schemaScripts.json'))
 
 		await this.generateStaticGeneratedSchemas()
 	}
@@ -236,7 +237,7 @@ export class SchemaData {
 	): Promise<{ dynamic: boolean; result?: any }> {
 		const compatabilityFileSystem = new CompatabilityFileSystem(fileSystem)
 
-		const formatVersions = (await data.get('packages/minecraftBedrock/formatVersions.json')).formatVersions
+		const formatVersions = (await Data.get('packages/minecraftBedrock/formatVersions.json')).formatVersions
 
 		let dynamicSchema = false
 

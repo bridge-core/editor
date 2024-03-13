@@ -215,10 +215,10 @@ import { Ref, computed, onMounted, ref, watch } from 'vue'
 import { IPackType } from 'mc-project-core'
 import { ProjectManager, packs } from '@/libs/project/ProjectManager'
 import { ConfigurableFile } from '@/libs/project/create/files/configurable/ConfigurableFile'
-import { FormatVersionDefinitions, ExperimentalToggle, useGetData } from '@/libs/data/Data'
+import { FormatVersionDefinitions, ExperimentalToggle, useGetData, Data } from '@/libs/data/Data'
 import { v4 as uuid } from 'uuid'
 import { useTranslate } from '@/libs/locales/Locales'
-import { data, fileSystem } from '@/App'
+import { fileSystem } from '@/App'
 
 const t = useTranslate()
 const getData = useGetData()
@@ -315,7 +315,7 @@ async function create() {
 			namespace: projectNamespace.value,
 			author: projectAuthor.value,
 			targetVersion: projectTargetVersion.value,
-			icon: projectIcon.value ?? (await data.getRaw(`packages/common/packIcon.png`)),
+			icon: projectIcon.value ?? (await Data.getRaw(`packages/common/packIcon.png`)),
 			packs: ['bridge', ...selectedPackTypes.value.map((pack) => pack.id)],
 			configurableFiles: selectedFiles.value.map((file) => file.id),
 			rpAsBpDependency: linkResourcePack.value,

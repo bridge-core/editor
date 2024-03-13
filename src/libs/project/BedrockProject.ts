@@ -3,12 +3,12 @@ import { Project } from './Project'
 import { BaseFileSystem } from '@/libs/fileSystem/BaseFileSystem'
 import { IPackType } from 'mc-project-core'
 import { FileTypeData } from '@/libs/data/bedrock/FileTypeData'
-import { data } from '@/App'
 import { SchemaData } from '@/libs/data/bedrock/SchemaData'
 import { PresetData } from '@/libs/data/bedrock/PresetData'
 import { ScriptTypeData } from '@/libs/data/bedrock/ScriptTypeData'
 import { IndexerService } from '@/libs/indexer/bedrock/IndexerService'
-import { RequirementsMatcher } from '../data/bedrock/RequirementsMatcher'
+import { RequirementsMatcher } from '@/libs/data/bedrock/RequirementsMatcher'
+import { Data } from '@/libs/data/Data'
 
 export class BedrockProject extends Project {
 	public packDefinitions: IPackType[] = []
@@ -23,7 +23,7 @@ export class BedrockProject extends Project {
 	public async load() {
 		await super.load()
 
-		this.packDefinitions = await data.get('packages/minecraftBedrock/packDefinitions.json')
+		this.packDefinitions = await Data.get('packages/minecraftBedrock/packDefinitions.json')
 
 		await this.fileTypeData.load()
 

@@ -1,6 +1,6 @@
-import { data } from '@/App'
 import { BedrockProject } from '@/libs/project/BedrockProject'
 import { Uri, languages } from 'monaco-editor'
+import { Data } from '@/libs/data/Data'
 
 export class ScriptTypeData {
 	constructor(public project: BedrockProject) {}
@@ -28,7 +28,7 @@ export class ScriptTypeData {
 			let content = null
 
 			if (location.startsWith('types/')) {
-				content = await data.getText(`data/packages/minecraftBedrock/${location}`)
+				content = await Data.getText(`data/packages/minecraftBedrock/${location}`)
 			} else {
 				const result = await fetch(location).catch(() => null)
 

@@ -1,9 +1,10 @@
-import { data, fileSystem } from '@/App'
+import { fileSystem } from '@/App'
 import { basename, dirname, extname, join } from '@/libs/path'
 import { ProjectManager } from '@/libs/project/ProjectManager'
 import { Runtime } from '@/libs/runtime/Runtime'
 import { compareVersions, deepMerge } from 'bridge-common-utils'
 import { Ref, ref } from 'vue'
+import { Data } from '@/libs/data/Data'
 
 export class PresetData {
 	public presets: { [key: string]: any } = {}
@@ -12,7 +13,7 @@ export class PresetData {
 	private runtime = new Runtime(fileSystem)
 
 	public async load() {
-		this.presets = await data.get('packages/minecraftBedrock/presets.json')
+		this.presets = await Data.get('packages/minecraftBedrock/presets.json')
 
 		for (const [presetPath, preset] of Object.entries(this.presets)) {
 			if (!this.categories[preset.category]) this.categories[preset.category] = []
@@ -65,7 +66,7 @@ export class PresetData {
 					templatePath = join(dirname(presetPath.substring('file:///data/'.length)), templatePath)
 				}
 
-				const script = await data.getText(templatePath)
+				const script = await Data.getText(templatePath)
 
 				const module: any = {}
 
@@ -123,11 +124,11 @@ export class PresetData {
 					loadPresetFile: async (path: string) => {
 						return {
 							name: basename(path),
-							content: await data.getRaw(
+							content: await Data.getRaw(
 								join(dirname(presetPath.substring('file:///data/'.length)), path)
 							),
 							async text() {
-								return await data.getText(
+								return await Data.getText(
 									join(dirname(presetPath.substring('file:///data/'.length)), path)
 								)
 							},
@@ -146,9 +147,9 @@ export class PresetData {
 			let templateContent = null
 
 			if (templatePath.endsWith('.png')) {
-				templateContent = await data.getRaw(templatePath)
+				templateContent = await Data.getRaw(templatePath)
 			} else {
-				templateContent = await data.getText(templatePath)
+				templateContent = await Data.getText(templatePath)
 			}
 
 			if (templateOptions.inject) {
@@ -174,7 +175,7 @@ export class PresetData {
 
 			templatePath = join(dirname(presetPath.substring('file:///data/'.length)), templatePath)
 
-			let templateContent = await data.getText(templatePath)
+			let templateContent = await Data.getText(templatePath)
 
 			if (templateOptions.inject) {
 				for (const inject of templateOptions.inject) {

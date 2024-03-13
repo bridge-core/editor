@@ -2,10 +2,10 @@ import { v4 as uuid } from 'uuid'
 import { BaseFileSystem } from '@/libs/fileSystem/BaseFileSystem'
 import { CreateProjectConfig } from '../../CreateProjectConfig'
 import { appVersion, dashVersion } from '@/libs/app/AppEnv'
-import { data } from '@/App'
+import { Data } from '@/libs/data/Data'
 
 async function targetVersionToMinEngineVersion(targetVersion: string) {
-	const mineEngineVersions: Record<string, string> = await data.get(
+	const mineEngineVersions: Record<string, string> = await Data.get(
 		'packages/minecraftBedrock/minEngineVersionMap.json'
 	)
 
@@ -45,13 +45,7 @@ export async function createManifest(
 			description: 'pack.description',
 			min_engine_version:
 				packType === 'behaviorPack' || packType === 'resourcePack'
-					? (
-							await targetVersionToMinEngineVersion(
-								config.targetVersion
-							)
-					  )
-							.split('.')
-							.map((str) => Number(str))
+					? (await targetVersionToMinEngineVersion(config.targetVersion)).split('.').map((str) => Number(str))
 					: undefined,
 			uuid: config.uuids[packType],
 			version: [1, 0, 0],

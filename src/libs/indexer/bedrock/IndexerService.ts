@@ -1,17 +1,15 @@
 import { WorkerFileSystemEntryPoint } from '@/libs/fileSystem/WorkerFileSystem'
 import IndexerWorker from './IndexerWorker?worker'
-import { data, fileSystem } from '@/App'
+import { fileSystem } from '@/App'
 import { sendAndWait } from '@/libs/worker/Communication'
 import { BedrockProject } from '@/libs/project/BedrockProject'
+import { Data } from '@/libs/data/Data'
 
 export class IndexerService {
 	private index: { [key: string]: { fileType: string; data?: any } } = {}
 	private instructions: { [key: string]: any } = {}
 	private worker = new IndexerWorker()
-	private workerFileSystem = new WorkerFileSystemEntryPoint(
-		this.worker,
-		fileSystem
-	)
+	private workerFileSystem = new WorkerFileSystemEntryPoint(this.worker, fileSystem)
 
 	constructor(public project: BedrockProject) {
 		this.worker.onmessage = this.onWorkerMessage.bind(this)
@@ -29,9 +27,7 @@ export class IndexerService {
 	}
 
 	public async setup() {
-		this.instructions = await data.get(
-			'packages/minecraftBedrock/lightningCaches.json'
-		)
+		this.instructions = await Data.get('packages/minecraftBedrock/lightningCaches.json')
 
 		this.index = (
 			await sendAndWait(
@@ -45,11 +41,7 @@ export class IndexerService {
 		).index
 	}
 
-	public async getCachedData(
-		fileType: string,
-		filePath?: string,
-		cacheKey?: string
-	): Promise<null | any> {
+	public async getCachedData(fileType: string, filePath?: string, cacheKey?: string): Promise<null | any> {
 		let data: string[] = []
 
 		if (filePath !== undefined) {
@@ -57,9 +49,7 @@ export class IndexerService {
 
 			if (this.index[filePath].fileType !== fileType) return null
 
-			return cacheKey
-				? this.index[filePath].data[cacheKey]
-				: this.index[filePath].data
+			return cacheKey ? this.index[filePath].data[cacheKey] : this.index[filePath].data
 		} else {
 			data = Object.values(this.index)
 				.filter((indexedData) => {
