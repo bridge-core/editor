@@ -2,7 +2,7 @@ import { ThemeManager } from '@/libs/theme/ThemeManager'
 import { Category } from '../Category'
 import { computed } from 'vue'
 import ColorScheme from './ColorScheme.vue'
-import { Settings } from '@/components/Windows/Settings/Settings'
+import { Settings } from '@/libs/settings/Settings'
 
 export class AppearanceCategory extends Category {
 	public name = 'windows.settings.appearance.name'

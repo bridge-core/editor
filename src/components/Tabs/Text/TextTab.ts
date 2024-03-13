@@ -8,7 +8,7 @@ import { BedrockProject } from '@/libs/project/BedrockProject'
 import { ThemeManager } from '@/libs/theme/ThemeManager'
 import { ProjectManager } from '@/libs/project/ProjectManager'
 import { FileTab } from '@/components/TabSystem/FileTab'
-import { Settings } from '@/components/Windows/Settings/Settings'
+import { Settings } from '@/libs/settings/Settings'
 
 export class TextTab extends FileTab {
 	public component: Component | null = TextTabComponent

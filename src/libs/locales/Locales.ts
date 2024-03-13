@@ -4,7 +4,7 @@ import enLang from '@/locales/en.json'
 import allLanguages from '@/locales/languages.json'
 import { Ref, onMounted, onUnmounted, ref } from 'vue'
 import { EventSystem } from '@/libs/event/EventSystem'
-import { Settings } from '@/components/Windows/Settings/Settings'
+import { Settings } from '@/libs/settings/Settings'
 
 // loads all languages, exclude the language file and en file since en is a special case
 // en is a special case since it is the default and other languages override it

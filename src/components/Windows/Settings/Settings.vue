@@ -7,21 +7,22 @@ import Switch from '@/components/Common/Switch.vue'
 import Button from '@/components/Common/Button.vue'
 
 import { useTranslate } from '@/libs/locales/Locales'
-import { useSettings } from './Settings'
-import { ref } from 'vue'
+import { Settings, useSettings } from '@/libs/settings/Settings'
+import { selectedCategory } from './SettingsWindow'
+import { computed, ref } from 'vue'
 
 const t = useTranslate()
 
 const settings = useSettings()
 
 const search = ref('')
+
+const definitions = Object.values(Settings.definitions).map((definition) => definition.category)
+const categories = ref(definitions.filter((definition, index) => definitions.indexOf(definition) === index))
 </script>
 
 <template>
-	<SidebarWindow
-		:name="`${t('windows.settings.title')} - ${t(settings.selectedCategory.value?.name ?? 'No Category')}`"
-		id="settings"
-	>
+	<SidebarWindow :name="`${t('windows.settings.title')} - ${t(selectedCategory ?? 'No Category')}`" id="settings">
 		<template #sidebar>
 			<div class="p-4">
 				<LabeledInput
@@ -40,20 +41,14 @@ const search = ref('')
 					</div>
 				</LabeledInput>
 
-				<div class="mt-4" v-if="settings.selectedCategory.value">
+				<!-- <div class="mt-4" v-if="selectedCategory">
 					<button
-						v-for="category in settings.categories.filter(
-							(category) =>
-								category.settings.find(
-									(setting) =>
-										t(setting.name).includes(search) || t(setting.description).includes(search)
-								) !== undefined
-						)"
+						v-for="category in categories"
 						class="w-full flex gap-1 p-1 mt-1 border-2 border-transparent hover:border-accent rounded transition-colors duration-100 ease-out"
 						:class="{
-							'bg-primary': settings.selectedCategory.value.id === category.id,
+							'bg-primary': selectedCategory === category,
 						}"
-						@click="settings.selectedCategory.value = category"
+						@click="selectedCategory = category"
 					>
 						<Icon
 							:icon="category.icon"
@@ -69,17 +64,14 @@ const search = ref('')
 							>{{ t(category.name) }}</span
 						>
 					</button>
-				</div>
+				</div> -->
 			</div>
 		</template>
 
 		<template #content>
 			<div class="max-w-[64rem] w-[50vw] h-[38rem] flex flex-col overflow-y-auto p-4 pt-0">
-				<div
-					v-if="settings.selectedCategory.value"
-					v-for="item in settings.selectedCategory.value.items.filter(
-						(item) => t(item.name).includes(search) || t(item.description).includes(search)
-					)"
+				<!-- <div
+					v-for="[id, definition] in Object.entries(Settings.definitions)"
 					class="flex gap-6 items-center"
 				>
 					<component v-if="item.type === 'custom'" :is="item.component!" :item="item" />
@@ -133,7 +125,7 @@ const search = ref('')
 					<p v-if="item.type !== 'custom'" class="text-textAlternate mr-6">
 						{{ t(item.description) }}
 					</p>
-				</div>
+				</div> -->
 			</div>
 		</template>
 	</SidebarWindow>

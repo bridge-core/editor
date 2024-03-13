@@ -18,7 +18,7 @@ import { ExtensionLibrary } from '@/components/Windows/ExtensionLibrary/Extensio
 import { Actions } from '@/libs/actions/Actions'
 import { setupTypescript } from '@/libs/monaco/TypeScript'
 import { PromptWindow } from '@/components/Windows/Prompt/PromptWindow'
-import { Settings } from '@/components/Windows/Settings/Settings'
+import { Settings } from '@/libs/settings/Settings'
 
 export const fileSystem = getFileSystem()
 export const tabManager = new TabManager()

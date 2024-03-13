@@ -8,7 +8,7 @@ import { IConfigJson } from 'mc-project-core'
 import { Ref, onMounted, onUnmounted, ref, watch } from 'vue'
 import { LocalFileSystem } from '@/libs/fileSystem/LocalFileSystem'
 import { ProjectManager } from './ProjectManager'
-import { Settings } from '@/components/Windows/Settings/Settings'
+import { Settings } from '@/libs/settings/Settings'
 
 export class Project {
 	public path: string

@@ -3,7 +3,7 @@ import OutputFolder from '../OutputFolder.vue'
 import { Category } from './Category'
 import { fileSystem } from '@/App'
 import { PWAFileSystem } from '@/libs/fileSystem/PWAFileSystem'
-import { Settings } from '@/components/Windows/Settings/Settings'
+import { Settings } from '@/libs/settings/Settings'
 
 export class ProjectsCategory extends Category {
 	public name = 'windows.settings.projects.name'
