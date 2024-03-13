@@ -6,7 +6,8 @@ import { EditorCategory } from './Categories/Editor'
 import { GeneralCategory } from './Categories/General'
 import { ProjectsCategory } from './Categories/Projects'
 import { EventSystem } from '@/libs/event/EventSystem'
-import { settings, windows } from '@/App'
+import { settings } from '@/App'
+import { Windows } from '@/components/Windows/Windows'
 import { get, set } from 'idb-keyval'
 
 export class Settings {
@@ -96,7 +97,7 @@ export class Settings {
 	}
 
 	public open(categoryId?: string) {
-		windows.open('settings')
+		Windows.open('settings')
 
 		if (!categoryId) return
 

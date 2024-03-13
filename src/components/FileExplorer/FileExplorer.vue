@@ -6,7 +6,7 @@ import ContextMenu from '@/components/Common/ContextMenu.vue'
 import ContextMenuItem from '@/components/Common/ContextMenuItem.vue'
 import FreeContextMenu from '@/components/Common/FreeContextMenu.vue'
 
-import { fileSystem, fileExplorer, tabManager, windows } from '@/App'
+import { fileSystem, fileExplorer, tabManager } from '@/App'
 import { BaseEntry } from '@/libs/fileSystem/BaseFileSystem'
 import { ComputedRef, Ref, computed, onMounted, onUnmounted, ref, watch } from 'vue'
 import { join } from '@/libs/path'
@@ -15,6 +15,7 @@ import { BedrockProject } from '@/libs/project/BedrockProject'
 import { useTranslate } from '@/libs/locales/Locales'
 import { ProjectManager } from '@/libs/project/ProjectManager'
 import { Actions } from '@/libs/actions/Actions'
+import { Windows } from '@/components/Windows/Windows'
 
 const t = useTranslate()
 
@@ -92,7 +93,7 @@ async function contextMenuBuild(close: any) {
 async function contextMenuNewFile(close: any) {
 	close()
 
-	windows.open('presets')
+	Windows.open('presets')
 }
 
 async function contextMenuOpenProjectConfig(close: any) {

@@ -1,4 +1,5 @@
-import { extensionLibrary, fileExplorer, tabManager, windows } from '@/App'
+import { extensionLibrary, fileExplorer, tabManager } from '@/App'
+import { Windows } from '@/components/Windows/Windows'
 import { Ref, ref } from 'vue'
 import { v4 as uuid } from 'uuid'
 import { FindAndReplaceTab } from '../Tabs/FindAnReplace/FindAndReplaceTab'
@@ -32,7 +33,7 @@ export class Sidebar {
 		})
 
 		this.addButton('manufacturing', () => {
-			windows.open('compiler')
+			Windows.open('compiler')
 		})
 		this.addButton('extension', () => {
 			extensionLibrary.open()

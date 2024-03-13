@@ -1,19 +1,19 @@
 import { Ref, ref, computed } from 'vue'
 
 export class Windows {
-	public openWindows: Ref<string[]> = ref([])
+	public static openWindows: Ref<string[]> = ref([])
 
-	public open(name: string) {
-		this.openWindows.value.push(name)
-		this.openWindows.value = this.openWindows.value
+	public static open(name: string) {
+		Windows.openWindows.value.push(name)
+		Windows.openWindows.value = Windows.openWindows.value
 	}
 
-	public close(name: string) {
-		this.openWindows.value.splice(this.openWindows.value.indexOf(name), 1)
-		this.openWindows.value = this.openWindows.value
+	public static close(name: string) {
+		Windows.openWindows.value.splice(Windows.openWindows.value.indexOf(name), 1)
+		Windows.openWindows.value = Windows.openWindows.value
 	}
 
-	public opened(name: string) {
-		return computed(() => this.openWindows.value.includes(name))
+	public static opened(name: string) {
+		return computed(() => Windows.openWindows.value.includes(name))
 	}
 }

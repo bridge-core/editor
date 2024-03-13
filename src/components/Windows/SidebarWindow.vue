@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { windows } from '@/App'
 import IconButton from '@/components/Common/IconButton.vue'
+
+import { Windows } from '@/components/Windows/Windows'
 import { watch } from 'vue'
 
 const { id } = defineProps({
@@ -16,7 +17,7 @@ const { id } = defineProps({
 
 const emit = defineEmits(['open'])
 
-const opened = windows.opened(id)
+const opened = Windows.opened(id)
 
 watch(opened, (value) => {
 	if (!value) return
@@ -25,7 +26,7 @@ watch(opened, (value) => {
 })
 
 function close() {
-	windows.close(id)
+	Windows.close(id)
 }
 
 defineExpose({

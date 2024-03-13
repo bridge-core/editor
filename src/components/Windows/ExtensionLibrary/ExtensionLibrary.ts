@@ -1,4 +1,5 @@
-import { extensions, windows } from '@/App'
+import { extensions } from '@/App'
+import { Windows } from '@/components/Windows/Windows'
 import { Ref, ref } from 'vue'
 import { ExtensionManifest } from '@/libs/extensions/Extensions'
 import { Data } from '@/libs/data/Data'
@@ -23,13 +24,13 @@ export class ExtensionLibrary {
 	public async open() {
 		await this.load()
 
-		windows.open('extensionLibrary')
+		Windows.open('extensionLibrary')
 	}
 
 	public requestInstall(extension: ExtensionManifest) {
 		this.extensionToInstall = extension
 
-		windows.open('extensionInstallLocation')
+		Windows.open('extensionInstallLocation')
 	}
 
 	public confirmInstallGlobal() {

@@ -1,4 +1,4 @@
-import { windows } from '@/App'
+import { Windows } from '@/components/Windows/Windows'
 import { Ref, ref } from 'vue'
 
 export class PromptWindow {
@@ -22,7 +22,7 @@ export class PromptWindow {
 		this.confirmCallback = confirmCallback
 		this.cancelCallback = cancelCallback
 
-		windows.open('prompt')
+		Windows.open('prompt')
 	}
 
 	public confirm(input: string) {

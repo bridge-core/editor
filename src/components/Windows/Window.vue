@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { windows } from '@/App'
+import { Windows } from '@/components/Windows/Windows'
 import IconButton from '@/components/Common/IconButton.vue'
 
 const props = defineProps({
@@ -14,7 +14,7 @@ const props = defineProps({
 })
 
 function close() {
-	windows.close(props.id)
+	Windows.close(props.id)
 }
 
 defineExpose({
@@ -26,7 +26,7 @@ defineExpose({
 	<Transition>
 		<div
 			class="w-screen h-app flex justify-center items-center absolute top-toolbar left-0"
-			v-if="windows.opened(id).value"
+			v-if="Windows.opened(id).value"
 		>
 			<div class="bg-menu w-screen h-app absolute top-0 left-0 opacity-30" @click="close" />
 

@@ -4,11 +4,12 @@ import IconButton from '@/components/Common/IconButton.vue'
 import ProjectGalleryEntry from './ProjectGalleryEntry.vue'
 import TextButton from '@/components/Common/TextButton.vue'
 
-import { fileSystem, windows, selectOrLoadBridgeFolder } from '@/App'
+import { fileSystem, selectOrLoadBridgeFolder } from '@/App'
 import { PWAFileSystem } from '@/libs/fileSystem/PWAFileSystem'
 import { computed, ref } from 'vue'
 import { useTranslate } from '@/libs/locales/Locales'
 import { ProjectInfo, ProjectManager } from '@/libs/project/ProjectManager'
+import { Windows } from '@/components/Windows/Windows'
 
 const t = useTranslate()
 
@@ -24,7 +25,7 @@ const suggestSelectBridgeFolder = computed(
 async function createProject() {
 	if (fileSystem instanceof PWAFileSystem && !fileSystem.setup) await selectOrLoadBridgeFolder()
 
-	windows.open('createProject')
+	Windows.open('createProject')
 }
 
 async function openProject(project: ProjectInfo) {

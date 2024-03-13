@@ -22,7 +22,6 @@ import { setupTypescript } from '@/libs/monaco/TypeScript'
 import { PromptWindow } from '@/components/Windows/Prompt/PromptWindow'
 
 export const fileSystem = getFileSystem()
-export const windows = new Windows()
 export const tabManager = new TabManager()
 export const sidebar = new Sidebar()
 export const fileExplorer = new FileExplorer()
@@ -31,13 +30,13 @@ export const confirmWindow = new ConfirmWindow()
 export const promptWindow = new PromptWindow()
 export const extensions = new Extensions()
 export const extensionLibrary = new ExtensionLibrary()
-export const localeManager = new LocaleManager()
 
 // Setup static singletons early so components can use them properly
 ProjectManager.setup()
 ThemeManager.setup()
 Toolbar.setup()
 Actions.setup()
+LocaleManager.setup()
 
 export async function setup() {
 	console.time('[App] Setup')

@@ -27,7 +27,7 @@
 import Logo from '@/components/Common/Logo.vue'
 import IconButton from '@/components/Common/IconButton.vue'
 
-import { windows } from '@/App'
+import { Windows } from '@/components/Windows/Windows'
 import { appVersion } from '@/libs/app/AppEnv'
 import { useTranslate } from '@/libs/locales/Locales'
 import { appWindow } from '@tauri-apps/api/window'
@@ -37,6 +37,6 @@ import { Toolbar } from './Toolbar'
 const t = useTranslate()
 
 function openChangelog() {
-	windows.open('changelog')
+	Windows.open('changelog')
 }
 </script>

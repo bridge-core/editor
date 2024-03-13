@@ -21,7 +21,7 @@ export class LocaleManager {
 	protected static currentLanguage: any = enLang
 	protected static currentLanuageId = 'english'
 
-	constructor() {
+	public static setup() {
 		settings.eventSystem.on('updated', (event) => {
 			const { id, value } = event as { id: string; value: string }
 
@@ -34,7 +34,7 @@ export class LocaleManager {
 		})
 	}
 
-	static getAvailableLanguages() {
+	public static getAvailableLanguages() {
 		return allLanguages
 			.sort((a, b) => a.name.localeCompare(b.name))
 			.map((l) => ({
@@ -43,11 +43,11 @@ export class LocaleManager {
 			}))
 	}
 
-	static getCurrentLanguageId() {
+	public static getCurrentLanguageId() {
 		return this.currentLanuageId
 	}
 
-	static async applyDefaultLanguage() {
+	public static async applyDefaultLanguage() {
 		const language = await get<string>('language')
 
 		// Set language based on bridge. setting
@@ -65,7 +65,7 @@ export class LocaleManager {
 		}
 	}
 
-	static async applyLanguage(id: string) {
+	public static async applyLanguage(id: string) {
 		if (id === this.currentLanuageId) return
 
 		if (id === 'english') {
@@ -90,7 +90,7 @@ export class LocaleManager {
 		this.eventSystem.dispatch('languageChanged', id)
 	}
 
-	static translate(key?: string, lang = this.currentLanguage) {
+	public static translate(key?: string, lang = this.currentLanguage) {
 		if (!key) return ''
 
 		if (key.startsWith('[') && key.endsWith(']')) {

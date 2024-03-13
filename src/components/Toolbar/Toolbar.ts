@@ -1,11 +1,11 @@
-import { windows } from '@/App'
+import { Windows } from '@/components/Windows/Windows'
 
 export class Toolbar {
 	public static items: { name: string; icon: string; action: () => void }[] = []
 
 	public static setup() {
 		this.addItem('toolbar.project.name', 'space_dashboard', () => null)
-		this.addItem('toolbar.settings.name', 'help', () => windows.open('settings'))
+		this.addItem('toolbar.settings.name', 'help', () => Windows.open('settings'))
 		this.addItem('toolbar.file.name', 'draft', () => null)
 		this.addItem('toolbar.tools.name', 'build', () => null)
 		this.addItem('toolbar.help.name', 'help', () => null)
