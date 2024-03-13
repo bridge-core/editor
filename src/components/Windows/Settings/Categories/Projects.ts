@@ -1,8 +1,9 @@
 import { get, set } from 'idb-keyval'
 import OutputFolder from '../OutputFolder.vue'
 import { Category } from './Category'
-import { fileSystem, settings } from '@/App'
+import { fileSystem } from '@/App'
 import { PWAFileSystem } from '@/libs/fileSystem/PWAFileSystem'
+import { Settings } from '@/components/Windows/Settings/Settings'
 
 export class ProjectsCategory extends Category {
 	public name = 'windows.settings.projects.name'
@@ -30,7 +31,7 @@ export class ProjectsCategory extends Category {
 				'windows.settings.projects.clearOutputFolder.name',
 				'windows.settings.projects.clearOutputFolder.description',
 				() => {
-					settings.set('outputFolder', undefined)
+					Settings.set('outputFolder', undefined)
 				}
 			)
 		}

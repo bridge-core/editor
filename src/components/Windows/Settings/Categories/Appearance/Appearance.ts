@@ -2,7 +2,7 @@ import { ThemeManager } from '@/libs/theme/ThemeManager'
 import { Category } from '../Category'
 import { computed } from 'vue'
 import ColorScheme from './ColorScheme.vue'
-import { settings } from '@/App'
+import { Settings } from '@/components/Windows/Settings/Settings'
 
 export class AppearanceCategory extends Category {
 	public name = 'windows.settings.appearance.name'
@@ -25,11 +25,11 @@ export class AppearanceCategory extends Category {
 				if (value === 'auto') value = ThemeManager.prefersDarkMode() ? 'dark' : 'light'
 
 				if (value === 'dark') {
-					ThemeManager.applyTheme(settings.get('darkTheme'))
+					ThemeManager.applyTheme(Settings.get('darkTheme'))
 				}
 
 				if (value === 'light') {
-					ThemeManager.applyTheme(settings.get('lightTheme'))
+					ThemeManager.applyTheme(Settings.get('lightTheme'))
 				}
 			},
 			undefined,
@@ -50,8 +50,8 @@ export class AppearanceCategory extends Category {
 				if (initial) return
 
 				if (
-					settings.get('colorScheme') !== 'dark' &&
-					!(settings.get('colorScheme') === 'auto' && ThemeManager.prefersDarkMode())
+					Settings.get('colorScheme') !== 'dark' &&
+					!(Settings.get('colorScheme') === 'auto' && ThemeManager.prefersDarkMode())
 				)
 					return
 
@@ -69,8 +69,8 @@ export class AppearanceCategory extends Category {
 				if (initial) return
 
 				if (
-					settings.get('colorScheme') !== 'light' &&
-					!(settings.get('colorScheme') === 'auto' && !ThemeManager.prefersDarkMode())
+					Settings.get('colorScheme') !== 'light' &&
+					!(Settings.get('colorScheme') === 'auto' && !ThemeManager.prefersDarkMode())
 				)
 					return
 

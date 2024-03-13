@@ -2,12 +2,13 @@ import { Component, ref } from 'vue'
 import TextTabComponent from '@/components/Tabs/Text/TextTab.vue'
 import { Uri, editor as monaco } from 'monaco-editor'
 import { keyword } from 'color-convert'
-import { fileSystem, settings } from '@/App'
+import { fileSystem } from '@/App'
 import { setMonarchTokensProvider } from '@/libs/monaco/Json'
 import { BedrockProject } from '@/libs/project/BedrockProject'
 import { ThemeManager } from '@/libs/theme/ThemeManager'
 import { ProjectManager } from '@/libs/project/ProjectManager'
 import { FileTab } from '@/components/TabSystem/FileTab'
+import { Settings } from '@/components/Windows/Settings/Settings'
 
 export class TextTab extends FileTab {
 	public component: Component | null = TextTabComponent
@@ -53,7 +54,7 @@ export class TextTab extends FileTab {
 		this.editor = monaco.create(element, {
 			fontFamily: 'Consolas',
 			//@ts-ignore Monaco types have not been update yet
-			'bracketPairColorization.enabled': settings.get('bracketPairColorization'),
+			'bracketPairColorization.enabled': Settings.get('bracketPairColorization'),
 			automaticLayout: true,
 			contextmenu: false,
 		})

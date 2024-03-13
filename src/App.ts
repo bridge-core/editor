@@ -4,11 +4,9 @@ import { LocaleManager } from '@/libs/locales/Locales'
 import { ProjectManager } from '@/libs/project/ProjectManager'
 import { getFileSystem } from '@/libs/fileSystem/FileSystem'
 import { Data } from '@/libs/data/Data'
-import { Windows } from '@/components/Windows/Windows'
 import { TabManager } from '@/components/TabSystem/TabManager'
 import { Sidebar } from '@/components/Sidebar/Sidebar'
 import { FileExplorer } from '@/components/FileExplorer/FileExplorer'
-import { Settings } from '@/components/Windows/Settings/Settings'
 import { ConfirmWindow } from '@/components/Windows/Confirm/ConfirmWindow'
 import { PWAFileSystem } from '@/libs/fileSystem/PWAFileSystem'
 import { TauriFileSystem } from '@/libs/fileSystem/TauriFileSystem'
@@ -20,12 +18,12 @@ import { ExtensionLibrary } from '@/components/Windows/ExtensionLibrary/Extensio
 import { Actions } from '@/libs/actions/Actions'
 import { setupTypescript } from '@/libs/monaco/TypeScript'
 import { PromptWindow } from '@/components/Windows/Prompt/PromptWindow'
+import { Settings } from '@/components/Windows/Settings/Settings'
 
 export const fileSystem = getFileSystem()
 export const tabManager = new TabManager()
 export const sidebar = new Sidebar()
 export const fileExplorer = new FileExplorer()
-export const settings = new Settings()
 export const confirmWindow = new ConfirmWindow()
 export const promptWindow = new PromptWindow()
 export const extensions = new Extensions()
@@ -55,7 +53,7 @@ export async function setup() {
 	setupTypescript()
 
 	console.time('[App] Settings')
-	await settings.load()
+	await Settings.load()
 	console.timeEnd('[App] Settings')
 
 	console.time('[App] Data')

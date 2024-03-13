@@ -1,5 +1,5 @@
 import { join } from '@/libs/path'
-import { confirmWindow, extensions, fileSystem, settings, sidebar } from '@/App'
+import { confirmWindow, extensions, fileSystem, sidebar } from '@/App'
 import { BaseFileSystem } from '@/libs/fileSystem/BaseFileSystem'
 import { PWAFileSystem } from '@/libs/fileSystem/PWAFileSystem'
 import { get, set } from 'idb-keyval'
@@ -8,6 +8,7 @@ import { IConfigJson } from 'mc-project-core'
 import { Ref, onMounted, onUnmounted, ref, watch } from 'vue'
 import { LocalFileSystem } from '@/libs/fileSystem/LocalFileSystem'
 import { ProjectManager } from './ProjectManager'
+import { Settings } from '@/components/Windows/Settings/Settings'
 
 export class Project {
 	public path: string
@@ -46,7 +47,7 @@ export class Project {
 
 		this.icon = await fileSystem.readFileDataUrl(join(this.path, 'BP', 'pack_icon.png'))
 
-		settings.eventSystem.on('updated', this.settingsChanged.bind(this))
+		Settings.eventSystem.on('updated', this.settingsChanged.bind(this))
 
 		this.usingProjectOutputFolder = (await get(this.usingProjectOutputFolderKey)) ?? false
 		this.eventSystem.dispatch('usingProjectOutputFolderChanged', undefined)
@@ -57,7 +58,7 @@ export class Project {
 	}
 
 	public async dispose() {
-		settings.eventSystem.off('updated', this.settingsChanged.bind(this))
+		Settings.eventSystem.off('updated', this.settingsChanged.bind(this))
 
 		extensions.disposeProjectExtensions()
 	}
@@ -132,7 +133,7 @@ export class Project {
 
 		let newOutputFolderHandle: FileSystemDirectoryHandle | undefined = this.usingProjectOutputFolder
 			? localProjectFolder
-			: settings.get('outputFolder')
+			: Settings.get('outputFolder')
 
 		let newOutputFileSystem = new PWAFileSystem()
 
@@ -158,7 +159,7 @@ export class Project {
 			'warning',
 			() => {
 				confirmWindow.open('You have not set up your output folder yet. Do you want to set it up now?', () =>
-					settings.open('projects')
+					Settings.open('projects')
 				)
 			},
 			'warning'

@@ -4,7 +4,7 @@ import enLang from '@/locales/en.json'
 import allLanguages from '@/locales/languages.json'
 import { Ref, onMounted, onUnmounted, ref } from 'vue'
 import { EventSystem } from '@/libs/event/EventSystem'
-import { settings } from '@/App'
+import { Settings } from '@/components/Windows/Settings/Settings'
 
 // loads all languages, exclude the language file and en file since en is a special case
 // en is a special case since it is the default and other languages override it
@@ -22,7 +22,7 @@ export class LocaleManager {
 	protected static currentLanuageId = 'english'
 
 	public static setup() {
-		settings.eventSystem.on('updated', (event) => {
+		Settings.eventSystem.on('updated', (event) => {
 			const { id, value } = event as { id: string; value: string }
 
 			if (id !== 'language') return

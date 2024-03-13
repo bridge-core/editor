@@ -1,86 +1,72 @@
 import { Ref, ShallowRef, onMounted, onUnmounted, ref, shallowRef } from 'vue'
-import { ActionsCategory } from './Categories/Actions'
-import { AppearanceCategory } from './Categories/Appearance/Appearance'
 import { Category } from './Categories/Category'
-import { EditorCategory } from './Categories/Editor'
-import { GeneralCategory } from './Categories/General'
-import { ProjectsCategory } from './Categories/Projects'
 import { EventSystem } from '@/libs/event/EventSystem'
-import { settings } from '@/App'
 import { Windows } from '@/components/Windows/Windows'
 import { get, set } from 'idb-keyval'
 
 export class Settings {
-	public categories: Category[] = []
-	public settings: any = null
-	public eventSystem = new EventSystem(['updated'])
-	public selectedCategory: Ref<Category | null> = ref(null)
+	public static categories: Category[] = []
+	public static settings: any = null
+	public static eventSystem = new EventSystem(['updated'])
+	public static selectedCategory: Ref<Category | null> = ref(null)
 
-	constructor() {
-		this.addCategory(new GeneralCategory())
-		this.addCategory(new EditorCategory())
-		this.addCategory(new AppearanceCategory())
-		this.addCategory(new ProjectsCategory())
-		this.addCategory(new ActionsCategory())
+	public static async load() {
+		Settings.selectedCategory.value = Settings.categories[0]
 
-		this.selectedCategory.value = this.categories[0]
-	}
-
-	public async load() {
 		try {
-			this.settings = JSON.parse((await get('settings')) as string)
+			Settings.settings = JSON.parse((await get('settings')) as string)
 		} catch {}
 
-		if (this.settings === null) {
-			this.settings = {}
+		if (Settings.settings === null) {
+			Settings.settings = {}
 
-			for (const category of this.categories) {
-				this.settings = {
-					...this.settings,
+			for (const category of Settings.categories) {
+				Settings.settings = {
+					...Settings.settings,
 					...category.getDefaults(),
 				}
 			}
 
-			for (const category of this.categories) {
+			for (const category of Settings.categories) {
 				for (const setting of category.settings) {
-					if (setting.update) await setting.update(this.settings[setting.id], true)
+					if (setting.update) await setting.update(Settings.settings[setting.id], true)
 
-					this.eventSystem.dispatch('updated', { id: setting.id, value: this.settings[setting.id] })
+					Settings.eventSystem.dispatch('updated', { id: setting.id, value: Settings.settings[setting.id] })
 				}
 			}
 
 			return
 		}
 
-		for (const category of this.categories) {
+		for (const category of Settings.categories) {
 			for (const setting of category.settings) {
 				if (setting.load) {
-					this.settings[setting.id] = await setting.load()
-				} else if (!this.settings[setting.id]) {
-					this.settings[setting.id] = setting.defaultValue
+					Settings.settings[setting.id] = await setting.load()
+				} else if (!Settings.settings[setting.id]) {
+					Settings.settings[setting.id] = setting.defaultValue
 				}
 
-				if (setting.update) await setting.update(this.settings[setting.id], true)
+				if (setting.update) await setting.update(Settings.settings[setting.id], true)
 
-				this.eventSystem.dispatch('updated', { id: setting.id, value: this.settings[setting.id] })
+				Settings.eventSystem.dispatch('updated', { id: setting.id, value: Settings.settings[setting.id] })
 			}
 		}
 	}
 
-	public addCategory(category: Category) {
-		this.categories.push(category)
+	public static addCategory(category: Category) {
+		Settings.categories.push(category)
 	}
 
-	public get(id: string): any {
-		return this.settings[id]
+	public static get(id: string): any {
+		return Settings.settings[id]
 	}
 
-	public async set(id: string, value: any) {
-		if (!this.settings) return
+	public static async set(id: string, value: any) {
+		if (!Settings.settings) return
 
-		this.settings[id] = value
+		Settings.settings[id] = value
 
-		for (const category of this.categories) {
+		for (const category of Settings.categories) {
 			const setting = category.settings.find((setting) => setting.id === id)
 			if (!setting) continue
 
@@ -89,41 +75,41 @@ export class Settings {
 			if (setting.save) {
 				await setting.save(value)
 			} else {
-				set('settings', JSON.stringify(this.settings))
+				set('settings', JSON.stringify(Settings.settings))
 			}
 
-			this.eventSystem.dispatch('updated', { id, value })
+			Settings.eventSystem.dispatch('updated', { id, value })
 		}
 	}
 
-	public open(categoryId?: string) {
+	public static open(categoryId?: string) {
 		Windows.open('settings')
 
 		if (!categoryId) return
 
-		const category = this.categories.find((category) => category.id === categoryId)
+		const category = Settings.categories.find((category) => category.id === categoryId)
 
 		if (!category) return
 
-		this.selectedCategory.value = category
+		Settings.selectedCategory.value = category
 	}
 }
 
 export function useSettings(): Ref<Settings> {
-	const currentSettings: ShallowRef<Settings> = shallowRef(settings)
+	const currentSettings: ShallowRef<Settings> = shallowRef(Settings)
 
 	function updateSettings() {
 		//@ts-ignore this value in't acutally read by any code, it just triggers an update
 		currentSettings.value = null
-		currentSettings.value = settings
+		currentSettings.value = Settings
 	}
 
 	onMounted(() => {
-		settings.eventSystem.on('updated', updateSettings)
+		Settings.eventSystem.on('updated', updateSettings)
 	})
 
 	onUnmounted(() => {
-		settings.eventSystem.off('updated', updateSettings)
+		Settings.eventSystem.off('updated', updateSettings)
 	})
 
 	return currentSettings
