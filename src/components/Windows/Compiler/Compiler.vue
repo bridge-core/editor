@@ -63,7 +63,7 @@ async function droppedOutputFolder(items: DataTransferItemList) {
 				<div class="overflow-y-scroll max-h-[34rem]">
 					<button
 						v-for="category of categories"
-						class="w-full flex align-center gap-2 border-transparent hover:border-text border-2 transition-colors duration-100 ease-out rounded p-2 mt-1"
+						class="w-full flex align-center gap-2 border-transparent hover:border-text border-2 transition-colors duration-100 ease-out rounded p-1 mt-1"
 						:class="{
 							'bg-primary': selectedCategory === category.id,
 						}"
@@ -117,7 +117,7 @@ async function droppedOutputFolder(items: DataTransferItemList) {
 							text="Clear Output Folder"
 							@click="ProjectManager.currentProject!.clearLocalProjectFolder()"
 						/>
-						<p class="text-textAlternate">{{ t('Forget the current project output folder.') }}</p>
+						<p class="text-text-secondary">{{ t('Forget the current project output folder.') }}</p>
 					</div>
 				</div>
 
@@ -125,7 +125,7 @@ async function droppedOutputFolder(items: DataTransferItemList) {
 					<div>
 						<p
 							v-for="log in (<BedrockProject>ProjectManager.currentProject).dashService.logs"
-							class="font-inter border-b border-menuAlternate pb-2 mb-2 text-sm"
+							class="font-inter border-b border-background-secondary pb-2 mb-2 text-sm"
 						>
 							{{ log }}
 						</p>
