@@ -1,12 +1,9 @@
-import { Ref, ShallowRef, onMounted, onUnmounted, shallowRef } from 'vue'
+import { Ref, ShallowRef, onMounted, onUnmounted, ref, shallowRef } from 'vue'
 import { EventSystem } from '@/libs/event/EventSystem'
 import { get, set } from 'idb-keyval'
 
-interface SettingDefinition<T> {
+interface Setting<T> {
 	default: T
-	label: string
-	description: string | undefined
-	category: string
 	load?: (value: any) => Promise<T>
 	save?: (value: T) => Promise<any>
 }
@@ -14,7 +11,7 @@ interface SettingDefinition<T> {
 export class Settings {
 	public static settings: Record<string, any> = {}
 	public static eventSystem = new EventSystem(['updated'])
-	public static definitions: Record<string, SettingDefinition<any>> = {}
+	public static definitions: Record<string, Setting<any>> = {}
 
 	public static loadedSettings: Record<string, any> = {}
 
@@ -32,7 +29,7 @@ export class Settings {
 		}
 	}
 
-	public static async addDefinition(id: string, definition: SettingDefinition<any>) {
+	public static async addDefinition(id: string, definition: Setting<any>) {
 		Settings.definitions[id] = definition
 
 		await this.updateDefinition(id)
@@ -75,15 +72,39 @@ export class Settings {
 	private static async updateDefinition(id: string) {
 		const definition = Settings.definitions[id]
 
-		if (Settings.settings[id] === undefined) Settings.settings[id] = definition.default
-
 		if (definition.load) {
 			Settings.settings[id] = await definition.load(Settings.loadedSettings[id])
 
 			return
 		}
 
+		if (Settings.loadedSettings[id] === undefined) {
+			Settings.settings[id] = definition.default
+
+			return
+		}
+
 		Settings.settings[id] = Settings.loadedSettings[id]
+	}
+
+	public static useGet(): Ref<(id: string) => any> {
+		const get: Ref<(id: string) => any> = ref(Settings.get)
+
+		function updateSettings() {
+			//@ts-ignore this value in't acutally read by any code, it just triggers an update
+			get.value = null
+			get.value = Settings.get
+		}
+
+		onMounted(() => {
+			Settings.eventSystem.on('updated', updateSettings)
+		})
+
+		onUnmounted(() => {
+			Settings.eventSystem.off('updated', updateSettings)
+		})
+
+		return get
 	}
 }
 
