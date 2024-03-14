@@ -30,14 +30,14 @@ async function dropped(event: DragEvent) {
 		class="border-2 border-dashed rounded flex justify-center items-center transition-colors duration-100 ease-out"
 		:class="{
 			'border-primary': hovered,
-			'border-menuAlternate': !hovered,
+			'border-background-secondary': !hovered,
 		}"
 		@dragenter="hovered = true"
 		@dragleave="hovered = false"
 		@dragover.prevent
 		@drop="dropped"
 	>
-		<span class="font-inter text-textAlternate select-none pointer-events-none">
+		<span class="font-inter text-text-secondary select-none pointer-events-none">
 			{{ text }}
 		</span>
 	</div>
