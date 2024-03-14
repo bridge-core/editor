@@ -1,19 +1,19 @@
 <template>
 	<div class="relative text-base" @click.stop="$emit('update:modelValue', !modelValue)">
-		<div class="w-[2.5rem] h-5">
+		<div class="w-[3rem] h-6 group">
 			<div
-				class="w-full h-full rounded-full transition-colors duration-100 ease-out opacity-20"
+				class="w-full h-full rounded-full transition-colors duration-100 ease-out border-2"
 				:class="{
-					'bg-background-tertiary': !modelValue,
-					'bg-primary': modelValue,
+					'border-background-secondary': !modelValue,
+					'border-primary': modelValue,
 				}"
 			/>
 
 			<div
-				class="rounded-full w-4 h-4 absolute top-0.5 transition-[left] duration-100 ease-out"
+				class="rounded-full w-4 h-4 absolute top-1 transition-[left, background] duration-100 ease-out group-hover:bg-accent"
 				:class="{
-					'left-[0.125rem] bg-background-tertiary': !modelValue,
-					'left-[1.375rem] bg-primary': modelValue,
+					'left-[0.25rem] bg-background-tertiary': !modelValue,
+					'left-[1.75rem] bg-primary': modelValue,
 				}"
 			/>
 		</div>
