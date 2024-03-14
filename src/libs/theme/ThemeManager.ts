@@ -2,6 +2,7 @@ import { Theme, colorNames } from './Theme'
 import { dark, light } from './DefaultThemes'
 import { onMounted, onUnmounted, ref } from 'vue'
 import { EventSystem } from '@/libs/event/EventSystem'
+import { Settings } from '@/libs/settings/Settings'
 import { get, set } from 'idb-keyval'
 
 export class ThemeManager {
@@ -12,6 +13,33 @@ export class ThemeManager {
 	public static setup() {
 		this.addTheme(dark)
 		this.addTheme(light)
+
+		Settings.addSetting('colorScheme', {
+			default: 'auto',
+		})
+
+		Settings.addSetting('darkTheme', {
+			default: 'bridge.default.dark',
+		})
+
+		Settings.addSetting('lightTheme', {
+			default: 'bridge.default.light',
+		})
+
+		Settings.eventSystem.on('updated', (event) => {
+			const { id, value } = event as { id: string; value: any }
+
+			if (!['colorScheme', 'darkTheme', 'lightTheme'].includes(id)) return
+
+			const colorScheme = Settings.get('colorScheme')
+
+			let themeId = Settings.get('darkTheme')
+
+			if (colorScheme === 'light' || (colorScheme === 'auto' && !ThemeManager.prefersDarkMode()))
+				themeId = Settings.get('lightTheme')
+
+			ThemeManager.applyTheme(themeId)
+		})
 	}
 
 	public static async load() {

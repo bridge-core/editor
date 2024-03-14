@@ -1,5 +1,5 @@
 import { ThemeManager } from '@/libs/theme/ThemeManager'
-import { Category } from '../Category'
+import { Category } from '../Categories/Category'
 import { computed } from 'vue'
 import ColorScheme from './ColorScheme.vue'
 import { Settings } from '@/libs/settings/Settings'
