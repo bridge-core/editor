@@ -21,7 +21,11 @@ const isInstalled = extensions.useIsInstalled()
 	<SidebarWindow :name="t('windows.extensionLibrary.title')" id="extensionLibrary">
 		<template #sidebar>
 			<div class="p-4">
-				<LabeledInput v-slot="{ focus, blur }" :label="t('Search Extensions')" class="bg-menuAlternate !mt-1">
+				<LabeledInput
+					v-slot="{ focus, blur }"
+					:label="t('Search Extensions')"
+					class="bg-background-secondary !mt-1"
+				>
 					<div class="flex gap-1">
 						<Icon icon="search" class="transition-colors duration-100 ease-out" />
 						<input @focus="focus" @blur="blur" class="outline-none border-none bg-transparent font-inter" />
@@ -31,7 +35,7 @@ const isInstalled = extensions.useIsInstalled()
 				<div class="mt-4">
 					<button
 						v-for="tag in Object.keys(extensionLibrary.tags)"
-						class="w-full flex gap-1 p-1 mt-1 border-2 border-transparent hover:border-text rounded transition-colors duration-100 ease-out"
+						class="w-full flex gap-1 p-1 mt-1 border-2 border-transparent hover:border-accent rounded transition-colors duration-100 ease-out"
 						:class="{
 							'bg-[var(--color)]': extensionLibrary.selectedTag.value === tag,
 						}"
@@ -44,7 +48,7 @@ const isInstalled = extensions.useIsInstalled()
 							:icon="extensionLibrary.tags[tag].icon"
 							:color="
 								extensionLibrary.selectedTag.value === tag
-									? 'text'
+									? 'accent'
 									: extensionLibrary.tags[tag].color ?? 'primary'
 							"
 							class="text-base"
@@ -63,7 +67,7 @@ const isInstalled = extensions.useIsInstalled()
 							extension.tags.includes(extensionLibrary.selectedTag.value)
 					)"
 					:key="extension.id"
-					class="bg-menuAlternate rounded mb-4 p-2"
+					class="bg-background-secondary rounded mb-4 p-2"
 				>
 					<div class="flex justify-between mb-4">
 						<div class="flex gap-2">
@@ -88,7 +92,7 @@ const isInstalled = extensions.useIsInstalled()
 
 								<template #menu="{ close }">
 									<div
-										class="w-56 bg-menuAlternate rounded mt-2 shadow-window overflow-hidden relative z-10 -ml-52"
+										class="w-56 bg-background-secondary rounded mt-2 shadow-window overflow-hidden relative z-10 -ml-52"
 									>
 										<ContextMenuItem
 											text="Uninstall"
@@ -115,7 +119,7 @@ const isInstalled = extensions.useIsInstalled()
 
 					<div class="mb-4 flex gap-4">
 						<span
-							class="font-inter text-sm py-1 px-2 bg-primary hover:bg-text rounded-full flex items-center gap-1 group hover:text-background transition-colors duration-100 ease-out cursor-pointer"
+							class="font-inter text-sm py-1 px-2 bg-primary hover:bg-accent rounded-full flex items-center gap-1 group hover:text-background transition-colors duration-100 ease-out cursor-pointer"
 						>
 							<span
 								class="material-symbols-rounded text-sm group-hover:text-background transition-colors duration-100 ease-out"
@@ -125,13 +129,13 @@ const isInstalled = extensions.useIsInstalled()
 							{{ extension.author }}
 						</span>
 
-						<span class="font-inter text-sm py-1 px-2 bg-menu rounded-full">
+						<span class="font-inter text-sm py-1 px-2 bg-background rounded-full">
 							{{ extension.version }}
 						</span>
 
 						<span
 							v-for="tag in extension.tags"
-							class="font-inter text-sm py-1 px-2 bg-[var(--color)] hover:bg-text rounded-full flex items-center gap-1 group hover:text-background transition-colors duration-100 ease-out cursor-pointer"
+							class="font-inter text-sm py-1 px-2 bg-[var(--color)] hover:bg-accent rounded-full flex items-center gap-1 group hover:text-background transition-colors duration-100 ease-out cursor-pointer"
 							:style="{
 								'--color': `var(--theme-color-${extensionLibrary.tags[tag].color ?? 'primary'})`,
 							}"
@@ -145,7 +149,7 @@ const isInstalled = extensions.useIsInstalled()
 						</span>
 					</div>
 
-					<p class="font-inter text-textAlternate">{{ extension.description }}</p>
+					<p class="font-inter text-text-secondary">{{ extension.description }}</p>
 				</div>
 			</div>
 		</template>
