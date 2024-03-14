@@ -21,7 +21,7 @@ export class Settings {
 		} catch {}
 
 		for (const id of Object.keys(Settings.definitions)) {
-			await Settings.updateDefinition(id)
+			await Settings.updateSetting(id)
 		}
 
 		for (const [id, value] of Object.entries(Settings.settings)) {
@@ -29,10 +29,10 @@ export class Settings {
 		}
 	}
 
-	public static async addDefinition(id: string, definition: Setting<any>) {
-		Settings.definitions[id] = definition
+	public static async addSetting(id: string, setting: Setting<any>) {
+		Settings.definitions[id] = setting
 
-		await this.updateDefinition(id)
+		await this.updateSetting(id)
 	}
 
 	public static removeDefinition(id: string) {
@@ -69,7 +69,7 @@ export class Settings {
 		Settings.eventSystem.dispatch('updated', { id, value })
 	}
 
-	private static async updateDefinition(id: string) {
+	private static async updateSetting(id: string) {
 		const definition = Settings.definitions[id]
 
 		if (definition.load) {
