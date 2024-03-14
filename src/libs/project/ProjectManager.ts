@@ -15,6 +15,8 @@ import { BedrockProject } from './BedrockProject'
 import { IConfigJson, defaultPackPaths } from 'mc-project-core'
 import { LocalFileSystem } from '@/libs/fileSystem/LocalFileSystem'
 import { Data } from '@/libs/data/Data'
+import { Settings } from '@/libs/settings/Settings'
+import { get, set } from 'idb-keyval'
 
 export const packs: {
 	[key: string]: Pack | undefined
@@ -40,6 +42,18 @@ export class ProjectManager {
 
 	public static setup() {
 		this.cacheFileSystem.setRootName('projectCache')
+
+		Settings.addSetting('outputFolder', {
+			default: null,
+			async save(value) {
+				await set('defaultOutputFolder', value)
+
+				return 'set'
+			},
+			async load(value) {
+				if (value === 'set') return await get('defaultOutputFolder')
+			},
+		})
 	}
 
 	public static async loadProjects() {

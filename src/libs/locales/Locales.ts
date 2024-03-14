@@ -22,6 +22,10 @@ export class LocaleManager {
 	protected static currentLanuageId = 'english'
 
 	public static setup() {
+		Settings.addSetting('language', {
+			default: 'English',
+		})
+
 		Settings.eventSystem.on('updated', (event) => {
 			const { id, value } = event as { id: string; value: string }
 

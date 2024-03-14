@@ -28,6 +28,12 @@ export class TextTab extends FileTab {
 		return path === this.path
 	}
 
+	public static setupSettings() {
+		Settings.addSetting('bracketPairColorization', {
+			default: false,
+		})
+	}
+
 	public async setup() {
 		if (!ProjectManager.currentProject) return
 		if (!(ProjectManager.currentProject instanceof BedrockProject)) return

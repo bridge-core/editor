@@ -2,6 +2,8 @@ import { Windows } from '@/components/Windows/Windows'
 import { ComputedRef, Ref, computed, ref } from 'vue'
 import ColorScheme from './Appearance/ColorScheme.vue'
 import { ThemeManager } from '@/libs/theme/ThemeManager'
+import { LocaleManager } from '@/libs/locales/Locales'
+import OutputFolder from './Projects/OutputFolder.vue'
 
 interface Category {
 	label: string
@@ -9,7 +11,6 @@ interface Category {
 }
 
 interface Item {
-	label: string
 	type: string
 }
 
@@ -20,39 +21,28 @@ export interface CustomItem extends Item {
 
 export interface DropdownItem extends Item {
 	type: 'dropdown'
+	label: string
 	values: ComputedRef<string[]>
 	labels: ComputedRef<string[]>
+}
+
+export interface ToggleItem extends Item {
+	type: 'toggle'
+	label: string
 }
 
 export class SettingsWindow {
 	public static categories: Record<string, Category> = {}
 	public static items: Record<string, Record<string, Item>> = {}
 
-	public static selectedCategory: Ref<string | null> = ref('appearance')
+	public static selectedCategory: Ref<string | null> = ref('projects')
 
 	public static setup() {
-		// SettingsWindow.addCategory('projects', {
-		// 	label: 'windows.settings.projects.name',
-		// 	icon: 'folder',
-		// })
-		// SettingsWindow.addCategory('general', {
-		// 	label: 'windows.settings.general.name',
-		// 	icon: 'circle',
-		// })
-		// SettingsWindow.addCategory('editor', {
-		// 	label: 'windows.settings.editor.name',
-		// 	icon: 'edit',
-		// })
-		// SettingsWindow.addCategory('actions', {
-		// 	label: 'windows.settings.actions.name',
-		// 	icon: 'keyboard',
-		// })
-		// SettingsWindow.addCategory('appearance', {
-		// 	label: 'windows.settings.appearance.name',
-		// 	icon: 'palette',
-		// })
-
+		setupProjectsCategory()
+		setupGeneralCategory()
+		setupActionsCategory()
 		setupAppearanceCategory()
+		setupEditorCategory()
 	}
 
 	public static openSettings(categoryId?: string) {
@@ -74,6 +64,39 @@ export class SettingsWindow {
 	}
 }
 
+function setupProjectsCategory() {
+	SettingsWindow.addCategory('projects', {
+		label: 'windows.settings.projects.name',
+		icon: 'folder',
+	})
+
+	SettingsWindow.addItem('projects', 'outputFolder', <CustomItem>{
+		type: 'custom',
+		component: OutputFolder,
+	})
+}
+
+function setupGeneralCategory() {
+	SettingsWindow.addCategory('general', {
+		label: 'windows.settings.general.name',
+		icon: 'circle',
+	})
+
+	SettingsWindow.addItem('general', 'language', <DropdownItem>{
+		type: 'dropdown',
+		label: 'windows.settings.general.language.name',
+		values: computed(() => LocaleManager.getAvailableLanguages().map((language) => language.text)),
+		labels: computed(() => LocaleManager.getAvailableLanguages().map((language) => language.text)),
+	})
+}
+
+function setupActionsCategory() {
+	SettingsWindow.addCategory('actions', {
+		label: 'windows.settings.actions.name',
+		icon: 'keyboard',
+	})
+}
+
 function setupAppearanceCategory() {
 	SettingsWindow.addCategory('appearance', {
 		label: 'windows.settings.appearance.name',
@@ -82,7 +105,6 @@ function setupAppearanceCategory() {
 
 	SettingsWindow.addItem('appearance', 'colorScheme', <CustomItem>{
 		type: 'custom',
-		label: 'windows.settings.appearance.colorScheme.name',
 		component: ColorScheme,
 	})
 
@@ -102,5 +124,17 @@ function setupAppearanceCategory() {
 		label: 'windows.settings.appearance.lightTheme.name',
 		values: computed(() => lightThemes.value.map((theme) => theme.id)),
 		labels: computed(() => lightThemes.value.map((theme) => theme.name)),
+	})
+}
+
+function setupEditorCategory() {
+	SettingsWindow.addCategory('editor', {
+		label: 'windows.settings.editor.name',
+		icon: 'edit',
+	})
+
+	SettingsWindow.addItem('editor', 'bracketPairColorization', <ToggleItem>{
+		type: 'toggle',
+		label: 'windows.settings.editor.bracketPairColorization.name',
 	})
 }

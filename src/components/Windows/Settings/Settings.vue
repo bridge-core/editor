@@ -8,7 +8,7 @@ import Button from '@/components/Common/Button.vue'
 
 import { useTranslate } from '@/libs/locales/Locales'
 import { Settings } from '@/libs/settings/Settings'
-import { CustomItem, DropdownItem, SettingsWindow } from './SettingsWindow'
+import { CustomItem, DropdownItem, SettingsWindow, ToggleItem } from './SettingsWindow'
 import { computed, onMounted, ref } from 'vue'
 
 const t = useTranslate()
@@ -85,7 +85,11 @@ SettingsWindow.setup()
 
 					<Dropdown v-if="item.type === 'dropdown'" class="mb-4 flex-1">
 						<template #main="{ expanded, toggle }">
-							<LabeledInput :label="t(item.label)" :focused="expanded" class="bg-background">
+							<LabeledInput
+								:label="t((item as DropdownItem).label)"
+								:focused="expanded"
+								class="bg-background"
+							>
 								<div class="flex items-center justify-between cursor-pointer" @click="toggle">
 									<span class="font-inter">{{
 										(item as DropdownItem).labels.value[
@@ -129,13 +133,13 @@ SettingsWindow.setup()
 						</template>
 					</Dropdown>
 
-					<!--<Switch
-						v-if="item.type === 'switch'"
-						:model-value="settings.get(item.id)"
-						@update:model-value="(value) => settings.set(item.id, value)"
-					/>
+					<div v-if="item.type === 'toggle'">
+						<h2 class="mb-2 text-text font-inter">{{ t((item as ToggleItem).label) }}</h2>
 
-					<Button v-if="item.type === 'button'" @click="item.trigger" :text="t(item.text)" />
+						<Switch :model-value="get(id)" @update:model-value="(value) => Settings.set(id, value)" />
+					</div>
+
+					<!--<Button v-if="item.type === 'button'" @click="item.trigger" :text="t(item.text)" />
 
 					<p v-if="item.type !== 'custom'" class="text-textAlternate mr-6">
 						{{ t(item.description) }}
