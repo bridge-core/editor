@@ -103,7 +103,7 @@ SettingsWindow.setup()
 						</template>
 
 						<template #choices="{ collapse }">
-							<div class="mt-2 bg-menuAlternate w-full p-1 rounded">
+							<div class="mt-2 bg-background-secondary w-full p-1 rounded">
 								<div class="flex flex-col max-h-[12rem] overflow-y-auto p-1">
 									<button
 										v-for="value in (item as DropdownItem).values.value"
@@ -115,7 +115,7 @@ SettingsWindow.setup()
 										"
 										class="hover:bg-primary text-start p-1 rounded transition-colors duration-100 ease-out font-inter"
 										:class="{
-											'bg-background-secondary': get(id) === value,
+											'bg-background-tertiary': get(id) === value,
 										}"
 									>
 										{{
