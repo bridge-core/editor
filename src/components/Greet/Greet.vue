@@ -59,7 +59,7 @@
 						<template v-slot:activator="{ on }">
 							<v-icon
 								size="large"
-								class="hover:text-accent transition-colors duration-100 ease-out"
+								class="mr-1 hover:text-accent transition-colors duration-100 ease-out"
 								@click="createProject"
 								v-on="on"
 								>mdi-plus</v-icon
@@ -69,6 +69,20 @@
 						<span>{{
 							t('windows.projectChooser.newProject.name')
 						}}</span>
+					</v-tooltip>
+
+					<v-tooltip color="tooltip" bottom>
+						<template v-slot:activator="{ on }">
+							<v-icon
+								size="large"
+								class="hover:text-accent transition-colors duration-100 ease-out"
+								@click="openMore"
+								v-on="on"
+								>mdi-dots-horizontal</v-icon
+							>
+						</template>
+
+						<span>{{ t('general.more') }}</span>
 					</v-tooltip>
 				</div>
 			</div>
@@ -273,6 +287,15 @@ onUnmounted(() => {
 	disposables.forEach((disposable) => disposable.dispose())
 	disposables = []
 })
+
+async function openMore() {
+	const app = await App.getApp()
+
+	await app.setupBridgeFolder(false)
+	await app.comMojang.setupComMojang()
+	await app.windows.projectChooser.loadAllProjects()
+	app.windows.projectChooser.open()
+}
 </script>
 
 <style scoped>
