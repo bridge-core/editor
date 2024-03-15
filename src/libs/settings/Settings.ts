@@ -64,7 +64,7 @@ export class Settings {
 			saveSettings[id] = Settings.settings[id]
 		}
 
-		await set('settings', JSON.stringify(this.settings))
+		await set('settings', JSON.stringify(saveSettings))
 
 		Settings.eventSystem.dispatch('updated', { id, value })
 	}

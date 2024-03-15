@@ -21,11 +21,7 @@ async function droppedOutputFolder(items: DataTransferItemList) {
 	if (!directoryHandle) return
 	if (!(directoryHandle instanceof FileSystemDirectoryHandle)) return
 
-	console.log(directoryHandle)
-
 	Settings.set('outputFolder', directoryHandle)
-
-	console.log(Settings.settings)
 }
 
 function clearOutputFolder() {
