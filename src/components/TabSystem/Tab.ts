@@ -7,7 +7,7 @@ export class Tab {
 	public name = ref('New Tab')
 	public icon: Ref<string | null> = ref(null)
 
-	public async setup() {}
+	public async setupTab() {}
 	public async destroy() {}
 	public async activate() {}
 	public async deactivate() {}

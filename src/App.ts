@@ -19,6 +19,7 @@ import { Actions } from '@/libs/actions/Actions'
 import { setupTypescript } from '@/libs/monaco/TypeScript'
 import { PromptWindow } from '@/components/Windows/Prompt/PromptWindow'
 import { Settings } from '@/libs/settings/Settings'
+import { TextTab } from '@/components/Tabs/Text/TextTab'
 
 export const fileSystem = getFileSystem()
 export const tabManager = new TabManager()
@@ -35,6 +36,7 @@ ThemeManager.setup()
 Toolbar.setup()
 Actions.setup()
 LocaleManager.setup()
+TextTab.setup()
 
 export async function setup() {
 	console.time('[App] Setup')

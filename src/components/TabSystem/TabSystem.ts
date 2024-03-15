@@ -15,7 +15,7 @@ export class TabSystem {
 			return
 		}
 
-		await tab.setup()
+		await tab.setupTab()
 
 		this.tabs.value.push(tab)
 
@@ -25,8 +25,7 @@ export class TabSystem {
 	public async selectTab(tab: Tab) {
 		if (this.selectedTab.value === tab) return
 
-		if (this.selectedTab.value !== null)
-			await this.selectedTab.value.deactivate()
+		if (this.selectedTab.value !== null) await this.selectedTab.value.deactivate()
 
 		this.selectedTab.value = tab
 
@@ -44,8 +43,7 @@ export class TabSystem {
 
 		this.tabs.value.splice(tabIndex, 1)
 
-		if (this.tabs.value.length != 0)
-			await this.selectTab(this.tabs.value[Math.max(tabIndex - 1, 0)])
+		if (this.tabs.value.length != 0) await this.selectTab(this.tabs.value[Math.max(tabIndex - 1, 0)])
 
 		await tab.destroy()
 	}
