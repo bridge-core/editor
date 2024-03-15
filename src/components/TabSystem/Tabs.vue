@@ -1,5 +1,5 @@
 <template>
-	<div class="flex-1 self-stretch my-2 mr-2">
+	<div class="flex-1 h-full mt-2 mr-2">
 		<TabSystem v-for="tabSystem in tabManager.tabSystems" :instance="tabSystem" :key="tabSystem.id" />
 	</div>
 </template>

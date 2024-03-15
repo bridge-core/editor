@@ -1,5 +1,5 @@
 <template>
-	<div class="w-full h-full max-h-full flex flex-col">
+	<div class="w-full h-full">
 		<div class="w-full h-8 flex gap-4 mb-2">
 			<div
 				v-for="tab in instance.tabs.value"
@@ -18,7 +18,7 @@
 			</div>
 		</div>
 
-		<div class="w-full tab-content mb-2">
+		<div class="w-full tab-content">
 			<component
 				v-if="instance.selectedTab.value"
 				:instance="instance.selectedTab.value"
