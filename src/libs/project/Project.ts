@@ -1,5 +1,5 @@
 import { join } from '@/libs/path'
-import { extensions } from '@/App'
+import { Extensions } from '@/libs/extensions/Extensions'
 import { ConfirmWindow } from '@/components/Windows/Confirm/ConfirmWindow'
 import { Sidebar } from '@/components/Sidebar/Sidebar'
 import { fileSystem } from '@/libs/fileSystem/FileSystem'
@@ -56,13 +56,13 @@ export class Project {
 
 		await this.setupOutputFileSystem()
 
-		await extensions.loadProjectExtensions()
+		await Extensions.loadProjectExtensions()
 	}
 
 	public async dispose() {
 		Settings.eventSystem.off('updated', this.settingsChanged.bind(this))
 
-		extensions.disposeProjectExtensions()
+		Extensions.disposeProjectExtensions()
 	}
 
 	public resolvePackPath(packId?: string, path?: string) {

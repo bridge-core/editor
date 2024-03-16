@@ -4,7 +4,7 @@ import LabeledInput from '@/components/Common/LabeledInput.vue'
 import Icon from '@/components/Common/Icon.vue'
 import IconButton from '@/components/Common/IconButton.vue'
 
-import { extensions } from '@/App'
+import { Extensions } from '@/libs/extensions/Extensions'
 import { ExtensionLibrary } from '@/components/Windows/ExtensionLibrary/ExtensionLibrary'
 import { useTranslate } from '@/libs/locales/Locales'
 import Button from '@/components/Common/Button.vue'
@@ -13,9 +13,9 @@ import ContextMenuItem from '@/components/Common/ContextMenuItem.vue'
 
 const t = useTranslate()
 
-const isInstalledGlobal = extensions.useIsInstalledGlobal()
-const isInstalledProject = extensions.useIsInstalledProject()
-const isInstalled = extensions.useIsInstalled()
+const isInstalledGlobal = Extensions.useIsInstalledGlobal()
+const isInstalledProject = Extensions.useIsInstalledProject()
+const isInstalled = Extensions.useIsInstalled()
 </script>
 
 <template>
@@ -99,7 +99,7 @@ const isInstalled = extensions.useIsInstalled()
 											text="Uninstall"
 											icon="delete"
 											class="pt-4"
-											@click="extensions.uninstall(extension.id)"
+											@click="Extensions.uninstall(extension.id)"
 										/>
 										<ContextMenuItem
 											text="Install in Project"

@@ -10,19 +10,18 @@ import { TauriFileSystem } from '@/libs/fileSystem/TauriFileSystem'
 import { get, set } from 'idb-keyval'
 import { appDataDir, appLocalDataDir, sep } from '@tauri-apps/api/path'
 import { join } from '@/libs/path'
-import { Extensions } from '@/libs/extensions/Extensions'
 import { setupActions } from '@/libs/actions/Actions'
 import { setupTypescript } from '@/libs/monaco/TypeScript'
 import { Settings } from '@/libs/settings/Settings'
 import { TextTab } from '@/components/Tabs/Text/TextTab'
-
-export const extensions = new Extensions()
+import { Extensions } from '@/libs/extensions/Extensions'
 
 // Setup static singletons early so components can use them properly
 ProjectManager.setup()
 ThemeManager.setup()
-Toolbar.setup()
 LocaleManager.setup()
+Extensions.setup()
+Toolbar.setup()
 TextTab.setup()
 Sidebar.setup()
 
@@ -57,7 +56,7 @@ export async function setup() {
 	console.timeEnd('[App] Projects')
 
 	console.time('[App] Extensions')
-	await extensions.load()
+	await Extensions.load()
 	console.timeEnd('[App] Extensions')
 
 	console.timeEnd('[App] Setup')

@@ -8,58 +8,58 @@ import { EventSystem } from '@/libs/event/EventSystem'
 import { Ref, onMounted, onUnmounted, ref } from 'vue'
 
 export class Extensions {
-	private globalExtensions: Extension[] = []
-	private projectExtensions: Extension[] = []
-	private eventSystem = new EventSystem(['extensionsUpdated'])
+	private static globalExtensions: Extension[] = []
+	private static projectExtensions: Extension[] = []
+	private static eventSystem = new EventSystem(['extensionsUpdated'])
 
-	constructor() {
-		fileSystem.eventSystem.on('reloaded', this.fileSystemReloaded.bind(this))
+	public static setup() {
+		fileSystem.eventSystem.on('reloaded', Extensions.fileSystemReloaded)
 	}
 
-	public async load() {
+	public static async load() {
 		if (fileSystem instanceof PWAFileSystem && !fileSystem.setup) return
 
 		for (const entry of await fileSystem.readDirectoryEntries('extensions')) {
-			await this.loadExtension(entry.path)
+			await Extensions.loadExtension(entry.path)
 		}
 
-		this.eventSystem.dispatch('extensionsUpdated', undefined)
+		Extensions.eventSystem.dispatch('extensionsUpdated', undefined)
 	}
 
-	public async loadProjectExtensions() {
+	public static async loadProjectExtensions() {
 		if (ProjectManager.currentProject === null) return
 
 		for (const entry of await fileSystem.readDirectoryEntries(
 			join(ProjectManager.currentProject.path, '.bridge/extensions')
 		)) {
-			await this.loadProjectExtension(entry.path)
+			await Extensions.loadProjectExtension(entry.path)
 		}
 
-		this.eventSystem.dispatch('extensionsUpdated', undefined)
+		Extensions.eventSystem.dispatch('extensionsUpdated', undefined)
 	}
 
-	public disposeProjectExtensions() {
-		this.projectExtensions = []
+	public static disposeProjectExtensions() {
+		Extensions.projectExtensions = []
 	}
 
-	public async installGlobal(extension: ExtensionManifest) {
+	public static async installGlobal(extension: ExtensionManifest) {
 		const path = join('extensions', extension.name.replace(/\s+/g, ''))
 
-		await this.installExtension(extension, path)
+		await Extensions.installExtension(extension, path)
 	}
 
-	public async installProject(extension: ExtensionManifest) {
+	public static async installProject(extension: ExtensionManifest) {
 		if (ProjectManager.currentProject === null) return
 
 		const path = join(ProjectManager.currentProject.path, '.bridge/extensions', extension.name.replace(/\s+/g, ''))
 
-		await this.installExtension(extension, path)
+		await Extensions.installExtension(extension, path)
 	}
 
-	public async uninstall(id: string) {
-		const projectExtension = this.projectExtensions.find((extension) => extension.id == id)
+	public static async uninstall(id: string) {
+		const projectExtension = Extensions.projectExtensions.find((extension) => extension.id == id)
 
-		const extension = projectExtension ?? this.globalExtensions.find((extension) => extension.id == id)
+		const extension = projectExtension ?? Extensions.globalExtensions.find((extension) => extension.id == id)
 
 		if (extension === undefined) return
 
@@ -68,84 +68,86 @@ export class Extensions {
 		await fileSystem.removeDirectory(extension.path)
 
 		if (projectExtension !== undefined) {
-			this.projectExtensions = this.projectExtensions.filter(
+			Extensions.projectExtensions = Extensions.projectExtensions.filter(
 				(otherExtension) => otherExtension.id !== extension.id
 			)
 		} else {
-			this.globalExtensions = this.globalExtensions.filter((otherExtension) => otherExtension.id !== extension.id)
+			Extensions.globalExtensions = Extensions.globalExtensions.filter(
+				(otherExtension) => otherExtension.id !== extension.id
+			)
 		}
 
-		this.eventSystem.dispatch('extensionsUpdated', undefined)
+		Extensions.eventSystem.dispatch('extensionsUpdated', undefined)
 	}
 
-	public isInstalledGlobal(id: string): boolean {
-		return this.globalExtensions.find((extension) => id === extension.id) !== undefined
+	public static isInstalledGlobal(id: string): boolean {
+		return Extensions.globalExtensions.find((extension) => id === extension.id) !== undefined
 	}
 
-	public isInstalledProject(id: string): boolean {
-		return this.projectExtensions.find((extension) => id === extension.id) !== undefined
+	public static isInstalledProject(id: string): boolean {
+		return Extensions.projectExtensions.find((extension) => id === extension.id) !== undefined
 	}
 
-	public isInstalled(id: string): boolean {
-		return this.isInstalledGlobal(id) || this.isInstalledProject(id)
+	public static isInstalled(id: string): boolean {
+		return Extensions.isInstalledGlobal(id) || Extensions.isInstalledProject(id)
 	}
 
-	public useIsInstalledGlobal(): Ref<(id: string) => boolean> {
-		const isInstalledGlobal = ref((id: string) => this.isInstalledGlobal(id))
+	public static useIsInstalledGlobal(): Ref<(id: string) => boolean> {
+		const isInstalledGlobal = ref((id: string) => Extensions.isInstalledGlobal(id))
 
 		const update = () => {
-			isInstalledGlobal.value = (id: string) => this.isInstalledGlobal(id)
+			isInstalledGlobal.value = (id: string) => Extensions.isInstalledGlobal(id)
 		}
 
 		onMounted(() => {
-			this.eventSystem.on('extensionsUpdated', update)
+			Extensions.eventSystem.on('extensionsUpdated', update)
 		})
 
 		onUnmounted(() => {
-			this.eventSystem.off('extensionsUpdated', update)
+			Extensions.eventSystem.off('extensionsUpdated', update)
 		})
 
 		return isInstalledGlobal
 	}
 
-	public useIsInstalledProject(): Ref<(id: string) => boolean> {
-		const isInstalledProject = ref((id: string) => this.isInstalledProject(id))
+	public static useIsInstalledProject(): Ref<(id: string) => boolean> {
+		const isInstalledProject = ref((id: string) => Extensions.isInstalledProject(id))
 
 		const update = () => {
-			isInstalledProject.value = (id: string) => this.isInstalledProject(id)
+			isInstalledProject.value = (id: string) => Extensions.isInstalledProject(id)
 		}
 
 		onMounted(() => {
-			this.eventSystem.on('extensionsUpdated', update)
+			Extensions.eventSystem.on('extensionsUpdated', update)
 		})
 
 		onUnmounted(() => {
-			this.eventSystem.off('extensionsUpdated', update)
+			Extensions.eventSystem.off('extensionsUpdated', update)
 		})
 
 		return isInstalledProject
 	}
 
-	public useIsInstalled(): Ref<(id: string) => boolean> {
-		const isInstalled = ref((id: string) => this.isInstalled(id))
+	public static useIsInstalled(): Ref<(id: string) => boolean> {
+		const isInstalled = ref((id: string) => Extensions.isInstalled(id))
 
 		const update = () => {
-			isInstalled.value = (id: string) => this.isInstalled(id)
+			isInstalled.value = (id: string) => Extensions.isInstalled(id)
 		}
 
 		onMounted(() => {
-			this.eventSystem.on('extensionsUpdated', update)
+			Extensions.eventSystem.on('extensionsUpdated', update)
 		})
 
 		onUnmounted(() => {
-			this.eventSystem.off('extensionsUpdated', update)
+			Extensions.eventSystem.off('extensionsUpdated', update)
 		})
 
 		return isInstalled
 	}
 
-	private async installExtension(extension: ExtensionManifest, path: string) {
-		const unzippedExtension = await this.downloadExtension(extension)
+	private static async installExtension(extension: ExtensionManifest, path: string) {
+		const unzippedExtension = await Extensions.downloadExtension(extension)
 
 		for (const filePath in unzippedExtension) {
 			if (filePath.startsWith('.')) continue
@@ -181,12 +183,12 @@ export class Extensions {
 			}
 		}
 
-		await this.loadExtension(path)
+		await Extensions.loadExtension(path)
 
-		this.eventSystem.dispatch('extensionsUpdated', undefined)
+		Extensions.eventSystem.dispatch('extensionsUpdated', undefined)
 	}
 
-	private async downloadExtension(extension: ExtensionManifest): Promise<Unzipped> {
+	private static async downloadExtension(extension: ExtensionManifest): Promise<Unzipped> {
 		const arrayBuffer = await (
 			await fetch('https://raw.githubusercontent.com/bridge-core/plugins/master' + extension.link)
 		).arrayBuffer()
@@ -199,21 +201,21 @@ export class Extensions {
 		)
 	}
 
-	private async fileSystemReloaded() {
-		await this.load()
+	private static async fileSystemReloaded() {
+		await Extensions.load()
 	}
 
-	private async loadExtension(path: string) {
+	private static async loadExtension(path: string) {
 		const extension = new Extension(path)
 		await extension.load()
 
-		this.globalExtensions.push(extension)
+		Extensions.globalExtensions.push(extension)
 	}
 
-	private async loadProjectExtension(path: string) {
+	private static async loadProjectExtension(path: string) {
 		const extension = new Extension(path)
 		await extension.load()
 
-		this.projectExtensions.push(extension)
+		Extensions.projectExtensions.push(extension)
 	}
 }

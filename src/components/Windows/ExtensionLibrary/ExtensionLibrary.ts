@@ -1,8 +1,8 @@
-import { extensions } from '@/App'
 import { Windows } from '@/components/Windows/Windows'
 import { Ref, ref } from 'vue'
 import { ExtensionManifest } from '@/libs/extensions/Extension'
 import { Data } from '@/libs/data/Data'
+import { Extensions } from '@/libs/extensions/Extensions'
 
 export class ExtensionLibrary {
 	public static tags: Record<string, { icon: string; color?: string }> = {}
@@ -36,12 +36,12 @@ export class ExtensionLibrary {
 	public static confirmInstallGlobal() {
 		if (ExtensionLibrary.extensionToInstall === undefined) return
 
-		extensions.installGlobal(ExtensionLibrary.extensionToInstall)
+		Extensions.installGlobal(ExtensionLibrary.extensionToInstall)
 	}
 
 	public static confirmInstallProject() {
 		if (ExtensionLibrary.extensionToInstall === undefined) return
 
-		extensions.installProject(ExtensionLibrary.extensionToInstall)
+		Extensions.installProject(ExtensionLibrary.extensionToInstall)
 	}
 }
