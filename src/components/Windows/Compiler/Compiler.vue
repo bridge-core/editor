@@ -8,8 +8,7 @@ import { useTranslate } from '@/libs/locales/Locales'
 import { ref } from 'vue'
 import { BedrockProject } from '@/libs/project/BedrockProject'
 import FileSystemDrop from '@/components/Common/FileSystemDrop.vue'
-import { useUsingProjectOutputFolder } from '@/libs/project/Project'
-import { ProjectManager } from '@/libs/project/ProjectManager'
+import { ProjectManager, useUsingProjectOutputFolder } from '@/libs/project/ProjectManager'
 
 const t = useTranslate()
 

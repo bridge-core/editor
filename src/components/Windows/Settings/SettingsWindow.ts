@@ -1,9 +1,12 @@
+import ColorScheme from './Appearance/ColorScheme.vue'
+import OutputFolder from './Projects/OutputFolder.vue'
+
 import { Windows } from '@/components/Windows/Windows'
 import { ComputedRef, Ref, computed, ref } from 'vue'
-import ColorScheme from './Appearance/ColorScheme.vue'
 import { ThemeManager } from '@/libs/theme/ThemeManager'
 import { LocaleManager } from '@/libs/locales/Locales'
-import OutputFolder from './Projects/OutputFolder.vue'
+import { Window } from '../Window'
+import Settings from './Settings.vue'
 
 interface Category {
 	label: string
@@ -31,7 +34,10 @@ export interface ToggleItem extends Item {
 	label: string
 }
 
-export class SettingsWindow {
+export class SettingsWindow extends Window {
+	public id = 'settings'
+	public component = Settings
+
 	public static categories: Record<string, Category> = {}
 	public static items: Record<string, Record<string, Item>> = {}
 
@@ -46,7 +52,7 @@ export class SettingsWindow {
 	}
 
 	public static open(categoryId?: string) {
-		Windows.open('settings')
+		Windows.open(new SettingsWindow())
 
 		if (!categoryId) return
 

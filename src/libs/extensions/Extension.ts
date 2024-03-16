@@ -3,7 +3,20 @@ import { join } from '@/libs/path'
 import { dark, light } from '@/libs/theme/DefaultThemes'
 import { ThemeManager } from '@/libs/theme/ThemeManager'
 import { Theme } from '@/libs/theme/Theme'
-import { ExtensionManifest } from './Extensions'
+
+export interface ExtensionManifest {
+	author: string
+	description: string
+	icon: string
+	id: string
+	link: string
+	name: string
+	tags: string[]
+	target: 'v1' | 'v2' | 'both' | 'v2.1'
+	version: string
+	releaseTimestamp: number
+	contributeFiles: Record<string, { path: string; pack: string }>
+}
 
 export class Extension {
 	public id: string = 'unloaded'

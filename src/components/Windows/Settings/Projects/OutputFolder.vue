@@ -5,8 +5,8 @@ import TextButton from '@/components/Common/TextButton.vue'
 import FileSystemDrop from '@/components/Common/FileSystemDrop.vue'
 import Info from '@/components/Common/Info.vue'
 import { Settings } from '@/libs/settings/Settings'
-import { useUsingProjectOutputFolder } from '@/libs/project/Project'
 import { useTranslate } from '@/libs/locales/Locales'
+import { useUsingProjectOutputFolder } from '@/libs/project/ProjectManager'
 
 const t = useTranslate()
 

@@ -5,9 +5,7 @@ import { PWAFileSystem } from '@/libs/fileSystem/PWAFileSystem'
 import { get, set } from 'idb-keyval'
 import { EventSystem } from '@/libs/event/EventSystem'
 import { IConfigJson } from 'mc-project-core'
-import { Ref, onMounted, onUnmounted, ref, watch } from 'vue'
 import { LocalFileSystem } from '@/libs/fileSystem/LocalFileSystem'
-import { ProjectManager } from './ProjectManager'
 import { Settings } from '@/libs/settings/Settings'
 import { SettingsWindow } from '@/components/Windows/Settings/SettingsWindow'
 
@@ -177,41 +175,4 @@ export async function validProject(path: string) {
 	if (!(await fileSystem.exists(join(path, 'BP/pack_icon.png')))) return false
 
 	return await fileSystem.exists(join(path, 'config.json'))
-}
-
-export function useUsingProjectOutputFolder(): Ref<boolean> {
-	const usingProjectOutputFolder: Ref<boolean> = ref(false)
-
-	function update() {
-		if (!ProjectManager.currentProject) {
-			usingProjectOutputFolder.value = false
-
-			return
-		}
-
-		usingProjectOutputFolder.value = ProjectManager.currentProject.usingProjectOutputFolder
-	}
-
-	watch(ProjectManager.useCurrentProject(), (newProject, oldProject) => {
-		if (oldProject) oldProject.eventSystem.off('usingProjectOutputFolderChanged', update)
-
-		if (newProject) {
-			newProject.eventSystem.on('usingProjectOutputFolderChanged', update)
-
-			update()
-		}
-	})
-
-	onMounted(() => {
-		if (ProjectManager.currentProject)
-			ProjectManager.currentProject.eventSystem.on('usingProjectOutputFolderChanged', update)
-
-		update()
-	})
-	onUnmounted(() => {
-		if (ProjectManager.currentProject)
-			ProjectManager.currentProject.eventSystem.off('usingProjectOutputFolderChanged', update)
-	})
-
-	return usingProjectOutputFolder
 }

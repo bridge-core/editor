@@ -5,7 +5,7 @@ import { basename, join } from '@/libs/path'
 import { PWAFileSystem } from '@/libs/fileSystem/PWAFileSystem'
 import { BaseFileSystem } from '@/libs/fileSystem/BaseFileSystem'
 import { CreateProjectConfig } from './CreateProjectConfig'
-import { Ref, onMounted, onUnmounted, ref } from 'vue'
+import { Ref, onMounted, onUnmounted, ref, watch } from 'vue'
 import { BehaviourPack } from './create/packs/BehaviorPack'
 import { BridgePack } from './create/packs/Bridge'
 import { Pack } from './create/packs/Pack'
@@ -187,4 +187,41 @@ export class ProjectManager {
 	private static async updateProjectCache() {
 		await this.cacheFileSystem.writeFileJson('projects.json', this.projects, false)
 	}
+}
+
+export function useUsingProjectOutputFolder(): Ref<boolean> {
+	const usingProjectOutputFolder: Ref<boolean> = ref(false)
+
+	function update() {
+		if (!ProjectManager.currentProject) {
+			usingProjectOutputFolder.value = false
+
+			return
+		}
+
+		usingProjectOutputFolder.value = ProjectManager.currentProject.usingProjectOutputFolder
+	}
+
+	watch(ProjectManager.useCurrentProject(), (newProject, oldProject) => {
+		if (oldProject) oldProject.eventSystem.off('usingProjectOutputFolderChanged', update)
+
+		if (newProject) {
+			newProject.eventSystem.on('usingProjectOutputFolderChanged', update)
+
+			update()
+		}
+	})
+
+	onMounted(() => {
+		if (ProjectManager.currentProject)
+			ProjectManager.currentProject.eventSystem.on('usingProjectOutputFolderChanged', update)
+
+		update()
+	})
+	onUnmounted(() => {
+		if (ProjectManager.currentProject)
+			ProjectManager.currentProject.eventSystem.off('usingProjectOutputFolderChanged', update)
+	})
+
+	return usingProjectOutputFolder
 }

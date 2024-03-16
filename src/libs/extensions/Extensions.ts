@@ -1,25 +1,11 @@
 import { fileSystem } from '@/App'
 import { extname, join } from '@/libs/path'
 import { Unzipped, unzip } from 'fflate'
-import { Extension } from './Extension'
+import { Extension, ExtensionManifest } from './Extension'
 import { PWAFileSystem } from '@/libs/fileSystem/PWAFileSystem'
 import { ProjectManager } from '@/libs/project/ProjectManager'
 import { EventSystem } from '@/libs/event/EventSystem'
 import { Ref, onMounted, onUnmounted, ref } from 'vue'
-
-export interface ExtensionManifest {
-	author: string
-	description: string
-	icon: string
-	id: string
-	link: string
-	name: string
-	tags: string[]
-	target: 'v1' | 'v2' | 'both' | 'v2.1'
-	version: string
-	releaseTimestamp: number
-	contributeFiles: Record<string, { path: string; pack: string }>
-}
 
 export class Extensions {
 	private globalExtensions: Extension[] = []

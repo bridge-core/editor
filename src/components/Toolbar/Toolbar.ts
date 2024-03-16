@@ -1,11 +1,12 @@
 import { Windows } from '@/components/Windows/Windows'
+// import { SettingsWindow } from '@/components/Windows/Settings/SettingsWindow'
 
 export class Toolbar {
 	public static items: { name: string; icon: string; action: () => void }[] = []
 
 	public static setup() {
 		this.addItem('toolbar.project.name', 'space_dashboard', () => null)
-		this.addItem('toolbar.settings.name', 'help', () => Windows.open('settings'))
+		this.addItem('toolbar.settings.name', 'help', () => SettingsWindow.open())
 		this.addItem('toolbar.file.name', 'draft', () => null)
 		this.addItem('toolbar.tools.name', 'build', () => null)
 		this.addItem('toolbar.help.name', 'help', () => null)
