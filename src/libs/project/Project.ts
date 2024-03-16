@@ -9,6 +9,7 @@ import { Ref, onMounted, onUnmounted, ref, watch } from 'vue'
 import { LocalFileSystem } from '@/libs/fileSystem/LocalFileSystem'
 import { ProjectManager } from './ProjectManager'
 import { Settings } from '@/libs/settings/Settings'
+import { SettingsWindow } from '@/components/Windows/Settings/SettingsWindow'
 
 export class Project {
 	public path: string
@@ -104,7 +105,7 @@ export class Project {
 	}
 
 	protected async settingsChanged(event: unknown) {
-		if ((event as { id: string; value: unknown }).value !== 'outputFolder') return
+		if ((event as { id: string; value: unknown }).id !== 'outputFolder') return
 
 		if (!(fileSystem instanceof PWAFileSystem)) return
 
@@ -159,7 +160,7 @@ export class Project {
 			'warning',
 			() => {
 				confirmWindow.open('You have not set up your output folder yet. Do you want to set it up now?', () =>
-					Settings.open('projects')
+					SettingsWindow.open('projects')
 				)
 			},
 			'warning'

@@ -45,7 +45,7 @@ export class SettingsWindow {
 		setupEditorCategory()
 	}
 
-	public static openSettings(categoryId?: string) {
+	public static open(categoryId?: string) {
 		Windows.open('settings')
 
 		if (!categoryId) return
