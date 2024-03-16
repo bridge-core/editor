@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { setup } from '@/App'
+
 import Toolbar from '@/components/Toolbar/Toolbar.vue'
 import Greet from '@/components/Greet/Greet.vue'
 import Editor from './components/Editor/Editor.vue'
@@ -12,7 +14,6 @@ import ExtensionInstallLocation from './components/Windows/ExtensionLibrary/Exte
 import Windows from './components/Windows/Windows.vue'
 
 import { onMounted } from 'vue'
-import { setup } from '@/App'
 import Prompt from './components/Windows/Prompt/Prompt.vue'
 
 onMounted(() => {

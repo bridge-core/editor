@@ -1,7 +1,8 @@
-import { join } from '@/libs/path'
 import { Extensions } from '@/libs/extensions/Extensions'
-import { ConfirmWindow } from '@/components/Windows/Confirm/ConfirmWindow'
 import { Sidebar } from '@/components/Sidebar/Sidebar'
+
+import { join } from '@/libs/path'
+import { ConfirmWindow } from '@/components/Windows/Confirm/ConfirmWindow'
 import { fileSystem } from '@/libs/fileSystem/FileSystem'
 import { BaseFileSystem } from '@/libs/fileSystem/BaseFileSystem'
 import { PWAFileSystem } from '@/libs/fileSystem/PWAFileSystem'
