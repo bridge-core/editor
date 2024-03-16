@@ -2,7 +2,7 @@ import { join } from '@/libs/path'
 import DashWorker from './DashWorker?worker'
 import { BedrockProject } from '@/libs/project/BedrockProject'
 import { WorkerFileSystemEntryPoint } from '@/libs/fileSystem/WorkerFileSystem'
-import { sidebar } from '@/App'
+import { Sidebar } from '@/components/Sidebar/Sidebar'
 import { BaseFileSystem } from '@/libs/fileSystem/BaseFileSystem'
 import { sendAndWait } from '@/libs/worker/Communication'
 import { Notification } from '@/components/Sidebar/Sidebar'
@@ -49,7 +49,7 @@ export class DashService {
 		if (event.data.action === 'progress') {
 			if (this.progressNotification === null) return
 
-			sidebar.setProgress(this.progressNotification, event.data.progress)
+			Sidebar.setProgress(this.progressNotification, event.data.progress)
 		}
 	}
 
@@ -92,7 +92,7 @@ export class DashService {
 
 		this.building = true
 
-		this.progressNotification = sidebar.addProgressNotification('manufacturing', 0, 1, undefined, undefined)
+		this.progressNotification = Sidebar.addProgressNotification('manufacturing', 0, 1, undefined, undefined)
 
 		await sendAndWait(
 			{
@@ -101,7 +101,7 @@ export class DashService {
 			this.worker
 		)
 
-		sidebar.clearNotification(this.progressNotification)
+		Sidebar.clearNotification(this.progressNotification)
 
 		this.building = false
 

@@ -1,5 +1,6 @@
 import { join } from '@/libs/path'
-import { confirmWindow, extensions, sidebar } from '@/App'
+import { confirmWindow, extensions } from '@/App'
+import { Sidebar } from '@/components/Sidebar/Sidebar'
 import { fileSystem } from '@/libs/fileSystem/FileSystem'
 import { BaseFileSystem } from '@/libs/fileSystem/BaseFileSystem'
 import { PWAFileSystem } from '@/libs/fileSystem/PWAFileSystem'
@@ -155,7 +156,7 @@ export class Project {
 		await set(this.usingProjectOutputFolderKey, false)
 		this.eventSystem.dispatch('usingProjectOutputFolderChanged', undefined)
 
-		sidebar.addNotification(
+		Sidebar.addNotification(
 			'warning',
 			() => {
 				confirmWindow.open('You have not set up your output folder yet. Do you want to set it up now?', () =>

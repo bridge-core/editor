@@ -4,7 +4,6 @@ import { LocaleManager } from '@/libs/locales/Locales'
 import { ProjectManager } from '@/libs/project/ProjectManager'
 import { fileSystem } from '@/libs/fileSystem/FileSystem'
 import { Data } from '@/libs/data/Data'
-import { TabManager } from '@/components/TabSystem/TabManager'
 import { Sidebar } from '@/components/Sidebar/Sidebar'
 import { FileExplorer } from '@/components/FileExplorer/FileExplorer'
 import { ConfirmWindow } from '@/components/Windows/Confirm/ConfirmWindow'
@@ -21,7 +20,6 @@ import { PromptWindow } from '@/components/Windows/Prompt/PromptWindow'
 import { Settings } from '@/libs/settings/Settings'
 import { TextTab } from '@/components/Tabs/Text/TextTab'
 
-export const sidebar = new Sidebar()
 export const fileExplorer = new FileExplorer()
 export const confirmWindow = new ConfirmWindow()
 export const promptWindow = new PromptWindow()
@@ -34,6 +32,7 @@ ThemeManager.setup()
 Toolbar.setup()
 LocaleManager.setup()
 TextTab.setup()
+Sidebar.setup()
 
 setupActions()
 

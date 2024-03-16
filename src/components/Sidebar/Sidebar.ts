@@ -16,59 +16,59 @@ export interface Notification {
 }
 
 export class Sidebar {
-	items: {
+	public static items: {
 		type: 'button' | 'divider'
 		icon?: string
 		callback?: () => void
 	}[] = []
 
-	notifications: Ref<Notification[]> = ref([])
+	public static notifications: Ref<Notification[]> = ref([])
 
-	constructor() {
-		this.addButton('folder', () => {
+	public static setup() {
+		Sidebar.addButton('folder', () => {
 			fileExplorer.toggle()
 		})
 
-		this.addButton('quick_reference_all', () => {
+		Sidebar.addButton('quick_reference_all', () => {
 			TabManager.openTab(TabManager.getTabByType(FindAndReplaceTab) ?? new FindAndReplaceTab())
 		})
 
-		this.addButton('manufacturing', () => {
+		Sidebar.addButton('manufacturing', () => {
 			Windows.open('compiler')
 		})
-		this.addButton('extension', () => {
+		Sidebar.addButton('extension', () => {
 			extensionLibrary.open()
 		})
-		this.addDivider()
+		Sidebar.addDivider()
 
-		this.addNotification(
+		Sidebar.addNotification(
 			'download',
 			() => {
 				window.open('https://bridge-core.app/guide/download/')
 			},
 			'primary'
 		)
-		// this.addNotification('link', () => {}, 'warning') // Don't remember why I put this, maybe a social media thing?
-		this.addNotification('help', () => {
+		// Sidebar.addNotification('link', () => {}, 'warning') // Don't remember why I put this, maybe a social media thing?
+		Sidebar.addNotification('help', () => {
 			window.open('https://bridge-core.app/guide/')
 		})
 	}
 
-	public addButton(icon: string, callback: () => void) {
-		this.items.push({
+	public static addButton(icon: string, callback: () => void) {
+		Sidebar.items.push({
 			type: 'button',
 			icon,
 			callback,
 		})
 	}
 
-	public addDivider() {
-		this.items.push({
+	public static addDivider() {
+		Sidebar.items.push({
 			type: 'divider',
 		})
 	}
 
-	public addNotification(icon: string, callback?: () => void, color?: string): Notification {
+	public static addNotification(icon: string, callback?: () => void, color?: string): Notification {
 		const notification: Notification = {
 			icon,
 			callback,
@@ -77,13 +77,13 @@ export class Sidebar {
 			type: 'button',
 		}
 
-		this.notifications.value.push(notification)
-		this.notifications.value = [...this.notifications.value]
+		Sidebar.notifications.value.push(notification)
+		Sidebar.notifications.value = [...Sidebar.notifications.value]
 
 		return notification
 	}
 
-	public addProgressNotification(
+	public static addProgressNotification(
 		icon: string,
 		progress: number,
 		maxProgress: number,
@@ -100,38 +100,38 @@ export class Sidebar {
 			maxProgress,
 		}
 
-		this.notifications.value.push(notification)
-		this.notifications.value = [...this.notifications.value]
+		Sidebar.notifications.value.push(notification)
+		Sidebar.notifications.value = [...Sidebar.notifications.value]
 
 		return notification
 	}
 
-	public activateNotification(notification: Notification) {
+	public static activateNotification(notification: Notification) {
 		if (notification.type === 'button') {
-			this.notifications.value.splice(this.notifications.value.indexOf(notification), 1)
-			this.notifications.value = [...this.notifications.value]
+			Sidebar.notifications.value.splice(Sidebar.notifications.value.indexOf(notification), 1)
+			Sidebar.notifications.value = [...Sidebar.notifications.value]
 		}
 
 		if (notification.callback) notification.callback()
 	}
 
-	public clearNotification(notification: Notification) {
+	public static clearNotification(notification: Notification) {
 		if (notification.type === 'progress') {
 			// Allow time for the progress bar to reach full value
 			setTimeout(() => {
-				this.notifications.value.splice(this.notifications.value.indexOf(notification), 1)
-				this.notifications.value = [...this.notifications.value]
+				Sidebar.notifications.value.splice(Sidebar.notifications.value.indexOf(notification), 1)
+				Sidebar.notifications.value = [...Sidebar.notifications.value]
 			}, 300)
 
 			return
 		}
 
-		this.notifications.value.splice(this.notifications.value.indexOf(notification), 1)
-		this.notifications.value = [...this.notifications.value]
+		Sidebar.notifications.value.splice(Sidebar.notifications.value.indexOf(notification), 1)
+		Sidebar.notifications.value = [...Sidebar.notifications.value]
 	}
 
-	public setProgress(notification: Notification, progress: number) {
+	public static setProgress(notification: Notification, progress: number) {
 		notification.progress = progress
-		this.notifications.value = [...this.notifications.value]
+		Sidebar.notifications.value = [...Sidebar.notifications.value]
 	}
 }

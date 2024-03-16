@@ -2,12 +2,12 @@
 import Icon from '@/components/Common/Icon.vue'
 import Notification from './Notification.vue'
 
-import { sidebar } from '@/App'
+import { Sidebar } from '@/components/Sidebar/Sidebar'
 </script>
 
 <template>
 	<div class="w-16 h-full bg-background-secondary rounded mt-2 flex flex-col gap-2 items-center p-3">
-		<div v-for="item in sidebar.items">
+		<div v-for="item in Sidebar.items">
 			<div
 				class="w-10 h-10 bg-background rounded flex justify-center items-center hover:bg-primary transition-colors duration-100 ease-out cursor-pointer"
 				v-if="item.type === 'button'"
@@ -20,9 +20,9 @@ import { sidebar } from '@/App'
 		</div>
 
 		<Notification
-			v-for="item in sidebar.notifications.value"
+			v-for="item in Sidebar.notifications.value"
 			:key="item.id"
-			@click="() => sidebar.activateNotification(item)"
+			@click="() => Sidebar.activateNotification(item)"
 			:icon="item.icon"
 			:type="item.type"
 			:progress="item.progress"
