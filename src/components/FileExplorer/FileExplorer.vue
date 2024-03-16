@@ -6,7 +6,7 @@ import ContextMenu from '@/components/Common/ContextMenu.vue'
 import ContextMenuItem from '@/components/Common/ContextMenuItem.vue'
 import FreeContextMenu from '@/components/Common/FreeContextMenu.vue'
 
-import { fileExplorer } from '@/App'
+import { FileExplorer } from '@/components/FileExplorer/FileExplorer'
 import { TabManager } from '@/components/TabSystem/TabManager'
 import { fileSystem } from '@/libs/fileSystem/FileSystem'
 import { BaseEntry } from '@/libs/fileSystem/BaseFileSystem'
@@ -116,7 +116,7 @@ function executeContextMenuAction(action: string, data: any) {
 </script>
 
 <template>
-	<div class="w-96 h-full mt-2 flex flex-col gap-2" v-if="fileExplorer.open.value">
+	<div class="w-96 h-full mt-2 flex flex-col gap-2" v-if="FileExplorer.open.value">
 		<div class="bg-background-secondary rounded h-16 flex items-center p-3 gap-3">
 			<img :src="currentProject?.icon ?? ''" class="w-10 h-10 select-none" />
 			<p class="text-3xl select-none font-inter font-medium">

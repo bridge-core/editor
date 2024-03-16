@@ -1,9 +1,9 @@
 import { ref } from 'vue'
 
 export class FileExplorer {
-	public open = ref(true)
+	public static open = ref(true)
 
-	public toggle() {
-		this.open.value = !this.open.value
+	public static toggle() {
+		FileExplorer.open.value = !FileExplorer.open.value
 	}
 }

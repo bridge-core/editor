@@ -1,9 +1,10 @@
-import { extensionLibrary, fileExplorer } from '@/App'
+import { extensionLibrary } from '@/App'
 import { TabManager } from '@/components/TabSystem/TabManager'
 import { Windows } from '@/components/Windows/Windows'
 import { Ref, ref } from 'vue'
 import { v4 as uuid } from 'uuid'
-import { FindAndReplaceTab } from '../Tabs/FindAnReplace/FindAndReplaceTab'
+import { FileExplorer } from '@/components/FileExplorer/FileExplorer'
+import { FindAndReplaceTab } from '@/components/Tabs/FindAnReplace/FindAndReplaceTab'
 
 export interface Notification {
 	icon?: string
@@ -26,7 +27,7 @@ export class Sidebar {
 
 	public static setup() {
 		Sidebar.addButton('folder', () => {
-			fileExplorer.toggle()
+			FileExplorer.toggle()
 		})
 
 		Sidebar.addButton('quick_reference_all', () => {
