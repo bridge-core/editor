@@ -6,53 +6,53 @@ import { ImageTab } from '../Tabs/Image/ImageTab'
 import { FileTab } from './FileTab'
 
 export class TabManager {
-	public tabSystems: TabSystem[] = [new TabSystem()]
-	public focusedTabSystem: ShallowRef<TabSystem | null> = shallowRef(null)
+	public static tabSystems: TabSystem[] = [new TabSystem()]
+	public static focusedTabSystem: ShallowRef<TabSystem | null> = shallowRef(null)
 
-	private tabTypes: (typeof FileTab)[] = [ImageTab, TextTab]
+	private static tabTypes: (typeof FileTab)[] = [ImageTab, TextTab]
 
-	public async openTab(tab: Tab) {
-		for (const tabSystem of this.tabSystems) {
+	public static async openTab(tab: Tab) {
+		for (const tabSystem of TabManager.tabSystems) {
 			for (const otherTab of tabSystem.tabs.value) {
 				if (otherTab === tab) {
 					await tabSystem.selectTab(tab)
 
-					this.focusedTabSystem.value = tabSystem
+					TabManager.focusedTabSystem.value = tabSystem
 
 					return
 				}
 			}
 		}
 
-		await this.getDefaultTabSystem().addTab(tab)
+		await TabManager.getDefaultTabSystem().addTab(tab)
 
-		this.focusedTabSystem.value = this.getDefaultTabSystem()
+		TabManager.focusedTabSystem.value = TabManager.getDefaultTabSystem()
 	}
 
-	public async openFile(path: string) {
-		for (const tabSystem of this.tabSystems) {
+	public static async openFile(path: string) {
+		for (const tabSystem of TabManager.tabSystems) {
 			for (const tab of tabSystem.tabs.value) {
 				if (tab instanceof FileTab && tab.is(path)) {
 					await tabSystem.selectTab(tab)
 
-					this.focusedTabSystem.value = tabSystem
+					TabManager.focusedTabSystem.value = tabSystem
 
 					return
 				}
 			}
 		}
 
-		for (const TabType of this.tabTypes) {
+		for (const TabType of TabManager.tabTypes) {
 			if (TabType.canEdit(path)) {
-				await this.openTab(new TabType(path))
+				await TabManager.openTab(new TabType(path))
 
 				return
 			}
 		}
 	}
 
-	public getTabByType<T extends Tab>(tabType: { new (...args: any[]): T }): T | null {
-		for (const tabSystem of this.tabSystems) {
+	public static getTabByType<T extends Tab>(tabType: { new (...args: any[]): T }): T | null {
+		for (const tabSystem of TabManager.tabSystems) {
 			for (const tab of tabSystem.tabs.value) {
 				if (tab instanceof tabType) {
 					return tab
@@ -63,13 +63,13 @@ export class TabManager {
 		return null
 	}
 
-	public getDefaultTabSystem(): TabSystem {
-		return this.tabSystems[0]
+	public static getDefaultTabSystem(): TabSystem {
+		return TabManager.tabSystems[0]
 	}
 
-	public getFocusedTab(): Tab | null {
-		if (this.focusedTabSystem.value === null) return null
+	public static getFocusedTab(): Tab | null {
+		if (TabManager.focusedTabSystem.value === null) return null
 
-		return this.focusedTabSystem.value.selectedTab.value
+		return TabManager.focusedTabSystem.value.selectedTab.value
 	}
 }

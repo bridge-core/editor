@@ -1,4 +1,5 @@
-import { extensionLibrary, fileExplorer, tabManager } from '@/App'
+import { extensionLibrary, fileExplorer } from '@/App'
+import { TabManager } from '@/components/TabSystem/TabManager'
 import { Windows } from '@/components/Windows/Windows'
 import { Ref, ref } from 'vue'
 import { v4 as uuid } from 'uuid'
@@ -29,7 +30,7 @@ export class Sidebar {
 		})
 
 		this.addButton('quick_reference_all', () => {
-			tabManager.openTab(tabManager.getTabByType(FindAndReplaceTab) ?? new FindAndReplaceTab())
+			TabManager.openTab(TabManager.getTabByType(FindAndReplaceTab) ?? new FindAndReplaceTab())
 		})
 
 		this.addButton('manufacturing', () => {

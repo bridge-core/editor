@@ -6,7 +6,8 @@ import ContextMenu from '@/components/Common/ContextMenu.vue'
 import ContextMenuItem from '@/components/Common/ContextMenuItem.vue'
 import FreeContextMenu from '@/components/Common/FreeContextMenu.vue'
 
-import { fileExplorer, tabManager } from '@/App'
+import { fileExplorer } from '@/App'
+import { TabManager } from '@/components/TabSystem/TabManager'
 import { fileSystem } from '@/libs/fileSystem/FileSystem'
 import { BaseEntry } from '@/libs/fileSystem/BaseFileSystem'
 import { ComputedRef, Ref, computed, onMounted, onUnmounted, ref, watch } from 'vue'
@@ -100,7 +101,7 @@ async function contextMenuNewFile(close: any) {
 async function contextMenuOpenProjectConfig(close: any) {
 	close()
 
-	tabManager.openFile(join(currentProject.value!.path, 'config.json'))
+	TabManager.openFile(join(currentProject.value!.path, 'config.json'))
 }
 
 const contextMenu: Ref<typeof FreeContextMenu | null> = ref(null)

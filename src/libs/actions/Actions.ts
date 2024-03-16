@@ -1,4 +1,5 @@
-import { promptWindow, tabManager } from '@/App'
+import { promptWindow } from '@/App'
+import { TabManager } from '@/components/TabSystem/TabManager'
 import { TextTab } from '@/components/Tabs/Text/TextTab'
 import { dirname, join, parse } from '@/libs/path'
 import { getClipboard, setClipboard } from '@/libs/Clipboard'
@@ -12,7 +13,7 @@ export function setupActions() {
 		new Action({
 			id: 'save',
 			trigger: () => {
-				const focusedTab = tabManager.getFocusedTab()
+				const focusedTab = TabManager.getFocusedTab()
 
 				if (focusedTab === null) return
 
@@ -28,7 +29,7 @@ export function setupActions() {
 		new Action({
 			id: 'copy',
 			trigger: () => {
-				const focusedTab = tabManager.getFocusedTab()
+				const focusedTab = TabManager.getFocusedTab()
 
 				if (focusedTab === null) return
 
@@ -44,7 +45,7 @@ export function setupActions() {
 		new Action({
 			id: 'paste',
 			trigger: () => {
-				const focusedTab = tabManager.getFocusedTab()
+				const focusedTab = TabManager.getFocusedTab()
 
 				if (focusedTab === null) return
 
@@ -60,7 +61,7 @@ export function setupActions() {
 		new Action({
 			id: 'cut',
 			trigger: () => {
-				const focusedTab = tabManager.getFocusedTab()
+				const focusedTab = TabManager.getFocusedTab()
 
 				if (focusedTab === null) return
 
@@ -229,7 +230,7 @@ export function setupActions() {
 		new Action({
 			id: 'format',
 			trigger: () => {
-				const focusedTab = tabManager.getFocusedTab()
+				const focusedTab = TabManager.getFocusedTab()
 
 				if (focusedTab === null) return
 
@@ -244,7 +245,7 @@ export function setupActions() {
 		new Action({
 			id: 'goToSymbol',
 			trigger: () => {
-				const focusedTab = tabManager.getFocusedTab()
+				const focusedTab = TabManager.getFocusedTab()
 
 				if (focusedTab === null) return
 
@@ -259,7 +260,7 @@ export function setupActions() {
 		new Action({
 			id: 'changeAllOccurrences',
 			trigger: () => {
-				const focusedTab = tabManager.getFocusedTab()
+				const focusedTab = TabManager.getFocusedTab()
 
 				if (focusedTab === null) return
 
@@ -274,7 +275,7 @@ export function setupActions() {
 		new Action({
 			id: 'goToDefinition',
 			trigger: () => {
-				const focusedTab = tabManager.getFocusedTab()
+				const focusedTab = TabManager.getFocusedTab()
 
 				if (focusedTab === null) return
 
@@ -289,7 +290,7 @@ export function setupActions() {
 		new Action({
 			id: 'viewDocumentation',
 			trigger: () => {
-				const focusedTab = tabManager.getFocusedTab()
+				const focusedTab = TabManager.getFocusedTab()
 
 				if (focusedTab === null) return
 

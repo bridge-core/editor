@@ -21,7 +21,6 @@ import { PromptWindow } from '@/components/Windows/Prompt/PromptWindow'
 import { Settings } from '@/libs/settings/Settings'
 import { TextTab } from '@/components/Tabs/Text/TextTab'
 
-export const tabManager = new TabManager()
 export const sidebar = new Sidebar()
 export const fileExplorer = new FileExplorer()
 export const confirmWindow = new ConfirmWindow()

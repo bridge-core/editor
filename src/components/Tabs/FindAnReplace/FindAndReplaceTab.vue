@@ -1,13 +1,12 @@
 <script setup lang="ts">
 import LabeledInput from '@/components/Common/LabeledInput.vue'
 import Icon from '@/components/Common/Icon.vue'
+import Button from '@/components/Common/Button.vue'
 
 import { type FindAndReplaceTab } from './FindAndReplaceTab'
 import { ref, watch } from 'vue'
 import { useTranslate } from '@/libs/locales/Locales'
-import Button from '@/components/Common/Button.vue'
-import IconButton from '@/components/Common/IconButton.vue'
-import { tabManager } from '@/App'
+import { TabManager } from '@/components/TabSystem/TabManager'
 
 const t = useTranslate()
 
@@ -112,7 +111,7 @@ function startSearch() {
 
 		<div class="mt-2 h-full flex-1 overflow-auto box-border">
 			<div v-for="path of Object.keys(instance.queryResult.value)">
-				<div class="flex items-center gap-2 cursor-pointer" @click="tabManager.openFile(path)">
+				<div class="flex items-center gap-2 cursor-pointer" @click="TabManager.openFile(path)">
 					<Icon
 						:icon="instance.queryResult.value[path].icon"
 						class="text-[var(--color)]"
@@ -127,7 +126,7 @@ function startSearch() {
 				<div
 					v-for="result of instance.queryResult.value[path].results"
 					class="cursor-pointer"
-					@click="tabManager.openFile(path)"
+					@click="TabManager.openFile(path)"
 				>
 					<span class="text-textAlternate">{{ result.previousContext ?? '' }}</span>
 

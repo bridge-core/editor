@@ -3,7 +3,7 @@ import FreeContextMenu from '@/components/Common/FreeContextMenu.vue'
 import ContextMenuItem from '@/components/Common/ContextMenuItem.vue'
 import Icon from '@/components/Common/Icon.vue'
 
-import { tabManager } from '@/App'
+import { TabManager } from '@/components/TabSystem/TabManager'
 import { basename } from '@/libs/path'
 import { ref, Ref } from 'vue'
 import { ActionManager } from '@/libs/actions/ActionManager'
@@ -11,7 +11,7 @@ import { ActionManager } from '@/libs/actions/ActionManager'
 const contextMenu: Ref<typeof FreeContextMenu | null> = ref(null)
 
 function click() {
-	tabManager.openFile(path)
+	TabManager.openFile(path)
 }
 
 const { path } = defineProps({
