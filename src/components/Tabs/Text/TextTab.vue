@@ -66,6 +66,18 @@ function save() {
 
 	contextMenu.value?.close()
 }
+
+function format() {
+	Actions.trigger('format')
+
+	contextMenu.value?.close()
+}
+
+function goToSymbol() {
+	Actions.trigger('goToSymbol')
+
+	contextMenu.value?.close()
+}
 </script>
 
 <template>
@@ -79,22 +91,17 @@ function save() {
 			<ContextMenuItem text="Cut" icon="content_cut" @click="cut" />
 			<ContextMenuItem text="Paste" icon="content_paste" @click="paste" />
 
-			<div class="bg-menu h-px m-2" />
+			<div class="bg-background-tertiary h-px m-2 my-0" />
 
 			<ContextMenuItem text="Save" icon="save" @click="save" />
 
-			<div class="bg-menu h-px m-2" />
+			<div class="bg-background-tertiary h-px m-2 my-0" />
 
 			<ContextMenuItem text="View Documentation" icon="menu_book" @click="Actions.trigger('viewDocumentation')" />
-			<ContextMenuItem text="Format Document" icon="edit_note" @click="Actions.trigger('formatDocument')" />
+			<ContextMenuItem text="Format" icon="edit_note" @click="format" />
 			<ContextMenuItem text="Change All Occurances" icon="edit" @click="Actions.trigger('changeAllOccurances')" />
 			<ContextMenuItem text="Go to Definition" icon="search" @click="Actions.trigger('goToDefinition')" />
-			<ContextMenuItem
-				text="Go to Symbol"
-				icon="arrow_forward"
-				class="pb-4"
-				@click="Actions.trigger('goToSymbol')"
-			/>
+			<ContextMenuItem text="Go to Symbol" icon="arrow_forward" class="pb-4" @click="goToSymbol" />
 		</FreeContextMenu>
 	</div>
 </template>

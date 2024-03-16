@@ -235,5 +235,35 @@ export class Actions {
 				},
 			})
 		)
+
+		this.addAction(
+			new Action({
+				id: 'format',
+				trigger: () => {
+					const focusedTab = tabManager.getFocusedTab()
+
+					if (focusedTab === null) return
+
+					if (!(focusedTab instanceof TextTab)) return
+
+					focusedTab.format()
+				},
+			})
+		)
+
+		this.addAction(
+			new Action({
+				id: 'goToSymbol',
+				trigger: () => {
+					const focusedTab = tabManager.getFocusedTab()
+
+					if (focusedTab === null) return
+
+					if (!(focusedTab instanceof TextTab)) return
+
+					focusedTab.goToSymbol()
+				},
+			})
+		)
 	}
 }

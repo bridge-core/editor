@@ -103,7 +103,7 @@ export class TextTab extends FileTab {
 
 		this.icon.value = 'loading'
 
-		this.editor.trigger('contextmenu', 'editor.action.formatDocument', null)
+		this.format()
 
 		await fileSystem.writeFile(this.path, this.model.getValue())
 
@@ -134,7 +134,22 @@ export class TextTab extends FileTab {
 		this.editor.trigger('action', 'editor.action.clipboardPasteAction', undefined)
 	}
 
+	public format() {
+		if (!this.editor) return
+
+		this.editor.trigger('action', 'editor.action.formatDocument', undefined)
+	}
+
+	public goToSymbol() {
+		if (!this.editor) return
+
+		this.editor.focus()
+		this.editor.trigger('action', 'editor.action.quickOutline', undefined)
+	}
+
 	private getColor(name: string): string {
+		console.log(name, ThemeManager.get(ThemeManager.currentTheme).colors[<any>name])
+
 		return this.convertColor(
 			//@ts-ignore  Typescript doesn't like indexing the colors for some reason
 			ThemeManager.get(ThemeManager.currentTheme).colors[<any>name] ?? 'pink'
@@ -164,25 +179,25 @@ export class TextTab extends FileTab {
 				'editor.background': this.getColor('background'),
 				'editor.lineHighlightBackground': this.getColor('lineHighlightBackground'),
 				'editorWidget.background': this.getColor('background'),
-				'editorWidget.border': this.getColor('sidebarNavigation'),
+				'editorWidget.border': this.getColor('backgroundSecondary'),
 				'pickerGroup.background': this.getColor('background'),
-				'pickerGroup.border': this.getColor('sidebarNavigation'),
+				'pickerGroup.border': this.getColor('backgroundSecondary'),
 				'badge.background': this.getColor('background'),
 
-				'input.background': this.getColor('sidebarNavigation'),
-				'input.border': this.getColor('menu'),
+				'input.background': this.getColor('backgroundSecondary'),
+				'input.border': this.getColor('backgroundSecondary'),
 				'inputOption.activeBorder': this.getColor('primary'),
 				focusBorder: this.getColor('primary'),
-				'list.focusBackground': this.getColor('menu'),
-				'list.hoverBackground': this.getColor('sidebarNavigation'),
-				contrastBorder: this.getColor('sidebarNavigation'),
+				'list.focusBackground': this.getColor('backgroundSecondary'),
+				'list.hoverBackground': this.getColor('backgroundSecondary'),
+				contrastBorder: this.getColor('backgroundSecondary'),
 
 				'peekViewTitle.background': this.getColor('background'),
 				'peekView.border': this.getColor('primary'),
-				'peekViewResult.background': this.getColor('sidebarNavigation'),
-				'peekViewResult.selectionBackground': this.getColor('menu'),
+				'peekViewResult.background': this.getColor('backgroundSecondary'),
+				'peekViewResult.selectionBackground': this.getColor('backgroundSecondary'),
 				'peekViewEditor.background': this.getColor('background'),
-				'peekViewEditor.matchHighlightBackground': this.getColor('menu'),
+				'peekViewEditor.matchHighlightBackground': this.getColor('backgroundSecondary'),
 				...theme.monaco,
 			},
 			rules: [
