@@ -1,5 +1,6 @@
 import { join } from '@/libs/path'
-import { confirmWindow, extensions } from '@/App'
+import { extensions } from '@/App'
+import { ConfirmWindow } from '@/components/Windows/Confirm/ConfirmWindow'
 import { Sidebar } from '@/components/Sidebar/Sidebar'
 import { fileSystem } from '@/libs/fileSystem/FileSystem'
 import { BaseFileSystem } from '@/libs/fileSystem/BaseFileSystem'
@@ -159,7 +160,7 @@ export class Project {
 		Sidebar.addNotification(
 			'warning',
 			() => {
-				confirmWindow.open('You have not set up your output folder yet. Do you want to set it up now?', () =>
+				ConfirmWindow.open('You have not set up your output folder yet. Do you want to set it up now?', () =>
 					SettingsWindow.open('projects')
 				)
 			},

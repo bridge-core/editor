@@ -5,7 +5,6 @@ import { ProjectManager } from '@/libs/project/ProjectManager'
 import { fileSystem } from '@/libs/fileSystem/FileSystem'
 import { Data } from '@/libs/data/Data'
 import { Sidebar } from '@/components/Sidebar/Sidebar'
-import { ConfirmWindow } from '@/components/Windows/Confirm/ConfirmWindow'
 import { PWAFileSystem } from '@/libs/fileSystem/PWAFileSystem'
 import { TauriFileSystem } from '@/libs/fileSystem/TauriFileSystem'
 import { get, set } from 'idb-keyval'
@@ -19,7 +18,6 @@ import { PromptWindow } from '@/components/Windows/Prompt/PromptWindow'
 import { Settings } from '@/libs/settings/Settings'
 import { TextTab } from '@/components/Tabs/Text/TextTab'
 
-export const confirmWindow = new ConfirmWindow()
 export const promptWindow = new PromptWindow()
 export const extensions = new Extensions()
 export const extensionLibrary = new ExtensionLibrary()

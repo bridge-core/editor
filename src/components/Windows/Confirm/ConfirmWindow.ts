@@ -1,24 +1,24 @@
 import { Windows } from '@/components/Windows/Windows'
 
 export class ConfirmWindow {
-	public text: string = ''
+	public static text: string = ''
 
-	private confirmCallback: () => void = () => {}
-	private cancelCallback: () => void = () => {}
+	private static confirmCallback: () => void = () => {}
+	private static cancelCallback: () => void = () => {}
 
-	public open(text: string, confirmCallback: () => void, cancelCallback: () => void = () => {}) {
-		this.text = text
-		this.confirmCallback = confirmCallback
-		this.cancelCallback = cancelCallback
+	public static open(text: string, confirmCallback: () => void, cancelCallback: () => void = () => {}) {
+		ConfirmWindow.text = text
+		ConfirmWindow.confirmCallback = confirmCallback
+		ConfirmWindow.cancelCallback = cancelCallback
 
 		Windows.open('confirm')
 	}
 
-	public confirm() {
-		this.confirmCallback()
+	public static confirm() {
+		ConfirmWindow.confirmCallback()
 	}
 
-	public cancel() {
-		this.cancelCallback()
+	public static cancel() {
+		ConfirmWindow.cancelCallback()
 	}
 }

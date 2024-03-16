@@ -2,7 +2,7 @@
 import Window from '@/components/Windows/Window.vue'
 import Button from '@/components/Common/Button.vue'
 
-import { confirmWindow } from '@/App'
+import { ConfirmWindow } from '@/components/Windows/Confirm/ConfirmWindow'
 import { useTranslate } from '@/libs/locales/Locales'
 import { Ref, ref } from 'vue'
 
@@ -13,7 +13,7 @@ const window: Ref<Window | null> = ref(null)
 function confirm() {
 	if (!window.value) return
 
-	confirmWindow.confirm()
+	ConfirmWindow.confirm()
 
 	window.value.close()
 }
@@ -21,7 +21,7 @@ function confirm() {
 function cancel() {
 	if (!window.value) return
 
-	confirmWindow.cancel()
+	ConfirmWindow.cancel()
 
 	window.value.close()
 }
@@ -31,7 +31,7 @@ function cancel() {
 	<Window :name="t('general.confirm')" id="confirm" ref="window">
 		<div class="p-4">
 			<p class="mb-4 max-w-sm font-inter">
-				{{ t(confirmWindow.text) }}
+				{{ t(ConfirmWindow.text) }}
 			</p>
 
 			<div class="flex justify-end gap-2">
