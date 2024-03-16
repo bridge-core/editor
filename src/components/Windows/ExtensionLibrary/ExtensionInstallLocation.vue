@@ -4,7 +4,7 @@ import Button from '@/components/Common/Button.vue'
 
 import { useTranslate } from '@/libs/locales/Locales'
 import { Ref, ref } from 'vue'
-import { extensionLibrary } from '@/App'
+import { ExtensionLibrary } from '@/components/Windows/ExtensionLibrary/ExtensionLibrary'
 
 const t = useTranslate()
 
@@ -13,7 +13,7 @@ const window: Ref<Window | null> = ref(null)
 function global() {
 	if (!window.value) return
 
-	extensionLibrary.confirmInstallGlobal()
+	ExtensionLibrary.confirmInstallGlobal()
 
 	window.value.close()
 }
@@ -21,7 +21,7 @@ function global() {
 function project() {
 	if (!window.value) return
 
-	extensionLibrary.confirmInstallProject()
+	ExtensionLibrary.confirmInstallProject()
 
 	window.value.close()
 }

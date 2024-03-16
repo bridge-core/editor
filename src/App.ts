@@ -11,14 +11,12 @@ import { get, set } from 'idb-keyval'
 import { appDataDir, appLocalDataDir, sep } from '@tauri-apps/api/path'
 import { join } from '@/libs/path'
 import { Extensions } from '@/libs/extensions/Extensions'
-import { ExtensionLibrary } from '@/components/Windows/ExtensionLibrary/ExtensionLibrary'
 import { setupActions } from '@/libs/actions/Actions'
 import { setupTypescript } from '@/libs/monaco/TypeScript'
 import { Settings } from '@/libs/settings/Settings'
 import { TextTab } from '@/components/Tabs/Text/TextTab'
 
 export const extensions = new Extensions()
-export const extensionLibrary = new ExtensionLibrary()
 
 // Setup static singletons early so components can use them properly
 ProjectManager.setup()

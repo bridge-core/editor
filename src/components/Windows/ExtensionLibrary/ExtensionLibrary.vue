@@ -4,7 +4,8 @@ import LabeledInput from '@/components/Common/LabeledInput.vue'
 import Icon from '@/components/Common/Icon.vue'
 import IconButton from '@/components/Common/IconButton.vue'
 
-import { extensionLibrary, extensions } from '@/App'
+import { extensions } from '@/App'
+import { ExtensionLibrary } from '@/components/Windows/ExtensionLibrary/ExtensionLibrary'
 import { useTranslate } from '@/libs/locales/Locales'
 import Button from '@/components/Common/Button.vue'
 import ContextMenu from '@/components/Common/ContextMenu.vue'
@@ -34,22 +35,22 @@ const isInstalled = extensions.useIsInstalled()
 
 				<div class="mt-4">
 					<button
-						v-for="tag in Object.keys(extensionLibrary.tags)"
+						v-for="tag in Object.keys(ExtensionLibrary.tags)"
 						class="w-full flex gap-1 p-1 mt-1 border-2 border-transparent hover:border-accent rounded transition-colors duration-100 ease-out"
 						:class="{
-							'bg-[var(--color)]': extensionLibrary.selectedTag.value === tag,
+							'bg-[var(--color)]': ExtensionLibrary.selectedTag.value === tag,
 						}"
 						:style="{
-							'--color': `var(--theme-color-${extensionLibrary.tags[tag].color ?? 'primary'})`,
+							'--color': `var(--theme-color-${ExtensionLibrary.tags[tag].color ?? 'primary'})`,
 						}"
-						@click="extensionLibrary.selectedTag.value = tag"
+						@click="ExtensionLibrary.selectedTag.value = tag"
 					>
 						<Icon
-							:icon="extensionLibrary.tags[tag].icon"
+							:icon="ExtensionLibrary.tags[tag].icon"
 							:color="
-								extensionLibrary.selectedTag.value === tag
+								ExtensionLibrary.selectedTag.value === tag
 									? 'accent'
-									: extensionLibrary.tags[tag].color ?? 'primary'
+									: ExtensionLibrary.tags[tag].color ?? 'primary'
 							"
 							class="text-base"
 						/>
@@ -61,10 +62,10 @@ const isInstalled = extensions.useIsInstalled()
 		<template #content>
 			<div class="max-w-[64rem] w-[50vw] h-[38rem] flex flex-col overflow-y-auto p-4 pt-0 mr-2">
 				<div
-					v-for="extension in extensionLibrary.extensions.filter(
+					v-for="extension in ExtensionLibrary.extensions.filter(
 						(extension) =>
-							extensionLibrary.selectedTag.value === 'All' ||
-							extension.tags.includes(extensionLibrary.selectedTag.value)
+							ExtensionLibrary.selectedTag.value === 'All' ||
+							extension.tags.includes(ExtensionLibrary.selectedTag.value)
 					)"
 					:key="extension.id"
 					class="bg-background-secondary rounded mb-4 p-2"
@@ -82,7 +83,7 @@ const isInstalled = extensions.useIsInstalled()
 								v-if="!isInstalled(extension.id)"
 								icon="vertical_align_bottom"
 								:text="t('Install')"
-								@click="extensionLibrary.requestInstall(extension)"
+								@click="ExtensionLibrary.requestInstall(extension)"
 							/>
 
 							<ContextMenu v-else>
@@ -137,12 +138,12 @@ const isInstalled = extensions.useIsInstalled()
 							v-for="tag in extension.tags"
 							class="font-inter text-sm py-1 px-2 bg-[var(--color)] hover:bg-accent rounded-full flex items-center gap-1 group hover:text-background transition-colors duration-100 ease-out cursor-pointer"
 							:style="{
-								'--color': `var(--theme-color-${extensionLibrary.tags[tag].color ?? 'primary'})`,
+								'--color': `var(--theme-color-${ExtensionLibrary.tags[tag].color ?? 'primary'})`,
 							}"
 						>
 							<span
 								class="material-symbols-rounded text-sm group-hover:text-background transition-colors duration-100 ease-out"
-								>{{ extensionLibrary.tags[tag].icon }}</span
+								>{{ ExtensionLibrary.tags[tag].icon }}</span
 							>
 
 							{{ tag }}

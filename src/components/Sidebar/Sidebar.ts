@@ -1,4 +1,4 @@
-import { extensionLibrary } from '@/App'
+import { ExtensionLibrary } from '@/components/Windows/ExtensionLibrary/ExtensionLibrary'
 import { TabManager } from '@/components/TabSystem/TabManager'
 import { Windows } from '@/components/Windows/Windows'
 import { Ref, ref } from 'vue'
@@ -38,7 +38,7 @@ export class Sidebar {
 			Windows.open('compiler')
 		})
 		Sidebar.addButton('extension', () => {
-			extensionLibrary.open()
+			ExtensionLibrary.open()
 		})
 		Sidebar.addDivider()
 

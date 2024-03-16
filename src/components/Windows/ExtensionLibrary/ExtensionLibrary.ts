@@ -1,47 +1,47 @@
 import { extensions } from '@/App'
 import { Windows } from '@/components/Windows/Windows'
 import { Ref, ref } from 'vue'
-import { ExtensionManifest } from '@/libs/extensions/Extensions'
+import { ExtensionManifest } from '@/libs/extensions/Extension'
 import { Data } from '@/libs/data/Data'
 
 export class ExtensionLibrary {
-	public tags: Record<string, { icon: string; color?: string }> = {}
-	public selectedTag: Ref<string> = ref('All')
-	public extensions: ExtensionManifest[] = []
+	public static tags: Record<string, { icon: string; color?: string }> = {}
+	public static selectedTag: Ref<string> = ref('All')
+	public static extensions: ExtensionManifest[] = []
 
-	private extensionToInstall?: ExtensionManifest
+	private static extensionToInstall?: ExtensionManifest
 
-	public async load() {
-		this.tags = await Data.get('packages/common/extensionTags.json')
+	public static async load() {
+		ExtensionLibrary.tags = await Data.get('packages/common/extensionTags.json')
 
-		this.selectedTag.value = Object.keys(this.tags)[0]
+		ExtensionLibrary.selectedTag.value = Object.keys(ExtensionLibrary.tags)[0]
 
-		this.extensions = await (
+		ExtensionLibrary.extensions = await (
 			await fetch('https://raw.githubusercontent.com/bridge-core/plugins/master/extensions.json')
 		).json()
 	}
 
-	public async open() {
-		await this.load()
+	public static async open() {
+		await ExtensionLibrary.load()
 
 		Windows.open('extensionLibrary')
 	}
 
-	public requestInstall(extension: ExtensionManifest) {
-		this.extensionToInstall = extension
+	public static requestInstall(extension: ExtensionManifest) {
+		ExtensionLibrary.extensionToInstall = extension
 
 		Windows.open('extensionInstallLocation')
 	}
 
-	public confirmInstallGlobal() {
-		if (this.extensionToInstall === undefined) return
+	public static confirmInstallGlobal() {
+		if (ExtensionLibrary.extensionToInstall === undefined) return
 
-		extensions.installGlobal(this.extensionToInstall)
+		extensions.installGlobal(ExtensionLibrary.extensionToInstall)
 	}
 
-	public confirmInstallProject() {
-		if (this.extensionToInstall === undefined) return
+	public static confirmInstallProject() {
+		if (ExtensionLibrary.extensionToInstall === undefined) return
 
-		extensions.installProject(this.extensionToInstall)
+		extensions.installProject(ExtensionLibrary.extensionToInstall)
 	}
 }
