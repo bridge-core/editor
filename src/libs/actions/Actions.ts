@@ -283,4 +283,19 @@ export function setupActions() {
 			},
 		})
 	)
+
+	ActionManager.addAction(
+		new Action({
+			id: 'viewDocumentation',
+			trigger: () => {
+				const focusedTab = tabManager.getFocusedTab()
+
+				if (focusedTab === null) return
+
+				if (!(focusedTab instanceof TextTab)) return
+
+				focusedTab.viewDocumentation()
+			},
+		})
+	)
 }

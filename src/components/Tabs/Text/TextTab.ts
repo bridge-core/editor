@@ -1,6 +1,6 @@
 import { Component, ref } from 'vue'
 import TextTabComponent from '@/components/Tabs/Text/TextTab.vue'
-import { Uri, editor as monaco } from 'monaco-editor'
+import { Position, Uri, editor, editor as monaco, Range } from 'monaco-editor'
 import { keyword } from 'color-convert'
 import { fileSystem } from '@/App'
 import { setMonarchTokensProvider } from '@/libs/monaco/Json'
@@ -160,6 +160,60 @@ export class TextTab extends FileTab {
 		if (!this.editor) return
 
 		this.editor.trigger('action', 'editor.action.rename', undefined)
+	}
+
+	public async viewDocumentation() {
+		if (!this.editor) return
+		if (!this.model) return
+
+		const selection = this.editor.getSelection()
+
+		if (!selection) return
+
+		if (!this.fileType.documentation) {
+			alert('No documentation found!')
+
+			return
+		}
+
+		let word: string | undefined
+		if (this.language.value === 'json') {
+			word = (await this.getJsonWordAtPosition(this.model, selection.getPosition())).word
+		} else {
+			word = this.model.getWordAtPosition(selection.getPosition())?.word
+		}
+
+		if (!word) return
+
+		let url = this.fileType.documentation.baseUrl
+		if (word && (this.fileType.documentation.supportsQuerying ?? true)) url += `#${word}`
+
+		window.open(url)
+	}
+
+	private async getJsonWordAtPosition(model: editor.ITextModel, position: Position) {
+		const line = model.getLineContent(position.lineNumber)
+
+		const wordStart = this.getPreviousQuote(line, position.column)
+		const wordEnd = this.getNextQuote(line, position.column)
+		return {
+			word: line.substring(wordStart, wordEnd),
+			range: new Range(position.lineNumber, wordStart, position.lineNumber, wordEnd),
+		}
+	}
+
+	private getNextQuote(line: string, startIndex: number) {
+		for (let i = startIndex - 1; i < line.length; i++) {
+			if (line[i] === '"') return i
+		}
+		return line.length
+	}
+
+	private getPreviousQuote(line: string, startIndex: number) {
+		for (let i = startIndex - 2; i > 0; i--) {
+			if (line[i] === '"') return i + 1
+		}
+		return 0
 	}
 
 	private getColor(name: string): string {
