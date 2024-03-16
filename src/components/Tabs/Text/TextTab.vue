@@ -99,8 +99,18 @@ function goToSymbol() {
 
 			<ContextMenuItem text="View Documentation" icon="menu_book" @click="Actions.trigger('viewDocumentation')" />
 			<ContextMenuItem text="Format" icon="edit_note" @click="format" />
-			<ContextMenuItem text="Change All Occurances" icon="edit" @click="Actions.trigger('changeAllOccurances')" />
-			<ContextMenuItem text="Go to Definition" icon="search" @click="Actions.trigger('goToDefinition')" />
+			<ContextMenuItem
+				v-if="instance.language.value !== 'json'"
+				text="Change All Occurances"
+				icon="edit"
+				@click="Actions.trigger('changeAllOccurances')"
+			/>
+			<ContextMenuItem
+				v-if="instance.language.value !== 'json'"
+				text="Go to Definition"
+				icon="search"
+				@click="Actions.trigger('goToDefinition')"
+			/>
 			<ContextMenuItem text="Go to Symbol" icon="arrow_forward" class="pb-4" @click="goToSymbol" />
 		</FreeContextMenu>
 	</div>

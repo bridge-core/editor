@@ -13,6 +13,7 @@ import { Settings } from '@/libs/settings/Settings'
 export class TextTab extends FileTab {
 	public component: Component | null = TextTabComponent
 	public icon = ref('loading')
+	public language = ref('plaintext')
 
 	private fileTypeIcon: string = 'data_object'
 	private editor: monaco.IStandaloneCodeEditor | null = null
@@ -68,6 +69,8 @@ export class TextTab extends FileTab {
 		const fileContent = await fileSystem.readFileText(this.path)
 
 		this.model = monaco.getModel(Uri.file(this.path))
+
+		this.language.value = this.fileType?.meta.language ?? 'plaintext'
 
 		if (this.model === null) {
 			this.model = monaco.createModel(
@@ -148,8 +151,6 @@ export class TextTab extends FileTab {
 	}
 
 	private getColor(name: string): string {
-		console.log(name, ThemeManager.get(ThemeManager.currentTheme).colors[<any>name])
-
 		return this.convertColor(
 			//@ts-ignore  Typescript doesn't like indexing the colors for some reason
 			ThemeManager.get(ThemeManager.currentTheme).colors[<any>name] ?? 'pink'
