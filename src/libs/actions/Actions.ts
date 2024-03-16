@@ -1,10 +1,11 @@
-import { fileSystem, promptWindow, tabManager } from '@/App'
+import { promptWindow, tabManager } from '@/App'
 import { TextTab } from '@/components/Tabs/Text/TextTab'
 import { dirname, join, parse } from '@/libs/path'
 import { getClipboard, setClipboard } from '@/libs/Clipboard'
 import { BaseEntry } from '@/libs/fileSystem/BaseFileSystem'
 import { ActionManager } from './ActionManager'
 import { Action } from './Action'
+import { fileSystem } from '@/libs/fileSystem/FileSystem'
 
 export function setupActions() {
 	ActionManager.addAction(

@@ -1,4 +1,4 @@
-import { fileSystem } from '@/App'
+import { fileSystem } from '@/libs/fileSystem/FileSystem'
 import { join } from '@/libs/path'
 import { dark, light } from '@/libs/theme/DefaultThemes'
 import { ThemeManager } from '@/libs/theme/ThemeManager'

@@ -1,5 +1,6 @@
 import { join } from '@/libs/path'
-import { confirmWindow, extensions, fileSystem, sidebar } from '@/App'
+import { confirmWindow, extensions, sidebar } from '@/App'
+import { fileSystem } from '@/libs/fileSystem/FileSystem'
 import { BaseFileSystem } from '@/libs/fileSystem/BaseFileSystem'
 import { PWAFileSystem } from '@/libs/fileSystem/PWAFileSystem'
 import { get, set } from 'idb-keyval'

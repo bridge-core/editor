@@ -2,7 +2,7 @@ import { Toolbar } from '@/components/Toolbar/Toolbar'
 import { ThemeManager } from '@/libs/theme/ThemeManager'
 import { LocaleManager } from '@/libs/locales/Locales'
 import { ProjectManager } from '@/libs/project/ProjectManager'
-import { getFileSystem } from '@/libs/fileSystem/FileSystem'
+import { fileSystem } from '@/libs/fileSystem/FileSystem'
 import { Data } from '@/libs/data/Data'
 import { TabManager } from '@/components/TabSystem/TabManager'
 import { Sidebar } from '@/components/Sidebar/Sidebar'
@@ -21,7 +21,6 @@ import { PromptWindow } from '@/components/Windows/Prompt/PromptWindow'
 import { Settings } from '@/libs/settings/Settings'
 import { TextTab } from '@/components/Tabs/Text/TextTab'
 
-export const fileSystem = getFileSystem()
 export const tabManager = new TabManager()
 export const sidebar = new Sidebar()
 export const fileExplorer = new FileExplorer()

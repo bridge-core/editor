@@ -1,6 +1,6 @@
 import { WorkerFileSystemEntryPoint } from '@/libs/fileSystem/WorkerFileSystem'
 import IndexerWorker from './IndexerWorker?worker'
-import { fileSystem } from '@/App'
+import { fileSystem } from '@/libs/fileSystem/FileSystem'
 import { sendAndWait } from '@/libs/worker/Communication'
 import { BedrockProject } from '@/libs/project/BedrockProject'
 import { Data } from '@/libs/data/Data'

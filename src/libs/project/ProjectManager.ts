@@ -1,5 +1,5 @@
 import { EventSystem } from '@/libs/event/EventSystem'
-import { fileSystem } from '@/App'
+import { fileSystem } from '@/libs/fileSystem/FileSystem'
 import { Project, validProject } from './Project'
 import { basename, join } from '@/libs/path'
 import { PWAFileSystem } from '@/libs/fileSystem/PWAFileSystem'

@@ -1,4 +1,4 @@
-import { fileSystem } from '@/App'
+import { fileSystem } from '@/libs/fileSystem/FileSystem'
 import { extname, join } from '@/libs/path'
 import { Unzipped, unzip } from 'fflate'
 import { Extension, ExtensionManifest } from './Extension'

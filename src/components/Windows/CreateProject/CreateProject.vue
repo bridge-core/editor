@@ -218,7 +218,7 @@ import { ConfigurableFile } from '@/libs/project/create/files/configurable/Confi
 import { FormatVersionDefinitions, ExperimentalToggle, useGetData, Data } from '@/libs/data/Data'
 import { v4 as uuid } from 'uuid'
 import { useTranslate } from '@/libs/locales/Locales'
-import { fileSystem } from '@/App'
+import { fileSystem } from '@/libs/fileSystem/FileSystem'
 
 const t = useTranslate()
 const getData = useGetData()

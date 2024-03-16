@@ -7,7 +7,7 @@ import ContextMenuItem from '@/components/Common/ContextMenuItem.vue'
 import { Ref, onMounted, onUnmounted, ref } from 'vue'
 import { basename } from '@/libs/path'
 import { BaseEntry } from '@/libs/fileSystem/BaseFileSystem'
-import { fileSystem } from '@/App'
+import { fileSystem } from '@/libs/fileSystem/FileSystem'
 import { ActionManager } from '@/libs/actions/ActionManager'
 
 const props = defineProps({

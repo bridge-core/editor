@@ -1,4 +1,4 @@
-import { fileSystem } from '@/App'
+import { fileSystem } from '@/libs/fileSystem/FileSystem'
 import { BedrockProject } from '@/libs/project/BedrockProject'
 import { TCompareOperator, compareVersions } from 'bridge-common-utils'
 import { TPackTypeId } from 'mc-project-core'

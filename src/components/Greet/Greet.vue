@@ -4,12 +4,13 @@ import IconButton from '@/components/Common/IconButton.vue'
 import ProjectGalleryEntry from './ProjectGalleryEntry.vue'
 import TextButton from '@/components/Common/TextButton.vue'
 
-import { fileSystem, selectOrLoadBridgeFolder } from '@/App'
+import { selectOrLoadBridgeFolder } from '@/App'
 import { PWAFileSystem } from '@/libs/fileSystem/PWAFileSystem'
 import { computed, ref } from 'vue'
 import { useTranslate } from '@/libs/locales/Locales'
 import { ProjectInfo, ProjectManager } from '@/libs/project/ProjectManager'
 import { Windows } from '@/components/Windows/Windows'
+import { fileSystem } from '@/libs/fileSystem/FileSystem'
 
 const t = useTranslate()
 

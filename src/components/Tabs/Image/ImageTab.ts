@@ -1,4 +1,4 @@
-import { fileSystem } from '@/App'
+import { fileSystem } from '@/libs/fileSystem/FileSystem'
 import { Component, Ref, ref } from 'vue'
 import ImageTabComponent from './ImageTab.vue'
 import { FileTab } from '@/components/TabSystem/FileTab'

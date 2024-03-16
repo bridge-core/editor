@@ -1,4 +1,4 @@
-import { fileSystem } from '@/App'
+import { fileSystem } from '@/libs/fileSystem/FileSystem'
 import { basename, dirname, extname, join } from '@/libs/path'
 import { ProjectManager } from '@/libs/project/ProjectManager'
 import { Runtime } from '@/libs/runtime/Runtime'

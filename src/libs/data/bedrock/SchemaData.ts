@@ -1,6 +1,6 @@
 import { setSchemas } from '@/libs/monaco/Json'
 import { Runtime } from '@/libs/runtime/Runtime'
-import { fileSystem } from '@/App'
+import { fileSystem } from '@/libs/fileSystem/FileSystem'
 import { basename, dirname, join } from '@/libs/path'
 import { CompatabilityFileSystem } from '@/libs/fileSystem/CompatabilityFileSystem'
 import { BedrockProject } from '@/libs/project/BedrockProject'

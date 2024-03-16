@@ -8,3 +8,5 @@ export function getFileSystem(): BaseFileSystem {
 
 	return new PWAFileSystem()
 }
+
+export const fileSystem = getFileSystem()
