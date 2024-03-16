@@ -6,7 +6,7 @@ import Icon from '@/components/Common/Icon.vue'
 import { tabManager } from '@/App'
 import { basename } from '@/libs/path'
 import { ref, Ref } from 'vue'
-import { Actions } from '@/libs/actions/Actions'
+import { ActionManager } from '@/libs/actions/ActionManager'
 
 const contextMenu: Ref<typeof FreeContextMenu | null> = ref(null)
 
@@ -28,7 +28,7 @@ const { path } = defineProps({
 function executeContextMenuAction(action: string, data: any) {
 	if (!contextMenu.value) return
 
-	Actions.trigger(action, data)
+	ActionManager.trigger(action, data)
 
 	contextMenu.value.close()
 }

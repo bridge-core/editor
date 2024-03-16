@@ -4,7 +4,7 @@ import ContextMenuItem from '@/components/Common/ContextMenuItem.vue'
 import { Ref, onMounted, onUnmounted, ref } from 'vue'
 import { type TextTab } from './TextTab'
 import FreeContextMenu from '@/components/Common/FreeContextMenu.vue'
-import { Actions } from '@/libs/actions/Actions'
+import { ActionManager } from '@/libs/actions/ActionManager'
 
 const { instance }: { instance: TextTab } = <any>defineProps({
 	instance: {
@@ -43,38 +43,8 @@ onUnmounted(() => {
 	instance.unmountEditor()
 })
 
-function copy() {
-	Actions.trigger('copy')
-
-	contextMenu.value?.close()
-}
-
-function cut() {
-	Actions.trigger('cut')
-
-	contextMenu.value?.close()
-}
-
-function paste() {
-	Actions.trigger('paste')
-
-	contextMenu.value?.close()
-}
-
-function save() {
-	Actions.trigger('save')
-
-	contextMenu.value?.close()
-}
-
-function format() {
-	Actions.trigger('format')
-
-	contextMenu.value?.close()
-}
-
-function goToSymbol() {
-	Actions.trigger('goToSymbol')
+function triggerActionAndCloseContextMenu(action: string) {
+	ActionManager.trigger(action)
 
 	contextMenu.value?.close()
 }
@@ -87,31 +57,45 @@ function goToSymbol() {
 		</div>
 
 		<FreeContextMenu class="w-56" ref="contextMenu">
-			<ContextMenuItem text="Copy" icon="content_copy" class="pt-4" @click="copy" />
-			<ContextMenuItem text="Cut" icon="content_cut" @click="cut" />
-			<ContextMenuItem text="Paste" icon="content_paste" @click="paste" />
+			<ContextMenuItem
+				text="Copy"
+				icon="content_copy"
+				class="pt-4"
+				@click="triggerActionAndCloseContextMenu('copy')"
+			/>
+			<ContextMenuItem text="Cut" icon="content_cut" @click="triggerActionAndCloseContextMenu('cut')" />
+			<ContextMenuItem text="Paste" icon="content_paste" @click="triggerActionAndCloseContextMenu('paste')" />
 
 			<div class="bg-background-tertiary h-px m-2 my-0" />
 
-			<ContextMenuItem text="Save" icon="save" @click="save" />
+			<ContextMenuItem text="Save" icon="save" @click="triggerActionAndCloseContextMenu('save')" />
 
 			<div class="bg-background-tertiary h-px m-2 my-0" />
 
-			<ContextMenuItem text="View Documentation" icon="menu_book" @click="Actions.trigger('viewDocumentation')" />
-			<ContextMenuItem text="Format" icon="edit_note" @click="format" />
+			<ContextMenuItem
+				text="View Documentation"
+				icon="menu_book"
+				@click="triggerActionAndCloseContextMenu('viewDocumentation')"
+			/>
+			<ContextMenuItem text="Format" icon="edit_note" @click="triggerActionAndCloseContextMenu('format')" />
 			<ContextMenuItem
 				v-if="instance.language.value !== 'json'"
 				text="Change All Occurances"
 				icon="edit"
-				@click="Actions.trigger('changeAllOccurances')"
+				@click="triggerActionAndCloseContextMenu('changeAllOccurrences')"
 			/>
 			<ContextMenuItem
 				v-if="instance.language.value !== 'json'"
 				text="Go to Definition"
 				icon="search"
-				@click="Actions.trigger('goToDefinition')"
+				@click="triggerActionAndCloseContextMenu('goToDefinition')"
 			/>
-			<ContextMenuItem text="Go to Symbol" icon="arrow_forward" class="pb-4" @click="goToSymbol" />
+			<ContextMenuItem
+				text="Go to Symbol"
+				icon="arrow_forward"
+				class="pb-4"
+				@click="triggerActionAndCloseContextMenu('goToSymbol')"
+			/>
 		</FreeContextMenu>
 	</div>
 </template>

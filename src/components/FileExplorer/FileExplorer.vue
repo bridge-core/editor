@@ -14,7 +14,7 @@ import { IPackType } from 'mc-project-core'
 import { BedrockProject } from '@/libs/project/BedrockProject'
 import { useTranslate } from '@/libs/locales/Locales'
 import { ProjectManager } from '@/libs/project/ProjectManager'
-import { Actions } from '@/libs/actions/Actions'
+import { ActionManager } from '@/libs/actions/ActionManager'
 import { Windows } from '@/components/Windows/Windows'
 
 const t = useTranslate()
@@ -107,7 +107,7 @@ const contextMenu: Ref<typeof FreeContextMenu | null> = ref(null)
 function executeContextMenuAction(action: string, data: any) {
 	if (!contextMenu.value) return
 
-	Actions.trigger(action, data)
+	ActionManager.trigger(action, data)
 
 	contextMenu.value.close()
 }

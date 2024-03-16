@@ -1,269 +1,286 @@
 import { fileSystem, promptWindow, tabManager } from '@/App'
-import { Action } from './Action'
 import { TextTab } from '@/components/Tabs/Text/TextTab'
 import { dirname, join, parse } from '@/libs/path'
 import { getClipboard, setClipboard } from '@/libs/Clipboard'
 import { BaseEntry } from '@/libs/fileSystem/BaseFileSystem'
+import { ActionManager } from './ActionManager'
+import { Action } from './Action'
 
-export class Actions {
-	private static actions: Record<string, Action> = {}
+export function setupActions() {
+	ActionManager.addAction(
+		new Action({
+			id: 'save',
+			trigger: () => {
+				const focusedTab = tabManager.getFocusedTab()
 
-	public static addAction(action: Action) {
-		this.actions[action.id] = action
-	}
+				if (focusedTab === null) return
 
-	public static trigger(id: string, data?: any) {
-		if (this.actions[id] === undefined) return
+				if (!(focusedTab instanceof TextTab)) return
 
-		this.actions[id].trigger(data)
-	}
+				focusedTab.save()
+			},
+			keyBinding: 'Ctrl + S',
+		})
+	)
 
-	public static setup() {
-		this.addAction(
-			new Action({
-				id: 'save',
-				trigger: () => {
-					const focusedTab = tabManager.getFocusedTab()
+	ActionManager.addAction(
+		new Action({
+			id: 'copy',
+			trigger: () => {
+				const focusedTab = tabManager.getFocusedTab()
 
-					if (focusedTab === null) return
+				if (focusedTab === null) return
 
-					if (!(focusedTab instanceof TextTab)) return
+				if (!(focusedTab instanceof TextTab)) return
 
-					focusedTab.save()
-				},
-				keyBinding: 'Ctrl + S',
-			})
-		)
+				focusedTab.copy()
+			},
+			keyBinding: 'Ctrl + C',
+		})
+	)
 
-		this.addAction(
-			new Action({
-				id: 'copy',
-				trigger: () => {
-					const focusedTab = tabManager.getFocusedTab()
+	ActionManager.addAction(
+		new Action({
+			id: 'paste',
+			trigger: () => {
+				const focusedTab = tabManager.getFocusedTab()
 
-					if (focusedTab === null) return
+				if (focusedTab === null) return
 
-					if (!(focusedTab instanceof TextTab)) return
+				if (!(focusedTab instanceof TextTab)) return
 
-					focusedTab.copy()
-				},
-				keyBinding: 'Ctrl + C',
-			})
-		)
+				focusedTab.paste()
+			},
+			keyBinding: 'Ctrl + V',
+		})
+	)
 
-		this.addAction(
-			new Action({
-				id: 'paste',
-				trigger: () => {
-					const focusedTab = tabManager.getFocusedTab()
+	ActionManager.addAction(
+		new Action({
+			id: 'cut',
+			trigger: () => {
+				const focusedTab = tabManager.getFocusedTab()
 
-					if (focusedTab === null) return
+				if (focusedTab === null) return
 
-					if (!(focusedTab instanceof TextTab)) return
+				if (!(focusedTab instanceof TextTab)) return
 
-					focusedTab.paste()
-				},
-				keyBinding: 'Ctrl + V',
-			})
-		)
+				focusedTab.cut()
+			},
+			keyBinding: 'Ctrl + X',
+		})
+	)
 
-		this.addAction(
-			new Action({
-				id: 'cut',
-				trigger: () => {
-					const focusedTab = tabManager.getFocusedTab()
+	ActionManager.addAction(
+		new Action({
+			id: 'deleteFileSystemEntry',
+			trigger: async (path: unknown) => {
+				if (typeof path !== 'string') return
 
-					if (focusedTab === null) return
+				if (!(await fileSystem.exists(path))) return
 
-					if (!(focusedTab instanceof TextTab)) return
+				const entry = await fileSystem.getEntry(path)
 
-					focusedTab.cut()
-				},
-				keyBinding: 'Ctrl + X',
-			})
-		)
+				if (entry.type === 'directory') {
+					await fileSystem.removeDirectory(path)
+				}
 
-		this.addAction(
-			new Action({
-				id: 'deleteFileSystemEntry',
-				trigger: async (path: unknown) => {
-					if (typeof path !== 'string') return
+				if (entry.type === 'file') {
+					await fileSystem.removeFile(path)
+				}
+			},
+		})
+	)
 
+	ActionManager.addAction(
+		new Action({
+			id: 'createFile',
+			trigger: async (path: unknown) => {
+				if (typeof path !== 'string') return
+
+				promptWindow.open('Create File', 'File Name', 'File Name', (name) => {
+					fileSystem.writeFile(join(path, name), '')
+				})
+			},
+		})
+	)
+
+	ActionManager.addAction(
+		new Action({
+			id: 'createFolder',
+			trigger: async (path: unknown) => {
+				if (typeof path !== 'string') return
+
+				promptWindow.open('Create Folder', 'Folder Name', 'Folder Name', (name) => {
+					fileSystem.makeDirectory(join(path, name))
+				})
+			},
+		})
+	)
+
+	ActionManager.addAction(
+		new Action({
+			id: 'renameFileSystemEntry',
+			trigger: async (path: unknown) => {
+				if (typeof path !== 'string') return
+
+				promptWindow.open('Rename', 'Name', 'Name', async (newPath) => {
 					if (!(await fileSystem.exists(path))) return
 
 					const entry = await fileSystem.getEntry(path)
 
 					if (entry.type === 'directory') {
+						await fileSystem.copyDirectory(path, join(dirname(path), newPath))
 						await fileSystem.removeDirectory(path)
 					}
 
 					if (entry.type === 'file') {
+						await fileSystem.copyFile(path, join(dirname(path), newPath))
 						await fileSystem.removeFile(path)
 					}
-				},
-			})
-		)
+				})
+			},
+		})
+	)
 
-		this.addAction(
-			new Action({
-				id: 'createFile',
-				trigger: async (path: unknown) => {
-					if (typeof path !== 'string') return
+	ActionManager.addAction(
+		new Action({
+			id: 'duplicateFileSystemEntry',
+			trigger: async (path: unknown) => {
+				if (typeof path !== 'string') return
 
-					promptWindow.open('Create File', 'File Name', 'File Name', (name) => {
-						fileSystem.writeFile(join(path, name), '')
-					})
-				},
-			})
-		)
+				if (!(await fileSystem.exists(path))) return
 
-		this.addAction(
-			new Action({
-				id: 'createFolder',
-				trigger: async (path: unknown) => {
-					if (typeof path !== 'string') return
+				const entry = await fileSystem.getEntry(path)
 
-					promptWindow.open('Create Folder', 'Folder Name', 'Folder Name', (name) => {
-						fileSystem.makeDirectory(join(path, name))
-					})
-				},
-			})
-		)
+				const parsedPath = parse(path)
+				const newPathBase = path.substring(0, path.length - parsedPath.ext.length)
 
-		this.addAction(
-			new Action({
-				id: 'renameFileSystemEntry',
-				trigger: async (path: unknown) => {
-					if (typeof path !== 'string') return
+				let additionalName = ' copy'
+				let newPath = newPathBase + additionalName + parsedPath.ext
 
-					promptWindow.open('Rename', 'Name', 'Name', async (newPath) => {
-						if (!(await fileSystem.exists(path))) return
+				while (await fileSystem.exists(newPath)) {
+					additionalName += ' copy'
 
-						const entry = await fileSystem.getEntry(path)
+					newPath = newPathBase + additionalName + parsedPath.ext
+				}
 
-						if (entry.type === 'directory') {
-							await fileSystem.copyDirectory(path, join(dirname(path), newPath))
-							await fileSystem.removeDirectory(path)
-						}
+				if (entry.type === 'directory') {
+					await fileSystem.copyDirectory(path, newPath)
+				}
 
-						if (entry.type === 'file') {
-							await fileSystem.copyFile(path, join(dirname(path), newPath))
-							await fileSystem.removeFile(path)
-						}
-					})
-				},
-			})
-		)
+				if (entry.type === 'file') {
+					await fileSystem.copyFile(path, newPath)
+				}
+			},
+		})
+	)
 
-		this.addAction(
-			new Action({
-				id: 'duplicateFileSystemEntry',
-				trigger: async (path: unknown) => {
-					if (typeof path !== 'string') return
+	ActionManager.addAction(
+		new Action({
+			id: 'copyFileSystemEntry',
+			trigger: async (path: unknown) => {
+				if (typeof path !== 'string') return
 
-					if (!(await fileSystem.exists(path))) return
+				if (!(await fileSystem.exists(path))) return
 
-					const entry = await fileSystem.getEntry(path)
+				setClipboard(await fileSystem.getEntry(path))
+			},
+		})
+	)
 
-					const parsedPath = parse(path)
-					const newPathBase = path.substring(0, path.length - parsedPath.ext.length)
+	ActionManager.addAction(
+		new Action({
+			id: 'pasteFileSystemEntry',
+			trigger: async (path: unknown) => {
+				if (typeof path !== 'string') return
 
-					let additionalName = ' copy'
-					let newPath = newPathBase + additionalName + parsedPath.ext
+				const clipboardEntry = getClipboard()
 
-					while (await fileSystem.exists(newPath)) {
-						additionalName += ' copy'
+				if (!(clipboardEntry instanceof BaseEntry)) return
 
-						newPath = newPathBase + additionalName + parsedPath.ext
-					}
+				const sourceEntry = await fileSystem.getEntry(path)
 
-					if (entry.type === 'directory') {
-						await fileSystem.copyDirectory(path, newPath)
-					}
+				const parsedPath = parse(clipboardEntry.path)
+				const newPathBase = join(sourceEntry.type === 'directory' ? path : dirname(path), parsedPath.name)
 
-					if (entry.type === 'file') {
-						await fileSystem.copyFile(path, newPath)
-					}
-				},
-			})
-		)
+				let additionalName = ' copy'
+				let newPath = newPathBase + additionalName + parsedPath.ext
 
-		this.addAction(
-			new Action({
-				id: 'copyFileSystemEntry',
-				trigger: async (path: unknown) => {
-					if (typeof path !== 'string') return
+				while (await fileSystem.exists(newPath)) {
+					additionalName += ' copy'
 
-					if (!(await fileSystem.exists(path))) return
+					newPath = newPathBase + additionalName + parsedPath.ext
+				}
 
-					setClipboard(await fileSystem.getEntry(path))
-				},
-			})
-		)
+				if (clipboardEntry.type === 'directory') {
+					await fileSystem.copyDirectory(clipboardEntry.path, newPath)
+				}
 
-		this.addAction(
-			new Action({
-				id: 'pasteFileSystemEntry',
-				trigger: async (path: unknown) => {
-					if (typeof path !== 'string') return
+				if (clipboardEntry.type === 'file') {
+					await fileSystem.copyFile(clipboardEntry.path, newPath)
+				}
+			},
+		})
+	)
 
-					const clipboardEntry = getClipboard()
+	ActionManager.addAction(
+		new Action({
+			id: 'format',
+			trigger: () => {
+				const focusedTab = tabManager.getFocusedTab()
 
-					if (!(clipboardEntry instanceof BaseEntry)) return
+				if (focusedTab === null) return
 
-					const sourceEntry = await fileSystem.getEntry(path)
+				if (!(focusedTab instanceof TextTab)) return
 
-					const parsedPath = parse(clipboardEntry.path)
-					const newPathBase = join(sourceEntry.type === 'directory' ? path : dirname(path), parsedPath.name)
+				focusedTab.format()
+			},
+		})
+	)
 
-					let additionalName = ' copy'
-					let newPath = newPathBase + additionalName + parsedPath.ext
+	ActionManager.addAction(
+		new Action({
+			id: 'goToSymbol',
+			trigger: () => {
+				const focusedTab = tabManager.getFocusedTab()
 
-					while (await fileSystem.exists(newPath)) {
-						additionalName += ' copy'
+				if (focusedTab === null) return
 
-						newPath = newPathBase + additionalName + parsedPath.ext
-					}
+				if (!(focusedTab instanceof TextTab)) return
 
-					if (clipboardEntry.type === 'directory') {
-						await fileSystem.copyDirectory(clipboardEntry.path, newPath)
-					}
+				focusedTab.goToSymbol()
+			},
+		})
+	)
 
-					if (clipboardEntry.type === 'file') {
-						await fileSystem.copyFile(clipboardEntry.path, newPath)
-					}
-				},
-			})
-		)
+	ActionManager.addAction(
+		new Action({
+			id: 'changeAllOccurrences',
+			trigger: () => {
+				const focusedTab = tabManager.getFocusedTab()
 
-		this.addAction(
-			new Action({
-				id: 'format',
-				trigger: () => {
-					const focusedTab = tabManager.getFocusedTab()
+				if (focusedTab === null) return
 
-					if (focusedTab === null) return
+				if (!(focusedTab instanceof TextTab)) return
 
-					if (!(focusedTab instanceof TextTab)) return
+				focusedTab.changeAllOccurrences()
+			},
+		})
+	)
 
-					focusedTab.format()
-				},
-			})
-		)
+	ActionManager.addAction(
+		new Action({
+			id: 'goToDefinition',
+			trigger: () => {
+				const focusedTab = tabManager.getFocusedTab()
 
-		this.addAction(
-			new Action({
-				id: 'goToSymbol',
-				trigger: () => {
-					const focusedTab = tabManager.getFocusedTab()
+				if (focusedTab === null) return
 
-					if (focusedTab === null) return
+				if (!(focusedTab instanceof TextTab)) return
 
-					if (!(focusedTab instanceof TextTab)) return
-
-					focusedTab.goToSymbol()
-				},
-			})
-		)
-	}
+				focusedTab.goToDefinition()
+			},
+		})
+	)
 }

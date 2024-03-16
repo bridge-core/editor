@@ -143,11 +143,23 @@ export class TextTab extends FileTab {
 		this.editor.trigger('action', 'editor.action.formatDocument', undefined)
 	}
 
+	public goToDefinition() {
+		if (!this.editor) return
+
+		this.editor.trigger('action', 'editor.action.revealDefinition', undefined)
+	}
+
 	public goToSymbol() {
 		if (!this.editor) return
 
 		this.editor.focus()
 		this.editor.trigger('action', 'editor.action.quickOutline', undefined)
+	}
+
+	public changeAllOccurrences() {
+		if (!this.editor) return
+
+		this.editor.trigger('action', 'editor.action.rename', undefined)
 	}
 
 	private getColor(name: string): string {

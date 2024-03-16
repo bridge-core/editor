@@ -8,7 +8,7 @@ import { Ref, onMounted, onUnmounted, ref } from 'vue'
 import { basename } from '@/libs/path'
 import { BaseEntry } from '@/libs/fileSystem/BaseFileSystem'
 import { fileSystem } from '@/App'
-import { Actions } from '@/libs/actions/Actions'
+import { ActionManager } from '@/libs/actions/ActionManager'
 
 const props = defineProps({
 	path: {
@@ -50,7 +50,7 @@ const contextMenu: Ref<typeof FreeContextMenu | null> = ref(null)
 function executeContextMenuAction(action: string, data: any) {
 	if (!contextMenu.value) return
 
-	Actions.trigger(action, data)
+	ActionManager.trigger(action, data)
 
 	contextMenu.value.close()
 }

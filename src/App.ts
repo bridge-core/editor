@@ -15,7 +15,7 @@ import { appDataDir, appLocalDataDir, sep } from '@tauri-apps/api/path'
 import { join } from '@/libs/path'
 import { Extensions } from '@/libs/extensions/Extensions'
 import { ExtensionLibrary } from '@/components/Windows/ExtensionLibrary/ExtensionLibrary'
-import { Actions } from '@/libs/actions/Actions'
+import { setupActions } from '@/libs/actions/Actions'
 import { setupTypescript } from '@/libs/monaco/TypeScript'
 import { PromptWindow } from '@/components/Windows/Prompt/PromptWindow'
 import { Settings } from '@/libs/settings/Settings'
@@ -34,9 +34,10 @@ export const extensionLibrary = new ExtensionLibrary()
 ProjectManager.setup()
 ThemeManager.setup()
 Toolbar.setup()
-Actions.setup()
 LocaleManager.setup()
 TextTab.setup()
+
+setupActions()
 
 export async function setup() {
 	console.time('[App] Setup')
