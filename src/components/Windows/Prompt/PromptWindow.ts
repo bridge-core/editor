@@ -2,14 +2,14 @@ import { Windows } from '@/components/Windows/Windows'
 import { Ref, ref } from 'vue'
 
 export class PromptWindow {
-	public name: Ref<string> = ref('?')
-	public label: string = '?'
-	public placeholder: string = '?'
+	public static name: Ref<string> = ref('?')
+	public static label: string = '?'
+	public static placeholder: string = '?'
 
-	private confirmCallback: (input: string) => void = () => {}
-	private cancelCallback: () => void = () => {}
+	private static confirmCallback: (input: string) => void = () => {}
+	private static cancelCallback: () => void = () => {}
 
-	public open(
+	public static open(
 		name: string,
 		label: string,
 		placeholder: string,
@@ -25,11 +25,11 @@ export class PromptWindow {
 		Windows.open('prompt')
 	}
 
-	public confirm(input: string) {
+	public static confirm(input: string) {
 		this.confirmCallback(input)
 	}
 
-	public cancel() {
+	public static cancel() {
 		this.cancelCallback()
 	}
 }

@@ -14,11 +14,9 @@ import { Extensions } from '@/libs/extensions/Extensions'
 import { ExtensionLibrary } from '@/components/Windows/ExtensionLibrary/ExtensionLibrary'
 import { setupActions } from '@/libs/actions/Actions'
 import { setupTypescript } from '@/libs/monaco/TypeScript'
-import { PromptWindow } from '@/components/Windows/Prompt/PromptWindow'
 import { Settings } from '@/libs/settings/Settings'
 import { TextTab } from '@/components/Tabs/Text/TextTab'
 
-export const promptWindow = new PromptWindow()
 export const extensions = new Extensions()
 export const extensionLibrary = new ExtensionLibrary()
 

@@ -1,4 +1,4 @@
-import { promptWindow } from '@/App'
+import { PromptWindow } from '@/components/Windows/Prompt/PromptWindow'
 import { TabManager } from '@/components/TabSystem/TabManager'
 import { TextTab } from '@/components/Tabs/Text/TextTab'
 import { dirname, join, parse } from '@/libs/path'
@@ -100,7 +100,7 @@ export function setupActions() {
 			trigger: async (path: unknown) => {
 				if (typeof path !== 'string') return
 
-				promptWindow.open('Create File', 'File Name', 'File Name', (name) => {
+				PromptWindow.open('Create File', 'File Name', 'File Name', (name) => {
 					fileSystem.writeFile(join(path, name), '')
 				})
 			},
@@ -113,7 +113,7 @@ export function setupActions() {
 			trigger: async (path: unknown) => {
 				if (typeof path !== 'string') return
 
-				promptWindow.open('Create Folder', 'Folder Name', 'Folder Name', (name) => {
+				PromptWindow.open('Create Folder', 'Folder Name', 'Folder Name', (name) => {
 					fileSystem.makeDirectory(join(path, name))
 				})
 			},
@@ -126,7 +126,7 @@ export function setupActions() {
 			trigger: async (path: unknown) => {
 				if (typeof path !== 'string') return
 
-				promptWindow.open('Rename', 'Name', 'Name', async (newPath) => {
+				PromptWindow.open('Rename', 'Name', 'Name', async (newPath) => {
 					if (!(await fileSystem.exists(path))) return
 
 					const entry = await fileSystem.getEntry(path)

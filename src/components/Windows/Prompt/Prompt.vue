@@ -3,7 +3,7 @@ import Window from '@/components/Windows/Window.vue'
 import Button from '@/components/Common/Button.vue'
 import LabeledInput from '@/components/Common/LabeledInput.vue'
 
-import { promptWindow } from '@/App'
+import { PromptWindow } from '@/components/Windows/Prompt/PromptWindow'
 import { useTranslate } from '@/libs/locales/Locales'
 import { Ref, ref } from 'vue'
 
@@ -16,7 +16,7 @@ const input = ref('')
 function confirm() {
 	if (!window.value) return
 
-	promptWindow.confirm(input.value)
+	PromptWindow.confirm(input.value)
 
 	window.value.close()
 }
@@ -24,17 +24,17 @@ function confirm() {
 function cancel() {
 	if (!window.value) return
 
-	promptWindow.cancel()
+	PromptWindow.cancel()
 
 	window.value.close()
 }
 </script>
 
 <template>
-	<Window :name="t(promptWindow.name.value)" id="prompt" ref="window">
+	<Window :name="t(PromptWindow.name.value)" id="prompt" ref="window">
 		<div class="px-4 pb-4">
 			<LabeledInput
-				:label="t(promptWindow.label)"
+				:label="t(PromptWindow.label)"
 				class="mb-4 max-w-sm flex-1 bg-background"
 				v-slot="{ focus, blur }"
 			>
@@ -42,7 +42,7 @@ function cancel() {
 					class="bg-background outline-none placeholder:text-textAlternate max-w-none w-full font-inter"
 					@focus="focus"
 					@blur="blur"
-					:placeholder="t(promptWindow.placeholder)"
+					:placeholder="t(PromptWindow.placeholder)"
 					:value="input"
 					@input="(event: Event) => (input = (<HTMLInputElement>event.target).value)"
 				/>
