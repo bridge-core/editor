@@ -7,13 +7,13 @@ import { fileSystem } from '@/libs/fileSystem/FileSystem'
 import { get, set } from 'idb-keyval'
 import { appDataDir, appLocalDataDir, sep } from '@tauri-apps/api/path'
 import { join } from '@/libs/path'
-import { Sidebar } from '@/components/Sidebar/Sidebar'
 import { setupActions } from '@/libs/actions/Actions'
 import { setupTypescript } from '@/libs/monaco/TypeScript'
 import { Settings } from '@/libs/settings/Settings'
 import { TextTab } from '@/components/Tabs/Text/TextTab'
 import { Extensions } from '@/libs/extensions/Extensions'
 import { Toolbar } from '@/components/Toolbar/Toolbar'
+import { setupSidebar } from '@/components/Sidebar/SidebarSetup'
 
 // Setup static singletons early so components can use them properly
 ProjectManager.setup()
@@ -22,9 +22,9 @@ LocaleManager.setup()
 Extensions.setup()
 Toolbar.setup()
 TextTab.setup()
-Sidebar.setup()
 
 setupActions()
+setupSidebar
 
 export async function setup() {
 	console.time('[App] Setup')
