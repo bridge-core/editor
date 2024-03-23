@@ -1,5 +1,4 @@
-import { Windows } from '@/components/Windows/Windows'
-// import { SettingsWindow } from '@/components/Windows/Settings/SettingsWindow'
+import { SettingsWindow } from '@/components/Windows/Settings/SettingsWindow'
 
 export class Toolbar {
 	public static items: { name: string; icon: string; action: () => void }[] = []

@@ -3,5 +3,10 @@ import { Windows } from './Windows'
 </script>
 
 <template>
-	<component v-for="window in Windows.openWindows.value" :key="window.uuid" :is="window.component" />
+	<component
+		v-for="window in Windows.openWindows.value"
+		:key="window.uuid ?? window.id"
+		:is="window.component"
+		:window="window"
+	/>
 </template>

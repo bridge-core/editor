@@ -26,14 +26,14 @@ onMounted(() => {
 		<Toolbar />
 		<Editor />
 		<Greet />
-		<Changelog />
+		<!-- <Changelog />
 		<CreateProject />
 		<Presets />
 		<Compiler />
 		<ExtensionLibrary />
 		<ExtensionInstallLocation />
 		<Confirm />
-		<Prompt />
+		<Prompt /> -->
 
 		<Windows />
 	</main>

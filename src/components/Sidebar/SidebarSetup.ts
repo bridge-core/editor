@@ -4,6 +4,7 @@ import { FindAndReplaceTab } from '@/components/Tabs/FindAnReplace/FindAndReplac
 import { ExtensionLibrary } from '@/components/Windows/ExtensionLibrary/ExtensionLibrary'
 import { TabManager } from '@/components/TabSystem/TabManager'
 import { Windows } from '@/components/Windows/Windows'
+import { CompilerWindow } from '@/components/Windows/Compiler/CompilerWindow'
 
 export function setupSidebar() {
 	Sidebar.addButton('folder', () => {
@@ -15,7 +16,7 @@ export function setupSidebar() {
 	})
 
 	Sidebar.addButton('manufacturing', () => {
-		Windows.open('compiler')
+		Windows.open(CompilerWindow)
 	})
 	Sidebar.addButton('extension', () => {
 		ExtensionLibrary.open()

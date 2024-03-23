@@ -18,6 +18,7 @@ import { useTranslate } from '@/libs/locales/Locales'
 import { ProjectManager } from '@/libs/project/ProjectManager'
 import { ActionManager } from '@/libs/actions/ActionManager'
 import { Windows } from '@/components/Windows/Windows'
+import { PresetsWindow } from '@/components/Windows/Presets/PresetsWindow'
 
 const t = useTranslate()
 
@@ -95,7 +96,7 @@ async function contextMenuBuild(close: any) {
 async function contextMenuNewFile(close: any) {
 	close()
 
-	Windows.open('presets')
+	Windows.open(PresetsWindow)
 }
 
 async function contextMenuOpenProjectConfig(close: any) {

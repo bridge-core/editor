@@ -10,6 +10,7 @@ import { useTranslate } from '@/libs/locales/Locales'
 import { ProjectInfo, ProjectManager } from '@/libs/project/ProjectManager'
 import { Windows } from '@/components/Windows/Windows'
 import { fileSystem, selectOrLoadBridgeFolder } from '@/libs/fileSystem/FileSystem'
+import { CreateProjectWindow } from '@/components/Windows/CreateProject/CreateProjectWindow'
 
 const t = useTranslate()
 
@@ -25,7 +26,7 @@ const suggestSelectBridgeFolder = computed(
 async function createProject() {
 	if (fileSystem instanceof PWAFileSystem && !fileSystem.setup) await selectOrLoadBridgeFolder()
 
-	Windows.open('createProject')
+	Windows.open(CreateProjectWindow)
 }
 
 async function openProject(project: ProjectInfo) {

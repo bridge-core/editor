@@ -1,7 +1,12 @@
-import { Windows } from '@/components/Windows/Windows'
+import { Windows } from '../Windows'
+import { Window } from '../Window'
 import { Ref, ref } from 'vue'
+import Prompt from './Prompt.vue'
 
-export class PromptWindow {
+export class PromptWindow extends Window {
+	public id = 'promptWindow'
+	public component = Prompt
+
 	public static name: Ref<string> = ref('?')
 	public static label: string = '?'
 	public static placeholder: string = '?'
@@ -22,7 +27,7 @@ export class PromptWindow {
 		this.confirmCallback = confirmCallback
 		this.cancelCallback = cancelCallback
 
-		Windows.open('prompt')
+		Windows.open(new PromptWindow())
 	}
 
 	public static confirm(input: string) {

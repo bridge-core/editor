@@ -1,8 +1,9 @@
 import { v4 as uuid } from 'uuid'
 
 export class Window {
-	public id: string = 'none'
 	public component: any
+
+	public id: string = 'none'
 	public uuid: string = ''
 
 	constructor() {

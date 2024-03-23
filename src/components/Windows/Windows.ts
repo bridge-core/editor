@@ -1,26 +1,29 @@
-import { Ref, ref, computed } from 'vue'
-import { Window } from './Window'
+import { ShallowRef, shallowRef } from 'vue'
+
+interface WindowProvider {
+	component: any
+	uuid?: string
+	id: string
+}
 
 export class Windows {
-	public static openWindows: Ref<Window[]> = ref([])
+	public static openWindows: ShallowRef<WindowProvider[]> = shallowRef([])
 
-	public static open(window: Window) {
+	public static open(window: WindowProvider) {
+		if (Windows.openWindows.value.includes(window)) return
+
 		Windows.openWindows.value.push(window)
-		Windows.openWindows.value = Windows.openWindows.value
-
-		console.log(Windows.openWindows.value)
+		Windows.openWindows.value = [...Windows.openWindows.value]
 	}
 
-	public static close(window: Window) {
+	public static close(window: WindowProvider) {
+		if (!Windows.openWindows.value.includes(window)) return
+
 		Windows.openWindows.value.splice(Windows.openWindows.value.indexOf(window), 1)
-		Windows.openWindows.value = Windows.openWindows.value
+		Windows.openWindows.value = [...Windows.openWindows.value]
 	}
 
-	public static opened(window: Window) {
+	public static windowIsOpen(window: WindowProvider) {
 		return Windows.openWindows.value.includes(window)
-	}
-
-	public static openedType(window: Window) {
-		return Windows.openWindows.value.find((window) => window.id === window.id) !== undefined
 	}
 }

@@ -35,8 +35,8 @@ export interface ToggleItem extends Item {
 }
 
 export class SettingsWindow extends Window {
-	public id = 'settings'
-	public component = Settings
+	public static id = 'settings'
+	public static component = Settings
 
 	public static categories: Record<string, Category> = {}
 	public static items: Record<string, Record<string, Item>> = {}
@@ -52,7 +52,7 @@ export class SettingsWindow extends Window {
 	}
 
 	public static open(categoryId?: string) {
-		Windows.open(new SettingsWindow())
+		Windows.open(SettingsWindow)
 
 		if (!categoryId) return
 

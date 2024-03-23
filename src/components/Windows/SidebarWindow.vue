@@ -1,33 +1,27 @@
 <script setup lang="ts">
 import IconButton from '@/components/Common/IconButton.vue'
 
-import { Windows } from '@/components/Windows/Windows'
-import { watch } from 'vue'
+import { Windows } from './Windows'
+import { Window } from './Window'
+import { onMounted } from 'vue'
 
-const { id } = defineProps({
+const { window } = defineProps({
 	name: {
 		type: String,
 		required: true,
 	},
-	id: {
-		type: String,
-		required: true,
-	},
+	window: {},
 })
 
 const emit = defineEmits(['open'])
 
-const opened = Windows.opened(id)
+function close() {
+	Windows.close(window as Window)
+}
 
-watch(opened, (value) => {
-	if (!value) return
-
+onMounted(() => {
 	emit('open')
 })
-
-function close() {
-	Windows.close(id)
-}
 
 defineExpose({
 	close,
@@ -36,7 +30,7 @@ defineExpose({
 
 <template>
 	<Transition>
-		<div class="w-screen h-app flex justify-center items-center absolute top-toolbar left-0" v-if="opened">
+		<div class="w-screen h-app flex justify-center items-center absolute top-toolbar left-0">
 			<div class="bg-menu w-screen h-app absolute top-0 left-0 opacity-30" @click="close" />
 
 			<div class="bg-background shadow-window rounded-md overflow-hidden flex items-stretch window relative">

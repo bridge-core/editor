@@ -24,7 +24,7 @@ Toolbar.setup()
 TextTab.setup()
 
 setupActions()
-setupSidebar
+setupSidebar()
 
 export async function setup() {
 	console.time('[App] Setup')

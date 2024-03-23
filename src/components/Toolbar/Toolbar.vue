@@ -33,10 +33,11 @@ import { useTranslate } from '@/libs/locales/Locales'
 import { appWindow } from '@tauri-apps/api/window'
 import { tauriBuild } from '@/libs/tauri/Tauri'
 import { Toolbar } from './Toolbar'
+import { ChangelogWindow } from '@/components/Windows/Changelog/ChangelogWindow'
 
 const t = useTranslate()
 
 function openChangelog() {
-	Windows.open('changelog')
+	Windows.open(ChangelogWindow)
 }
 </script>

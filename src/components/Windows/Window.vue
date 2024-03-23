@@ -1,20 +1,19 @@
 <script setup lang="ts">
-import { Windows } from '@/components/Windows/Windows'
 import IconButton from '@/components/Common/IconButton.vue'
 
-const props = defineProps({
+import { Windows } from './Windows'
+import { Window } from './Window'
+
+const { window } = defineProps({
 	name: {
 		type: String,
 		required: true,
 	},
-	id: {
-		type: String,
-		required: true,
-	},
+	window: {},
 })
 
 function close() {
-	Windows.close(props.id)
+	Windows.close(window as Window)
 }
 
 defineExpose({
@@ -24,10 +23,7 @@ defineExpose({
 
 <template>
 	<Transition>
-		<div
-			class="w-screen h-app flex justify-center items-center absolute top-toolbar left-0"
-			v-if="Windows.opened(id).value"
-		>
+		<div class="w-screen h-app flex justify-center items-center absolute top-toolbar left-0">
 			<div class="bg-menu w-screen h-app absolute top-0 left-0 opacity-30" @click="close" />
 
 			<div class="bg-background shadow-window relative rounded-md overflow-hidden window">
@@ -35,8 +31,10 @@ defineExpose({
 					<span class="select-none ml-1 text-textAlternate font-inter">
 						{{ name }}
 					</span>
+
 					<IconButton icon="close" class="text-sm" @click="close" />
 				</div>
+
 				<slot />
 			</div>
 		</div>
