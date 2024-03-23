@@ -22,23 +22,21 @@ defineExpose({
 </script>
 
 <template>
-	<Transition>
-		<div class="w-screen h-app flex justify-center items-center absolute top-toolbar left-0">
-			<div class="bg-menu w-screen h-app absolute top-0 left-0 opacity-30" @click="close" />
+	<div class="w-screen h-app flex justify-center items-center absolute top-toolbar left-0">
+		<div class="bg-menu w-screen h-app absolute top-0 left-0 opacity-30" @click="close" />
 
-			<div class="bg-background shadow-window relative rounded-md overflow-hidden window">
-				<div class="w-full flex justify-between align-center p-2">
-					<span class="select-none ml-1 text-textAlternate font-inter">
-						{{ name }}
-					</span>
+		<div class="bg-background shadow-window relative rounded-md overflow-hidden window">
+			<div class="w-full flex justify-between align-center p-2">
+				<span class="select-none ml-1 text-textAlternate font-inter">
+					{{ name }}
+				</span>
 
-					<IconButton icon="close" class="text-sm" @click="close" />
-				</div>
-
-				<slot />
+				<IconButton icon="close" class="text-sm" @click="close" />
 			</div>
+
+			<slot />
 		</div>
-	</Transition>
+	</div>
 </template>
 
 <style scoped>

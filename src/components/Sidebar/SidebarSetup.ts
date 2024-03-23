@@ -1,7 +1,7 @@
 import { Sidebar } from './Sidebar'
 import { FileExplorer } from '@/components/FileExplorer/FileExplorer'
 import { FindAndReplaceTab } from '@/components/Tabs/FindAnReplace/FindAndReplaceTab'
-import { ExtensionLibrary } from '@/components/Windows/ExtensionLibrary/ExtensionLibrary'
+import { ExtensionLibraryWindow } from '@/components/Windows/ExtensionLibrary/ExtensionLibrary'
 import { TabManager } from '@/components/TabSystem/TabManager'
 import { Windows } from '@/components/Windows/Windows'
 import { CompilerWindow } from '@/components/Windows/Compiler/CompilerWindow'
@@ -19,7 +19,7 @@ export function setupSidebar() {
 		Windows.open(CompilerWindow)
 	})
 	Sidebar.addButton('extension', () => {
-		ExtensionLibrary.open()
+		ExtensionLibraryWindow.open()
 	})
 	Sidebar.addDivider()
 

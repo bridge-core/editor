@@ -4,6 +4,7 @@ import { ExtensionManifest } from '@/libs/extensions/Extension'
 import { Data } from '@/libs/data/Data'
 import { Extensions } from '@/libs/extensions/Extensions'
 import { Window } from '@/components/Windows/Window'
+import ExtensionLibrary from './ExtensionLibrary.vue'
 import ExtensionInstallLocation from './ExtensionInstallLocation.vue'
 
 class ExtensionInstallLocationWindow extends Window {
@@ -11,7 +12,7 @@ class ExtensionInstallLocationWindow extends Window {
 	public static component = ExtensionInstallLocation
 }
 
-export class ExtensionLibrary extends Window {
+export class ExtensionLibraryWindow extends Window {
 	public static tags: Record<string, { icon: string; color?: string }> = {}
 	public static selectedTag: Ref<string> = ref('All')
 	public static extensions: ExtensionManifest[] = []
@@ -22,36 +23,36 @@ export class ExtensionLibrary extends Window {
 	public static component = ExtensionLibrary
 
 	public static async load() {
-		ExtensionLibrary.tags = await Data.get('packages/common/extensionTags.json')
+		ExtensionLibraryWindow.tags = await Data.get('packages/common/extensionTags.json')
 
-		ExtensionLibrary.selectedTag.value = Object.keys(ExtensionLibrary.tags)[0]
+		ExtensionLibraryWindow.selectedTag.value = Object.keys(ExtensionLibraryWindow.tags)[0]
 
-		ExtensionLibrary.extensions = await (
+		ExtensionLibraryWindow.extensions = await (
 			await fetch('https://raw.githubusercontent.com/bridge-core/plugins/master/extensions.json')
 		).json()
 	}
 
 	public static async open() {
-		await ExtensionLibrary.load()
+		await ExtensionLibraryWindow.load()
 
-		Windows.open(ExtensionLibrary)
+		Windows.open(ExtensionLibraryWindow)
 	}
 
 	public static requestInstall(extension: ExtensionManifest) {
-		ExtensionLibrary.extensionToInstall = extension
+		ExtensionLibraryWindow.extensionToInstall = extension
 
 		Windows.open(ExtensionInstallLocationWindow)
 	}
 
 	public static confirmInstallGlobal() {
-		if (ExtensionLibrary.extensionToInstall === undefined) return
+		if (ExtensionLibraryWindow.extensionToInstall === undefined) return
 
-		Extensions.installGlobal(ExtensionLibrary.extensionToInstall)
+		Extensions.installGlobal(ExtensionLibraryWindow.extensionToInstall)
 	}
 
 	public static confirmInstallProject() {
-		if (ExtensionLibrary.extensionToInstall === undefined) return
+		if (ExtensionLibraryWindow.extensionToInstall === undefined) return
 
-		Extensions.installProject(ExtensionLibrary.extensionToInstall)
+		Extensions.installProject(ExtensionLibraryWindow.extensionToInstall)
 	}
 }
