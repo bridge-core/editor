@@ -2,7 +2,6 @@ import { ShallowRef, shallowRef } from 'vue'
 
 interface WindowProvider {
 	component: any
-	uuid?: string
 	id: string
 }
 

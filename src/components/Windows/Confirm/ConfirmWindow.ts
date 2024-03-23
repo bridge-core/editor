@@ -1,29 +1,18 @@
-import { Windows } from '@/components/Windows/Windows'
 import { Window } from '../Window'
 import Confirm from './Confirm.vue'
 
 export class ConfirmWindow extends Window {
-	public static text: string = ''
-
-	private static confirmCallback: () => void = () => {}
-	private static cancelCallback: () => void = () => {}
-
-	public id = 'confirm'
 	public component = Confirm
 
-	public static open(text: string, confirmCallback: () => void, cancelCallback: () => void = () => {}) {
-		ConfirmWindow.text = text
-		ConfirmWindow.confirmCallback = confirmCallback
-		ConfirmWindow.cancelCallback = cancelCallback
-
-		Windows.open(new ConfirmWindow())
+	constructor(public text: string, public confirmCallback?: () => void, public cancelCallback?: () => void) {
+		super()
 	}
 
-	public static confirm() {
-		ConfirmWindow.confirmCallback()
+	public confirm() {
+		if (this.confirmCallback) this.confirmCallback()
 	}
 
-	public static cancel() {
-		ConfirmWindow.cancelCallback()
+	public cancel() {
+		if (this.cancelCallback) this.cancelCallback()
 	}
 }

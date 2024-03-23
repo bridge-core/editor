@@ -9,7 +9,7 @@ import Button from '@/components/Common/Button.vue'
 import { useTranslate } from '@/libs/locales/Locales'
 import { Settings } from '@/libs/settings/Settings'
 import { CustomItem, DropdownItem, SettingsWindow, ToggleItem } from './SettingsWindow'
-import { computed, onMounted, ref } from 'vue'
+import { ref } from 'vue'
 
 const t = useTranslate()
 

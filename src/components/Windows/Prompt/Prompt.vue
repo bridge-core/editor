@@ -3,46 +3,48 @@ import Window from '@/components/Windows/Window.vue'
 import Button from '@/components/Common/Button.vue'
 import LabeledInput from '@/components/Common/LabeledInput.vue'
 
-import { PromptWindow } from '@/components/Windows/Prompt/PromptWindow'
 import { useTranslate } from '@/libs/locales/Locales'
 import { Ref, ref } from 'vue'
+import type { PromptWindow } from './PromptWindow'
 
 const t = useTranslate()
 
-const window: Ref<Window | null> = ref(null)
+const windowElement: Ref<Window | null> = ref(null)
 
 const input = ref('')
 
+const { window } = defineProps({
+	window: {
+		required: true,
+	},
+}) as { window: PromptWindow }
+
 function confirm() {
-	if (!window.value) return
+	if (!windowElement.value) return
 
-	PromptWindow.confirm(input.value)
+	window.confirm(input.value)
 
-	window.value.close()
+	windowElement.value.close()
 }
 
 function cancel() {
-	if (!window.value) return
+	if (!windowElement.value) return
 
-	PromptWindow.cancel()
+	window.cancel()
 
-	window.value.close()
+	windowElement.value.close()
 }
 </script>
 
 <template>
-	<Window :name="t(PromptWindow.name.value)" id="prompt" ref="window">
+	<Window :name="t(window.name.value)" id="prompt" ref="windowElement">
 		<div class="px-4 pb-4">
-			<LabeledInput
-				:label="t(PromptWindow.label)"
-				class="mb-4 max-w-sm flex-1 bg-background"
-				v-slot="{ focus, blur }"
-			>
+			<LabeledInput :label="t(window.label)" class="mb-4 max-w-sm flex-1 bg-background" v-slot="{ focus, blur }">
 				<input
 					class="bg-background outline-none placeholder:text-textAlternate max-w-none w-full font-inter"
 					@focus="focus"
 					@blur="blur"
-					:placeholder="t(PromptWindow.placeholder)"
+					:placeholder="t(window.placeholder)"
 					:value="input"
 					@input="(event: Event) => (input = (<HTMLInputElement>event.target).value)"
 				/>

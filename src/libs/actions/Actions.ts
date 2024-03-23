@@ -7,6 +7,7 @@ import { BaseEntry } from '@/libs/fileSystem/BaseFileSystem'
 import { ActionManager } from './ActionManager'
 import { Action } from './Action'
 import { fileSystem } from '@/libs/fileSystem/FileSystem'
+import { Windows } from '@/components/Windows/Windows'
 
 export function setupActions() {
 	ActionManager.addAction(
@@ -100,9 +101,11 @@ export function setupActions() {
 			trigger: async (path: unknown) => {
 				if (typeof path !== 'string') return
 
-				PromptWindow.open('Create File', 'File Name', 'File Name', (name) => {
-					fileSystem.writeFile(join(path, name), '')
-				})
+				Windows.open(
+					new PromptWindow('Create File', 'File Name', 'File Name', (name) => {
+						fileSystem.writeFile(join(path, name), '')
+					})
+				)
 			},
 		})
 	)
@@ -113,9 +116,11 @@ export function setupActions() {
 			trigger: async (path: unknown) => {
 				if (typeof path !== 'string') return
 
-				PromptWindow.open('Create Folder', 'Folder Name', 'Folder Name', (name) => {
-					fileSystem.makeDirectory(join(path, name))
-				})
+				Windows.open(
+					new PromptWindow('Create Folder', 'Folder Name', 'Folder Name', (name) => {
+						fileSystem.makeDirectory(join(path, name))
+					})
+				)
 			},
 		})
 	)
@@ -126,21 +131,23 @@ export function setupActions() {
 			trigger: async (path: unknown) => {
 				if (typeof path !== 'string') return
 
-				PromptWindow.open('Rename', 'Name', 'Name', async (newPath) => {
-					if (!(await fileSystem.exists(path))) return
+				Windows.open(
+					new PromptWindow('Rename', 'Name', 'Name', async (newPath) => {
+						if (!(await fileSystem.exists(path))) return
 
-					const entry = await fileSystem.getEntry(path)
+						const entry = await fileSystem.getEntry(path)
 
-					if (entry.type === 'directory') {
-						await fileSystem.copyDirectory(path, join(dirname(path), newPath))
-						await fileSystem.removeDirectory(path)
-					}
+						if (entry.type === 'directory') {
+							await fileSystem.copyDirectory(path, join(dirname(path), newPath))
+							await fileSystem.removeDirectory(path)
+						}
 
-					if (entry.type === 'file') {
-						await fileSystem.copyFile(path, join(dirname(path), newPath))
-						await fileSystem.removeFile(path)
-					}
-				})
+						if (entry.type === 'file') {
+							await fileSystem.copyFile(path, join(dirname(path), newPath))
+							await fileSystem.removeFile(path)
+						}
+					})
+				)
 			},
 		})
 	)

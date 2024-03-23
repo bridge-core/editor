@@ -11,6 +11,7 @@ import { IConfigJson } from 'mc-project-core'
 import { LocalFileSystem } from '@/libs/fileSystem/LocalFileSystem'
 import { Settings } from '@/libs/settings/Settings'
 import { SettingsWindow } from '@/components/Windows/Settings/SettingsWindow'
+import { Windows } from '@/components/Windows/Windows'
 
 export class Project {
 	public path: string
@@ -160,8 +161,10 @@ export class Project {
 		Sidebar.addNotification(
 			'warning',
 			() => {
-				ConfirmWindow.open('You have not set up your output folder yet. Do you want to set it up now?', () =>
-					SettingsWindow.open('projects')
+				Windows.open(
+					new ConfirmWindow('You have not set up your output folder yet. Do you want to set it up now?', () =>
+						SettingsWindow.open('projects')
+					)
 				)
 			},
 			'warning'
