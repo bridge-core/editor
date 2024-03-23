@@ -23,7 +23,7 @@ onMounted(async () => {
 })
 </script>
 
-<style scoped>
+<style>
 .changelog ul {
 	margin-bottom: 24px;
 }
@@ -35,29 +35,29 @@ onMounted(async () => {
 }
 
 .changelog h1 {
-	@apply text-3xl font-bold mb-4;
+	@apply text-3xl font-bold mb-4 font-inter text-text;
 }
 .changelog h2 {
-	@apply text-2xl font-semibold mb-2;
+	@apply text-2xl font-semibold mb-2 font-inter text-text;
 }
 .changelog h3 {
-	@apply text-xl font-semibold mb-2;
+	@apply text-xl font-semibold mb-2 font-inter text-text;
 }
 .changelog h4 {
-	@apply text-lg font-medium;
+	@apply text-lg font-medium font-inter text-text;
 }
 .changelog h5 {
-	@apply text-base font-semibold;
+	@apply text-base font-semibold font-inter text-text;
 }
 .changelog h6 {
-	@apply text-base font-medium;
+	@apply text-base font-medium font-inter text-text;
 }
 
 .changelog p {
-	@apply text-base font-normal mb-2;
+	@apply text-base font-normal mb-2 font-inter text-text;
 }
 
 .changelog hr {
-	@apply my-6;
+	@apply my-6 border-background-secondary;
 }
 </style>
