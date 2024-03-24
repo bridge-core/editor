@@ -1,6 +1,6 @@
 import { Component, ref } from 'vue'
 import TextTabComponent from '@/components/Tabs/Text/TextTab.vue'
-import { Position, Uri, editor, editor as monaco, Range } from 'monaco-editor'
+import { Position, Uri, editor, editor as monaco, Range, IDisposable } from 'monaco-editor'
 import { keyword } from 'color-convert'
 import { fileSystem } from '@/libs/fileSystem/FileSystem'
 import { setMonarchTokensProvider } from '@/libs/monaco/Json'
@@ -20,6 +20,8 @@ export class TextTab extends FileTab {
 	private model: monaco.ITextModel | null = null
 
 	private fileType: any | null = null
+
+	private disposables: IDisposable[] = []
 
 	public static canEdit(path: string): boolean {
 		return true
@@ -82,18 +84,26 @@ export class TextTab extends FileTab {
 
 		this.editor.setModel(this.model)
 
+		this.disposables.push(
+			this.model.onDidChangeLanguageConfiguration(() => {
+				this.updateEditorTheme()
+			})
+		)
+
 		const schemaData = ProjectManager.currentProject.schemaData
 		const scriptTypeData = ProjectManager.currentProject.scriptTypeData
 
 		if (this.fileType && this.fileType.schema) await schemaData.applySchemaForFile(this.path, this.fileType.schema)
 		if (this.fileType && this.fileType.types) await scriptTypeData.applyTypesForFile(this.path, this.fileType.types)
 
-		this.updateEditorTheme()
-
 		this.icon.value = this.fileTypeIcon
 	}
 
 	public unmountEditor() {
+		for (const disposable of this.disposables) {
+			disposable.dispose()
+		}
+
 		this.model?.dispose()
 		this.editor?.dispose()
 

@@ -1,4 +1,4 @@
-import { IDisposable, languages } from 'monaco-editor'
+import { languages } from 'monaco-editor'
 
 interface SchemaDefinition {
 	readonly uri: string
@@ -30,17 +30,6 @@ export function setSchemas(schemas: SchemaDefinition[]) {
 
 updateDefaults()
 
-let currentMonarchLanguage: IDisposable | null = null
-
-export function setMonarchTokensProvider(
-	tokenProvider: languages.IMonarchLanguage
-) {
-	currentMonarchLanguage?.dispose()
-
-	const newMonarchLanguage = languages.setMonarchTokensProvider(
-		'json',
-		tokenProvider
-	)
-
-	currentMonarchLanguage = newMonarchLanguage
+export function setMonarchTokensProvider(tokenProvider: languages.IMonarchLanguage) {
+	languages.setMonarchTokensProvider('json', tokenProvider)
 }
