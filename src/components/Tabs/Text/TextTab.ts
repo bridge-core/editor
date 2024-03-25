@@ -296,21 +296,27 @@ export class TextTab extends FileTab {
 
 		monaco.setTheme(`bridge`)
 
+		let keywords: string[] = ['minecraft', 'bridge', ProjectManager.currentProject?.config?.namespace].filter(
+			(item) => item !== undefined
+		) as string[]
 		let typeIdentifiers: string[] = []
 		let variables: string[] = []
+		let definitions: string[] = []
 
 		if (this.fileType && this.fileType.highlighterConfiguration) {
+			keywords = [...keywords, ...(this.fileType.highlighterConfiguration.keywords ?? [])]
 			typeIdentifiers = this.fileType.highlighterConfiguration.typeIdentifiers ?? []
 			variables = this.fileType.highlighterConfiguration.variables ?? []
+			definitions = this.fileType.highlighterConfiguration.definitions ?? []
 		}
 
 		setMonarchTokensProvider({
 			defaultToken: 'identifier',
 
-			keywords: ['format_version'],
+			keywords,
 			atoms: ['true', 'false', 'null'],
 			typeIdentifiers,
-			definitions: [],
+			definitions,
 			variables,
 
 			symbols: /[=><!~?:&|+\-*\/\^%]+/,
@@ -329,7 +335,7 @@ export class TextTab extends FileTab {
 						/[a-z_$][\w$]*/,
 						{
 							cases: {
-								'@atoms': 'type',
+								'@atoms': 'atom',
 								'@default': 'identifier',
 							},
 						},
@@ -352,11 +358,13 @@ export class TextTab extends FileTab {
 					[/@escapes/, 'keyword'],
 
 					[
-						/([^(\\")])+/,
+						/(\\"|[^\"\:])+/,
 						{
 							cases: {
 								'@keywords': 'keyword',
 								'@variables': 'variable',
+								'@typeIdentifiers': 'type.identifier',
+								'@definitions': 'definition',
 								'@default': 'string',
 							},
 						},
