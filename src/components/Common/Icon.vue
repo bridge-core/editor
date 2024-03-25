@@ -16,6 +16,7 @@
 // TODO: Remove this later when we fix the data!
 const mdiMap: { [key: string]: string | undefined } = {
 	'mdi-human': 'accessibility_new',
+	'mdi-minecraft': 'deployed_code',
 	'mdi-earth': 'public',
 	'mdi-image': 'image',
 	'mdi-wrench': 'build',
