@@ -14,6 +14,7 @@ export class TextTab extends FileTab {
 	public component: Component | null = TextTabComponent
 	public icon = ref('loading')
 	public language = ref('plaintext')
+	public hasDocumentation = ref(false)
 
 	private fileTypeIcon: string = 'data_object'
 	private editor: monaco.IStandaloneCodeEditor | null = null
@@ -46,6 +47,8 @@ export class TextTab extends FileTab {
 		this.fileType = fileTypeData.get(this.path)
 
 		if (this.fileType === null) return
+
+		this.hasDocumentation.value = this.fileType.documentation !== undefined
 
 		if (this.fileType.icon === undefined) return
 
@@ -180,11 +183,7 @@ export class TextTab extends FileTab {
 
 		if (!selection) return
 
-		if (!this.fileType.documentation) {
-			alert('No documentation found!')
-
-			return
-		}
+		if (!this.fileType.documentation) return
 
 		let word: string | undefined
 		if (this.language.value === 'json') {

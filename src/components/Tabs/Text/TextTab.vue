@@ -73,6 +73,7 @@ function triggerActionAndCloseContextMenu(action: string) {
 			<div class="bg-background-tertiary h-px m-2 my-0" />
 
 			<ContextMenuItem
+				v-if="instance.hasDocumentation.value"
 				text="View Documentation"
 				icon="menu_book"
 				@click="triggerActionAndCloseContextMenu('viewDocumentation')"
