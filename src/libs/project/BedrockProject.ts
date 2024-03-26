@@ -13,7 +13,7 @@ import { Data } from '@/libs/data/Data'
 export class BedrockProject extends Project {
 	public packDefinitions: IPackType[] = []
 	public fileTypeData = new FileTypeData()
-	public schemaData = new SchemaData()
+	public schemaData = new SchemaData(this)
 	public presetData = new PresetData()
 	public scriptTypeData = new ScriptTypeData(this)
 	public indexerService = new IndexerService(this)

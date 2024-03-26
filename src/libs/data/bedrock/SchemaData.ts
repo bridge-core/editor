@@ -41,6 +41,8 @@ export class SchemaData {
 
 	private runtime = new Runtime(fileSystem)
 
+	constructor(public project: BedrockProject) {}
+
 	private fixPaths(schemas: { [key: string]: any }) {
 		return Object.fromEntries(
 			Object.entries(schemas).map(([path, schema]) => [path.substring('file:///'.length), schema])
@@ -104,7 +106,7 @@ export class SchemaData {
 		}
 	}
 
-	public async applySchemaForFile(path: string, schemaUri: string | undefined) {
+	public async applySchemaForFile(path: string, fileType?: string, schemaUri?: string) {
 		if (schemaUri === undefined) {
 			if (this.fileSchemas[path] !== undefined) delete this.fileSchemas[path]
 
@@ -115,7 +117,7 @@ export class SchemaData {
 
 		if (schemaUri.startsWith('file:///')) schemaUri = schemaUri.substring('file:///'.length)
 
-		const generatedDynamicSchemas: { [key: string]: any } = {}
+		const generatedDynamicSchemas: Record<string, any> = {}
 
 		for (const scriptPath of this.dynamicSchemaScripts) {
 			let scriptData = this.schemaScripts[scriptPath]
@@ -136,7 +138,46 @@ export class SchemaData {
 				this.processScriptData(scriptData)
 		}
 
-		const localSchemas: { [key: string]: any } = {}
+		const lightningCacheSchemas: Record<string, any> = {}
+
+		if (fileType) {
+			const collectedData = (await this.project.indexerService.getCachedData(fileType)).reduce(
+				(accumulator: any, currentObject: any) => {
+					for (const [key, value] of Object.entries(currentObject.data)) {
+						accumulator[key] = (accumulator[key] ?? []).concat(value)
+					}
+
+					return accumulator
+				},
+				{}
+			)
+			const contextCollectedData = await this.project.indexerService.getCachedData(fileType, path)
+			const baseUrl = `data/packages/minecraftBedrock/schema/${fileType}/dynamic`
+
+			for (const key in collectedData) {
+				lightningCacheSchemas[join(baseUrl, `${key}Enum.json`)] = {
+					type: 'string',
+					enum: collectedData[key],
+				}
+
+				lightningCacheSchemas[join(baseUrl, `${key}Property.json`)] = {
+					properties: Object.fromEntries(collectedData[key].map((d: any) => [d, {}])),
+				}
+			}
+
+			for (const key in contextCollectedData) {
+				lightningCacheSchemas[join(baseUrl, 'currentContext', `${key}Enum.json`)] = {
+					type: 'string',
+					enum: contextCollectedData[key],
+				}
+
+				lightningCacheSchemas[join(baseUrl, 'currentContext', `${key}Property.json`)] = {
+					properties: Object.fromEntries(contextCollectedData[key].map((d: any) => [d, {}])),
+				}
+			}
+		}
+
+		const localSchemas: Record<string, any> = {}
 
 		let rebasedSchemas = []
 		let schemasToRebaseQueue = [schemaUri]
@@ -146,6 +187,7 @@ export class SchemaData {
 			rebasedSchemas.push(schemaPathToRebase)
 
 			let schema =
+				lightningCacheSchemas[schemaPathToRebase] ??
 				generatedDynamicSchemas[schemaPathToRebase] ??
 				this.staticGeneratedSchemas[schemaPathToRebase] ??
 				this.schemas[schemaPathToRebase]

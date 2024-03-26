@@ -96,7 +96,7 @@ export class TextTab extends FileTab {
 		const schemaData = ProjectManager.currentProject.schemaData
 		const scriptTypeData = ProjectManager.currentProject.scriptTypeData
 
-		await schemaData.applySchemaForFile(this.path, this.fileType?.schema)
+		await schemaData.applySchemaForFile(this.path, this.fileType?.id, this.fileType?.schema)
 
 		await scriptTypeData.applyTypes(this.fileType?.types ?? [])
 
