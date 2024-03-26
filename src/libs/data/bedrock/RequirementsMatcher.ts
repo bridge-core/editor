@@ -28,26 +28,16 @@ export interface Requirements {
 	matchAll?: boolean
 }
 
-export class RequirementsMatcher implements AsyncDisposable {
+export class RequirementsMatcher {
 	private latestFormatVersion: string = ''
-	private behaviourManifest: any | null = null
 
 	constructor(public project: BedrockProject) {}
 
 	public async setup() {
 		this.latestFormatVersion = (await Data.get('packages/minecraftBedrock/formatVersions.json'))[0]
-
-		const behaviorPackPath = this.project.resolvePackPath('behaviorPack', 'manifest.json')
-		if (this.project.packs['behaviorPack'] && (await fileSystem.exists(behaviorPackPath))) {
-			try {
-				this.behaviourManifest = await fileSystem.readFileJson(behaviorPackPath)
-			} catch {}
-		}
 	}
 
-	public async dispose() {}
-
-	public matches(requirements: Requirements): boolean {
+	public matches(requirements: Requirements, behaviourManifest: any): boolean {
 		for (const pack of requirements.packTypes ?? []) {
 			if (this.project.packs[pack] === undefined) return false
 		}
@@ -77,9 +67,7 @@ export class RequirementsMatcher implements AsyncDisposable {
 			}
 		}
 
-		const dependencies = this.getDependencies()
-
-		console.log(dependencies)
+		const dependencies = this.getDependencies(behaviourManifest)
 
 		for (const dependency of requirements.dependencies ?? []) {
 			if (
@@ -95,12 +83,12 @@ export class RequirementsMatcher implements AsyncDisposable {
 		return true
 	}
 
-	private getDependencies(): { moduleName: string; version: string }[] {
-		if (this.behaviourManifest === null) return []
+	private getDependencies(behaviourManifest: any): { moduleName: string; version: string }[] {
+		if (behaviourManifest === null) return []
 
-		if (this.behaviourManifest.dependencies === undefined) return []
+		if (behaviourManifest.dependencies === undefined) return []
 
-		return this.behaviourManifest.dependencies.map((dependency: any) => {
+		return behaviourManifest.dependencies.map((dependency: any) => {
 			if (dependency.module_name) {
 				// Convert old module names to new naming convention
 				switch (dependency.module_name) {

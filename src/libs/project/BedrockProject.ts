@@ -33,7 +33,7 @@ export class BedrockProject extends Project {
 
 		await this.presetData.load()
 
-		await this.scriptTypeData.load()
+		await this.scriptTypeData.setup()
 
 		await this.dashService.setup()
 
@@ -46,6 +46,8 @@ export class BedrockProject extends Project {
 		await super.dispose()
 
 		await this.dashService.dispose()
+
+		await this.scriptTypeData.dispose()
 	}
 
 	public async setOutputFileSystem(fileSystem: BaseFileSystem) {
