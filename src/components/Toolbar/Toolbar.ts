@@ -4,6 +4,8 @@ export class Toolbar {
 	public static items: { name: string; icon: string; action: () => void }[] = []
 
 	public static setup() {
+		this.items = []
+
 		this.addItem('toolbar.project.name', 'space_dashboard', () => null)
 		this.addItem('toolbar.settings.name', 'help', () => SettingsWindow.open())
 		this.addItem('toolbar.file.name', 'draft', () => null)

@@ -20,6 +20,11 @@ export class Sidebar {
 
 	public static notifications: Ref<Notification[]> = ref([])
 
+	public static setup() {
+		this.items = []
+		this.notifications.value = []
+	}
+
 	public static addButton(icon: string, callback: () => void) {
 		Sidebar.items.push({
 			type: 'button',

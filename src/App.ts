@@ -13,6 +13,7 @@ import { TextTab } from '@/components/Tabs/Text/TextTab'
 import { Extensions } from '@/libs/extensions/Extensions'
 import { Toolbar } from '@/components/Toolbar/Toolbar'
 import { setupSidebar } from '@/components/Sidebar/SidebarSetup'
+import { Sidebar } from '@/components/Sidebar/Sidebar'
 
 export function setupBeforeComponents() {
 	ProjectManager.setup()
@@ -21,6 +22,7 @@ export function setupBeforeComponents() {
 	Extensions.setup()
 	Toolbar.setup()
 	TextTab.setup()
+	Sidebar.setup()
 
 	setupActions()
 	setupSidebar()
