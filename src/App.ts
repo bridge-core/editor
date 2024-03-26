@@ -4,7 +4,6 @@ import { ProjectManager } from '@/libs/project/ProjectManager'
 import { Data } from '@/libs/data/Data'
 import { TauriFileSystem } from '@/libs/fileSystem/TauriFileSystem'
 import { fileSystem } from '@/libs/fileSystem/FileSystem'
-import { get, set } from 'idb-keyval'
 import { appDataDir, appLocalDataDir, sep } from '@tauri-apps/api/path'
 import { join } from '@/libs/path'
 import { setupActions } from '@/libs/actions/Actions'
@@ -15,16 +14,17 @@ import { Extensions } from '@/libs/extensions/Extensions'
 import { Toolbar } from '@/components/Toolbar/Toolbar'
 import { setupSidebar } from '@/components/Sidebar/SidebarSetup'
 
-// Setup static singletons early so components can use them properly
-ProjectManager.setup()
-ThemeManager.setup()
-LocaleManager.setup()
-Extensions.setup()
-Toolbar.setup()
-TextTab.setup()
+export function setupBeforeComponents() {
+	ProjectManager.setup()
+	ThemeManager.setup()
+	LocaleManager.setup()
+	Extensions.setup()
+	Toolbar.setup()
+	TextTab.setup()
 
-setupActions()
-setupSidebar()
+	setupActions()
+	setupSidebar()
+}
 
 export async function setup() {
 	console.time('[App] Setup')

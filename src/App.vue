@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { setup } from '@/App'
+import { setup, setupBeforeComponents } from '@/App'
 
 import Toolbar from '@/components/Toolbar/Toolbar.vue'
 import Greet from '@/components/Greet/Greet.vue'
@@ -7,6 +7,8 @@ import Editor from '@/components/Editor/Editor.vue'
 import Windows from '@/components/Windows/Windows.vue'
 
 import { onMounted } from 'vue'
+
+setupBeforeComponents()
 
 onMounted(() => {
 	setup()
