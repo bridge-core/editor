@@ -9,7 +9,7 @@ export class ScriptTypeData {
 
 	public async load() {}
 
-	public async applyTypesForFile(path: string, types: any[]) {
+	public async applyTypes(types: any[]) {
 		for (const type of this.typeDisposables) {
 			type.dispose()
 		}

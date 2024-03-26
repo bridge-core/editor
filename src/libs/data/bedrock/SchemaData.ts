@@ -104,7 +104,15 @@ export class SchemaData {
 		}
 	}
 
-	public async applySchemaForFile(path: string, schemaUri: string) {
+	public async applySchemaForFile(path: string, schemaUri: string | undefined) {
+		if (schemaUri === undefined) {
+			if (this.fileSchemas[path] !== undefined) delete this.fileSchemas[path]
+
+			this.updateDefaults()
+
+			return
+		}
+
 		if (schemaUri.startsWith('file:///')) schemaUri = schemaUri.substring('file:///'.length)
 
 		const generatedDynamicSchemas: { [key: string]: any } = {}

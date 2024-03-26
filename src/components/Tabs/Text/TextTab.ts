@@ -96,8 +96,9 @@ export class TextTab extends FileTab {
 		const schemaData = ProjectManager.currentProject.schemaData
 		const scriptTypeData = ProjectManager.currentProject.scriptTypeData
 
-		if (this.fileType && this.fileType.schema) await schemaData.applySchemaForFile(this.path, this.fileType.schema)
-		if (this.fileType && this.fileType.types) await scriptTypeData.applyTypesForFile(this.path, this.fileType.types)
+		await schemaData.applySchemaForFile(this.path, this.fileType?.schema)
+
+		await scriptTypeData.applyTypes(this.fileType?.types ?? [])
 
 		this.icon.value = this.fileTypeIcon
 	}
