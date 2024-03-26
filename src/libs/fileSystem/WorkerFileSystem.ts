@@ -1,7 +1,8 @@
 import { sendAndWait } from '@/libs/worker/Communication'
 import { BaseEntry, BaseFileSystem } from './BaseFileSystem'
+import { Disposable } from '@/libs/disposeable/Disposeable'
 
-export class WorkerFileSystemEntryPoint {
+export class WorkerFileSystemEntryPoint implements Disposable {
 	public boundOnWorkerMessage: (event: MessageEvent) => void
 
 	constructor(public worker: Worker, private fileSystem: BaseFileSystem, private name: string = 'fileSystem') {

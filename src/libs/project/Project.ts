@@ -12,8 +12,9 @@ import { LocalFileSystem } from '@/libs/fileSystem/LocalFileSystem'
 import { Settings } from '@/libs/settings/Settings'
 import { SettingsWindow } from '@/components/Windows/Settings/SettingsWindow'
 import { Windows } from '@/components/Windows/Windows'
+import { AsyncDisposable } from '@/libs/disposeable/Disposeable'
 
-export class Project {
+export class Project implements AsyncDisposable {
 	public path: string
 	public icon: string | null = null
 	public config: IConfigJson | null = null

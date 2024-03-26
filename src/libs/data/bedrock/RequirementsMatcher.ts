@@ -3,6 +3,7 @@ import { BedrockProject } from '@/libs/project/BedrockProject'
 import { TCompareOperator, compareVersions } from 'bridge-common-utils'
 import { TPackTypeId } from 'mc-project-core'
 import { Data } from '@/libs/data/Data'
+import { AsyncDisposable } from '@/libs/disposeable/Disposeable'
 
 export interface Requirements {
 	/**
@@ -27,7 +28,7 @@ export interface Requirements {
 	matchAll?: boolean
 }
 
-export class RequirementsMatcher {
+export class RequirementsMatcher implements AsyncDisposable {
 	private latestFormatVersion: string = ''
 	private behaviourManifest: any | null = null
 
@@ -43,6 +44,8 @@ export class RequirementsMatcher {
 			} catch {}
 		}
 	}
+
+	public async dispose() {}
 
 	public matches(requirements: Requirements): boolean {
 		for (const pack of requirements.packTypes ?? []) {
@@ -75,6 +78,8 @@ export class RequirementsMatcher {
 		}
 
 		const dependencies = this.getDependencies()
+
+		console.log(dependencies)
 
 		for (const dependency of requirements.dependencies ?? []) {
 			if (

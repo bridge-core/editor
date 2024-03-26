@@ -9,8 +9,9 @@ import { Notification } from '@/components/Sidebar/Sidebar'
 import { v4 as uuid } from 'uuid'
 import { Data } from '@/libs/data/Data'
 import { fileSystem } from '@/libs/fileSystem/FileSystem'
+import { AsyncDisposable } from '@/libs/disposeable/Disposeable'
 
-export class DashService {
+export class DashService implements AsyncDisposable {
 	public logs: string[] = []
 	public isSetup: boolean = false
 

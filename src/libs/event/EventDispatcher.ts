@@ -1,4 +1,4 @@
-import { IDisposable } from '@/libs/disposeable/Disposeable'
+import { Disposable } from '@/libs/disposeable/Disposeable'
 
 export class EventDispatcher<T> {
 	protected listeners = new Set<(data: T) => void>()
@@ -12,12 +12,9 @@ export class EventDispatcher<T> {
 		this.listeners.forEach((listener) => listener(data))
 	}
 
-	on(listener: (data: T) => void, getDisposable?: true): IDisposable
+	on(listener: (data: T) => void, getDisposable?: true): Disposable
 	on(listener: (data: T) => void, getDisposable: false): undefined
-	on(
-		listener: (data: T) => void,
-		getDisposable?: boolean
-	): IDisposable | undefined
+	on(listener: (data: T) => void, getDisposable?: boolean): Disposable | undefined
 	on(listener: (data: T) => void, getDisposable: boolean = true) {
 		this.listeners.add(listener)
 
