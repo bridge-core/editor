@@ -49,7 +49,7 @@ export class ScriptTypeData implements Disposable {
 			let content = null
 
 			if (location.startsWith('types/')) {
-				content = await Data.getText(`data/packages/minecraftBedrock/${location}`)
+				content = await Data.getText(`packages/minecraftBedrock/${location}`)
 			} else {
 				const result = await fetch(location).catch(() => null)
 
