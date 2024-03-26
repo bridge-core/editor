@@ -1,24 +1,18 @@
 <script setup lang="ts">
 import IconButton from '@/components/Common/IconButton.vue'
 
-import { Windows } from './Windows'
-import { Window } from './Window'
-
-const { window } = defineProps({
+defineProps({
 	name: {
 		type: String,
 		required: true,
 	},
-	window: {},
 })
+
+const emit = defineEmits(['close'])
 
 function close() {
-	Windows.close(window as Window)
+	emit('close')
 }
-
-defineExpose({
-	close,
-})
 </script>
 
 <template>

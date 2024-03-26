@@ -9,6 +9,8 @@ import { ref } from 'vue'
 import { BedrockProject } from '@/libs/project/BedrockProject'
 import FileSystemDrop from '@/components/Common/FileSystemDrop.vue'
 import { ProjectManager, useUsingProjectOutputFolder } from '@/libs/project/ProjectManager'
+import { CompilerWindow } from './CompilerWindow'
+import { Windows } from '../Windows'
 
 const t = useTranslate()
 
@@ -56,7 +58,7 @@ async function droppedOutputFolder(items: DataTransferItemList) {
 </script>
 
 <template>
-	<SidebarWindow :name="t('sidebar.compiler.name')" id="compiler" ref="window">
+	<SidebarWindow :name="t('sidebar.compiler.name')" @close="Windows.close(CompilerWindow)">
 		<template #sidebar>
 			<div class="p-4">
 				<div class="overflow-y-scroll max-h-[34rem]">

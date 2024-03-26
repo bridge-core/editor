@@ -4,12 +4,11 @@ import Button from '@/components/Common/Button.vue'
 import LabeledInput from '@/components/Common/LabeledInput.vue'
 
 import { useTranslate } from '@/libs/locales/Locales'
-import { Ref, ref } from 'vue'
+import { ref } from 'vue'
 import type { PromptWindow } from './PromptWindow'
+import { Windows } from '../Windows'
 
 const t = useTranslate()
-
-const windowElement: Ref<Window | null> = ref(null)
 
 const input = ref('')
 
@@ -20,28 +19,24 @@ const { window } = defineProps({
 }) as { window: PromptWindow }
 
 function confirm() {
-	if (!windowElement.value) return
-
 	window.confirm(input.value)
 
-	windowElement.value.close()
+	Windows.close(window)
 }
 
 function cancel() {
-	if (!windowElement.value) return
-
 	window.cancel()
 
-	windowElement.value.close()
+	Windows.close(window)
 }
 </script>
 
 <template>
-	<Window :name="t(window.name.value)" id="prompt" ref="windowElement">
+	<Window :name="t(window.name.value)" @close="cancel">
 		<div class="px-4 pb-4">
 			<LabeledInput :label="t(window.label)" class="mb-4 max-w-sm flex-1 bg-background" v-slot="{ focus, blur }">
 				<input
-					class="bg-background outline-none placeholder:text-textAlternate max-w-none w-full font-inter"
+					class="bg-background outline-none placeholder:text-text-secondary max-w-none w-full font-inter"
 					@focus="focus"
 					@blur="blur"
 					:placeholder="t(window.placeholder)"

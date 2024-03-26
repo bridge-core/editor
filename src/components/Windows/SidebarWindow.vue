@@ -1,30 +1,23 @@
 <script setup lang="ts">
 import IconButton from '@/components/Common/IconButton.vue'
 
-import { Windows } from './Windows'
-import { Window } from './Window'
 import { onMounted } from 'vue'
 
-const { window } = defineProps({
+defineProps({
 	name: {
 		type: String,
 		required: true,
 	},
-	window: {},
 })
 
-const emit = defineEmits(['open'])
+const emit = defineEmits(['open', 'close'])
 
 function close() {
-	Windows.close(window as Window)
+	emit('close')
 }
 
 onMounted(() => {
 	emit('open')
-})
-
-defineExpose({
-	close,
 })
 </script>
 

@@ -7,7 +7,7 @@ import { Window } from '@/components/Windows/Window'
 import ExtensionLibrary from './ExtensionLibrary.vue'
 import ExtensionInstallLocation from './ExtensionInstallLocation.vue'
 
-class ExtensionInstallLocationWindow extends Window {
+export class ExtensionInstallLocationWindow extends Window {
 	public static id = 'extensionInstallLocationWindow'
 	public static component = ExtensionInstallLocation
 }

@@ -10,6 +10,7 @@ import { useTranslate } from '@/libs/locales/Locales'
 import Button from '@/components/Common/Button.vue'
 import ContextMenu from '@/components/Common/ContextMenu.vue'
 import ContextMenuItem from '@/components/Common/ContextMenuItem.vue'
+import { Windows } from '../Windows'
 
 const t = useTranslate()
 
@@ -19,7 +20,7 @@ const isInstalled = Extensions.useIsInstalled()
 </script>
 
 <template>
-	<SidebarWindow :name="t('windows.extensionLibrary.title')" id="extensionLibrary">
+	<SidebarWindow :name="t('windows.extensionLibrary.title')" @close="Windows.close(ExtensionLibraryWindow)">
 		<template #sidebar>
 			<div class="p-4">
 				<LabeledInput

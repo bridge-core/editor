@@ -5,6 +5,7 @@ import Button from '@/components/Common/Button.vue'
 import { useTranslate } from '@/libs/locales/Locales'
 import { Ref, ref } from 'vue'
 import type { ConfirmWindow } from './ConfirmWindow'
+import { Windows } from '../Windows'
 
 const t = useTranslate()
 
@@ -17,24 +18,20 @@ const { window } = defineProps({
 }) as { window: ConfirmWindow }
 
 function confirm() {
-	if (!windowElement.value) return
-
 	window.confirm()
 
-	windowElement.value.close()
+	Windows.close(window)
 }
 
 function cancel() {
-	if (!windowElement.value) return
-
 	window.cancel()
 
-	windowElement.value.close()
+	Windows.close(window)
 }
 </script>
 
 <template>
-	<Window :name="t('general.confirm')" id="confirm" ref="windowElement">
+	<Window :name="t('general.confirm')" @close="cancel">
 		<div class="p-4">
 			<p class="mb-4 max-w-sm font-inter">
 				{{ t(window.text) }}

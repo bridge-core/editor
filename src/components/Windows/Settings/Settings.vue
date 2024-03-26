@@ -10,6 +10,7 @@ import { useTranslate } from '@/libs/locales/Locales'
 import { Settings } from '@/libs/settings/Settings'
 import { CustomItem, DropdownItem, SettingsWindow, ToggleItem } from './SettingsWindow'
 import { ref } from 'vue'
+import { Windows } from '../Windows'
 
 const t = useTranslate()
 
@@ -27,7 +28,7 @@ SettingsWindow.setup()
 				? SettingsWindow.categories[SettingsWindow.selectedCategory.value].label
 				: ''
 		)}`"
-		id="settings"
+		@close="Windows.close(SettingsWindow)"
 	>
 		<template #sidebar>
 			<div class="p-4">

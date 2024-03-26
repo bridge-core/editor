@@ -1,5 +1,192 @@
+<script lang="ts" setup>
+import Window from '@/components/Windows/Window.vue'
+import Button from '@/components/Common/Button.vue'
+import Icon from '@/components/Common/Icon.vue'
+import Switch from '@/components/Common/Switch.vue'
+import LabeledInput from '@/components/Common/LabeledInput.vue'
+import InformativeToggle from '@/components/Common/InformativeToggle.vue'
+import Expandable from '@/components/Common/Expandable.vue'
+import Dropdown from '@/components/Common/Dropdown.vue'
+
+import { Ref, computed, ref, watch } from 'vue'
+import { IPackType } from 'mc-project-core'
+import { ProjectManager, packs } from '@/libs/project/ProjectManager'
+import { ConfigurableFile } from '@/libs/project/create/files/configurable/ConfigurableFile'
+import { FormatVersionDefinitions, ExperimentalToggle, useGetData, Data } from '@/libs/data/Data'
+import { v4 as uuid } from 'uuid'
+import { useTranslate } from '@/libs/locales/Locales'
+import { fileSystem } from '@/libs/fileSystem/FileSystem'
+import { Windows } from '../Windows'
+import { CreateProjectWindow } from './CreateProjectWindow'
+
+const t = useTranslate()
+const getData = useGetData()
+
+const projectIconInput: Ref<HTMLInputElement | null> = ref(null)
+const window = ref<Window | null>(null)
+
+const linkBehaviourPack = ref(false)
+const linkResourcePack = ref(false)
+
+function setLinkBehaviourPack(value: boolean) {
+	if (
+		!selectedPackTypes.value.find((pack) => pack.id === 'behaviorPack') ||
+		!selectedPackTypes.value.find((pack) => pack.id === 'resourcePack')
+	)
+		return
+
+	linkBehaviourPack.value = value
+}
+
+function setLinkResourcePack(value: boolean) {
+	if (
+		!selectedPackTypes.value.find((pack) => pack.id === 'behaviorPack') ||
+		!selectedPackTypes.value.find((pack) => pack.id === 'resourcePack')
+	)
+		return
+
+	linkResourcePack.value = value
+}
+
+const projectName: Ref<string> = ref('New Project')
+const projectDescription: Ref<string> = ref('')
+const projectNamespace: Ref<string> = ref('bridge')
+const projectAuthor: Ref<string> = ref('')
+const projectTargetVersion: Ref<string> = ref('1.20.50')
+const projectIcon: Ref<File | null> = ref(null)
+
+const packTypes: Ref<IPackType[]> = ref([])
+const selectedPackTypes: Ref<IPackType[]> = ref([])
+
+const experimentalToggles: Ref<ExperimentalToggle[]> = ref([])
+const selectedExperimentalToggles: Ref<ExperimentalToggle[]> = ref([])
+
+watch(getData, async (getData) => {
+	packTypes.value = (await getData('packages/minecraftBedrock/packDefinitions.json')) || []
+
+	experimentalToggles.value = (await getData('packages/minecraftBedrock/experimentalGameplay.json')) || []
+
+	formatVersionDefinitions.value =
+		<FormatVersionDefinitions>await getData('packages/minecraftBedrock/formatVersions.json') || []
+
+	if (!formatVersionDefinitions.value) return
+
+	projectTargetVersion.value = formatVersionDefinitions.value.currentStable
+})
+
+const availableConfigurableFiles = computed(() => {
+	const files: ConfigurableFile[] = []
+
+	for (const packType of selectedPackTypes.value) {
+		const pack = packs[packType.id]
+
+		if (!pack) continue
+
+		files.push(...pack.configurableFiles)
+	}
+
+	return files
+})
+
+const selectedFiles: Ref<ConfigurableFile[]> = ref([])
+const formatVersionDefinitions: Ref<FormatVersionDefinitions | null> = ref(null)
+
+const dataValid = computed(() => {
+	if (projectName.value === '') return false
+	if (projectName.value.match(/"|\\|\/|:|\||<|>|\*|\?|~/g) !== null) return false
+	if (projectName.value.endsWith('.')) return false
+
+	if (projectNamespace.value.toLocaleLowerCase() !== projectNamespace.value) return false
+	if (projectNamespace.value.includes(' ')) return false
+	if (projectNamespace.value.includes(':')) return false
+	if (projectNamespace.value === '') return false
+
+	return true
+})
+
+async function create() {
+	if (!dataValid.value) return
+
+	ProjectManager.createProject(
+		{
+			name: projectName.value,
+			description: projectDescription.value,
+			namespace: projectNamespace.value,
+			author: projectAuthor.value,
+			targetVersion: projectTargetVersion.value,
+			icon: projectIcon.value ?? (await Data.getRaw(`packages/common/packIcon.png`)),
+			packs: ['bridge', ...selectedPackTypes.value.map((pack) => pack.id)],
+			configurableFiles: selectedFiles.value.map((file) => file.id),
+			rpAsBpDependency: linkResourcePack.value,
+			bpAsRpDependency: linkBehaviourPack.value,
+			uuids: Object.fromEntries(selectedPackTypes.value.map((packType) => [packType.id, uuid()])),
+			experiments: selectedExperimentalToggles.value.map((toggle) => toggle.id),
+		},
+		fileSystem
+	)
+
+	window.value?.close()
+}
+
+function selectPackType(packType: IPackType) {
+	if (selectedPackTypes.value.includes(packType)) {
+		selectedPackTypes.value.splice(selectedPackTypes.value.indexOf(packType), 1)
+		selectedPackTypes.value = selectedPackTypes.value
+
+		if (packType.id === 'behaviorPack' || packType.id === 'resourcePack') {
+			linkBehaviourPack.value = false
+			linkResourcePack.value = false
+		}
+
+		const pack = packs[packType.id]
+
+		if (pack) {
+			for (const file of pack.configurableFiles) {
+				if (!selectedFiles.value.includes(file)) continue
+
+				selectedFiles.value.splice(selectedFiles.value.indexOf(file), 1)
+				selectedFiles.value = selectedFiles.value
+			}
+		}
+	} else {
+		selectedPackTypes.value.push(packType)
+		selectedPackTypes.value = selectedPackTypes.value
+	}
+}
+
+function selectExperimentalToggle(toggle: ExperimentalToggle) {
+	if (selectedExperimentalToggles.value.includes(toggle)) {
+		selectedExperimentalToggles.value.splice(selectedExperimentalToggles.value.indexOf(toggle), 1)
+		selectedExperimentalToggles.value = selectedExperimentalToggles.value
+	} else {
+		selectedExperimentalToggles.value.push(toggle)
+		selectedExperimentalToggles.value = selectedExperimentalToggles.value
+	}
+}
+
+function selectFile(file: ConfigurableFile) {
+	if (selectedFiles.value.includes(file)) {
+		selectedFiles.value.splice(selectedFiles.value.indexOf(file), 1)
+		selectedFiles.value = selectedFiles.value
+	} else {
+		selectedFiles.value.push(file)
+		selectedFiles.value = selectedFiles.value
+	}
+}
+
+function chooseProjectIcon() {
+	if (!projectIconInput.value) return
+
+	if (!projectIconInput.value.files) return
+
+	if (!projectIconInput.value.files[0]) return
+
+	projectIcon.value = projectIconInput.value.files[0]
+}
+</script>
+
 <template>
-	<Window :name="t('windows.createProject.title')" id="createProject" ref="window">
+	<Window :name="t('windows.createProject.title')" @close="Windows.close(CreateProjectWindow)">
 		<div class="flex flex-col">
 			<div class="max-h-[36rem] overflow-y-scroll p-4 pt-2 m-4 mt-0 max-width overflow-x-auto">
 				<!-- Pack Types -->
@@ -200,191 +387,6 @@
 		</div>
 	</Window>
 </template>
-
-<script lang="ts" setup>
-import Window from '@/components/Windows/Window.vue'
-import Button from '@/components/Common/Button.vue'
-import Icon from '@/components/Common/Icon.vue'
-import Switch from '@/components/Common/Switch.vue'
-import LabeledInput from '@/components/Common/LabeledInput.vue'
-import InformativeToggle from '@/components/Common/InformativeToggle.vue'
-import Expandable from '@/components/Common/Expandable.vue'
-import Dropdown from '@/components/Common/Dropdown.vue'
-
-import { Ref, computed, onMounted, ref, watch } from 'vue'
-import { IPackType } from 'mc-project-core'
-import { ProjectManager, packs } from '@/libs/project/ProjectManager'
-import { ConfigurableFile } from '@/libs/project/create/files/configurable/ConfigurableFile'
-import { FormatVersionDefinitions, ExperimentalToggle, useGetData, Data } from '@/libs/data/Data'
-import { v4 as uuid } from 'uuid'
-import { useTranslate } from '@/libs/locales/Locales'
-import { fileSystem } from '@/libs/fileSystem/FileSystem'
-
-const t = useTranslate()
-const getData = useGetData()
-
-const projectIconInput: Ref<HTMLInputElement | null> = ref(null)
-const window = ref<Window | null>(null)
-
-const linkBehaviourPack = ref(false)
-const linkResourcePack = ref(false)
-
-function setLinkBehaviourPack(value: boolean) {
-	if (
-		!selectedPackTypes.value.find((pack) => pack.id === 'behaviorPack') ||
-		!selectedPackTypes.value.find((pack) => pack.id === 'resourcePack')
-	)
-		return
-
-	linkBehaviourPack.value = value
-}
-
-function setLinkResourcePack(value: boolean) {
-	if (
-		!selectedPackTypes.value.find((pack) => pack.id === 'behaviorPack') ||
-		!selectedPackTypes.value.find((pack) => pack.id === 'resourcePack')
-	)
-		return
-
-	linkResourcePack.value = value
-}
-
-const projectName: Ref<string> = ref('New Project')
-const projectDescription: Ref<string> = ref('')
-const projectNamespace: Ref<string> = ref('bridge')
-const projectAuthor: Ref<string> = ref('')
-const projectTargetVersion: Ref<string> = ref('1.20.50')
-const projectIcon: Ref<File | null> = ref(null)
-
-const packTypes: Ref<IPackType[]> = ref([])
-const selectedPackTypes: Ref<IPackType[]> = ref([])
-
-const experimentalToggles: Ref<ExperimentalToggle[]> = ref([])
-const selectedExperimentalToggles: Ref<ExperimentalToggle[]> = ref([])
-
-watch(getData, async (getData) => {
-	packTypes.value = (await getData('packages/minecraftBedrock/packDefinitions.json')) || []
-
-	experimentalToggles.value = (await getData('packages/minecraftBedrock/experimentalGameplay.json')) || []
-
-	formatVersionDefinitions.value =
-		<FormatVersionDefinitions>await getData('packages/minecraftBedrock/formatVersions.json') || []
-
-	if (!formatVersionDefinitions.value) return
-
-	projectTargetVersion.value = formatVersionDefinitions.value.currentStable
-})
-
-const availableConfigurableFiles = computed(() => {
-	const files: ConfigurableFile[] = []
-
-	for (const packType of selectedPackTypes.value) {
-		const pack = packs[packType.id]
-
-		if (!pack) continue
-
-		files.push(...pack.configurableFiles)
-	}
-
-	return files
-})
-
-const selectedFiles: Ref<ConfigurableFile[]> = ref([])
-const formatVersionDefinitions: Ref<FormatVersionDefinitions | null> = ref(null)
-
-const dataValid = computed(() => {
-	if (projectName.value === '') return false
-	if (projectName.value.match(/"|\\|\/|:|\||<|>|\*|\?|~/g) !== null) return false
-	if (projectName.value.endsWith('.')) return false
-
-	if (projectNamespace.value.toLocaleLowerCase() !== projectNamespace.value) return false
-	if (projectNamespace.value.includes(' ')) return false
-	if (projectNamespace.value.includes(':')) return false
-	if (projectNamespace.value === '') return false
-
-	return true
-})
-
-async function create() {
-	if (!dataValid.value) return
-
-	ProjectManager.createProject(
-		{
-			name: projectName.value,
-			description: projectDescription.value,
-			namespace: projectNamespace.value,
-			author: projectAuthor.value,
-			targetVersion: projectTargetVersion.value,
-			icon: projectIcon.value ?? (await Data.getRaw(`packages/common/packIcon.png`)),
-			packs: ['bridge', ...selectedPackTypes.value.map((pack) => pack.id)],
-			configurableFiles: selectedFiles.value.map((file) => file.id),
-			rpAsBpDependency: linkResourcePack.value,
-			bpAsRpDependency: linkBehaviourPack.value,
-			uuids: Object.fromEntries(selectedPackTypes.value.map((packType) => [packType.id, uuid()])),
-			experiments: selectedExperimentalToggles.value.map((toggle) => toggle.id),
-		},
-		fileSystem
-	)
-
-	window.value?.close()
-}
-
-function selectPackType(packType: IPackType) {
-	if (selectedPackTypes.value.includes(packType)) {
-		selectedPackTypes.value.splice(selectedPackTypes.value.indexOf(packType), 1)
-		selectedPackTypes.value = selectedPackTypes.value
-
-		if (packType.id === 'behaviorPack' || packType.id === 'resourcePack') {
-			linkBehaviourPack.value = false
-			linkResourcePack.value = false
-		}
-
-		const pack = packs[packType.id]
-
-		if (pack) {
-			for (const file of pack.configurableFiles) {
-				if (!selectedFiles.value.includes(file)) continue
-
-				selectedFiles.value.splice(selectedFiles.value.indexOf(file), 1)
-				selectedFiles.value = selectedFiles.value
-			}
-		}
-	} else {
-		selectedPackTypes.value.push(packType)
-		selectedPackTypes.value = selectedPackTypes.value
-	}
-}
-
-function selectExperimentalToggle(toggle: ExperimentalToggle) {
-	if (selectedExperimentalToggles.value.includes(toggle)) {
-		selectedExperimentalToggles.value.splice(selectedExperimentalToggles.value.indexOf(toggle), 1)
-		selectedExperimentalToggles.value = selectedExperimentalToggles.value
-	} else {
-		selectedExperimentalToggles.value.push(toggle)
-		selectedExperimentalToggles.value = selectedExperimentalToggles.value
-	}
-}
-
-function selectFile(file: ConfigurableFile) {
-	if (selectedFiles.value.includes(file)) {
-		selectedFiles.value.splice(selectedFiles.value.indexOf(file), 1)
-		selectedFiles.value = selectedFiles.value
-	} else {
-		selectedFiles.value.push(file)
-		selectedFiles.value = selectedFiles.value
-	}
-}
-
-function chooseProjectIcon() {
-	if (!projectIconInput.value) return
-
-	if (!projectIconInput.value.files) return
-
-	if (!projectIconInput.value.files[0]) return
-
-	projectIcon.value = projectIconInput.value.files[0]
-}
-</script>
 
 <style scoped>
 .max-width {

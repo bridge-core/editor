@@ -3,38 +3,31 @@ import Window from '@/components/Windows/Window.vue'
 import Button from '@/components/Common/Button.vue'
 
 import { useTranslate } from '@/libs/locales/Locales'
-import { Ref, ref } from 'vue'
 import { ExtensionLibraryWindow } from '@/components/Windows/ExtensionLibrary/ExtensionLibrary'
+import { Windows } from '../Windows'
+import { ExtensionInstallLocationWindow } from './ExtensionLibrary'
 
 const t = useTranslate()
 
-const window: Ref<Window | null> = ref(null)
-
 function global() {
-	if (!window.value) return
-
 	ExtensionLibraryWindow.confirmInstallGlobal()
 
-	window.value.close()
+	Windows.close(ExtensionInstallLocationWindow)
 }
 
 function project() {
-	if (!window.value) return
-
 	ExtensionLibraryWindow.confirmInstallProject()
 
-	window.value.close()
+	Windows.close(ExtensionInstallLocationWindow)
 }
 
 function cancel() {
-	if (!window.value) return
-
-	window.value.close()
+	Windows.close(ExtensionInstallLocationWindow)
 }
 </script>
 
 <template>
-	<Window :name="t('Extension Install Location')" id="extensionInstallLocation" ref="window">
+	<Window :name="t('Extension Install Location')" @close="cancel">
 		<div class="p-4">
 			<p class="mb-4 max-w-sm font-inter">
 				{{ t('Do you want to install this extension globally or just for this project?') }}

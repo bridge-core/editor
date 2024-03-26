@@ -11,6 +11,8 @@ import { useTranslate } from '@/libs/locales/Locales'
 import { ComputedRef, Ref, computed, ref, watch } from 'vue'
 import { BedrockProject } from '@/libs/project/BedrockProject'
 import { ProjectManager } from '@/libs/project/ProjectManager'
+import { Windows } from '../Windows'
+import { PresetsWindow } from './PresetsWindow'
 
 const t = useTranslate()
 
@@ -48,8 +50,6 @@ const categories: ComputedRef<{ [key: string]: string[] }> = computed(() => {
 	return categories
 })
 
-const window = ref<Window | null>(null)
-
 function opened() {
 	if (!ProjectManager.currentProject) return
 	if (!(ProjectManager.currentProject instanceof BedrockProject)) return
@@ -60,15 +60,13 @@ function opened() {
 }
 
 async function create() {
-	if (!window.value) return
-
 	if (selectedPresetPath.value === null) return
 
 	if (!ProjectManager.currentProject) return
 
 	if (!(ProjectManager.currentProject instanceof BedrockProject)) return
 
-	window.value.close()
+	Windows.close(PresetsWindow)
 
 	await ProjectManager.currentProject.presetData.createPreset(selectedPresetPath.value, createPresetOptions.value)
 }
@@ -86,7 +84,7 @@ const filteredCategories = computed(() => {
 </script>
 
 <template>
-	<SidebarWindow :name="t('windows.createPreset.title')" id="presets" ref="window" @open="opened">
+	<SidebarWindow :name="t('windows.createPreset.title')" @open="opened" @close="Windows.close(PresetsWindow)">
 		<template #sidebar>
 			<div class="p-4">
 				<LabeledInput v-slot="{ focus, blur }" :label="t('Search Presets')" class="bg-menuAlternate !mt-1 mb-2">
