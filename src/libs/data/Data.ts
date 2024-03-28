@@ -1,4 +1,3 @@
-import { zipSize } from '@/libs/app/DataPackage'
 import { baseUrl } from '@/libs/app/AppEnv'
 import { unzip, Unzipped } from 'fflate'
 import { LocalFileSystem } from '@/libs/fileSystem/LocalFileSystem'
@@ -26,19 +25,46 @@ export class Data {
 	public static async load() {
 		Data.fileSystem.setRootName('data')
 
-		if (await Data.fileSystem.exists('loaded')) {
+		// const rawData = await fetch(baseUrl + 'packages.zip').then((response) => response.arrayBuffer())
+		let hash: string | undefined = undefined
+
+		try {
+			hash = await fetch('https://raw.githubusercontent.com/bridge-core/editor-packages/release/hash', {
+				cache: 'no-cache',
+			}).then((response) => response.text())
+		} catch {}
+
+		if (hash === undefined) {
+			if (await Data.fileSystem.exists('hash')) {
+				// Hash failed to fetch but we have loaded data before
+				console.log('[Data] Failed to fetch data but cach exists')
+
+				Data.loaded.dispatch(undefined)
+
+				return
+			} else {
+				// Hash failed to fetch and we have never loaded the data before
+				throw new Error('Failed to load Data...')
+			}
+		}
+
+		// Hash fetched but it is the same as last hash
+		if ((await Data.fileSystem.exists('hash')) && (await Data.fileSystem.readFileText('hash')) === hash) {
+			console.log('[Data] Skipped fetching data because hash matches')
+
 			Data.loaded.dispatch(undefined)
 
 			return
 		}
 
-		const rawData = await fetch(baseUrl + 'packages.zip').then((response) => response.arrayBuffer())
+		console.log('[Data] Fetching Data because hash does not match')
 
-		if (rawData.byteLength !== zipSize) {
-			throw new Error(
-				`Error: Data package was larger than the expected size of ${zipSize} bytes; got ${rawData.byteLength} bytes`
-			)
-		}
+		const rawData = await fetch(
+			'https://raw.githubusercontent.com/bridge-core/editor-packages/release/packages.zip',
+			{
+				cache: 'no-cache',
+			}
+		).then((response) => response.arrayBuffer())
 
 		const unzipped = await new Promise<Unzipped>((resolve, reject) =>
 			unzip(new Uint8Array(rawData), async (error, zip) => {
@@ -56,7 +82,7 @@ export class Data {
 			}
 		}
 
-		await Data.fileSystem.writeFile('loaded', '')
+		await Data.fileSystem.writeFile('hash', hash)
 
 		Data.loaded.dispatch(undefined)
 	}
