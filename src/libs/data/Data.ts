@@ -7,6 +7,7 @@ import { Disposable } from '@/libs/disposeable/Disposeable'
 import { Sidebar } from '@/components/Sidebar/Sidebar'
 import { Windows } from '@/components/Windows/Windows'
 import { AlertWindow } from '@/components/Windows/Alert/AlertWindow'
+import { Settings } from '@/libs/settings/Settings'
 
 export interface FormatVersionDefinitions {
 	currentStable: string
@@ -26,6 +27,10 @@ export class Data {
 	private static fileSystem = new LocalFileSystem()
 
 	public static async load() {
+		await Settings.addSetting('dataDeveloperMode', {
+			default: false,
+		})
+
 		Data.fileSystem.setRootName('data')
 
 		let hash: string | undefined = undefined
@@ -37,6 +42,12 @@ export class Data {
 		} catch {}
 
 		let packagesUrl = 'https://raw.githubusercontent.com/bridge-core/editor-packages/release/packages.zip'
+
+		if (Settings.get('dataDeveloperMode')) {
+			if (await Data.fileSystem.exists('hash')) await Data.fileSystem.removeFile('hash')
+
+			hash = undefined
+		}
 
 		if (hash === undefined) {
 			if (await Data.fileSystem.exists('hash')) {

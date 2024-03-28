@@ -49,6 +49,7 @@ export class SettingsWindow extends Window {
 		setupActionsCategory()
 		setupAppearanceCategory()
 		setupEditorCategory()
+		setupDeveloperCategory()
 	}
 
 	public static open(categoryId?: string) {
@@ -142,5 +143,17 @@ function setupEditorCategory() {
 	SettingsWindow.addItem('editor', 'bracketPairColorization', <ToggleItem>{
 		type: 'toggle',
 		label: 'windows.settings.editor.bracketPairColorization.name',
+	})
+}
+
+function setupDeveloperCategory() {
+	SettingsWindow.addCategory('developer', {
+		label: 'windows.settings.developer.name',
+		icon: 'code',
+	})
+
+	SettingsWindow.addItem('developer', 'dataDeveloperMode', <ToggleItem>{
+		type: 'toggle',
+		label: 'windows.settings.developer.dataDeveloperMode.name',
 	})
 }

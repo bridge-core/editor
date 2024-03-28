@@ -943,6 +943,10 @@
 				"forceDataDownload": {
 					"name": "Force Data Download",
 					"description": "Ignore the cached app data and instead download the latest data"
+				},
+				"dataDeveloperMode": {
+					"name": "Data Developer Mode",
+					"description": "Ignore the data cache and load from the built in packages"
 				}
 			},
 			"actions": {
