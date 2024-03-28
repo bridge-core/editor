@@ -16,7 +16,7 @@ const { window } = defineProps({
 </script>
 
 <template>
-	<Window :name="t('windows.alert.name')" @close="Windows.close(window)">
+	<Window :name="t('windows.alert.title')" @close="Windows.close(window)">
 		<div class="p-4">
 			<p class="mb-4 max-w-sm font-inter">
 				{{ t(window.text) }}
