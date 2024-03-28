@@ -9,6 +9,7 @@ import { basename } from '@/libs/path'
 import { BaseEntry } from '@/libs/fileSystem/BaseFileSystem'
 import { fileSystem } from '@/libs/fileSystem/FileSystem'
 import { ActionManager } from '@/libs/actions/ActionManager'
+import { Disposable } from '@/libs/disposeable/Disposeable'
 
 const props = defineProps({
 	path: {
@@ -35,14 +36,16 @@ async function updateEntries(path: unknown) {
 	entries.value = await fileSystem.readDirectoryEntries(props.path)
 }
 
+let disposable: Disposable
+
 onMounted(async () => {
-	fileSystem.eventSystem.on('pathUpdated', updateEntries)
+	disposable = fileSystem.pathUpdated.on(updateEntries)
 
 	updateEntries(props.path)
 })
 
 onUnmounted(() => {
-	fileSystem.eventSystem.off('pathUpdated', updateEntries)
+	disposable.dispose()
 })
 
 const contextMenu: Ref<typeof FreeContextMenu | null> = ref(null)

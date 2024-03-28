@@ -1,8 +1,8 @@
-import { EventSystem } from '@/libs/event/EventSystem'
 import { basename, dirname, join } from '@/libs/path'
+import { Event } from '@/libs/event/Event'
 
 export class BaseFileSystem {
-	public eventSystem = new EventSystem(['reloaded', 'pathUpdated'])
+	public pathUpdated: Event<string> = new Event()
 
 	public async readFile(path: string): Promise<ArrayBuffer> {
 		throw new Error('Not implemented!')

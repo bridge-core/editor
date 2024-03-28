@@ -12,7 +12,7 @@ import { Settings } from '@/libs/settings/Settings'
 import { SettingsWindow } from '@/components/Windows/Settings/SettingsWindow'
 import { Windows } from '@/components/Windows/Windows'
 import { AsyncDisposable, Disposable, disposeAll } from '@/libs/disposeable/Disposeable'
-import { Event } from '../event/Event'
+import { Event } from '@/libs/event/Event'
 
 export class Project implements AsyncDisposable {
 	public path: string

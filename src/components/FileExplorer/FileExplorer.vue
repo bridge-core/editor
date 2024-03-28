@@ -19,6 +19,7 @@ import { ProjectManager } from '@/libs/project/ProjectManager'
 import { ActionManager } from '@/libs/actions/ActionManager'
 import { Windows } from '@/components/Windows/Windows'
 import { PresetsWindow } from '@/components/Windows/Presets/PresetsWindow'
+import { Disposable } from '@/libs/disposeable/Disposeable'
 
 const t = useTranslate()
 
@@ -69,8 +70,10 @@ watch(selectedPackPath, (path) => {
 	updateEntries(path)
 })
 
+let disposable: Disposable
+
 onMounted(async () => {
-	fileSystem.eventSystem.on('pathUpdated', updateEntries)
+	disposable = fileSystem.pathUpdated.on(updateEntries)
 
 	if (!currentProject.value) return
 	if (!(currentProject.value instanceof BedrockProject)) return
@@ -81,7 +84,7 @@ onMounted(async () => {
 })
 
 onUnmounted(() => {
-	fileSystem.eventSystem.off('pathUpdated', updateEntries)
+	disposable.dispose()
 })
 
 async function contextMenuBuild(close: any) {

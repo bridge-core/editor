@@ -14,6 +14,7 @@ import { Extensions } from '@/libs/extensions/Extensions'
 import { Toolbar } from '@/components/Toolbar/Toolbar'
 import { setupSidebar } from '@/components/Sidebar/SidebarSetup'
 import { Sidebar } from '@/components/Sidebar/Sidebar'
+import { PWAFileSystem } from '@/libs/fileSystem/PWAFileSystem'
 
 export function setupBeforeComponents() {
 	ProjectManager.setup()
@@ -34,11 +35,12 @@ export async function setup() {
 	ThemeManager.load()
 	LocaleManager.applyDefaultLanguage()
 
-	fileSystem.eventSystem.on('reloaded', () => {
-		console.time('[App] Projects')
-		ProjectManager.loadProjects()
-		console.timeEnd('[App] Projects')
-	})
+	if (fileSystem instanceof PWAFileSystem)
+		fileSystem.reloaded.on(() => {
+			console.time('[App] Projects')
+			ProjectManager.loadProjects()
+			console.timeEnd('[App] Projects')
+		})
 
 	if (fileSystem instanceof TauriFileSystem) await setupTauriFileSystem()
 

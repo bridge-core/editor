@@ -9,7 +9,7 @@ import { Notification } from '@/components/Sidebar/Sidebar'
 import { v4 as uuid } from 'uuid'
 import { Data } from '@/libs/data/Data'
 import { fileSystem } from '@/libs/fileSystem/FileSystem'
-import { AsyncDisposable } from '@/libs/disposeable/Disposeable'
+import { Disposable, AsyncDisposable, disposeAll } from '@/libs/disposeable/Disposeable'
 
 export class DashService implements AsyncDisposable {
 	public logs: string[] = []
@@ -22,6 +22,7 @@ export class DashService implements AsyncDisposable {
 	private inFlightBuildRequest: boolean = false
 	private building: boolean = false
 	private watchRebuildRequestId: string | null = null
+	private disposables: Disposable[] = []
 
 	constructor(public project: BedrockProject) {
 		this.worker.onmessage = this.onWorkerMessage.bind(this)
@@ -66,7 +67,7 @@ export class DashService implements AsyncDisposable {
 
 		this.isSetup = true
 
-		fileSystem.eventSystem.on('pathUpdated', this.pathUpdated.bind(this))
+		this.disposables.push(fileSystem.pathUpdated.on(this.pathUpdated.bind(this)))
 	}
 
 	public async dispose() {
@@ -75,7 +76,7 @@ export class DashService implements AsyncDisposable {
 		this.inputFileSystem.dispose()
 		this.outputFileSystem.dispose()
 
-		fileSystem.eventSystem.off('pathUpdated', this.pathUpdated.bind(this))
+		disposeAll(this.disposables)
 	}
 
 	public setOutputFileSystem(fileSystem: BaseFileSystem) {

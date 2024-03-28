@@ -2,7 +2,7 @@ import { BedrockProject } from '@/libs/project/BedrockProject'
 import { Uri, languages } from 'monaco-editor'
 import { Data } from '@/libs/data/Data'
 import { fileSystem } from '@/libs/fileSystem/FileSystem'
-import { Disposable } from '@/libs/disposeable/Disposeable'
+import { Disposable, disposeAll } from '@/libs/disposeable/Disposeable'
 
 export class ScriptTypeData implements Disposable {
 	constructor(public project: BedrockProject) {}
@@ -11,12 +11,14 @@ export class ScriptTypeData implements Disposable {
 
 	private appliedTypes: any[] = []
 
+	private disposables: Disposable[] = []
+
 	public async setup() {
-		fileSystem.eventSystem.on('pathUpdated', this.pathUpdated.bind(this))
+		this.disposables.push(fileSystem.pathUpdated.on(this.pathUpdated.bind(this)))
 	}
 
 	public async dispose() {
-		fileSystem.eventSystem.off('pathUpdated', this.pathUpdated)
+		disposeAll(this.disposables)
 	}
 
 	public async applyTypes(types: any[]) {

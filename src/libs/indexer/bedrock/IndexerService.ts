@@ -4,7 +4,7 @@ import { fileSystem } from '@/libs/fileSystem/FileSystem'
 import { sendAndWait } from '@/libs/worker/Communication'
 import { BedrockProject } from '@/libs/project/BedrockProject'
 import { Data } from '@/libs/data/Data'
-import { Disposable } from '@/libs/disposeable/Disposeable'
+import { Disposable, disposeAll } from '@/libs/disposeable/Disposeable'
 import { Event } from '@/libs/event/Event'
 
 export class IndexerService implements Disposable {
@@ -14,6 +14,8 @@ export class IndexerService implements Disposable {
 	private instructions: { [key: string]: any } = {}
 	private worker = new IndexerWorker()
 	private workerFileSystem = new WorkerFileSystemEntryPoint(this.worker, fileSystem)
+
+	private disposables: Disposable[] = []
 
 	constructor(public project: BedrockProject) {
 		this.worker.onmessage = this.onWorkerMessage.bind(this)
@@ -33,7 +35,7 @@ export class IndexerService implements Disposable {
 	public async setup() {
 		this.instructions = await Data.get('packages/minecraftBedrock/lightningCaches.json')
 
-		fileSystem.eventSystem.on('pathUpdated', this.pathUpdated.bind(this))
+		this.disposables.push(fileSystem.pathUpdated.on(this.pathUpdated.bind(this)))
 
 		this.index = (
 			await sendAndWait(
@@ -81,7 +83,7 @@ export class IndexerService implements Disposable {
 
 		this.workerFileSystem.dispose()
 
-		fileSystem.eventSystem.off('pathUpdated', this.pathUpdated)
+		disposeAll(this.disposables)
 	}
 
 	private async pathUpdated(path: unknown) {

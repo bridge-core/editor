@@ -44,7 +44,7 @@ export class LocalFileSystem extends BaseFileSystem {
 			content,
 		})
 
-		this.eventSystem.dispatch('pathUpdated', path)
+		this.pathUpdated.dispatch(path)
 	}
 
 	public async makeDirectory(path: string) {
@@ -54,7 +54,7 @@ export class LocalFileSystem extends BaseFileSystem {
 			kind: 'directory',
 		})
 
-		this.eventSystem.dispatch('pathUpdated', path)
+		this.pathUpdated.dispatch(path)
 	}
 
 	public async removeDirectory(path: string) {
@@ -62,7 +62,7 @@ export class LocalFileSystem extends BaseFileSystem {
 
 		await del(`localFileSystem/${this.rootName}/${path}`)
 
-		this.eventSystem.dispatch('pathUpdated', path)
+		this.pathUpdated.dispatch(path)
 	}
 
 	public async exists(path: string): Promise<boolean> {

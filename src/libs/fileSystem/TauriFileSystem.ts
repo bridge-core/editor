@@ -30,7 +30,7 @@ export class TauriFileSystem extends BaseFileSystem {
 				.map((path) => path.substring(this.basePath!.length))
 
 			for (const path of paths) {
-				this.eventSystem.dispatch('pathUpdated', path)
+				this.pathUpdated.dispatch(path)
 			}
 		})
 	}

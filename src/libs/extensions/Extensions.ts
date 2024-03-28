@@ -14,7 +14,7 @@ export class Extensions {
 	private static updated: Event<undefined> = new Event()
 
 	public static setup() {
-		fileSystem.eventSystem.on('reloaded', Extensions.fileSystemReloaded)
+		if (fileSystem instanceof PWAFileSystem) fileSystem.reloaded.on(Extensions.fileSystemReloaded)
 	}
 
 	public static async load() {

@@ -2,9 +2,12 @@ import { sep, parse, basename, join } from '@/libs/path'
 import { BaseEntry, BaseFileSystem } from './BaseFileSystem'
 import { Ref, onMounted, onUnmounted, ref } from 'vue'
 import { md5 } from 'js-md5'
+import { Event } from '@/libs/event/Event'
+import { Disposable } from '@/libs/disposeable/Disposeable'
 
 export class PWAFileSystem extends BaseFileSystem {
 	public baseHandle: FileSystemDirectoryHandle | null = null
+	public reloaded: Event<undefined> = new Event()
 
 	private cache: { [key: string]: string } = {}
 
@@ -15,7 +18,7 @@ export class PWAFileSystem extends BaseFileSystem {
 	public setBaseHandle(handle: FileSystemDirectoryHandle) {
 		this.baseHandle = handle
 
-		this.eventSystem.dispatch('reloaded', null)
+		this.reloaded.dispatch(undefined)
 	}
 
 	public async startCache() {
@@ -310,8 +313,10 @@ export class PWAFileSystem extends BaseFileSystem {
 			setup.value = me.setup
 		}
 
-		onMounted(() => me.eventSystem.on('reloaded', updatedFileSystem))
-		onUnmounted(() => me.eventSystem.off('reloaded', updatedFileSystem))
+		let disposable: Disposable
+
+		onMounted(() => (disposable = me.reloaded.on(updatedFileSystem)))
+		onUnmounted(() => disposable.dispose())
 
 		return setup
 	}
@@ -351,10 +356,7 @@ export class PWAFileSystem extends BaseFileSystem {
 				let fileHash = await this.generateFileHash(entry.path)
 
 				if (this.cache[entry.path] !== fileHash)
-					this.eventSystem.dispatch(
-						'pathUpdated',
-						entry.path.startsWith('/') ? entry.path.substring(1) : entry.path
-					)
+					this.pathUpdated.dispatch(entry.path.startsWith('/') ? entry.path.substring(1) : entry.path)
 
 				this.cache[entry.path] = fileHash
 			}
@@ -368,18 +370,15 @@ export class PWAFileSystem extends BaseFileSystem {
 
 			for (const previousPath of previousPaths) {
 				if (!newPaths.includes(previousPath))
-					this.eventSystem.dispatch(
-						'pathUpdated',
-						previousPath.startsWith('/') ? previousPath.substring(1) : previousPath
-					)
+					this.pathUpdated.dispatch(previousPath.startsWith('/') ? previousPath.substring(1) : previousPath)
 			}
 
 			for (const newPath of newPaths) {
 				if (!previousPaths.includes(newPath))
-					this.eventSystem.dispatch('pathUpdated', newPath.startsWith('/') ? newPath.substring(1) : newPath)
+					this.pathUpdated.dispatch(newPath.startsWith('/') ? newPath.substring(1) : newPath)
 			}
 
-			this.eventSystem.dispatch('pathUpdated', path)
+			this.pathUpdated.dispatch(path)
 		}
 
 		this.cache[path] = hash
