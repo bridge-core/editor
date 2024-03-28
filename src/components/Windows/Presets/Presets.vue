@@ -38,6 +38,12 @@ watch(selectedPreset, () => {
 
 let availablePresets: Ref<{ [key: string]: any }> = ref({})
 
+if (ProjectManager.currentProject && ProjectManager.currentProject instanceof BedrockProject) {
+	availablePresets = ProjectManager.currentProject.presetData.useAvailablePresets()
+
+	selectedPresetPath.value = Object.keys(availablePresets.value)[0] ?? null
+}
+
 const categories: ComputedRef<{ [key: string]: string[] }> = computed(() => {
 	const categories: { [key: string]: string[] } = {}
 
@@ -49,15 +55,6 @@ const categories: ComputedRef<{ [key: string]: string[] }> = computed(() => {
 
 	return categories
 })
-
-function opened() {
-	if (!ProjectManager.currentProject) return
-	if (!(ProjectManager.currentProject instanceof BedrockProject)) return
-
-	availablePresets = ProjectManager.currentProject.presetData.useAvailablePresets()
-
-	selectedPresetPath.value = Object.keys(availablePresets.value)[0] ?? null
-}
 
 async function create() {
 	if (selectedPresetPath.value === null) return
@@ -84,10 +81,14 @@ const filteredCategories = computed(() => {
 </script>
 
 <template>
-	<SidebarWindow :name="t('windows.createPreset.title')" @open="opened" @close="Windows.close(PresetsWindow)">
+	<SidebarWindow :name="t('windows.createPreset.title')" @close="Windows.close(PresetsWindow)">
 		<template #sidebar>
 			<div class="p-4">
-				<LabeledInput v-slot="{ focus, blur }" :label="t('Search Presets')" class="bg-menuAlternate !mt-1 mb-2">
+				<LabeledInput
+					v-slot="{ focus, blur }"
+					:label="t('Search Presets')"
+					class="bg-background-secondary !mt-1 mb-2"
+				>
 					<div class="flex gap-1">
 						<Icon icon="search" class="transition-colors duration-100 ease-out" />
 						<input
@@ -233,7 +234,7 @@ const filteredCategories = computed(() => {
 								</template>
 
 								<template #choices="{ collapse }">
-									<div class="mb-4 bg-menuAlternate w-full p-1 rounded">
+									<div class="mb-4 bg-background-secondary w-full p-1 rounded">
 										<div class="flex flex-col max-h-[12rem] overflow-y-auto p-1">
 											<button
 												v-for="dropdownItem in fieldOptions.options"
