@@ -28,7 +28,6 @@ export class Data {
 	public static async load() {
 		Data.fileSystem.setRootName('data')
 
-		// const rawData = await fetch(baseUrl + 'packages.zip').then((response) => response.arrayBuffer())
 		let hash: string | undefined = undefined
 
 		try {
@@ -37,17 +36,30 @@ export class Data {
 			}).then((response) => response.text())
 		} catch {}
 
+		let packagesUrl = 'https://raw.githubusercontent.com/bridge-core/editor-packages/release/packages.zip'
+
 		if (hash === undefined) {
 			if (await Data.fileSystem.exists('hash')) {
 				// Hash failed to fetch but we have loaded data before
-				console.log('[Data] Failed to fetch data but cach exists')
+				console.log('[Data] Failed to fetch hash but cache exists')
 
 				Data.loaded.dispatch(undefined)
 
 				return
 			} else {
 				// Hash failed to fetch and we have never loaded the data before
-				throw new Error('Failed to load Data...')
+
+				console.log('[Data] Failed to fetch hash, falling back to built in data')
+
+				packagesUrl = baseUrl + 'packages.zip'
+
+				try {
+					hash = await fetch(baseUrl + 'hash', {
+						cache: 'no-cache',
+					}).then((response) => response.text())
+				} catch {}
+
+				if (hash === undefined) throw new Error('Failed to load fallback data!')
 			}
 		}
 
@@ -60,7 +72,7 @@ export class Data {
 			return
 		}
 
-		console.log('[Data] Fetching Data because hash does not match')
+		console.log('[Data] Fetching data')
 
 		Sidebar.addNotification(
 			'package_2',
@@ -70,12 +82,9 @@ export class Data {
 			'primary'
 		)
 
-		const rawData = await fetch(
-			'https://raw.githubusercontent.com/bridge-core/editor-packages/release/packages.zip',
-			{
-				cache: 'no-cache',
-			}
-		).then((response) => response.arrayBuffer())
+		const rawData = await fetch(packagesUrl, {
+			cache: 'no-cache',
+		}).then((response) => response.arrayBuffer())
 
 		const unzipped = await new Promise<Unzipped>((resolve, reject) =>
 			unzip(new Uint8Array(rawData), async (error, zip) => {
