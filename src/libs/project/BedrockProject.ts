@@ -45,6 +45,9 @@ export class BedrockProject extends Project {
 	public async dispose() {
 		await super.dispose()
 
+		this.indexerService.dispose()
+		this.schemaData.dispose()
+
 		await this.dashService.dispose()
 
 		await this.scriptTypeData.dispose()
