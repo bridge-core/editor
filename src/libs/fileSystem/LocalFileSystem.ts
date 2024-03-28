@@ -47,6 +47,14 @@ export class LocalFileSystem extends BaseFileSystem {
 		this.pathUpdated.dispatch(path)
 	}
 
+	public async removeFile(path: string) {
+		if (this.rootName === null) throw new Error('Root name not set')
+
+		await del(`localFileSystem/${this.rootName}/${path}`)
+
+		this.pathUpdated.dispatch(path)
+	}
+
 	public async makeDirectory(path: string) {
 		if (this.rootName === null) throw new Error('Root name not set')
 
