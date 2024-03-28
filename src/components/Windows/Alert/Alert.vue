@@ -3,7 +3,7 @@ import Window from '@/components/Windows/Window.vue'
 import Button from '@/components/Common/Button.vue'
 
 import { useTranslate } from '@/libs/locales/Locales'
-import type { ConfirmWindow } from './ConfirmWindow'
+import type { AlertWindow } from './AlertWindow'
 import { Windows } from '../Windows'
 
 const t = useTranslate()
@@ -12,31 +12,18 @@ const { window } = defineProps({
 	window: {
 		required: true,
 	},
-}) as { window: ConfirmWindow }
-
-function confirm() {
-	window.confirm()
-
-	Windows.close(window)
-}
-
-function cancel() {
-	window.cancel()
-
-	Windows.close(window)
-}
+}) as { window: AlertWindow }
 </script>
 
 <template>
-	<Window :name="t('general.confirm')" @close="cancel">
+	<Window :name="t('windows.alert.name')" @close="Windows.close(window)">
 		<div class="p-4">
 			<p class="mb-4 max-w-sm font-inter">
 				{{ t(window.text) }}
 			</p>
 
 			<div class="flex justify-end gap-2">
-				<Button :text="t('Confirm')" class="font-inter" @click="confirm" />
-				<Button :text="t('Cancel')" class="font-inter" @click="cancel" />
+				<Button :text="t('Ok')" class="font-inter" @click="Windows.close(window)" />
 			</div>
 		</div>
 	</Window>
