@@ -5,10 +5,10 @@ import { sendAndWait } from '@/libs/worker/Communication'
 import { BedrockProject } from '@/libs/project/BedrockProject'
 import { Data } from '@/libs/data/Data'
 import { Disposable } from '@/libs/disposeable/Disposeable'
-import { EventSystem } from '@/libs/event/EventSystem'
+import { Event } from '@/libs/event/Event'
 
 export class IndexerService implements Disposable {
-	public eventSystem = new EventSystem(['updated'])
+	public updated: Event<undefined> = new Event()
 
 	private index: { [key: string]: { fileType: string; data?: any } } = {}
 	private instructions: { [key: string]: any } = {}
@@ -46,7 +46,7 @@ export class IndexerService implements Disposable {
 			)
 		).index
 
-		this.eventSystem.dispatch('updated', undefined)
+		this.updated.dispatch(undefined)
 	}
 
 	public getCachedData(fileType: string, filePath?: string, cacheKey?: string): null | any {
@@ -97,6 +97,6 @@ export class IndexerService implements Disposable {
 			)
 		).index
 
-		this.eventSystem.dispatch('updated', undefined)
+		this.updated.dispatch(undefined)
 	}
 }

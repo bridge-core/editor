@@ -8,7 +8,7 @@ import { v4 as uuid } from 'uuid'
 import { walkObject } from 'bridge-common-utils'
 import { ProjectManager } from '@/libs/project/ProjectManager'
 import { Data } from '@/libs/data/Data'
-import { Disposable } from '@/libs/disposeable/Disposeable'
+import { Disposable, disposeAll } from '@/libs/disposeable/Disposeable'
 
 /*
 Building the schema for a file is a little complicated.
@@ -44,6 +44,8 @@ export class SchemaData implements Disposable {
 
 	private lightningCacheSchemas: Record<string, any> = {}
 
+	private disposables: Disposable[] = []
+
 	constructor(public project: BedrockProject) {}
 
 	private fixPaths(schemas: { [key: string]: any }) {
@@ -53,7 +55,7 @@ export class SchemaData implements Disposable {
 	}
 
 	public async load() {
-		this.project.indexerService.eventSystem.on('updated', this.indexerUpdated.bind(this))
+		this.disposables.push(this.project.indexerService.updated.on(this.indexerUpdated.bind(this)))
 
 		this.indexerUpdated()
 
@@ -68,7 +70,7 @@ export class SchemaData implements Disposable {
 	}
 
 	public dispose() {
-		this.project.indexerService.eventSystem.off('updated', this.indexerUpdated)
+		disposeAll(this.disposables)
 	}
 
 	private indexerUpdated() {

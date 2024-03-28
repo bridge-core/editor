@@ -5,3 +5,9 @@ export interface Disposable {
 export interface AsyncDisposable {
 	dispose: () => Promise<void>
 }
+
+export function disposeAll(disposables: Disposable[]) {
+	for (const disposable of disposables) {
+		disposable.dispose()
+	}
+}

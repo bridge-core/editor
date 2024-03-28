@@ -25,11 +25,11 @@ export class Data {
 	public static async load() {
 		Data.fileSystem.setRootName('data')
 
-		if (await Data.fileSystem.exists('loaded')) {
-			Data.eventSystem.dispatch('loaded', null)
+		// if (await Data.fileSystem.exists('loaded')) {
+		// 	Data.eventSystem.dispatch('loaded', null)
 
-			return
-		}
+		// 	return
+		// }
 
 		const rawData = await fetch(baseUrl + 'packages.zip').then((response) => response.arrayBuffer())
 
