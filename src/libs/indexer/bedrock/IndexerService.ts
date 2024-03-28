@@ -4,8 +4,12 @@ import { fileSystem } from '@/libs/fileSystem/FileSystem'
 import { sendAndWait } from '@/libs/worker/Communication'
 import { BedrockProject } from '@/libs/project/BedrockProject'
 import { Data } from '@/libs/data/Data'
+import { Disposable } from '@/libs/disposeable/Disposeable'
+import { EventSystem } from '@/libs/event/EventSystem'
 
-export class IndexerService {
+export class IndexerService implements Disposable {
+	public eventSystem = new EventSystem(['updated'])
+
 	private index: { [key: string]: { fileType: string; data?: any } } = {}
 	private instructions: { [key: string]: any } = {}
 	private worker = new IndexerWorker()
@@ -29,6 +33,8 @@ export class IndexerService {
 	public async setup() {
 		this.instructions = await Data.get('packages/minecraftBedrock/lightningCaches.json')
 
+		fileSystem.eventSystem.on('pathUpdated', this.pathUpdated.bind(this))
+
 		this.index = (
 			await sendAndWait(
 				{
@@ -39,9 +45,11 @@ export class IndexerService {
 				this.worker
 			)
 		).index
+
+		this.eventSystem.dispatch('updated', undefined)
 	}
 
-	public async getCachedData(fileType: string, filePath?: string, cacheKey?: string): Promise<null | any> {
+	public getCachedData(fileType: string, filePath?: string, cacheKey?: string): null | any {
 		let data: string[] = []
 
 		if (filePath !== undefined) {
@@ -68,9 +76,27 @@ export class IndexerService {
 		return Object.keys(this.index)
 	}
 
-	public async disposte() {
+	public dispose() {
 		this.worker.terminate()
 
 		this.workerFileSystem.dispose()
+
+		fileSystem.eventSystem.off('pathUpdated', this.pathUpdated)
+	}
+
+	private async pathUpdated(path: unknown) {
+		if (typeof path !== 'string') return
+
+		this.index = (
+			await sendAndWait(
+				{
+					action: 'index',
+					path: this.project.path,
+				},
+				this.worker
+			)
+		).index
+
+		this.eventSystem.dispatch('updated', undefined)
 	}
 }

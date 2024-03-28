@@ -50,11 +50,7 @@ function resolvePackPath(packId: string, path: string) {
 	return join(projectPath ?? '', (<any>config.packs)[packId], path)
 }
 
-async function runLightningCacheScript(
-	script: string,
-	path: string,
-	value: string
-): Promise<any> {
+async function runLightningCacheScript(script: string, path: string, value: string): Promise<any> {
 	const scriptResult = await runtime.run(
 		path,
 		{
@@ -64,8 +60,7 @@ async function runLightningCacheScript(
 					for (const extension of extensions) {
 						const possiblePath = basePath + extension
 
-						if (await fileSystem.exists(possiblePath))
-							return possiblePath
+						if (await fileSystem.exists(possiblePath)) return possiblePath
 					}
 				},
 				resolvePackPath,
@@ -125,20 +120,13 @@ async function handleJsonInstructions(
 				if (typeof data === 'object') data = Object.keys(data)
 				if (!Array.isArray(data)) data = [data]
 
-				if (filter !== undefined)
-					data = data.filter(
-						(value: string) => !filter.includes(value)
-					)
+				if (filter !== undefined) data = data.filter((value: string) => !filter.includes(value))
 
 				if (script !== undefined) {
 					data = (
 						await Promise.all(
 							data.map(async (value: string) => {
-								return await runLightningCacheScript(
-									script,
-									filePath,
-									value
-								)
+								return await runLightningCacheScript(script, filePath, value)
 							})
 						)
 					).filter((value: unknown) => value !== undefined)
@@ -157,12 +145,7 @@ async function handleJsonInstructions(
 	}
 }
 
-async function handleScriptInstructions(
-	path: string,
-	fileType: any,
-	text: string,
-	script: string
-) {
+async function handleScriptInstructions(path: string, fileType: any, text: string, script: string) {
 	let data: { [key: string]: any } = {}
 
 	const module: any = {}
@@ -192,10 +175,7 @@ async function indexFile(path: string) {
 
 	if (fileType && fileType.lightningCache)
 		fileInstructions =
-			instructions[
-				'file:///data/packages/minecraftBedrock/lightningCache/' +
-					fileType.lightningCache
-			]
+			instructions['file:///data/packages/minecraftBedrock/lightningCache/' + fileType.lightningCache]
 
 	let data: { [key: string]: any } = {}
 
@@ -212,21 +192,11 @@ async function indexFile(path: string) {
 
 		if (text !== undefined) {
 			if (typeof fileInstructions === 'string') {
-				await handleScriptInstructions(
-					path,
-					fileType,
-					text,
-					fileInstructions
-				)
+				await handleScriptInstructions(path, fileType, text, fileInstructions)
 
 				return
 			} else {
-				await handleJsonInstructions(
-					path,
-					fileType,
-					json,
-					fileInstructions
-				)
+				await handleJsonInstructions(path, fileType, json, fileInstructions)
 
 				return
 			}
@@ -249,12 +219,7 @@ async function indexDirectory(path: string) {
 	}
 }
 
-async function setup(
-	newConfig: IConfigJson,
-	newInstructions: { [key: string]: any },
-	actionId: string,
-	path: string
-) {
+async function setup(newConfig: IConfigJson, newInstructions: { [key: string]: any }, actionId: string, path: string) {
 	index = {}
 
 	config = newConfig
@@ -272,14 +237,20 @@ async function setup(
 	})
 }
 
+async function reindex(path: string, actionId: string) {
+	await indexDirectory(path)
+
+	postMessage({
+		action: 'indexComplete',
+		index,
+		id: actionId,
+	})
+}
+
 onmessage = (event: any) => {
 	if (!event.data) return
 
-	if (event.data.action === 'setup')
-		setup(
-			event.data.config,
-			event.data.instructions,
-			event.data.id,
-			event.data.path
-		)
+	if (event.data.action === 'setup') setup(event.data.config, event.data.instructions, event.data.id, event.data.path)
+
+	if (event.data.action === 'index') reindex(event.data.path, event.data.id)
 }
