@@ -4,6 +4,9 @@ import { LocalFileSystem } from '@/libs/fileSystem/LocalFileSystem'
 import { onMounted, onUnmounted, ref, Ref } from 'vue'
 import { Event } from '@/libs/event/Event'
 import { Disposable } from '@/libs/disposeable/Disposeable'
+import { Sidebar } from '@/components/Sidebar/Sidebar'
+import { Windows } from '@/components/Windows/Windows'
+import { AlertWindow } from '@/components/Windows/Alert/AlertWindow'
 
 export interface FormatVersionDefinitions {
 	currentStable: string
@@ -58,6 +61,14 @@ export class Data {
 		}
 
 		console.log('[Data] Fetching Data because hash does not match')
+
+		Sidebar.addNotification(
+			'package_2',
+			() => {
+				Windows.open(new AlertWindow('A new data update has been installed.'))
+			},
+			'primary'
+		)
 
 		const rawData = await fetch(
 			'https://raw.githubusercontent.com/bridge-core/editor-packages/release/packages.zip',
