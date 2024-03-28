@@ -1,6 +1,6 @@
 import { Component, ref } from 'vue'
 import TextTabComponent from '@/components/Tabs/Text/TextTab.vue'
-import { Position, Uri, editor, editor as monaco, Range, IDisposable } from 'monaco-editor'
+import { Position, Uri, editor, editor as monaco, Range } from 'monaco-editor'
 import { keyword } from 'color-convert'
 import { fileSystem } from '@/libs/fileSystem/FileSystem'
 import { setMonarchTokensProvider } from '@/libs/monaco/Json'
@@ -9,6 +9,7 @@ import { ThemeManager } from '@/libs/theme/ThemeManager'
 import { ProjectManager } from '@/libs/project/ProjectManager'
 import { FileTab } from '@/components/TabSystem/FileTab'
 import { Settings } from '@/libs/settings/Settings'
+import { Disposable, disposeAll } from '@/libs/disposeable/Disposeable'
 
 export class TextTab extends FileTab {
 	public component: Component | null = TextTabComponent
@@ -22,7 +23,7 @@ export class TextTab extends FileTab {
 
 	private fileType: any | null = null
 
-	private disposables: IDisposable[] = []
+	private disposables: Disposable[] = []
 
 	public static canEdit(path: string): boolean {
 		return true
@@ -61,7 +62,7 @@ export class TextTab extends FileTab {
 
 		this.updateEditorTheme()
 
-		ThemeManager.eventSystem.on('themeChanged', this.updateEditorTheme.bind(this))
+		this.disposables.push(ThemeManager.themeChanged.on(this.updateEditorTheme.bind(this)))
 
 		this.editor = monaco.create(element, {
 			fontFamily: 'Consolas',
@@ -104,14 +105,10 @@ export class TextTab extends FileTab {
 	}
 
 	public unmountEditor() {
-		for (const disposable of this.disposables) {
-			disposable.dispose()
-		}
+		disposeAll(this.disposables)
 
 		this.model?.dispose()
 		this.editor?.dispose()
-
-		ThemeManager.eventSystem.off('themeChanged', this.updateEditorTheme)
 	}
 
 	public async save() {

@@ -1,14 +1,16 @@
 import { Theme, colorNames } from './Theme'
 import { dark, light } from './DefaultThemes'
 import { onMounted, onUnmounted, ref } from 'vue'
-import { EventSystem } from '@/libs/event/EventSystem'
 import { Settings } from '@/libs/settings/Settings'
 import { get, set } from 'idb-keyval'
+import { Event } from '@/libs/event/Event'
+import { Disposable } from '@/libs/disposeable/Disposeable'
 
 export class ThemeManager {
 	public static themes: Theme[] = []
 	public static currentTheme: string = dark.id
-	public static eventSystem = new EventSystem(['themesUpdated', 'themeChanged'])
+	public static themesUpdated: Event<undefined> = new Event()
+	public static themeChanged: Event<undefined> = new Event()
 
 	public static setup() {
 		this.addTheme(dark)
@@ -61,13 +63,13 @@ export class ThemeManager {
 			this.themes.push(theme)
 		}
 
-		this.eventSystem.dispatch('themesUpdated', null)
+		this.themesUpdated.dispatch(undefined)
 	}
 
 	public static removeTheme(theme: Theme) {
 		this.themes = this.themes.filter((otherTheme) => otherTheme.id !== theme.id)
 
-		this.eventSystem.dispatch('themesUpdated', null)
+		this.themesUpdated.dispatch(undefined)
 
 		if (this.currentTheme === theme.id) this.applyTheme(dark.id)
 	}
@@ -87,7 +89,7 @@ export class ThemeManager {
 
 		set('lastUsedTheme', JSON.stringify(theme))
 
-		this.eventSystem.dispatch('themeChanged', undefined)
+		this.themeChanged.dispatch(undefined)
 	}
 
 	public static reloadTheme() {
@@ -110,12 +112,14 @@ export class ThemeManager {
 			themes.value = [...me.themes]
 		}
 
+		let disposable: Disposable
+
 		onMounted(() => {
-			this.eventSystem.on('themesUpdated', update)
+			disposable = ThemeManager.themesUpdated.on(update)
 		})
 
 		onUnmounted(() => {
-			this.eventSystem.off('themesUpdated', update)
+			disposable.dispose()
 		})
 
 		return themes
@@ -130,7 +134,7 @@ export class ThemeManager {
 			themes.value = [...me.themes]
 		}
 
-		this.eventSystem.on('themesUpdated', update)
+		ThemeManager.themesUpdated.on(update)
 
 		return themes
 	}

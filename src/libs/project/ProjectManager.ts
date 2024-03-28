@@ -1,4 +1,3 @@
-import { EventSystem } from '@/libs/event/EventSystem'
 import { fileSystem } from '@/libs/fileSystem/FileSystem'
 import { Project, validProject } from './Project'
 import { basename, join } from '@/libs/path'
@@ -17,6 +16,8 @@ import { LocalFileSystem } from '@/libs/fileSystem/LocalFileSystem'
 import { Data } from '@/libs/data/Data'
 import { Settings } from '@/libs/settings/Settings'
 import { get, set } from 'idb-keyval'
+import { Event } from '@/libs/event/Event'
+import { Disposable } from '@/libs/disposeable/Disposeable'
 
 export const packs: {
 	[key: string]: Pack | undefined
@@ -35,8 +36,9 @@ export interface ProjectInfo {
 
 export class ProjectManager {
 	public static projects: ProjectInfo[] = []
-	public static eventSystem = new EventSystem(['updatedProjects', 'updatedCurrentProject'])
 	public static currentProject: Project | null = null
+	public static updatedProjects: Event<undefined> = new Event()
+	public static updatedCurrentProject: Event<undefined> = new Event()
 
 	private static cacheFileSystem = new LocalFileSystem()
 
@@ -63,7 +65,7 @@ export class ProjectManager {
 			if (await this.cacheFileSystem.exists('projects.json'))
 				this.projects = await this.cacheFileSystem.readFileJson('projects.json')
 
-			this.eventSystem.dispatch('updatedProjects', null)
+			this.updatedProjects.dispatch(undefined)
 
 			return
 		}
@@ -84,7 +86,7 @@ export class ProjectManager {
 
 		this.updateProjectCache()
 
-		this.eventSystem.dispatch('updatedProjects', null)
+		this.updatedProjects.dispatch(undefined)
 	}
 
 	private static addProject(project: ProjectInfo) {
@@ -92,7 +94,7 @@ export class ProjectManager {
 
 		this.updateProjectCache()
 
-		this.eventSystem.dispatch('updatedProjects', null)
+		this.updatedProjects.dispatch(undefined)
 	}
 
 	public static async createProject(config: CreateProjectConfig, fileSystem: BaseFileSystem) {
@@ -129,7 +131,7 @@ export class ProjectManager {
 
 		await this.currentProject.load()
 
-		this.eventSystem.dispatch('updatedCurrentProject', null)
+		this.updatedCurrentProject.dispatch(undefined)
 
 		console.timeEnd('[APP] Load Project')
 	}
@@ -156,14 +158,14 @@ export class ProjectManager {
 	public static useProjects(): Ref<ProjectInfo[]> {
 		const projects: Ref<ProjectInfo[]> = ref(this.projects)
 
-		const me = this
-
 		function updateProjects() {
-			projects.value = [...me.projects]
+			projects.value = [...ProjectManager.projects]
 		}
 
-		onMounted(() => me.eventSystem.on('updatedProjects', updateProjects))
-		onUnmounted(() => me.eventSystem.off('updatedProjects', updateProjects))
+		let disposable: Disposable
+
+		onMounted(() => (disposable = ProjectManager.updatedProjects.on(updateProjects)))
+		onUnmounted(() => disposable.dispose())
 
 		return projects
 	}
@@ -178,8 +180,10 @@ export class ProjectManager {
 			currentProject.value = me.currentProject
 		}
 
-		onMounted(() => me.eventSystem.on('updatedCurrentProject', updateCurrentProject))
-		onUnmounted(() => me.eventSystem.off('updatedCurrentProject', updateCurrentProject))
+		let disposable: Disposable
+
+		onMounted(() => (disposable = ProjectManager.updatedProjects.on(updateCurrentProject)))
+		onUnmounted(() => disposable.dispose())
 
 		return currentProject
 	}
@@ -202,11 +206,13 @@ export function useUsingProjectOutputFolder(): Ref<boolean> {
 		usingProjectOutputFolder.value = ProjectManager.currentProject.usingProjectOutputFolder
 	}
 
+	let disposable: Disposable
+
 	watch(ProjectManager.useCurrentProject(), (newProject, oldProject) => {
-		if (oldProject) oldProject.eventSystem.off('usingProjectOutputFolderChanged', update)
+		if (oldProject) disposable.dispose()
 
 		if (newProject) {
-			newProject.eventSystem.on('usingProjectOutputFolderChanged', update)
+			disposable = newProject.usingProjectOutputFolderChanged.on(update)
 
 			update()
 		}
@@ -214,13 +220,12 @@ export function useUsingProjectOutputFolder(): Ref<boolean> {
 
 	onMounted(() => {
 		if (ProjectManager.currentProject)
-			ProjectManager.currentProject.eventSystem.on('usingProjectOutputFolderChanged', update)
+			disposable = ProjectManager.currentProject.usingProjectOutputFolderChanged.on(update)
 
 		update()
 	})
 	onUnmounted(() => {
-		if (ProjectManager.currentProject)
-			ProjectManager.currentProject.eventSystem.off('usingProjectOutputFolderChanged', update)
+		if (ProjectManager.currentProject) disposable.dispose()
 	})
 
 	return usingProjectOutputFolder

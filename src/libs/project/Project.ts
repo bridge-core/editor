@@ -6,13 +6,13 @@ import { fileSystem } from '@/libs/fileSystem/FileSystem'
 import { BaseFileSystem } from '@/libs/fileSystem/BaseFileSystem'
 import { PWAFileSystem } from '@/libs/fileSystem/PWAFileSystem'
 import { get, set } from 'idb-keyval'
-import { EventSystem } from '@/libs/event/EventSystem'
 import { IConfigJson } from 'mc-project-core'
 import { LocalFileSystem } from '@/libs/fileSystem/LocalFileSystem'
 import { Settings } from '@/libs/settings/Settings'
 import { SettingsWindow } from '@/components/Windows/Settings/SettingsWindow'
 import { Windows } from '@/components/Windows/Windows'
 import { AsyncDisposable, Disposable, disposeAll } from '@/libs/disposeable/Disposeable'
+import { Event } from '../event/Event'
 
 export class Project implements AsyncDisposable {
 	public path: string
@@ -24,7 +24,7 @@ export class Project implements AsyncDisposable {
 
 	public packs: { [key: string]: string } = {}
 
-	public eventSystem = new EventSystem(['usingProjectOutputFolderChanged'])
+	public usingProjectOutputFolderChanged: Event<undefined> = new Event()
 
 	private projectOutputFolderHandleKey: string = ''
 	private usingProjectOutputFolderKey: string = ''
@@ -56,7 +56,7 @@ export class Project implements AsyncDisposable {
 		this.disposables.push(Settings.updated.on(this.settingsChanged.bind(this)))
 
 		this.usingProjectOutputFolder = (await get(this.usingProjectOutputFolderKey)) ?? false
-		this.eventSystem.dispatch('usingProjectOutputFolderChanged', undefined)
+		this.usingProjectOutputFolderChanged.dispatch(undefined)
 
 		await this.setupOutputFileSystem()
 
@@ -90,15 +90,18 @@ export class Project implements AsyncDisposable {
 		await set(this.projectOutputFolderHandleKey, handle)
 
 		this.usingProjectOutputFolder = await this.setOutputFolderHandle(handle)
+
 		await set(this.usingProjectOutputFolderKey, this.usingProjectOutputFolder)
-		this.eventSystem.dispatch('usingProjectOutputFolderChanged', undefined)
+
+		this.usingProjectOutputFolderChanged.dispatch(undefined)
 	}
 
 	public async clearLocalProjectFolder() {
 		if (!this.usingProjectOutputFolder) return
 
 		this.usingProjectOutputFolder = false
-		this.eventSystem.dispatch('usingProjectOutputFolderChanged', undefined)
+
+		this.usingProjectOutputFolderChanged.dispatch(undefined)
 
 		await set(this.projectOutputFolderHandleKey, undefined)
 
@@ -158,8 +161,10 @@ export class Project implements AsyncDisposable {
 		}
 
 		this.usingProjectOutputFolder = false
+
 		await set(this.usingProjectOutputFolderKey, false)
-		this.eventSystem.dispatch('usingProjectOutputFolderChanged', undefined)
+
+		this.usingProjectOutputFolderChanged.dispatch(undefined)
 
 		Sidebar.addNotification(
 			'warning',
