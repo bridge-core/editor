@@ -371,6 +371,8 @@ export class SchemaData implements Disposable {
 							return data
 						},
 						customComponents(fileType: any) {
+							console.warn('To be implemented when custom components are implemented')
+
 							return {}
 						},
 						getIndexedPaths(fileType: string, sort: boolean) {
