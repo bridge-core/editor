@@ -4,13 +4,14 @@ import { Unzipped, unzip } from 'fflate'
 import { Extension, ExtensionManifest } from './Extension'
 import { PWAFileSystem } from '@/libs/fileSystem/PWAFileSystem'
 import { ProjectManager } from '@/libs/project/ProjectManager'
-import { EventSystem } from '@/libs/event/EventSystem'
 import { Ref, onMounted, onUnmounted, ref } from 'vue'
+import { Event } from '@/libs/event/Event'
+import { Disposable } from '@/libs/disposeable/Disposeable'
 
 export class Extensions {
 	private static globalExtensions: Extension[] = []
 	private static projectExtensions: Extension[] = []
-	private static eventSystem = new EventSystem(['extensionsUpdated'])
+	private static updated: Event<undefined> = new Event()
 
 	public static setup() {
 		fileSystem.eventSystem.on('reloaded', Extensions.fileSystemReloaded)
@@ -23,7 +24,7 @@ export class Extensions {
 			await Extensions.loadExtension(entry.path)
 		}
 
-		Extensions.eventSystem.dispatch('extensionsUpdated', undefined)
+		Extensions.updated.dispatch(undefined)
 	}
 
 	public static async loadProjectExtensions() {
@@ -35,7 +36,7 @@ export class Extensions {
 			await Extensions.loadProjectExtension(entry.path)
 		}
 
-		Extensions.eventSystem.dispatch('extensionsUpdated', undefined)
+		Extensions.updated.dispatch(undefined)
 	}
 
 	public static disposeProjectExtensions() {
@@ -77,7 +78,7 @@ export class Extensions {
 			)
 		}
 
-		Extensions.eventSystem.dispatch('extensionsUpdated', undefined)
+		Extensions.updated.dispatch(undefined)
 	}
 
 	public static isInstalledGlobal(id: string): boolean {
@@ -99,12 +100,14 @@ export class Extensions {
 			isInstalledGlobal.value = (id: string) => Extensions.isInstalledGlobal(id)
 		}
 
+		let disposable: Disposable
+
 		onMounted(() => {
-			Extensions.eventSystem.on('extensionsUpdated', update)
+			disposable = Extensions.updated.on(update)
 		})
 
 		onUnmounted(() => {
-			Extensions.eventSystem.off('extensionsUpdated', update)
+			disposable.dispose()
 		})
 
 		return isInstalledGlobal
@@ -117,12 +120,14 @@ export class Extensions {
 			isInstalledProject.value = (id: string) => Extensions.isInstalledProject(id)
 		}
 
+		let disposable: Disposable
+
 		onMounted(() => {
-			Extensions.eventSystem.on('extensionsUpdated', update)
+			disposable = Extensions.updated.on(update)
 		})
 
 		onUnmounted(() => {
-			Extensions.eventSystem.off('extensionsUpdated', update)
+			disposable.dispose()
 		})
 
 		return isInstalledProject
@@ -135,12 +140,14 @@ export class Extensions {
 			isInstalled.value = (id: string) => Extensions.isInstalled(id)
 		}
 
+		let disposable: Disposable
+
 		onMounted(() => {
-			Extensions.eventSystem.on('extensionsUpdated', update)
+			disposable = Extensions.updated.on(update)
 		})
 
 		onUnmounted(() => {
-			Extensions.eventSystem.off('extensionsUpdated', update)
+			disposable.dispose()
 		})
 
 		return isInstalled
@@ -185,7 +192,7 @@ export class Extensions {
 
 		await Extensions.loadExtension(path)
 
-		Extensions.eventSystem.dispatch('extensionsUpdated', undefined)
+		Extensions.updated.dispatch(undefined)
 	}
 
 	private static async downloadExtension(extension: ExtensionManifest): Promise<Unzipped> {

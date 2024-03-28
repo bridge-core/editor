@@ -26,7 +26,7 @@ export class ThemeManager {
 			default: 'bridge.default.light',
 		})
 
-		Settings.eventSystem.on('updated', (event) => {
+		Settings.updated.on((event) => {
 			const { id, value } = event as { id: string; value: any }
 
 			if (!['colorScheme', 'darkTheme', 'lightTheme'].includes(id)) return

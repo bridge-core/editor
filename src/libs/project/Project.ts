@@ -12,7 +12,7 @@ import { LocalFileSystem } from '@/libs/fileSystem/LocalFileSystem'
 import { Settings } from '@/libs/settings/Settings'
 import { SettingsWindow } from '@/components/Windows/Settings/SettingsWindow'
 import { Windows } from '@/components/Windows/Windows'
-import { AsyncDisposable } from '@/libs/disposeable/Disposeable'
+import { AsyncDisposable, Disposable, disposeAll } from '@/libs/disposeable/Disposeable'
 
 export class Project implements AsyncDisposable {
 	public path: string
@@ -28,6 +28,8 @@ export class Project implements AsyncDisposable {
 
 	private projectOutputFolderHandleKey: string = ''
 	private usingProjectOutputFolderKey: string = ''
+
+	private disposables: Disposable[] = []
 
 	constructor(public name: string) {
 		this.path = join('projects', this.name)
@@ -51,7 +53,7 @@ export class Project implements AsyncDisposable {
 
 		this.icon = await fileSystem.readFileDataUrl(join(this.path, 'BP', 'pack_icon.png'))
 
-		Settings.eventSystem.on('updated', this.settingsChanged.bind(this))
+		this.disposables.push(Settings.updated.on(this.settingsChanged.bind(this)))
 
 		this.usingProjectOutputFolder = (await get(this.usingProjectOutputFolderKey)) ?? false
 		this.eventSystem.dispatch('usingProjectOutputFolderChanged', undefined)
@@ -62,7 +64,7 @@ export class Project implements AsyncDisposable {
 	}
 
 	public async dispose() {
-		Settings.eventSystem.off('updated', this.settingsChanged.bind(this))
+		disposeAll(this.disposables)
 
 		Extensions.disposeProjectExtensions()
 	}

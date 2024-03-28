@@ -2,8 +2,9 @@ import { zipSize } from '@/libs/app/DataPackage'
 import { baseUrl } from '@/libs/app/AppEnv'
 import { unzip, Unzipped } from 'fflate'
 import { LocalFileSystem } from '@/libs/fileSystem/LocalFileSystem'
-import { EventSystem } from '@/libs/event/EventSystem'
 import { onMounted, onUnmounted, ref, Ref } from 'vue'
+import { Event } from '@/libs/event/Event'
+import { Disposable } from '@/libs/disposeable/Disposeable'
 
 export interface FormatVersionDefinitions {
 	currentStable: string
@@ -18,18 +19,18 @@ export interface ExperimentalToggle {
 }
 
 export class Data {
-	public static eventSystem = new EventSystem(['loaded'])
+	public static loaded: Event<undefined> = new Event()
 
 	private static fileSystem = new LocalFileSystem()
 
 	public static async load() {
 		Data.fileSystem.setRootName('data')
 
-		// if (await Data.fileSystem.exists('loaded')) {
-		// 	Data.eventSystem.dispatch('loaded', null)
+		if (await Data.fileSystem.exists('loaded')) {
+			Data.loaded.dispatch(undefined)
 
-		// 	return
-		// }
+			return
+		}
 
 		const rawData = await fetch(baseUrl + 'packages.zip').then((response) => response.arrayBuffer())
 
@@ -57,7 +58,7 @@ export class Data {
 
 		await Data.fileSystem.writeFile('loaded', '')
 
-		Data.eventSystem.dispatch('loaded', null)
+		Data.loaded.dispatch(undefined)
 	}
 
 	public static async get(path: string): Promise<any> {
@@ -80,12 +81,14 @@ export function useGetData(): Ref<(path: string) => undefined | any> {
 		get.value = (path: string) => Data.get(path)
 	}
 
+	let disposable: Disposable
+
 	onMounted(() => {
-		Data.eventSystem.on('loaded', updateGet)
+		disposable = Data.loaded.on(updateGet)
 	})
 
 	onUnmounted(() => {
-		Data.eventSystem.off('loaded', updateGet)
+		disposable.dispose()
 	})
 
 	return get

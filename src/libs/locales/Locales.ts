@@ -3,8 +3,9 @@ import { get } from 'idb-keyval'
 import enLang from '@/locales/en.json'
 import allLanguages from '@/locales/languages.json'
 import { Ref, onMounted, onUnmounted, ref } from 'vue'
-import { EventSystem } from '@/libs/event/EventSystem'
 import { Settings } from '@/libs/settings/Settings'
+import { Event } from '@/libs/event/Event'
+import { Disposable } from '@/libs/disposeable/Disposeable'
 
 // loads all languages, exclude the language file and en file since en is a special case
 // en is a special case since it is the default and other languages override it
@@ -16,7 +17,7 @@ const languages = Object.fromEntries(
 )
 
 export class LocaleManager {
-	public static eventSystem = new EventSystem(['languageChanged'])
+	public static languageChanged: Event<string> = new Event()
 
 	protected static currentLanguage: any = enLang
 	protected static currentLanuageId = 'english'
@@ -26,7 +27,7 @@ export class LocaleManager {
 			default: 'English',
 		})
 
-		Settings.eventSystem.on('updated', (event) => {
+		Settings.updated.on((event) => {
 			const { id, value } = event as { id: string; value: string }
 
 			if (id !== 'language') return
@@ -76,7 +77,7 @@ export class LocaleManager {
 			this.currentLanguage = clone(enLang)
 			this.currentLanuageId = id
 
-			this.eventSystem.dispatch('languageChanged', id)
+			this.languageChanged.dispatch(id)
 			return
 		}
 
@@ -91,7 +92,7 @@ export class LocaleManager {
 
 		this.currentLanuageId = id
 
-		this.eventSystem.dispatch('languageChanged', id)
+		this.languageChanged.dispatch(id)
 	}
 
 	public static translate(key?: string, lang = this.currentLanguage) {
@@ -135,12 +136,14 @@ export function useTranslate(): Ref<(key: string) => string> {
 		translation.value = (key: string) => LocaleManager.translate(key)
 	}
 
+	let disposable: Disposable
+
 	onMounted(() => {
-		LocaleManager.eventSystem.on('languageChanged', updateTranslate)
+		disposable = LocaleManager.languageChanged.on(updateTranslate)
 	})
 
 	onUnmounted(() => {
-		LocaleManager.eventSystem.off('languageChanged', updateTranslate)
+		disposable.dispose()
 	})
 
 	return translation

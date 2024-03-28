@@ -1,6 +1,7 @@
 import { Ref, ShallowRef, onMounted, onUnmounted, ref, shallowRef } from 'vue'
-import { EventSystem } from '@/libs/event/EventSystem'
 import { get, set } from 'idb-keyval'
+import { Event } from '@/libs/event/Event'
+import { Disposable } from '@/libs/disposeable/Disposeable'
 
 interface Setting<T> {
 	default: T
@@ -10,7 +11,7 @@ interface Setting<T> {
 
 export class Settings {
 	public static settings: Record<string, any> = {}
-	public static eventSystem = new EventSystem(['updated'])
+	public static updated: Event<{ id: string; value: any }> = new Event()
 	public static definitions: Record<string, Setting<any>> = {}
 
 	public static loadedSettings: Record<string, any> = {}
@@ -25,7 +26,7 @@ export class Settings {
 		}
 
 		for (const [id, value] of Object.entries(Settings.settings)) {
-			Settings.eventSystem.dispatch('updated', { id, value })
+			Settings.updated.dispatch({ id, value })
 		}
 	}
 
@@ -66,7 +67,7 @@ export class Settings {
 
 		await set('settings', JSON.stringify(saveSettings))
 
-		Settings.eventSystem.dispatch('updated', { id, value })
+		Settings.updated.dispatch({ id, value })
 	}
 
 	private static async updateSetting(id: string) {
@@ -96,12 +97,14 @@ export class Settings {
 			get.value = Settings.get
 		}
 
+		let disposable: Disposable
+
 		onMounted(() => {
-			Settings.eventSystem.on('updated', updateSettings)
+			disposable = Settings.updated.on(updateSettings)
 		})
 
 		onUnmounted(() => {
-			Settings.eventSystem.off('updated', updateSettings)
+			disposable.dispose()
 		})
 
 		return get
@@ -117,12 +120,14 @@ export function useSettings(): Ref<Settings> {
 		currentSettings.value = Settings
 	}
 
+	let disposable: Disposable
+
 	onMounted(() => {
-		Settings.eventSystem.on('updated', updateSettings)
+		disposable = Settings.updated.on(updateSettings)
 	})
 
 	onUnmounted(() => {
-		Settings.eventSystem.off('updated', updateSettings)
+		disposable.dispose()
 	})
 
 	return currentSettings
