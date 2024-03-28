@@ -40,15 +40,12 @@ export class Data {
 
 		if (hash === undefined) {
 			if (await Data.fileSystem.exists('hash')) {
-				// Hash failed to fetch but we have loaded data before
 				console.log('[Data] Failed to fetch hash but cache exists')
 
 				Data.loaded.dispatch(undefined)
 
 				return
 			} else {
-				// Hash failed to fetch and we have never loaded the data before
-
 				console.log('[Data] Failed to fetch hash, falling back to built in data')
 
 				packagesUrl = baseUrl + 'packages.zip'
@@ -63,7 +60,6 @@ export class Data {
 			}
 		}
 
-		// Hash fetched but it is the same as last hash
 		if ((await Data.fileSystem.exists('hash')) && (await Data.fileSystem.readFileText('hash')) === hash) {
 			console.log('[Data] Skipped fetching data because hash matches')
 
