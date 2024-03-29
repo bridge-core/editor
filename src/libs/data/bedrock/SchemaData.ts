@@ -246,6 +246,16 @@ export class SchemaData implements Disposable {
 			const schemaPathToRebase = schemasToRebaseQueue.shift()!
 			rebasedSchemas.push(schemaPathToRebase)
 
+			// if (
+			// 	schemaPathToRebase === 'data/packages/minecraftBedrock/schema/lootTable/dynamic/lootTablePathEnum.json'
+			// ) {
+			// 	console.log(generatedDynamicSchemas[schemaPathToRebase])
+			// 	console.log(generatedGlobalSchemas[schemaPathToRebase])
+			// 	console.log(contextLightningCacheSchemas[schemaPathToRebase])
+			// 	console.log(this.lightningCacheSchemas[schemaPathToRebase])
+			// 	console.log(this.schemas[schemaPathToRebase])
+			// }
+
 			let schema =
 				generatedDynamicSchemas[schemaPathToRebase] ??
 				generatedGlobalSchemas[schemaPathToRebase] ??
@@ -384,13 +394,18 @@ export class SchemaData implements Disposable {
 						},
 						uuid,
 						get(path: string) {
+							if (!me.fileSystemSchemaScripts.includes(scriptPath))
+								me.fileSystemSchemaScripts.push(scriptPath)
+
 							if (!me.localSchemaScripts.includes(scriptPath)) me.localSchemaScripts.push(scriptPath)
 
 							if (fileJson === undefined) return []
 
 							let data: string[] = []
 
-							walkObject(path, fileJson, data.push)
+							walkObject(path, fileJson, (value) => {
+								data.push(value)
+							})
 
 							return data
 						},
