@@ -43,6 +43,7 @@ export class IndexerService implements Disposable {
 					action: 'setup',
 					path: this.project.path,
 					instructions: this.instructions,
+					config: this.project.config ?? undefined,
 				},
 				this.worker
 			)

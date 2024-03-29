@@ -41,16 +41,16 @@ let index: { [key: string]: { fileType: string; data?: any } } = {}
 
 function resolvePackPath(packId: string, path: string) {
 	if (!config) return ''
-	if (config.packs) return ''
+	if (!config.packs) return ''
 
-	if (path === undefined) {
-		return join(projectPath ?? '', (<any>config.packs)[packId])
-	}
+	if (path === undefined) return join(projectPath ?? '', (<any>config.packs)[packId])
 
 	return join(projectPath ?? '', (<any>config.packs)[packId], path)
 }
 
 async function runLightningCacheScript(script: string, path: string, value: string): Promise<any> {
+	runtime.clearCache()
+
 	const scriptResult = await runtime.run(
 		path,
 		{
@@ -96,6 +96,8 @@ async function handleJsonInstructions(
 		}
 
 		if (pathScript !== undefined) {
+			runtime.clearCache()
+
 			paths = (
 				await runtime.run(
 					filePath,
@@ -116,24 +118,32 @@ async function handleJsonInstructions(
 		let foundData: string[] = []
 
 		for (const jsonPath of paths) {
-			walkObject(jsonPath, json, async (data) => {
-				if (typeof data === 'object') data = Object.keys(data)
-				if (!Array.isArray(data)) data = [data]
+			let promises: Promise<void>[] = []
 
-				if (filter !== undefined) data = data.filter((value: string) => !filter.includes(value))
+			walkObject(jsonPath, json, (data) => {
+				promises.push(
+					(async () => {
+						if (typeof data === 'object') data = Object.keys(data)
+						if (!Array.isArray(data)) data = [data]
 
-				if (script !== undefined) {
-					data = (
-						await Promise.all(
-							data.map(async (value: string) => {
-								return await runLightningCacheScript(script, filePath, value)
-							})
-						)
-					).filter((value: unknown) => value !== undefined)
-				}
+						if (filter !== undefined) data = data.filter((value: string) => !filter.includes(value))
 
-				foundData = foundData.concat(data)
+						if (script !== undefined) {
+							data = (
+								await Promise.all(
+									data.map(async (value: string) => {
+										return await runLightningCacheScript(script, filePath, value)
+									})
+								)
+							).filter((value: unknown) => value !== undefined)
+						}
+
+						foundData = foundData.concat(data)
+					})()
+				)
 			})
+
+			await Promise.all(promises)
 		}
 
 		data[cacheKey] = foundData
@@ -149,6 +159,9 @@ async function handleScriptInstructions(path: string, fileType: any, text: strin
 	let data: { [key: string]: any } = {}
 
 	const module: any = {}
+
+	runtime.clearCache()
+
 	await runtime.run(
 		path,
 		{

@@ -246,15 +246,12 @@ export class SchemaData implements Disposable {
 			const schemaPathToRebase = schemasToRebaseQueue.shift()!
 			rebasedSchemas.push(schemaPathToRebase)
 
-			let schema = deepMergeAll(
-				[
-					generatedDynamicSchemas[schemaPathToRebase],
-					generatedGlobalSchemas[schemaPathToRebase],
-					contextLightningCacheSchemas[schemaPathToRebase],
-					this.lightningCacheSchemas[schemaPathToRebase],
-					this.schemas[schemaPathToRebase],
-				].filter((schema) => schema !== undefined)
-			)
+			let schema =
+				generatedDynamicSchemas[schemaPathToRebase] ??
+				generatedGlobalSchemas[schemaPathToRebase] ??
+				contextLightningCacheSchemas[schemaPathToRebase] ??
+				this.lightningCacheSchemas[schemaPathToRebase] ??
+				this.schemas[schemaPathToRebase]
 
 			if (schema === undefined) {
 				console.warn('Failed to load schema reference', schemaPathToRebase)

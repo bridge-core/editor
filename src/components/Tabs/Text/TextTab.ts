@@ -100,6 +100,8 @@ export class TextTab extends FileTab {
 		const schemaData = ProjectManager.currentProject.schemaData
 
 		schemaData.addFileForUpdate(this.path, this.fileType?.id, this.fileType?.schema)
+
+		await schemaData.updateSchemaForFile(this.path, this.fileType?.id, this.fileType?.schema)
 	}
 
 	public async deactivate() {
