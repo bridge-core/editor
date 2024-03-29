@@ -120,7 +120,12 @@ async function create() {
 			rpAsBpDependency: linkResourcePack.value,
 			bpAsRpDependency: linkBehaviourPack.value,
 			uuids: Object.fromEntries(selectedPackTypes.value.map((packType) => [packType.id, uuid()])),
-			experiments: selectedExperimentalToggles.value.map((toggle) => toggle.id),
+			experiments: Object.fromEntries(
+				experimentalToggles.value.map((toggle) => [
+					toggle.id,
+					selectedExperimentalToggles.value.includes(toggle),
+				])
+			),
 		},
 		fileSystem
 	)

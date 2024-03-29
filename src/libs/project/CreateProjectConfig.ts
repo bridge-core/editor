@@ -9,6 +9,6 @@ export interface CreateProjectConfig {
 	configurableFiles: string[]
 	rpAsBpDependency: boolean
 	bpAsRpDependency: boolean
-	uuids: { [key: string]: string }
-	experiments: string[]
+	uuids: Record<string, string>
+	experiments: Record<string, boolean>
 }
