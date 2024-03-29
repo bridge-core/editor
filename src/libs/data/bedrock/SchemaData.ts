@@ -5,7 +5,7 @@ import { basename, dirname, join } from '@/libs/path'
 import { CompatabilityFileSystem } from '@/libs/fileSystem/CompatabilityFileSystem'
 import { BedrockProject } from '@/libs/project/BedrockProject'
 import { v4 as uuid } from 'uuid'
-import { deepMergeAll, walkObject } from 'bridge-common-utils'
+import { walkObject } from 'bridge-common-utils'
 import { ProjectManager } from '@/libs/project/ProjectManager'
 import { Data } from '@/libs/data/Data'
 import { Disposable, disposeAll } from '@/libs/disposeable/Disposeable'
@@ -447,6 +447,20 @@ export class SchemaData implements Disposable {
 				type: 'string',
 				enum: scriptData.data,
 			}
+		} else if (scriptData.type === 'properties') {
+			return {
+				type: 'object',
+				properties: Object.fromEntries(scriptData.data.map((res: string) => [res, {}])),
+			}
+		} else if (scriptData.type === 'object') {
+			return {
+				type: 'string',
+				properties: scriptData.data,
+			}
+		} else if (scriptData.type === 'custom') {
+			return scriptData.data
+		} else {
+			console.warn('Unexpected script data type:', scriptData)
 		}
 
 		return undefined
