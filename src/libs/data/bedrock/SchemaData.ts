@@ -31,18 +31,19 @@ export class SchemaData implements Disposable {
 
 	private staticGeneratedSchemas: any = {}
 
-	private fileSchemas: {
-		[key: string]: {
+	private lightningCacheSchemas: Record<string, any> = {}
+
+	private fileSchemas: Record<
+		string,
+		{
 			main: string
-			localSchemas: {
-				[key: string]: any
-			}
+			localSchemas: Record<string, any>
 		}
-	} = {}
+	> = {}
+
+	private filesToUpdate: { path: string; fileType?: string; schemaUri?: string }[] = []
 
 	private runtime = new Runtime(fileSystem)
-
-	private lightningCacheSchemas: Record<string, any> = {}
 
 	private disposables: Disposable[] = []
 
@@ -100,6 +101,10 @@ export class SchemaData implements Disposable {
 				}
 			}
 		}
+
+		for (const file of this.filesToUpdate) {
+			this.updateSchemaForFile(file.path, file.fileType, file.schemaUri)
+		}
 	}
 
 	private rebaseReferences(
@@ -148,7 +153,7 @@ export class SchemaData implements Disposable {
 		}
 	}
 
-	public async applySchemaForFile(path: string, fileType?: string, schemaUri?: string) {
+	public async updateSchemaForFile(path: string, fileType?: string, schemaUri?: string) {
 		if (schemaUri === undefined) {
 			if (this.fileSchemas[path] !== undefined) delete this.fileSchemas[path]
 
@@ -238,6 +243,17 @@ export class SchemaData implements Disposable {
 		}
 
 		this.updateDefaults()
+	}
+
+	public addFileForUpdate(path: string, fileType?: string, schemaUri?: string) {
+		this.filesToUpdate.push({ path, fileType, schemaUri })
+	}
+
+	public removeFileForUpdate(path: string) {
+		this.filesToUpdate.splice(
+			this.filesToUpdate.findIndex((file) => file.path === path),
+			1
+		)
 	}
 
 	private updateDefaults() {

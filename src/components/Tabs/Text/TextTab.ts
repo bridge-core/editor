@@ -80,7 +80,7 @@ export class TextTab extends FileTab {
 		const schemaData = ProjectManager.currentProject.schemaData
 		const scriptTypeData = ProjectManager.currentProject.scriptTypeData
 
-		await schemaData.applySchemaForFile(this.path, this.fileType?.id, this.fileType?.schema)
+		await schemaData.updateSchemaForFile(this.path, this.fileType?.id, this.fileType?.schema)
 
 		await scriptTypeData.applyTypes(this.fileType?.types ?? [])
 
@@ -91,6 +91,24 @@ export class TextTab extends FileTab {
 		disposeAll(this.disposables)
 
 		this.model?.dispose()
+	}
+
+	public async activate() {
+		if (!ProjectManager.currentProject) return
+		if (!(ProjectManager.currentProject instanceof BedrockProject)) return
+
+		const schemaData = ProjectManager.currentProject.schemaData
+
+		schemaData.addFileForUpdate(this.path, this.fileType?.id, this.fileType?.schema)
+	}
+
+	public async deactivate() {
+		if (!ProjectManager.currentProject) return
+		if (!(ProjectManager.currentProject instanceof BedrockProject)) return
+
+		const schemaData = ProjectManager.currentProject.schemaData
+
+		schemaData.removeFileForUpdate(this.path)
 	}
 
 	public async mountEditor(element: HTMLElement) {
