@@ -25,6 +25,8 @@ export class TextTab extends FileTab {
 
 	private disposables: Disposable[] = []
 
+	private savedViewState: editor.ICodeEditorViewState | undefined = undefined
+
 	public static canEdit(path: string): boolean {
 		return true
 	}
@@ -39,7 +41,7 @@ export class TextTab extends FileTab {
 		})
 	}
 
-	public async setupTab() {
+	public async create() {
 		if (!ProjectManager.currentProject) return
 		if (!(ProjectManager.currentProject instanceof BedrockProject)) return
 
@@ -47,13 +49,48 @@ export class TextTab extends FileTab {
 
 		this.fileType = fileTypeData.get(this.path)
 
-		if (this.fileType === null) return
+		if (this.fileType !== null) {
+			this.hasDocumentation.value = this.fileType.documentation !== undefined
 
-		this.hasDocumentation.value = this.fileType.documentation !== undefined
+			if (this.fileType.icon !== undefined) this.fileTypeIcon = this.fileType.icon
+		}
 
-		if (this.fileType.icon === undefined) return
+		const fileContent = await fileSystem.readFileText(this.path)
 
-		this.fileTypeIcon = this.fileType.icon
+		this.model = monaco.getModel(Uri.file(this.path))
+
+		this.language.value = this.fileType?.meta.language ?? 'plaintext'
+
+		if (this.model === null) {
+			this.model = monaco.createModel(
+				fileContent,
+				this.fileType?.meta.language ?? 'plaintext',
+				Uri.file(this.path)
+			)
+		}
+
+		this.disposables.push(
+			this.model.onDidChangeLanguageConfiguration(() => {
+				if (this.editor === undefined) return
+
+				this.updateEditorTheme()
+			})
+		)
+
+		const schemaData = ProjectManager.currentProject.schemaData
+		const scriptTypeData = ProjectManager.currentProject.scriptTypeData
+
+		await schemaData.applySchemaForFile(this.path, this.fileType?.id, this.fileType?.schema)
+
+		await scriptTypeData.applyTypes(this.fileType?.types ?? [])
+
+		this.icon.value = this.fileTypeIcon
+	}
+
+	public async destroy() {
+		disposeAll(this.disposables)
+
+		this.model?.dispose()
 	}
 
 	public async mountEditor(element: HTMLElement) {
@@ -72,42 +109,14 @@ export class TextTab extends FileTab {
 			contextmenu: false,
 		})
 
-		const fileContent = await fileSystem.readFileText(this.path)
-
-		this.model = monaco.getModel(Uri.file(this.path))
-
-		this.language.value = this.fileType?.meta.language ?? 'plaintext'
-
-		if (this.model === null) {
-			this.model = monaco.createModel(
-				fileContent,
-				this.fileType?.meta.language ?? 'plaintext',
-				Uri.file(this.path)
-			)
-		}
-
 		this.editor.setModel(this.model)
 
-		this.disposables.push(
-			this.model.onDidChangeLanguageConfiguration(() => {
-				this.updateEditorTheme()
-			})
-		)
-
-		const schemaData = ProjectManager.currentProject.schemaData
-		const scriptTypeData = ProjectManager.currentProject.scriptTypeData
-
-		await schemaData.applySchemaForFile(this.path, this.fileType?.id, this.fileType?.schema)
-
-		await scriptTypeData.applyTypes(this.fileType?.types ?? [])
-
-		this.icon.value = this.fileTypeIcon
+		if (this.savedViewState) this.editor.restoreViewState(this.savedViewState)
 	}
 
 	public unmountEditor() {
-		disposeAll(this.disposables)
+		this.savedViewState = this.editor?.saveViewState() ?? undefined
 
-		this.model?.dispose()
 		this.editor?.dispose()
 	}
 

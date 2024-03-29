@@ -16,7 +16,7 @@ export class FileTab extends Tab {
 		return false
 	}
 
-	public async setupTab() {}
+	public async create() {}
 	public async destroy() {}
 	public async activate() {}
 	public async deactivate() {}

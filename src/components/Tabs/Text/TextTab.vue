@@ -38,8 +38,6 @@ onMounted(async () => {
 })
 
 onUnmounted(() => {
-	if (!editorElement.value) return
-
 	instance.unmountEditor()
 })
 

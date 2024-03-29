@@ -15,7 +15,7 @@ export class TabSystem {
 			return
 		}
 
-		await tab.setupTab()
+		await tab.create()
 
 		this.tabs.value.push(tab)
 

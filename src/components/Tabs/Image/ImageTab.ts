@@ -11,7 +11,7 @@ export class ImageTab extends FileTab {
 		return path.endsWith('.png')
 	}
 
-	public async setupTab() {
+	public async create() {
 		this.image.value = await fileSystem.readFileDataUrl(this.path)
 	}
 }
