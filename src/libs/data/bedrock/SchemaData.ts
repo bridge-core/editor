@@ -5,7 +5,7 @@ import { basename, dirname, join } from '@/libs/path'
 import { CompatabilityFileSystem } from '@/libs/fileSystem/CompatabilityFileSystem'
 import { BedrockProject } from '@/libs/project/BedrockProject'
 import { v4 as uuid } from 'uuid'
-import { walkObject } from 'bridge-common-utils'
+import { deepMergeAll, walkObject } from 'bridge-common-utils'
 import { ProjectManager } from '@/libs/project/ProjectManager'
 import { Data } from '@/libs/data/Data'
 import { Disposable, disposeAll } from '@/libs/disposeable/Disposeable'
@@ -246,22 +246,15 @@ export class SchemaData implements Disposable {
 			const schemaPathToRebase = schemasToRebaseQueue.shift()!
 			rebasedSchemas.push(schemaPathToRebase)
 
-			// if (
-			// 	schemaPathToRebase === 'data/packages/minecraftBedrock/schema/lootTable/dynamic/lootTablePathEnum.json'
-			// ) {
-			// 	console.log(generatedDynamicSchemas[schemaPathToRebase])
-			// 	console.log(generatedGlobalSchemas[schemaPathToRebase])
-			// 	console.log(contextLightningCacheSchemas[schemaPathToRebase])
-			// 	console.log(this.lightningCacheSchemas[schemaPathToRebase])
-			// 	console.log(this.schemas[schemaPathToRebase])
-			// }
-
-			let schema =
-				generatedDynamicSchemas[schemaPathToRebase] ??
-				generatedGlobalSchemas[schemaPathToRebase] ??
-				contextLightningCacheSchemas[schemaPathToRebase] ??
-				this.lightningCacheSchemas[schemaPathToRebase] ??
-				this.schemas[schemaPathToRebase]
+			let schema = deepMergeAll(
+				[
+					generatedDynamicSchemas[schemaPathToRebase],
+					generatedGlobalSchemas[schemaPathToRebase],
+					contextLightningCacheSchemas[schemaPathToRebase],
+					this.lightningCacheSchemas[schemaPathToRebase],
+					this.schemas[schemaPathToRebase],
+				].filter((schema) => schema !== undefined)
+			)
 
 			if (schema === undefined) {
 				console.warn('Failed to load schema reference', schemaPathToRebase)
