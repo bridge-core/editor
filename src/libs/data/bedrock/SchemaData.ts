@@ -23,13 +23,19 @@ Optimizations:
 - pregenerate generated schemas for all the non dynamic schema scripts when the project loads to save time.
 */
 
+interface SchemaScriptResult {
+	data: any
+	result: any
+}
+
 export class SchemaData implements Disposable {
 	private schemas: any = {}
 
 	private schemaScripts: any = {}
-	private dynamicSchemaScripts: string[] = []
-
-	private staticGeneratedSchemas: any = {}
+	private globalSchemaScriptResults: Record<string, SchemaScriptResult> = {}
+	private localSchemaScripts: string[] = []
+	private indexerSchemaScripts: string[] = []
+	private fileSystemSchemaScripts: string[] = []
 
 	private lightningCacheSchemas: Record<string, any> = {}
 
@@ -57,6 +63,7 @@ export class SchemaData implements Disposable {
 
 	public async load() {
 		this.disposables.push(this.project.indexerService.updated.on(this.indexerUpdated.bind(this)))
+		this.disposables.push(fileSystem.pathUpdated.on(this.pathUpdated.bind(this)))
 
 		this.indexerUpdated()
 
@@ -67,14 +74,14 @@ export class SchemaData implements Disposable {
 
 		this.schemaScripts = this.fixPaths(await Data.get('packages/minecraftBedrock/schemaScripts.json'))
 
-		await this.generateStaticGeneratedSchemas()
+		await this.runAllSchemaScripts()
 	}
 
 	public dispose() {
 		disposeAll(this.disposables)
 	}
 
-	private indexerUpdated() {
+	private async indexerUpdated() {
 		for (const fileType of this.project.fileTypeData.fileTypes.map((fileType) => fileType.id)) {
 			const chachedData = this.project.indexerService.getCachedData(fileType)
 
@@ -100,6 +107,36 @@ export class SchemaData implements Disposable {
 					properties: Object.fromEntries(collectedData[key].map((d: any) => [d, {}])),
 				}
 			}
+		}
+
+		for (const [path, scriptData] of Object.entries(this.schemaScripts)) {
+			if (!this.indexerSchemaScripts.includes(path)) continue
+
+			const result = await this.runScript(path, scriptData)
+
+			if (this.localSchemaScripts.includes(path)) continue
+
+			if (result === null) continue
+
+			this.globalSchemaScriptResults[path] = result
+		}
+
+		for (const file of this.filesToUpdate) {
+			this.updateSchemaForFile(file.path, file.fileType, file.schemaUri)
+		}
+	}
+
+	private async pathUpdated() {
+		for (const [path, scriptData] of Object.entries(this.schemaScripts)) {
+			if (!this.fileSystemSchemaScripts.includes(path)) continue
+
+			const result = await this.runScript(path, scriptData)
+
+			if (this.localSchemaScripts.includes(path)) continue
+
+			if (result === null) continue
+
+			this.globalSchemaScriptResults[path] = result
 		}
 
 		for (const file of this.filesToUpdate) {
@@ -164,25 +201,22 @@ export class SchemaData implements Disposable {
 
 		if (schemaUri.startsWith('file:///')) schemaUri = schemaUri.substring('file:///'.length)
 
+		const generatedGlobalSchemas: Record<string, any> = {}
+
+		for (const [scriptPath, result] of Object.entries(this.globalSchemaScriptResults)) {
+			generatedGlobalSchemas[join('data/packages/minecraftBedrock/schema/', result.data.generateFile)] =
+				result.result
+		}
+
 		const generatedDynamicSchemas: Record<string, any> = {}
 
-		for (const scriptPath of this.dynamicSchemaScripts) {
-			let scriptData = this.schemaScripts[scriptPath]
+		for (const scriptPath of this.localSchemaScripts) {
+			const result = await this.runScript(scriptPath, this.schemaScripts[scriptPath], path)
 
-			const scriptResult = await this.runScript(
-				scriptPath,
-				typeof scriptData === 'string' ? scriptData : scriptData.script,
-				path
-			)
+			if (result === null) continue
 
-			if (typeof scriptData === 'string') {
-				scriptData = scriptResult.result
-			} else {
-				scriptData.data = scriptResult.result
-			}
-
-			generatedDynamicSchemas[join('data/packages/minecraftBedrock/schema/', scriptData.generateFile)] =
-				this.processScriptData(scriptData)
+			generatedDynamicSchemas[join('data/packages/minecraftBedrock/schema/', result.data.generateFile)] =
+				result.result
 		}
 
 		const contextLightningCacheSchemas: Record<string, any> = {}
@@ -212,11 +246,21 @@ export class SchemaData implements Disposable {
 			const schemaPathToRebase = schemasToRebaseQueue.shift()!
 			rebasedSchemas.push(schemaPathToRebase)
 
+			if (
+				schemaPathToRebase === 'data/packages/minecraftBedrock/schema/lootTable/dynamic/lootTablePathEnum.json'
+			) {
+				console.log(generatedDynamicSchemas[schemaPathToRebase])
+				console.log(generatedGlobalSchemas[schemaPathToRebase])
+				console.log(contextLightningCacheSchemas[schemaPathToRebase])
+				console.log(this.lightningCacheSchemas[schemaPathToRebase])
+				console.log(this.schemas[schemaPathToRebase])
+			}
+
 			let schema =
+				generatedDynamicSchemas[schemaPathToRebase] ??
+				generatedGlobalSchemas[schemaPathToRebase] ??
 				contextLightningCacheSchemas[schemaPathToRebase] ??
 				this.lightningCacheSchemas[schemaPathToRebase] ??
-				generatedDynamicSchemas[schemaPathToRebase] ??
-				this.staticGeneratedSchemas[schemaPathToRebase] ??
 				this.schemas[schemaPathToRebase]
 
 			if (schema === undefined) {
@@ -270,82 +314,57 @@ export class SchemaData implements Disposable {
 		)
 	}
 
-	private async generateStaticGeneratedSchemas() {
-		this.staticGeneratedSchemas = {}
-		this.dynamicSchemaScripts = []
+	private async runAllSchemaScripts() {
+		for (const [path, scriptData] of Object.entries(this.schemaScripts)) {
+			const result = await this.runScript(path, scriptData)
 
-		const promises = []
+			if (this.localSchemaScripts.includes(path)) continue
 
-		for (const scriptPath of Object.keys(this.schemaScripts)) {
-			promises.push(this.generateStaticSchema(scriptPath, this.schemaScripts[scriptPath]))
+			if (result === null) continue
+
+			this.globalSchemaScriptResults[path] = result
 		}
 
-		await Promise.all(promises)
-	}
-
-	private async generateStaticSchema(scriptPath: string, scriptData: any) {
-		const scriptResult = await this.runScript(
-			scriptPath,
-			typeof scriptData === 'string' ? scriptData : scriptData.script
-		)
-
-		if (scriptResult.dynamic) {
-			this.dynamicSchemaScripts.push(scriptPath)
-
-			return
-		}
-
-		if (typeof scriptData === 'string') {
-			scriptData = scriptResult.result
-		} else {
-			scriptData.data = scriptResult.result
-		}
-
-		if (scriptData === undefined) return
-
-		this.staticGeneratedSchemas[join('data/packages/minecraftBedrock/schema/', scriptData.generateFile)] =
-			this.processScriptData(scriptData)
-	}
-
-	private processScriptData(scriptData: any): any {
-		if (scriptData.type === 'enum') {
-			return {
-				type: 'string',
-				enum: scriptData.data,
-			}
-		}
-
-		return undefined
+		console.log(this.globalSchemaScriptResults)
+		console.log(this.localSchemaScripts)
+		console.log(this.indexerSchemaScripts)
+		console.log(this.fileSystemSchemaScripts)
 	}
 
 	private async runScript(
 		scriptPath: string,
-		script: string,
+		scriptData: any,
 		filePath?: string
-	): Promise<{ dynamic: boolean; result?: any }> {
+	): Promise<SchemaScriptResult | null> {
+		const script: string = typeof scriptData === 'string' ? scriptData : scriptData.script
+
 		const compatabilityFileSystem = new CompatabilityFileSystem(fileSystem)
 
 		const formatVersions = (await Data.get('packages/minecraftBedrock/formatVersions.json')).formatVersions
 
-		let dynamicSchema = false
-
-		let invalidJson = true
 		let fileJson: any = undefined
 
 		if (filePath !== undefined) {
 			try {
 				fileJson = await fileSystem.readFileJson(filePath)
-
-				invalidJson = false
 			} catch {}
 		}
 
+		const me = this
+
 		try {
-			const result = await (
+			this.runtime.clearCache()
+
+			const runResult = await (
 				await this.runtime.run(
 					scriptPath,
 					{
-						readdir: compatabilityFileSystem.readdir.bind(compatabilityFileSystem),
+						readdir: (path: string) => {
+							if (!me.fileSystemSchemaScripts.includes(scriptPath))
+								me.fileSystemSchemaScripts.push(scriptPath)
+
+							return compatabilityFileSystem.readdir.call(compatabilityFileSystem, path)
+						},
 						resolvePackPath(packId: string, path?: string) {
 							if (!ProjectManager.currentProject) return ''
 
@@ -355,6 +374,8 @@ export class SchemaData implements Disposable {
 							return formatVersions
 						},
 						getCacheDataFor(fileType: string, filePath?: string, cacheKey?: string) {
+							if (!me.indexerSchemaScripts.includes(scriptPath)) me.indexerSchemaScripts.push(scriptPath)
+
 							return Promise.resolve(
 								(ProjectManager.currentProject as BedrockProject).indexerService.getCachedData(
 									fileType,
@@ -370,7 +391,7 @@ export class SchemaData implements Disposable {
 							return ProjectManager.currentProject?.config?.namespace
 						},
 						getFileName() {
-							dynamicSchema = true
+							if (!me.localSchemaScripts.includes(scriptPath)) me.localSchemaScripts.push(scriptPath)
 
 							if (filePath === undefined) return undefined
 
@@ -378,7 +399,7 @@ export class SchemaData implements Disposable {
 						},
 						uuid,
 						get(path: string) {
-							dynamicSchema = true
+							if (!me.localSchemaScripts.includes(scriptPath)) me.localSchemaScripts.push(scriptPath)
 
 							if (fileJson === undefined) return []
 
@@ -394,35 +415,50 @@ export class SchemaData implements Disposable {
 							return {}
 						},
 						getIndexedPaths(fileType: string, sort: boolean) {
+							if (!me.indexerSchemaScripts.includes(scriptPath)) me.indexerSchemaScripts.push(scriptPath)
+
 							if (!(ProjectManager.currentProject instanceof BedrockProject)) return Promise.resolve([])
 
 							return Promise.resolve(ProjectManager.currentProject.indexerService.getIndexedFiles())
 						},
-						failedCurrentFileLoad() {
-							dynamicSchema = true
-
-							return invalidJson
-						},
+						failedCurrentFileLoad: undefined,
 					},
 					`
-				___module.execute = async function(){
-					${script}
-				}
-			`
+			___module.execute = async function(){
+				${script}
+			}
+		`
 				)
 			).execute()
 
+			if (typeof scriptData === 'string') {
+				scriptData = runResult
+			} else {
+				scriptData.data = runResult
+			}
+
 			return {
-				dynamic: dynamicSchema,
-				result,
+				data: scriptData,
+				result: this.processScriptData(scriptData),
 			}
 		} catch (err) {
 			console.error('Error running schema script ', scriptPath)
 			console.error(err)
 
+			return null
+		}
+	}
+
+	private processScriptData(scriptData: any): any {
+		if (scriptData === undefined) return undefined
+
+		if (scriptData.type === 'enum') {
 			return {
-				dynamic: dynamicSchema,
+				type: 'string',
+				enum: scriptData.data,
 			}
 		}
+
+		return undefined
 	}
 }
