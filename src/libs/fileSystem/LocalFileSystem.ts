@@ -6,6 +6,8 @@ export class LocalFileSystem extends BaseFileSystem {
 
 	private rootName: string | null = null
 
+	private pathsToWatch: string[] = []
+
 	public setRootName(name: string) {
 		this.rootName = name
 	}
@@ -44,7 +46,8 @@ export class LocalFileSystem extends BaseFileSystem {
 			content,
 		})
 
-		this.pathUpdated.dispatch(path)
+		if (this.pathsToWatch.find((watchPath) => path.startsWith(watchPath)) !== undefined)
+			this.pathUpdated.dispatch(path)
 	}
 
 	public async removeFile(path: string) {
@@ -52,7 +55,8 @@ export class LocalFileSystem extends BaseFileSystem {
 
 		await del(`localFileSystem/${this.rootName}/${path}`)
 
-		this.pathUpdated.dispatch(path)
+		if (this.pathsToWatch.find((watchPath) => path.startsWith(watchPath)) !== undefined)
+			this.pathUpdated.dispatch(path)
 	}
 
 	public async makeDirectory(path: string) {
@@ -62,7 +66,8 @@ export class LocalFileSystem extends BaseFileSystem {
 			kind: 'directory',
 		})
 
-		this.pathUpdated.dispatch(path)
+		if (this.pathsToWatch.find((watchPath) => path.startsWith(watchPath)) !== undefined)
+			this.pathUpdated.dispatch(path)
 	}
 
 	public async removeDirectory(path: string) {
@@ -70,7 +75,8 @@ export class LocalFileSystem extends BaseFileSystem {
 
 		await del(`localFileSystem/${this.rootName}/${path}`)
 
-		this.pathUpdated.dispatch(path)
+		if (this.pathsToWatch.find((watchPath) => path.startsWith(watchPath)) !== undefined)
+			this.pathUpdated.dispatch(path)
 	}
 
 	public async exists(path: string): Promise<boolean> {
@@ -88,5 +94,13 @@ export class LocalFileSystem extends BaseFileSystem {
 			.filter((key) => key.startsWith(`localFileSystem/${this.rootName}/`))
 
 		return localFSKeys
+	}
+
+	public async watch(path: string) {
+		this.pathsToWatch.push(path)
+	}
+
+	public async unwatch(path: string) {
+		this.pathsToWatch.splice(this.pathsToWatch.indexOf(path), 1)
 	}
 }

@@ -91,6 +91,14 @@ export class BaseFileSystem {
 	public async exists(path: string): Promise<boolean> {
 		throw new Error('Not implemented!')
 	}
+
+	public async watch(path: string) {
+		throw new Error('Not implemented!')
+	}
+
+	public async unwatch(path: string) {
+		throw new Error('Not implemented!')
+	}
 }
 
 export class BaseEntry {

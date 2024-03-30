@@ -16,6 +16,7 @@ import { listen } from '@tauri-apps/api/event'
 export class TauriFileSystem extends BaseFileSystem {
 	private basePath: string | null = null
 	private textEncoder = new TextEncoder()
+	private pathsToWatch: string[] = []
 
 	public setBasePath(newPath: string) {
 		this.basePath = newPath
@@ -27,6 +28,7 @@ export class TauriFileSystem extends BaseFileSystem {
 
 			const paths = (event.payload as string[])
 				.filter((path) => path.startsWith(this.basePath!))
+				.filter((path) => this.pathsToWatch.find((watchPath) => path.startsWith(watchPath)) !== undefined)
 				.map((path) => path.substring(this.basePath!.length))
 
 			for (const path of paths) {
@@ -200,5 +202,13 @@ export class TauriFileSystem extends BaseFileSystem {
 
 			throw error
 		}
+	}
+
+	public async watch(path: string) {
+		this.pathsToWatch.push(path)
+	}
+
+	public async unwatch(path: string) {
+		this.pathsToWatch.splice(this.pathsToWatch.indexOf(path), 1)
 	}
 }

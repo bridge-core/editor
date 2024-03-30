@@ -20,8 +20,6 @@ export async function selectOrLoadBridgeFolder() {
 	if (!fileSystem.baseHandle && savedHandle && (await fileSystem.ensurePermissions(savedHandle))) {
 		fileSystem.setBaseHandle(savedHandle)
 
-		fileSystem.startCache()
-
 		return
 	}
 
@@ -33,7 +31,5 @@ export async function selectOrLoadBridgeFolder() {
 		)
 
 		set('bridgeFolderHandle', fileSystem.baseHandle)
-
-		fileSystem.startCache()
 	} catch {}
 }

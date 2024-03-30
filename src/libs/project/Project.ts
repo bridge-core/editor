@@ -37,6 +37,8 @@ export class Project implements AsyncDisposable {
 		this.projectOutputFolderHandleKey = `projectOutputFolderHandle-${this.name}`
 		this.usingProjectOutputFolderKey = `usingProjectFolder-${this.name}`
 
+		fileSystem.watch(this.path)
+
 		if (!(this.outputFileSystem instanceof LocalFileSystem)) return
 
 		this.outputFileSystem.setRootName(this.name)
@@ -64,6 +66,8 @@ export class Project implements AsyncDisposable {
 	}
 
 	public async dispose() {
+		fileSystem.unwatch(this.path)
+
 		disposeAll(this.disposables)
 
 		Extensions.disposeProjectExtensions()

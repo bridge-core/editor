@@ -11,6 +11,14 @@ export class PWAFileSystem extends BaseFileSystem {
 
 	private cache: { [key: string]: string } = {}
 
+	private pathsToWatch: string[] = []
+
+	constructor() {
+		super()
+
+		this.checkForUpdates()
+	}
+
 	public get setup(): boolean {
 		return this.baseHandle !== null
 	}
@@ -19,14 +27,6 @@ export class PWAFileSystem extends BaseFileSystem {
 		this.baseHandle = handle
 
 		this.reloaded.dispatch(undefined)
-	}
-
-	public async startCache() {
-		await this.indexPath('/')
-
-		setInterval(() => {
-			this.checkForUpdate('/')
-		}, 1000)
 	}
 
 	protected async traverse(path: string): Promise<FileSystemDirectoryHandle> {
@@ -304,6 +304,16 @@ export class PWAFileSystem extends BaseFileSystem {
 		return false
 	}
 
+	public async watch(path: string) {
+		await this.indexPath(path)
+
+		this.pathsToWatch.push(path)
+	}
+
+	public async unwatch(path: string) {
+		this.pathsToWatch.splice(this.pathsToWatch.indexOf(path), 1)
+	}
+
 	public useSetup(): Ref<boolean> {
 		const setup = ref(this.setup)
 
@@ -319,6 +329,16 @@ export class PWAFileSystem extends BaseFileSystem {
 		onUnmounted(() => disposable.dispose())
 
 		return setup
+	}
+
+	private async checkForUpdates() {
+		for (const path of this.pathsToWatch) {
+			await this.checkForUpdate(path)
+		}
+
+		setTimeout(() => {
+			this.checkForUpdates()
+		}, 1000)
 	}
 
 	private async generateFileHash(path: string): Promise<string> {
