@@ -1,8 +1,5 @@
 <template>
-	<div
-		class="bg-menuAlternate overflow-hidden transition-[height] duration-100 ease-out"
-		ref="container"
-	>
+	<div class="bg-background-secondary overflow-hidden transition-[height] duration-100 ease-out" ref="container">
 		<div class="h-auto" ref="sizing">
 			<div
 				class="h-10 flex items-center p-3 justify-between cursor-pointer group"

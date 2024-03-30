@@ -33,7 +33,7 @@
 
 *::-webkit-scrollbar-thumb {
 	border-radius: 24px;
-	background-color: var(--theme-color-menu);
+	background-color: var(--theme-color-backgroundSecondary);
 }
 
 summary::-webkit-details-marker {

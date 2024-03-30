@@ -123,7 +123,7 @@ function executeContextMenuAction(action: string, data: any) {
 	<div class="w-96 h-full mt-2 flex flex-col gap-2" v-if="FileExplorer.open.value">
 		<div class="bg-background-secondary rounded h-16 flex items-center p-3 gap-3">
 			<img :src="currentProject?.icon ?? ''" class="w-10 h-10 select-none" />
-			<p class="text-3xl select-none font-inter font-medium">
+			<p class="text-3xl select-none font-inter font-medium truncate">
 				{{ currentProject?.name }}
 			</p>
 		</div>

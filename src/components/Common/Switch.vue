@@ -4,8 +4,11 @@
 			<div
 				class="w-full h-full rounded-full transition-colors duration-100 ease-out border-2"
 				:class="{
-					'border-background-secondary': !modelValue,
+					'border-[var(--color)]': !modelValue,
 					'border-primary': modelValue,
+				}"
+				:style="{
+					'--color': `var(--theme-color-${borderColor})`,
 				}"
 			/>
 
@@ -24,6 +27,10 @@
 defineProps({
 	modelValue: {
 		type: Boolean,
+	},
+	borderColor: {
+		type: String,
+		default: 'backgroundSecondary',
 	},
 })
 defineEmits(['update:modelValue'])

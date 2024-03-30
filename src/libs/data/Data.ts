@@ -128,7 +128,7 @@ export class Data {
 }
 
 export function useGetData(): Ref<(path: string) => undefined | any> {
-	const get = ref((path: string) => Promise.resolve(undefined))
+	const get = ref((path: string) => Data.get(path))
 
 	function updateGet() {
 		get.value = (path: string) => Data.get(path)

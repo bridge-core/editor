@@ -8,8 +8,8 @@ import InformativeToggle from '@/components/Common/InformativeToggle.vue'
 import Expandable from '@/components/Common/Expandable.vue'
 import Dropdown from '@/components/Common/Dropdown.vue'
 
-import { Ref, computed, ref, watch } from 'vue'
-import { IPackType } from 'mc-project-core'
+import { Ref, computed, onMounted, ref, watch } from 'vue'
+import { IPackType, PackType } from 'mc-project-core'
 import { ProjectManager, packs } from '@/libs/project/ProjectManager'
 import { ConfigurableFile } from '@/libs/project/create/files/configurable/ConfigurableFile'
 import { FormatVersionDefinitions, ExperimentalToggle, useGetData, Data } from '@/libs/data/Data'
@@ -18,32 +18,30 @@ import { useTranslate } from '@/libs/locales/Locales'
 import { fileSystem } from '@/libs/fileSystem/FileSystem'
 import { Windows } from '../Windows'
 import { CreateProjectWindow } from './CreateProjectWindow'
+import TextButton from '@/components/Common/TextButton.vue'
 
 const t = useTranslate()
 const getData = useGetData()
 
 const projectIconInput: Ref<HTMLInputElement | null> = ref(null)
-const window = ref<Window | null>(null)
 
 const linkBehaviourPack = ref(false)
 const linkResourcePack = ref(false)
 
 function setLinkBehaviourPack(value: boolean) {
-	if (
-		!selectedPackTypes.value.find((pack) => pack.id === 'behaviorPack') ||
-		!selectedPackTypes.value.find((pack) => pack.id === 'resourcePack')
-	)
-		return
+	if (!selectedPackTypes.value.find((pack) => pack.id === 'behaviorPack'))
+		selectPackType(packTypes.value.find((packType) => packType.id === 'behaviorPack')!)
+	if (!selectedPackTypes.value.find((pack) => pack.id === 'resourcePack'))
+		selectPackType(packTypes.value.find((packType) => packType.id === 'resourcePack')!)
 
 	linkBehaviourPack.value = value
 }
 
 function setLinkResourcePack(value: boolean) {
-	if (
-		!selectedPackTypes.value.find((pack) => pack.id === 'behaviorPack') ||
-		!selectedPackTypes.value.find((pack) => pack.id === 'resourcePack')
-	)
-		return
+	if (!selectedPackTypes.value.find((pack) => pack.id === 'behaviorPack'))
+		selectPackType(packTypes.value.find((packType) => packType.id === 'behaviorPack')!)
+	if (!selectedPackTypes.value.find((pack) => pack.id === 'resourcePack'))
+		selectPackType(packTypes.value.find((packType) => packType.id === 'resourcePack')!)
 
 	linkResourcePack.value = value
 }
@@ -61,18 +59,20 @@ const selectedPackTypes: Ref<IPackType[]> = ref([])
 const experimentalToggles: Ref<ExperimentalToggle[]> = ref([])
 const selectedExperimentalToggles: Ref<ExperimentalToggle[]> = ref([])
 
-watch(getData, async (getData) => {
-	packTypes.value = (await getData('packages/minecraftBedrock/packDefinitions.json')) || []
+async function setup() {
+	packTypes.value = (await getData.value('packages/minecraftBedrock/packDefinitions.json')) || []
 
-	experimentalToggles.value = (await getData('packages/minecraftBedrock/experimentalGameplay.json')) || []
+	experimentalToggles.value = (await getData.value('packages/minecraftBedrock/experimentalGameplay.json')) || []
 
 	formatVersionDefinitions.value =
-		<FormatVersionDefinitions>await getData('packages/minecraftBedrock/formatVersions.json') || []
+		<FormatVersionDefinitions>await getData.value('packages/minecraftBedrock/formatVersions.json') || []
 
 	if (!formatVersionDefinitions.value) return
 
 	projectTargetVersion.value = formatVersionDefinitions.value.currentStable
-})
+}
+
+watch(getData, setup)
 
 const availableConfigurableFiles = computed(() => {
 	const files: ConfigurableFile[] = []
@@ -130,7 +130,7 @@ async function create() {
 		fileSystem
 	)
 
-	window.value?.close()
+	Windows.close(CreateProjectWindow)
 }
 
 function selectPackType(packType: IPackType) {
@@ -188,12 +188,14 @@ function chooseProjectIcon() {
 
 	projectIcon.value = projectIconInput.value.files[0]
 }
+
+onMounted(setup)
 </script>
 
 <template>
 	<Window :name="t('windows.createProject.title')" @close="Windows.close(CreateProjectWindow)">
 		<div class="flex flex-col">
-			<div class="max-h-[36rem] overflow-y-scroll p-4 pt-2 m-4 mt-0 max-width overflow-x-auto">
+			<div class="max-h-[38rem] overflow-y-scroll p-4 pt-2 m-4 mt-0 max-width overflow-x-auto">
 				<!-- Pack Types -->
 				<div class="flex gap-3 mb-4">
 					<InformativeToggle
@@ -208,10 +210,11 @@ function chooseProjectIcon() {
 						<div class="flex items-center my-4" v-if="packType.id === 'behaviorPack'">
 							<Switch
 								class="mr-2"
+								border-color="backgroundTertiary"
 								:model-value="linkResourcePack"
 								@update:model-value="setLinkResourcePack"
 							/>
-							<span class="text-xs text-textAlternate select-none font-inter">{{
+							<span class="text-xs text-text-secondary select-none font-inter">{{
 								t('windows.createProject.rpAsBpDependency')
 							}}</span>
 						</div>
@@ -219,10 +222,11 @@ function chooseProjectIcon() {
 						<div class="flex items-center my-4" v-if="packType.id === 'resourcePack'">
 							<Switch
 								class="mr-2"
+								border-color="backgroundTertiary"
 								:model-value="linkBehaviourPack"
 								@update:model-value="setLinkBehaviourPack"
 							/>
-							<span class="text-xs text-textAlternate select-none font-inter">{{
+							<span class="text-xs text-text-secondary select-none font-inter">{{
 								t('windows.createProject.bpAsRpDependency')
 							}}</span>
 						</div>
@@ -270,12 +274,12 @@ function chooseProjectIcon() {
 						<input type="file" class="hidden" ref="projectIconInput" @:change="chooseProjectIcon" />
 
 						<button
-							class="flex align-center gap-2 text-textAlternate font-inter"
+							class="flex align-center gap-2 text-text-secondary font-inter"
 							@mouseenter="focus"
 							@mouseleave="blur"
 							@click="projectIconInput?.click()"
 						>
-							<Icon icon="image" class="no-fill" color="text-textAlternate" />
+							<Icon icon="image" class="no-fill" color="text-text-secondary" />
 							{{ t('windows.createProject.icon.placeholder') }}
 						</button>
 					</LabeledInput>
@@ -286,7 +290,7 @@ function chooseProjectIcon() {
 						v-slot="{ focus, blur }"
 					>
 						<input
-							class="bg-background outline-none max-w-none w-full placeholder:text-textAlternate font-inter"
+							class="bg-background outline-none max-w-none w-full placeholder:text-text-secondary font-inter"
 							@focus="focus"
 							@blur="blur"
 							v-model="projectName"
@@ -301,7 +305,7 @@ function chooseProjectIcon() {
 					v-slot="{ focus, blur }"
 				>
 					<input
-						class="bg-background outline-none max-w-none placeholder:text-textAlternate max-w-none w-full font-inter"
+						class="bg-background outline-none max-w-none placeholder:text-text-secondary max-w-none w-full font-inter"
 						@focus="focus"
 						@blur="blur"
 						v-model="projectDescription"
@@ -316,7 +320,7 @@ function chooseProjectIcon() {
 						v-slot="{ focus, blur }"
 					>
 						<input
-							class="bg-background outline-none placeholder:text-textAlternate max-w-none w-full font-inter"
+							class="bg-background outline-none placeholder:text-text-secondary max-w-none w-full font-inter"
 							@focus="focus"
 							@blur="blur"
 							v-model="projectNamespace"
@@ -330,7 +334,7 @@ function chooseProjectIcon() {
 						v-slot="{ focus, blur }"
 					>
 						<input
-							class="bg-background outline-none placeholder:text-textAlternate max-w-none w-full font-inter"
+							class="bg-background outline-none placeholder:text-text-secondary max-w-none w-full font-inter"
 							@focus="focus"
 							@blur="blur"
 							v-model="projectAuthor"
@@ -358,8 +362,8 @@ function chooseProjectIcon() {
 						</template>
 
 						<template #choices="{ collapse }">
-							<div class="mt-2 bg-menuAlternate w-full p-1 rounded">
-								<div class="flex flex-col max-h-[12rem] overflow-y-auto p-1">
+							<div class="mt-2 bg-background-secondary w-full p-1 rounded">
+								<div class="flex flex-col max-h-[6.5rem] overflow-y-auto p-1 light-scroll">
 									<button
 										v-for="version in formatVersionDefinitions?.formatVersions.slice().reverse()"
 										@click="
@@ -370,7 +374,7 @@ function chooseProjectIcon() {
 										"
 										class="hover:bg-primary text-start p-1 rounded transition-colors duration-100 ease-out font-inter"
 										:class="{
-											'bg-menu': projectTargetVersion === version,
+											'bg-background-tertiary': projectTargetVersion === version,
 										}"
 									>
 										{{ version }}
@@ -382,8 +386,7 @@ function chooseProjectIcon() {
 				</div>
 			</div>
 
-			<Button
-				icon="add"
+			<TextButton
 				:text="t('Create')"
 				@click="create"
 				class="mt-4 mr-8 mb-8 self-end transition-[color, opacity]"
@@ -396,5 +399,9 @@ function chooseProjectIcon() {
 <style scoped>
 .max-width {
 	max-width: min(90vw, 65.5rem);
+}
+
+.light-scroll::-webkit-scrollbar-thumb {
+	background-color: var(--theme-color-backgroundTertiary);
 }
 </style>

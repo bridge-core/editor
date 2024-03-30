@@ -1,6 +1,6 @@
 <template>
 	<div
-		class="cursor-pointer w-60 rounded bg-[var(--color)] hover:border-text p-2 border-2 transition-colors duration-100 ease-out"
+		class="cursor-pointer w-60 rounded bg-[var(--color)] hover:border-accent p-2 border-2 transition-colors duration-100 ease-out"
 		:class="{
 			'!border-primary': selected,
 			'border-[var(--color)]': !selected,
@@ -19,16 +19,14 @@
 		<div class="flex align-center mb-2">
 			<Icon
 				:icon="selected ? 'task_alt' : 'circle'"
-				:color="selected ? 'success' : 'textAlternate'"
+				:color="selected ? 'success' : 'textSecondary'"
 				class="text-base mr-1"
 				:class="{ 'no-fill': !selected }"
 			/>
-			<span class="text-textAlternate select-none font-inter"
-				>Active</span
-			>
+			<span class="text-text-secondary select-none font-inter">Active</span>
 		</div>
 
-		<p class="text-sm select-none text-textAlternate font-inter">
+		<p class="text-sm select-none text-text-secondary font-inter">
 			{{ description }}
 		</p>
 
@@ -62,7 +60,7 @@ defineProps({
 	},
 	background: {
 		type: String,
-		default: 'menuAlternate',
+		default: 'backgroundSecondary',
 	},
 })
 </script>
