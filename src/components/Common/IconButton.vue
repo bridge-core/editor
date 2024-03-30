@@ -1,8 +1,5 @@
 <template>
-	<Icon
-		class="cursor-pointer hover:text-primary transition-colors duration-100 ease-out"
-		:icon="icon"
-	/>
+	<Icon class="cursor-pointer hover:text-primary transition-colors duration-100 ease-out" :icon="icon" />
 </template>
 
 <script setup lang="ts">

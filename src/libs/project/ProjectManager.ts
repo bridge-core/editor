@@ -32,6 +32,7 @@ export interface ProjectInfo {
 	name: string
 	icon: string
 	config: IConfigJson
+	favorite: boolean
 }
 
 export class ProjectManager {
@@ -148,11 +149,44 @@ export class ProjectManager {
 		if (await fileSystem.exists(join(path, defaultPackPaths['skinPack'], 'pack_icon.png')))
 			iconDataUrl = await fileSystem.readFileDataUrl(join(path, 'BP', 'pack_icon.png'))
 
+		let favorites: string[] = []
+
+		try {
+			favorites = JSON.parse((await get('favoriteProjects')) as string)
+		} catch {}
+
 		return {
 			name: basename(path),
 			icon: iconDataUrl,
 			config: await fileSystem.readFileJson(join(path, 'config.json')),
+			favorite: favorites.includes(basename(path)),
 		}
+	}
+
+	public static async toggleFavoriteProject(name: string) {
+		let favorites: string[] = []
+
+		try {
+			favorites = JSON.parse((await get('favoriteProjects')) as string)
+		} catch {}
+
+		if (favorites.includes(name)) {
+			favorites.splice(favorites.indexOf(name), 1)
+		} else {
+			favorites.push(name)
+		}
+
+		const project = ProjectManager.projects.find((project) => project.name === name)
+
+		if (project) {
+			project.favorite = favorites.includes(name)
+
+			ProjectManager.updateProjectCache()
+
+			ProjectManager.updatedProjects.dispatch(undefined)
+		}
+
+		await set('favoriteProjects', JSON.stringify(favorites))
 	}
 
 	public static useProjects(): Ref<ProjectInfo[]> {

@@ -34,6 +34,8 @@ async function openProject(project: ProjectInfo) {
 
 	ProjectManager.loadProject(project.name)
 }
+
+async function edit(name: string) {}
 </script>
 
 <template>
@@ -59,13 +61,16 @@ async function openProject(project: ProjectInfo) {
 
 			<div class="h-px w-full bg-background-secondary mb-1" />
 
-			<div class="flex flex-wrap gap-2 overflow-x-hidden overflow-y-hidden mt-2">
+			<div class="flex flex-wrap gap-2 overflow-x-hidden overflow-y-auto mt-2 max-h-[28rem] project-gallery">
 				<ProjectGalleryEntry
-					v-for="(project, index) in projects"
+					v-for="(project, index) in projects.toSorted((a, b) => (b.favorite ? 1 : 0) - (a.favorite ? 1 : 0))"
 					:key="index"
 					:icon="project.icon"
 					:name="project.name"
+					:favorite="project.favorite"
 					@click="openProject(project)"
+					@favorite="ProjectManager.toggleFavoriteProject"
+					@edit="edit"
 				/>
 			</div>
 
@@ -91,5 +96,9 @@ async function openProject(project: ProjectInfo) {
 <style scoped>
 .pixelated {
 	image-rendering: pixelated;
+}
+
+.project-gallery {
+	width: calc(100% + 0.5rem);
 }
 </style>
