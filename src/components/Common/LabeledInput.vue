@@ -2,8 +2,11 @@
 	<div
 		class="border-2 rounded px-3 py-2 transition-colors duration-100 ease-out relative mt-3 select-none"
 		:class="{
-			'border-background-secondary': !(_focused || focused),
+			'border-[var(--color)]': !(_focused || focused),
 			'border-primary': _focused || focused,
+		}"
+		:style="{
+			'--color': `var(--theme-color-${borderColor})`,
 		}"
 	>
 		<span class="absolute -top-1/3 left-2 text-xs bg-inherit p-1 text-text-secondary font-inter">{{ label }}</span>
@@ -23,6 +26,10 @@ defineProps({
 	focused: {
 		type: Boolean,
 		default: false,
+	},
+	borderColor: {
+		type: String,
+		default: 'backgroundSecondary',
 	},
 })
 </script>

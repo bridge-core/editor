@@ -88,6 +88,7 @@ const filteredCategories = computed(() => {
 					v-slot="{ focus, blur }"
 					:label="t('Search Presets')"
 					class="bg-background-secondary !mt-1 mb-2"
+					border-color="backgroundTertiary"
 				>
 					<div class="flex gap-1">
 						<Icon icon="search" class="transition-colors duration-100 ease-out" />
@@ -139,7 +140,7 @@ const filteredCategories = computed(() => {
 							<span class="text-3xl font-bold font-inter select-none">{{ selectedPreset.name }}</span>
 						</div>
 
-						<p class="font-inter text-textAlternate mb-12 select-none">
+						<p class="font-inter text-text-secondary mb-12 select-none">
 							{{ selectedPreset.description }}
 						</p>
 
@@ -153,7 +154,7 @@ const filteredCategories = computed(() => {
 							v-slot="{ focus, blur }"
 						>
 							<input
-								class="bg-background outline-none placeholder:text-textAlternate max-w-none w-full font-inter"
+								class="bg-background outline-none placeholder:text-text-secondary max-w-none w-full font-inter"
 								@focus="focus"
 								@blur="blur"
 								:placeholder="t('Folders')"
@@ -173,7 +174,7 @@ const filteredCategories = computed(() => {
 								v-slot="{ focus, blur }"
 							>
 								<input
-									class="bg-background outline-none placeholder:text-textAlternate max-w-none w-full font-inter"
+									class="bg-background outline-none placeholder:text-text-secondary max-w-none w-full font-inter"
 									@focus="focus"
 									@blur="blur"
 									:placeholder="fieldName"
@@ -194,11 +195,11 @@ const filteredCategories = computed(() => {
 								<input type="file" class="hidden" />
 
 								<button
-									class="flex align-center gap-2 text-textAlternate font-inter"
+									class="flex align-center gap-2 text-text-secondary font-inter placeholder:text-text-secondary"
 									@mouseenter="focus"
 									@mouseleave="blur"
 								>
-									<Icon icon="image" class="no-fill" color="text-textAlternate" />
+									<Icon icon="image" class="no-fill" color="text-text-secondary" />
 									{{ fieldName }}
 								</button>
 							</LabeledInput>
@@ -211,10 +212,15 @@ const filteredCategories = computed(() => {
 										(createPresetOptions[fieldId] = value)"
 								/>
 
-								<p class="font-inter text-textAlternate">{{ fieldName }}</p>
+								<p class="font-inter text-text-secondary">{{ fieldName }}</p>
 							</div>
 
-							<Dropdown v-if="fieldOptions.type === 'selectInput'" class="mb-6 flex-1">
+							<Dropdown
+								v-if="
+									fieldOptions.type === 'selectInput' && typeof fieldOptions.options[0] === 'object'
+								"
+								class="mb-6 flex-1"
+							>
 								<template #main="{ expanded, toggle }">
 									<LabeledInput :label="t(fieldName)" :focused="expanded" class="bg-background">
 										<div class="flex items-center justify-between cursor-pointer" @click="toggle">
@@ -250,6 +256,49 @@ const filteredCategories = computed(() => {
 												}"
 											>
 												{{ dropdownItem.text }}
+											</button>
+										</div>
+									</div>
+								</template>
+							</Dropdown>
+
+							<Dropdown
+								v-if="
+									fieldOptions.type === 'selectInput' && typeof fieldOptions.options[0] === 'string'
+								"
+								class="mb-6 flex-1"
+							>
+								<template #main="{ expanded, toggle }">
+									<LabeledInput :label="t(fieldName)" :focused="expanded" class="bg-background">
+										<div class="flex items-center justify-between cursor-pointer" @click="toggle">
+											<span class="font-inter">{{ createPresetOptions[fieldId] }}</span>
+
+											<Icon
+												icon="arrow_drop_down"
+												class="transition-transform duration-200 ease-out"
+												:class="{ '-rotate-180': expanded }"
+											/>
+										</div>
+									</LabeledInput>
+								</template>
+
+								<template #choices="{ collapse }">
+									<div class="mb-4 bg-background-secondary w-full p-1 rounded">
+										<div class="flex flex-col max-h-[12rem] overflow-y-auto p-1">
+											<button
+												v-for="dropdownItem in fieldOptions.options"
+												@click="
+													() => {
+														createPresetOptions[fieldId] = dropdownItem
+														collapse()
+													}
+												"
+												class="hover:bg-primary text-start p-1 rounded transition-colors duration-100 ease-out font-inter"
+												:class="{
+													'bg-menu': createPresetOptions[fieldId] === dropdownItem,
+												}"
+											>
+												{{ dropdownItem }}
 											</button>
 										</div>
 									</div>
