@@ -20,7 +20,7 @@ export function setupLang() {
 	})
 
 	languages.registerCompletionItemProvider('lang', {
-		triggerCharacters: ['='],
+		triggerCharacters: ['=', '\n'],
 		provideCompletionItems: async (model, position) => {
 			if (!ProjectManager.currentProject) return
 			if (!(ProjectManager.currentProject instanceof BedrockProject)) return
@@ -55,11 +55,7 @@ export function setupLang() {
 					(key) => !currentLangKeys.has(key)
 				)
 
-				console.log(validLangKeys)
-
 				validLangKeys = validLangKeys.filter((key) => key.startsWith(currentLine))
-
-				console.log(validLangKeys)
 
 				suggestions.push(
 					...(await Promise.all(
@@ -67,7 +63,7 @@ export function setupLang() {
 							const completion = `${key}=${await guessValue(key + '=')}`
 
 							return {
-								range: new Range(position.lineNumber, 0, position.lineNumber, position.column),
+								range: new Range(position.lineNumber, 1, position.lineNumber, position.column),
 								kind: languages.CompletionItemKind.Text,
 								label: completion,
 								insertText: completion,
