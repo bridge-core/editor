@@ -1,6 +1,6 @@
 import { Component, ref } from 'vue'
 import TextTabComponent from '@/components/Tabs/Text/TextTab.vue'
-import { Position, Uri, editor, editor as monaco, Range } from 'monaco-editor'
+import { Position, Uri, editor, editor as monaco, Range, languages } from 'monaco-editor'
 import { keyword } from 'color-convert'
 import { fileSystem } from '@/libs/fileSystem/FileSystem'
 import { setMonarchTokensProvider } from '@/libs/monaco/Json'
@@ -59,15 +59,19 @@ export class TextTab extends FileTab {
 
 		this.model = monaco.getModel(Uri.file(this.path))
 
-		this.language.value = this.fileType?.meta.language ?? 'plaintext'
-
 		if (this.model === null) {
-			this.model = monaco.createModel(
-				fileContent,
-				this.fileType?.meta.language ?? 'plaintext',
-				Uri.file(this.path)
-			)
+			this.model = monaco.createModel(fileContent, this.fileType?.meta?.language, Uri.file(this.path))
 		}
+
+		this.language.value = this.model.getLanguageId()
+
+		console.log(this.language.value)
+
+		console.log(languages.getLanguages())
+
+		console.log(Uri.file(this.path))
+
+		console.log(this.fileType?.meta?.language)
 
 		this.disposables.push(
 			this.model.onDidChangeLanguageConfiguration(() => {

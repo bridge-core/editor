@@ -77,22 +77,6 @@ export class FileTypeData {
 				if (isMatch(path, mustNotMatch)) continue
 			}
 
-			fileType.meta = {
-				language: 'plaintext',
-			}
-
-			if (path.endsWith('.ts')) {
-				fileType.meta.language = 'typescript'
-			}
-
-			if (path.endsWith('.js')) {
-				fileType.meta.language = 'javascript'
-			}
-
-			if (path.endsWith('.json')) {
-				fileType.meta.language = 'json'
-			}
-
 			return fileType
 		}
 

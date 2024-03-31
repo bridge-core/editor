@@ -15,6 +15,7 @@ import { Toolbar } from '@/components/Toolbar/Toolbar'
 import { setupSidebar } from '@/components/Sidebar/SidebarSetup'
 import { Sidebar } from '@/components/Sidebar/Sidebar'
 import { PWAFileSystem } from '@/libs/fileSystem/PWAFileSystem'
+import { setupLang } from './libs/monaco/languages/Lang'
 
 export function setupBeforeComponents() {
 	ProjectManager.setup()
@@ -45,6 +46,7 @@ export async function setup() {
 	if (fileSystem instanceof TauriFileSystem) await setupTauriFileSystem()
 
 	setupTypescript()
+	setupLang()
 
 	console.time('[App] Settings')
 	await Settings.load()
