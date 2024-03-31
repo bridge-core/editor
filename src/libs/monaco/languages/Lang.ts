@@ -62,8 +62,8 @@ export function setupLang() {
 						validLangKeys.map(async (key) => ({
 							range: new Range(position.lineNumber, 1, position.lineNumber, position.column),
 							kind: languages.CompletionItemKind.Text,
-							label: key,
-							insertText: key,
+							label: key + '=',
+							insertText: key + '=',
 						}))
 					))
 				)
