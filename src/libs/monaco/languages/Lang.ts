@@ -59,16 +59,12 @@ export function setupLang() {
 
 				suggestions.push(
 					...(await Promise.all(
-						validLangKeys.map(async (key) => {
-							const completion = `${key}=${await guessValue(key + '=')}`
-
-							return {
-								range: new Range(position.lineNumber, 1, position.lineNumber, position.column),
-								kind: languages.CompletionItemKind.Text,
-								label: completion,
-								insertText: completion,
-							}
-						})
+						validLangKeys.map(async (key) => ({
+							range: new Range(position.lineNumber, 1, position.lineNumber, position.column),
+							kind: languages.CompletionItemKind.Text,
+							label: key,
+							insertText: key,
+						}))
 					))
 				)
 			} else {
