@@ -51,17 +51,29 @@ export function setupLang() {
 						.map((line) => line.split('=')[0].trim())
 				)
 
-				const validLangKeys = (await ProjectManager.currentProject.langData.getKeys()).filter(
+				let validLangKeys = (await ProjectManager.currentProject.langData.getKeys()).filter(
 					(key) => !currentLangKeys.has(key)
 				)
 
+				console.log(validLangKeys)
+
+				validLangKeys = validLangKeys.filter((key) => key.startsWith(currentLine))
+
+				console.log(validLangKeys)
+
 				suggestions.push(
-					...validLangKeys.map((key) => ({
-						range: new Range(position.lineNumber, position.column, position.lineNumber, position.column),
-						kind: languages.CompletionItemKind.Text,
-						label: key,
-						insertText: key,
-					}))
+					...(await Promise.all(
+						validLangKeys.map(async (key) => {
+							const completion = `${key}=${await guessValue(key + '=')}`
+
+							return {
+								range: new Range(position.lineNumber, 0, position.lineNumber, position.column),
+								kind: languages.CompletionItemKind.Text,
+								label: completion,
+								insertText: completion,
+							}
+						})
+					))
 				)
 			} else {
 				// Generate a value based on the key
