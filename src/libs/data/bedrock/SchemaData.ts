@@ -219,8 +219,6 @@ export class SchemaData implements Disposable {
 				result.result
 		}
 
-		console.log(generatedGlobalSchemas)
-
 		const contextLightningCacheSchemas: Record<string, any> = {}
 
 		if (fileType) {
