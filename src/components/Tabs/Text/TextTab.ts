@@ -65,14 +65,6 @@ export class TextTab extends FileTab {
 
 		this.language.value = this.model.getLanguageId()
 
-		console.log(this.language.value)
-
-		console.log(languages.getLanguages())
-
-		console.log(Uri.file(this.path))
-
-		console.log(this.fileType?.meta?.language)
-
 		this.disposables.push(
 			this.model.onDidChangeLanguageConfiguration(() => {
 				if (this.editor === undefined) return
