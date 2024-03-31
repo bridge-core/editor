@@ -219,6 +219,8 @@ export class SchemaData implements Disposable {
 				result.result
 		}
 
+		console.log(generatedGlobalSchemas)
+
 		const contextLightningCacheSchemas: Record<string, any> = {}
 
 		if (fileType) {
@@ -454,7 +456,7 @@ export class SchemaData implements Disposable {
 			}
 		} else if (scriptData.type === 'object') {
 			return {
-				type: 'string',
+				type: 'object',
 				properties: scriptData.data,
 			}
 		} else if (scriptData.type === 'custom') {
