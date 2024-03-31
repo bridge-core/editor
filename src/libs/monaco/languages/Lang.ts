@@ -15,7 +15,17 @@ export function setupLang() {
 
 	languages.setMonarchTokensProvider('lang', {
 		tokenizer: {
-			root: [[/##.*/, 'comment'], [/=|\.|:/, 'definition'], ...colorCodes],
+			root: [
+				[/##.*/, 'comment'],
+				[/\w+(?=:)/, 'keyword', '@identifierPart'],
+				[/=|\./, 'definition'],
+				...colorCodes,
+			],
+			identifierPart: [
+				[/:/, 'definition'],
+				[/\w+/, 'type'],
+				[/\./, '@rematch', '@pop'],
+			],
 		},
 	})
 
