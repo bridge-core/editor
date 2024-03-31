@@ -216,7 +216,7 @@ export class ProjectManager {
 
 		let disposable: Disposable
 
-		onMounted(() => (disposable = ProjectManager.updatedProjects.on(updateCurrentProject)))
+		onMounted(() => (disposable = ProjectManager.updatedCurrentProject.on(updateCurrentProject)))
 		onUnmounted(() => disposable.dispose())
 
 		return currentProject
