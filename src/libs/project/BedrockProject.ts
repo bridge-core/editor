@@ -10,6 +10,7 @@ import { IndexerService } from '@/libs/indexer/bedrock/IndexerService'
 import { RequirementsMatcher } from '@/libs/data/bedrock/RequirementsMatcher'
 import { Data } from '@/libs/data/Data'
 import { LangData } from '@/libs/data/bedrock/LangData'
+import { CommandData } from '@/libs/data/bedrock/CommandData'
 
 export class BedrockProject extends Project {
 	public packDefinitions: IPackType[] = []
@@ -18,6 +19,7 @@ export class BedrockProject extends Project {
 	public presetData = new PresetData()
 	public scriptTypeData = new ScriptTypeData(this)
 	public langData = new LangData(this)
+	public commandData = new CommandData()
 	public indexerService = new IndexerService(this)
 	public dashService = new DashService(this)
 	public requirementsMatcher = new RequirementsMatcher(this)
@@ -28,16 +30,13 @@ export class BedrockProject extends Project {
 		this.packDefinitions = await Data.get('packages/minecraftBedrock/packDefinitions.json')
 
 		await this.fileTypeData.load()
-
 		await this.indexerService.setup()
-
 		await this.schemaData.load()
-
 		await this.presetData.load()
-
 		await this.scriptTypeData.setup()
 
 		await this.langData.setup()
+		await this.commandData.setup()
 
 		await this.dashService.setup()
 
