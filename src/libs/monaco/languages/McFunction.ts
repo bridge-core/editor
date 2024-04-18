@@ -247,9 +247,9 @@ type Token = {
 }
 
 /*
-For command tokenization we'll be using an algorithm I came up with for my own programming language called Mew.
+For command tokenization we'll be using an algorithm I came up with after experimentation in various side projects.
 The old command parsing used something similar so I imagine it is not a novel concept but from my limitted'
-research I can't find the name for this algorithm so we'll just call it Mew's Algorithm :P.
+research I can't find the name for it.
 
 How it works:
 The program runs a single for loop untill it encounters the end of the string.
@@ -299,8 +299,6 @@ function tokenize(line: string): Token[] {
 		})
 
 	for (let cursorIndex = 0; cursorIndex < tokens.length; cursorIndex++) {
-		// TODO: build compound symbols
-
 		if (tokens[cursorIndex].word === '"') {
 			let endCursorIndex
 			for (endCursorIndex = cursorIndex + 1; endCursorIndex < tokens.length; endCursorIndex++) {
@@ -316,6 +314,38 @@ function tokenize(line: string): Token[] {
 					.slice(cursorIndex, endCursorIndex + 1)
 					.map((token) => token.word)
 					.join(''),
+			})
+		}
+
+		if (cursorIndex + 1 < tokens.length && tokens[cursorIndex].word === '@') {
+			tokens.splice(cursorIndex, 2, {
+				start: tokens[cursorIndex].start,
+				end: tokens[cursorIndex + 1].end,
+				word: '@' + tokens[cursorIndex + 1].word,
+			})
+		}
+
+		if (
+			cursorIndex + 1 < tokens.length &&
+			tokens[cursorIndex].word === '=' &&
+			tokens[cursorIndex + 1].word === '!'
+		) {
+			tokens.splice(cursorIndex, 2, {
+				start: tokens[cursorIndex].start,
+				end: tokens[cursorIndex + 1].end,
+				word: '=!',
+			})
+		}
+
+		if (
+			cursorIndex + 1 < tokens.length &&
+			tokens[cursorIndex].word === '.' &&
+			tokens[cursorIndex + 1].word === '.'
+		) {
+			tokens.splice(cursorIndex, 2, {
+				start: tokens[cursorIndex].start,
+				end: tokens[cursorIndex + 1].end,
+				word: '..',
 			})
 		}
 
