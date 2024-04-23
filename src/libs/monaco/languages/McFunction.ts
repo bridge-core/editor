@@ -1,7 +1,9 @@
-import { CancellationToken, Position, editor, languages, Range } from 'monaco-editor'
+import { CancellationToken, Position, editor, languages, Range, Token } from 'monaco-editor'
 import { colorCodes } from './Language'
 import { ProjectManager } from '@/libs/project/ProjectManager'
 import { BedrockProject } from '@/libs/project/BedrockProject'
+
+window.reloadId = Math.random() // TODO: Remove
 
 export function setupMcFunction() {
 	languages.register({ id: 'mcfunction', extensions: ['.mcfunction'], aliases: ['mcfunction'] })
@@ -36,6 +38,8 @@ export function setupMcFunction() {
 		],
 	})
 
+	const id = window.reloadId // TODO: Remove
+
 	languages.registerCompletionItemProvider('mcfunction', {
 		triggerCharacters: [' ', '[', '{', '=', ',', '!'],
 		async provideCompletionItems(
@@ -44,15 +48,41 @@ export function setupMcFunction() {
 			context: languages.CompletionContext,
 			token: CancellationToken
 		) {
+			if (id !== window.reloadId) return // TODO: Remove
+
 			if (!ProjectManager.currentProject) return
 			if (!(ProjectManager.currentProject instanceof BedrockProject)) return
+
+			const commandData = ProjectManager.currentProject.commandData
 
 			const line = model.getLineContent(position.lineNumber)
 
 			const lineUntilCursor = line.slice(0, position.column - 1)
 
-			console.log(lineUntilCursor)
-			console.log(tokenize(lineUntilCursor))
+			const tokens = tokenize(line)
+
+			console.log(tokens)
+
+			const parsedTokens = parse(tokens)
+
+			console.log(parsedTokens)
+
+			// if (tokens.length === 0)
+			// 	return {
+			// 		suggestions: commandData.getCommandNames().map((command) => ({
+			// 			label: command,
+			// 			insertText,
+			// 			documentation,
+			// 			kind,
+			// 			range: new Range(
+			// 				position.lineNumber,
+			// 				(lastToken?.startColumn ?? 0) + 1,
+			// 				position.lineNumber,
+			// 				(lastToken?.endColumn ?? 0) + 1
+			// 			),
+			// 			insertTextRules,
+			// 		})),
+			// 	}
 
 			return undefined
 
@@ -120,8 +150,8 @@ export function setupMcFunction() {
 		if (!(ProjectManager.currentProject instanceof BedrockProject)) return
 
 		updateTokensProvider(
-			ProjectManager.currentProject.commandData.getCommands(),
-			ProjectManager.currentProject.commandData.getSelectorArguments()
+			ProjectManager.currentProject.commandData.getCommandNames(),
+			ProjectManager.currentProject.commandData.getSelectorArgumentNames()
 		)
 	})
 
@@ -129,8 +159,8 @@ export function setupMcFunction() {
 
 	if (ProjectManager.currentProject && ProjectManager.currentProject instanceof BedrockProject)
 		updateTokensProvider(
-			ProjectManager.currentProject.commandData.getCommands(),
-			ProjectManager.currentProject.commandData.getSelectorArguments()
+			ProjectManager.currentProject.commandData.getCommandNames(),
+			ProjectManager.currentProject.commandData.getSelectorArgumentNames()
 		)
 }
 
@@ -240,12 +270,6 @@ function updateTokensProvider(commands: string[], selectorArguments: string[]) {
 	})
 }
 
-type Token = {
-	start: number
-	end: number
-	word: string
-}
-
 /*
 For command tokenization we'll be using an algorithm I came up with after experimentation in various side projects.
 The old command parsing used something similar so I imagine it is not a novel concept but from my limitted'
@@ -264,8 +288,15 @@ This also includes joining strings
 
 Finally, if there is ever a text of length 0 trying to be added, it is ignorred.
 */
+type Token = {
+	start: number
+	end: number
+	word: string
+	type?: TokenType
+	[key: string]: any
+}
 
-const symbols = ['!', '@', '.', '{', '}', '[', ']', '=', ':', ' ', '"']
+const symbols = ['!', '.', '{', '}', '[', ']', '=', ':', ' ', '"']
 
 function tokenize(line: string): Token[] {
 	const tokens: Token[] = []
@@ -349,12 +380,93 @@ function tokenize(line: string): Token[] {
 			})
 		}
 
-		if (tokens[cursorIndex].word === ' ') {
-			tokens.splice(cursorIndex, 1)
+		// We don't remove whitespace yet
 
-			cursorIndex--
+		// if (tokens[cursorIndex].word === ' ') {
+		// 	tokens.splice(cursorIndex, 1)
+
+		// 	cursorIndex--
+		// }
+	}
+
+	return tokens
+}
+
+enum TokenType {
+	Number = 'Number',
+	Boolean = 'Boolean',
+	Symbol = 'Symbol',
+
+	Offset = 'Offset',
+	Coordinates = 'Coordinates',
+
+	Selector = 'Selector',
+	Json = 'Json',
+	Item = 'Item',
+	Score = 'Score',
+	BlockState = 'Blockstate',
+}
+
+function parse(tokens: Token[]): Token[] {
+	if (!ProjectManager.currentProject) return tokens
+	if (!(ProjectManager.currentProject instanceof BedrockProject)) return tokens
+
+	for (let index = 0; index < tokens.length; index++) {
+		if (tokens[index].word === 'true' || tokens[index].word === 'false') {
+			tokens[index].type = TokenType.Boolean
+		} else if (['!', '.', '{', '}', '[', ']', '=', ':', '"'].includes(tokens[index].word)) {
+			tokens[index].type = TokenType.Symbol
+		} else if (/^-?(([0-9]+|[0-9]+\.)|(\.[0-9]+)|([0-9]+\.[0-9]+))$/.test(tokens[index].word)) {
+			tokens[index].type = TokenType.Number
+		}
+	}
+
+	for (let index = 0; index < tokens.length; index++) {
+		if (tokens[index].type === TokenType.Symbol && (tokens[index].word === '~' || tokens[index].word === '^')) {
+			if (index < tokens.length - 1 && tokens[index + 1].type === TokenType.Number) {
+			} else if (
+				index < tokens.length - 2 &&
+				tokens[index + 1].word === '+' &&
+				tokens[index + 2].type === TokenType.Number
+			) {
+			}
 		}
 	}
 
 	return tokens
 }
+
+// enum Context {
+// 	Start,
+// 	Argument,
+// 	Selector,
+// 	Json,
+// 	BlockState,
+// }
+
+// function getContext(tokens: Token[], cursor: number): any {
+// 	let cursorTokenIndex = 0
+
+// 	for (; cursorTokenIndex < tokens.length; cursorTokenIndex++) {
+// 		if (tokens[cursorTokenIndex].end >= cursor) break
+// 	}
+
+// 	let selectorTargetIndex = null
+
+// 	for (let index = 0; index < tokens.length; index++) {
+// 		if (tokens[index].start >= cursor) break
+
+// 		if (!tokens[index].word.startsWith('@')) continue
+
+// 		selectorTargetIndex = index
+
+// 		break
+// 	}
+
+// 	if (selectorTargetIndex !== null) {
+// 	}
+
+// 	// if(!tokens[selectorTargetIndex + 1] || tokens[selectorTargetIndex].word != )
+
+// 	// return false
+// }

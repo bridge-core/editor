@@ -7,11 +7,11 @@ export class CommandData {
 		this.data = await Data.get(`packages/minecraftBedrock/language/mcfunction/main.json`)
 	}
 
-	public getCommands() {
+	public getCommandNames(): string[] {
 		return this.data.vanilla[0].commands.map((command: any) => command.commandName)
 	}
 
-	public getSelectorArguments() {
+	public getSelectorArgumentNames(): string[] {
 		return this.data.vanilla[0].selectorArguments.map((argument: any) => argument.argumentName)
 	}
 }
