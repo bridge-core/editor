@@ -291,7 +291,7 @@ Finally, if there is ever a text of length 0 trying to be added, it is ignorred.
 type Token = {
 	start: number
 	end: number
-	word: string
+	word?: string
 	type?: TokenType
 	[key: string]: any
 }
@@ -396,15 +396,17 @@ enum TokenType {
 	Number = 'Number',
 	Boolean = 'Boolean',
 	Symbol = 'Symbol',
+	String = 'String',
+	Unkown = 'Unkown',
+	Whitespace = 'Whitespace',
 
 	Offset = 'Offset',
-	Coordinates = 'Coordinates',
 
 	Selector = 'Selector',
 	Json = 'Json',
 	Item = 'Item',
 	Score = 'Score',
-	BlockState = 'Blockstate',
+	BlockState = 'Blockstatep',
 }
 
 function parse(tokens: Token[]): Token[] {
@@ -414,24 +416,40 @@ function parse(tokens: Token[]): Token[] {
 	for (let index = 0; index < tokens.length; index++) {
 		if (tokens[index].word === 'true' || tokens[index].word === 'false') {
 			tokens[index].type = TokenType.Boolean
-		} else if (['!', '.', '{', '}', '[', ']', '=', ':', '"'].includes(tokens[index].word)) {
+		} else if (['!', '.', '{', '}', '[', ']', '=', ':', '"'].includes(tokens[index].word ?? '')) {
 			tokens[index].type = TokenType.Symbol
-		} else if (/^-?(([0-9]+|[0-9]+\.)|(\.[0-9]+)|([0-9]+\.[0-9]+))$/.test(tokens[index].word)) {
+		} else if (/^-?(([0-9]+)|([0-9]+\.)|(\.[0-9]+)|([0-9]+\.[0-9]+))$/.test(tokens[index].word ?? '')) {
 			tokens[index].type = TokenType.Number
+		} else if (/^(~|\^)((-|\+)?([0-9]+)|([0-9]+\.)|(\.[0-9]+)|([0-9]+\.[0-9]+))?$/.test(tokens[index].word ?? '')) {
+			tokens[index].type = TokenType.Offset
+		} else if (tokens[index].word?.startsWith('"') && tokens[index].word?.endsWith('"')) {
+			tokens[index].type = TokenType.String
+		} else if (tokens[index].word === ' ') {
+			tokens[index].type = TokenType.Whitespace
+		} else {
+			tokens[index].type = TokenType.Unkown
 		}
 	}
 
 	for (let index = 0; index < tokens.length; index++) {
-		if (tokens[index].type === TokenType.Symbol && (tokens[index].word === '~' || tokens[index].word === '^')) {
-			if (index < tokens.length - 1 && tokens[index + 1].type === TokenType.Number) {
-			} else if (
-				index < tokens.length - 2 &&
-				tokens[index + 1].word === '+' &&
-				tokens[index + 2].type === TokenType.Number
-			) {
-			}
+		if (
+			index - 1 >= 0 &&
+			index + 1 < tokens.length &&
+			tokens[index].type === TokenType.Symbol &&
+			tokens[index].word === ':' &&
+			tokens[index - 1].type === TokenType.Unkown &&
+			tokens[index + 1].type === TokenType.Unkown
+		) {
+			tokens.splice(index - 1, 3, {
+				start: tokens[index - 1].start,
+				end: tokens[index + 1].end,
+				word: tokens[index - 1].word! + tokens[index].word! + tokens[index + 1].word!,
+				type: TokenType.Unkown,
+			})
 		}
 	}
+
+	tokens = tokens.filter((token) => token.type !== TokenType.Whitespace)
 
 	return tokens
 }
