@@ -397,7 +397,7 @@ enum TokenType {
 	Boolean = 'Boolean',
 	Symbol = 'Symbol',
 	String = 'String',
-	Unkown = 'Unkown',
+	Unkown = 'Unknown',
 	Whitespace = 'Whitespace',
 
 	Offset = 'Offset',
@@ -406,7 +406,7 @@ enum TokenType {
 	Json = 'Json',
 	Item = 'Item',
 	Score = 'Score',
-	BlockState = 'Blockstatep',
+	BlockState = 'Blockstate',
 }
 
 function parse(tokens: Token[]): Token[] {
@@ -445,6 +445,70 @@ function parse(tokens: Token[]): Token[] {
 				end: tokens[index + 1].end,
 				word: tokens[index - 1].word! + tokens[index].word! + tokens[index + 1].word!,
 				type: TokenType.Unkown,
+			})
+		}
+	}
+
+	for (let index = 0; index < tokens.length; index++) {
+		// TODO: account for dynamic selectors
+		if (tokens[index].type === TokenType.Unkown && /^@(a|r|p|e|s|(initiator))$/.test(tokens[index].word!)) {
+			if (
+				index + 1 < tokens.length &&
+				tokens[index + 1].type === TokenType.Symbol &&
+				tokens[index + 1].word === '['
+			) {
+				let openBrackets = 1
+				let bracketIndex = index + 2
+
+				for (; openBrackets > 0 && bracketIndex < tokens.length; bracketIndex++) {
+					if (tokens[bracketIndex].type === TokenType.Symbol && tokens[bracketIndex].word === '[') {
+						openBrackets++
+					}
+
+					if (tokens[bracketIndex].type === TokenType.Symbol && tokens[bracketIndex].word === ']') {
+						openBrackets--
+					}
+				}
+
+				if (openBrackets > 0) continue
+
+				tokens.splice(index, bracketIndex - index, {
+					start: tokens[index].start,
+					end: tokens[bracketIndex - 1].end,
+					type: TokenType.Selector,
+					base: tokens[index],
+					parameters: tokens.slice(index + 2, bracketIndex - 1),
+				})
+			} else {
+				tokens[index] = {
+					start: tokens[index].start,
+					end: tokens[index].end,
+					type: TokenType.Selector,
+					base: tokens[index],
+					parameters: [],
+				}
+			}
+		} else if (tokens[index].type === TokenType.Symbol && tokens[index].word === '[') {
+			let openBrackets = 1
+			let bracketIndex = index + 2
+
+			for (; openBrackets > 0 && bracketIndex < tokens.length; bracketIndex++) {
+				if (tokens[bracketIndex].type === TokenType.Symbol && tokens[bracketIndex].word === '[') {
+					openBrackets++
+				}
+
+				if (tokens[bracketIndex].type === TokenType.Symbol && tokens[bracketIndex].word === ']') {
+					openBrackets--
+				}
+			}
+
+			if (openBrackets > 0) continue
+
+			tokens.splice(index, bracketIndex - index, {
+				start: tokens[index].start,
+				end: tokens[bracketIndex - 1].end,
+				type: TokenType.BlockState,
+				parameters: tokens.slice(index + 1, bracketIndex - 1),
 			})
 		}
 	}
