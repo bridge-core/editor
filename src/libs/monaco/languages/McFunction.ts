@@ -405,8 +405,6 @@ enum TokenType {
 
 	Selector = 'Selector',
 	Json = 'Json',
-	Item = 'Item',
-	Score = 'Score',
 	BlockState = 'Blockstate',
 	Parameter = 'Parameter',
 	ParameterGroup = 'ParameterGroup',
@@ -465,6 +463,7 @@ function parse(tokens: Token[]): Token[] {
 				first: tokens[index - 1],
 				second: tokens[index + 1],
 				type: TokenType.Range,
+				word: tokens[index - 1].word + '..' + tokens[index + 1].word,
 			})
 		}
 	}
@@ -529,6 +528,31 @@ function parse(tokens: Token[]): Token[] {
 				end: tokens[bracketIndex - 1].end,
 				type: TokenType.BlockState,
 				parameters: parseBlockstateParameters(tokens.slice(index + 1, bracketIndex - 1)),
+			})
+		} else if (tokens[index].type === TokenType.Symbol && tokens[index].word === '{') {
+			let openBrackets = 1
+			let bracketIndex = index + 2
+
+			for (; openBrackets > 0 && bracketIndex < tokens.length; bracketIndex++) {
+				if (tokens[bracketIndex].type === TokenType.Symbol && tokens[bracketIndex].word === '{') {
+					openBrackets++
+				}
+
+				if (tokens[bracketIndex].type === TokenType.Symbol && tokens[bracketIndex].word === '}') {
+					openBrackets--
+				}
+			}
+
+			if (openBrackets > 0) continue
+
+			tokens.splice(index, bracketIndex - index, {
+				start: tokens[index].start,
+				end: tokens[bracketIndex - 1].end,
+				word: tokens
+					.slice(index, bracketIndex)
+					.map((token) => token.word)
+					.join(''),
+				type: TokenType.Json,
 			})
 		}
 	}
