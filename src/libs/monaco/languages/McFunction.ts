@@ -67,22 +67,27 @@ export function setupMcFunction() {
 
 			console.log(parsedTokens)
 
-			// if (tokens.length === 0)
-			// 	return {
-			// 		suggestions: commandData.getCommandNames().map((command) => ({
-			// 			label: command,
-			// 			insertText,
-			// 			documentation,
-			// 			kind,
-			// 			range: new Range(
-			// 				position.lineNumber,
-			// 				(lastToken?.startColumn ?? 0) + 1,
-			// 				position.lineNumber,
-			// 				(lastToken?.endColumn ?? 0) + 1
-			// 			),
-			// 			insertTextRules,
-			// 		})),
-			// 	}
+			if (tokens.length === 0 || (tokens.length === 1 && tokens[0].end === line.length)) {
+				let partialCommand = tokens[0]?.word || ''
+
+				return {
+					suggestions: commandData
+						.getCommandNames()
+						.filter((command) => partialCommand === '' || command.startsWith(partialCommand))
+						.map((command) => ({
+							label: command,
+							insertText: command.substring(partialCommand.length),
+							kind: languages.CompletionItemKind.Text,
+							//documentation,
+							range: new Range(
+								position.lineNumber,
+								position.column,
+								position.lineNumber,
+								position.column
+							),
+						})),
+				}
+			}
 
 			return undefined
 
