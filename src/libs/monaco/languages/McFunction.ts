@@ -296,7 +296,7 @@ type Token = {
 	[key: string]: any
 }
 
-const symbols = ['!', '.', '{', '}', '[', ']', '=', ':', ' ', '"']
+const symbols = ['!', '.', '{', '}', '[', ']', '=', ':', ' ', '"', ',']
 
 function tokenize(line: string): Token[] {
 	const tokens: Token[] = []
@@ -400,6 +400,7 @@ enum TokenType {
 	Unkown = 'Unknown',
 	Whitespace = 'Whitespace',
 
+	Range = 'Range',
 	Offset = 'Offset',
 
 	Selector = 'Selector',
@@ -407,6 +408,8 @@ enum TokenType {
 	Item = 'Item',
 	Score = 'Score',
 	BlockState = 'Blockstate',
+	Parameter = 'Parameter',
+	ParameterGroup = 'ParameterGroup',
 }
 
 function parse(tokens: Token[]): Token[] {
@@ -416,7 +419,7 @@ function parse(tokens: Token[]): Token[] {
 	for (let index = 0; index < tokens.length; index++) {
 		if (tokens[index].word === 'true' || tokens[index].word === 'false') {
 			tokens[index].type = TokenType.Boolean
-		} else if (['!', '.', '{', '}', '[', ']', '=', ':', '"'].includes(tokens[index].word ?? '')) {
+		} else if (['!', '.', '{', '}', '[', ']', '=', ':', '"', ','].includes(tokens[index].word ?? '')) {
 			tokens[index].type = TokenType.Symbol
 		} else if (/^-?(([0-9]+)|([0-9]+\.)|(\.[0-9]+)|([0-9]+\.[0-9]+))$/.test(tokens[index].word ?? '')) {
 			tokens[index].type = TokenType.Number
@@ -445,6 +448,23 @@ function parse(tokens: Token[]): Token[] {
 				end: tokens[index + 1].end,
 				word: tokens[index - 1].word! + tokens[index].word! + tokens[index + 1].word!,
 				type: TokenType.Unkown,
+			})
+		}
+
+		if (
+			index - 1 >= 0 &&
+			index + 1 < tokens.length &&
+			tokens[index].type === TokenType.Unkown &&
+			tokens[index].word === '..' &&
+			tokens[index - 1].type === TokenType.Number &&
+			tokens[index + 1].type === TokenType.Number
+		) {
+			tokens.splice(index - 1, 3, {
+				start: tokens[index - 1].start,
+				end: tokens[index + 1].end,
+				first: tokens[index - 1],
+				second: tokens[index + 1],
+				type: TokenType.Range,
 			})
 		}
 	}
@@ -477,7 +497,7 @@ function parse(tokens: Token[]): Token[] {
 					end: tokens[bracketIndex - 1].end,
 					type: TokenType.Selector,
 					base: tokens[index],
-					parameters: tokens.slice(index + 2, bracketIndex - 1),
+					parameters: parseSelectorParameters(tokens.slice(index + 2, bracketIndex - 1)),
 				})
 			} else {
 				tokens[index] = {
@@ -508,7 +528,7 @@ function parse(tokens: Token[]): Token[] {
 				start: tokens[index].start,
 				end: tokens[bracketIndex - 1].end,
 				type: TokenType.BlockState,
-				parameters: tokens.slice(index + 1, bracketIndex - 1),
+				parameters: parseBlockstateParameters(tokens.slice(index + 1, bracketIndex - 1)),
 			})
 		}
 	}
@@ -518,37 +538,97 @@ function parse(tokens: Token[]): Token[] {
 	return tokens
 }
 
-// enum Context {
-// 	Start,
-// 	Argument,
-// 	Selector,
-// 	Json,
-// 	BlockState,
-// }
+function parseSelectorParameters(tokens: Token[]): Token[] {
+	tokens = tokens.filter((token) => token.type !== TokenType.Whitespace)
 
-// function getContext(tokens: Token[], cursor: number): any {
-// 	let cursorTokenIndex = 0
+	for (let index = 0; index < tokens.length; index++) {
+		if (
+			index + 2 < tokens.length &&
+			tokens[index].type === TokenType.Unkown &&
+			tokens[index + 1].type === TokenType.Symbol &&
+			['=', '=!'].includes(tokens[index + 1].word!) &&
+			[TokenType.Number, TokenType.String, TokenType.Range, TokenType.Unkown].includes(tokens[index + 2].type!)
+		) {
+			tokens.splice(index, 3, {
+				start: tokens[index].start,
+				end: tokens[index + 2].end,
+				type: TokenType.Parameter,
+				name: tokens[index],
+				operator: tokens[index + 1],
+				value: tokens[index + 2],
+			})
+		}
+	}
 
-// 	for (; cursorTokenIndex < tokens.length; cursorTokenIndex++) {
-// 		if (tokens[cursorTokenIndex].end >= cursor) break
-// 	}
+	for (let index = 0; index < tokens.length; index++) {
+		if (tokens[index].type === TokenType.Symbol && tokens[index].word === '{') {
+			let openBrackets = 1
+			let bracketIndex = index + 2
 
-// 	let selectorTargetIndex = null
+			for (; openBrackets > 0 && bracketIndex < tokens.length; bracketIndex++) {
+				if (tokens[bracketIndex].type === TokenType.Symbol && tokens[bracketIndex].word === '{') {
+					openBrackets++
+				}
 
-// 	for (let index = 0; index < tokens.length; index++) {
-// 		if (tokens[index].start >= cursor) break
+				if (tokens[bracketIndex].type === TokenType.Symbol && tokens[bracketIndex].word === '}') {
+					openBrackets--
+				}
+			}
 
-// 		if (!tokens[index].word.startsWith('@')) continue
+			if (openBrackets > 0) continue
 
-// 		selectorTargetIndex = index
+			tokens.splice(index, bracketIndex - index, {
+				start: tokens[index].start,
+				end: tokens[bracketIndex - 1].end,
+				type: TokenType.ParameterGroup,
+				parameters: tokens.slice(index + 1, bracketIndex - 1),
+			})
+		}
+	}
 
-// 		break
-// 	}
+	for (let index = 0; index < tokens.length; index++) {
+		if (
+			index + 2 < tokens.length &&
+			tokens[index].type === TokenType.Unkown &&
+			tokens[index + 1].type === TokenType.Symbol &&
+			['=', '=!'].includes(tokens[index + 1].word!) &&
+			tokens[index + 2].type == TokenType.ParameterGroup
+		) {
+			tokens.splice(index, 3, {
+				start: tokens[index].start,
+				end: tokens[index + 2].end,
+				type: TokenType.Parameter,
+				name: tokens[index],
+				operator: tokens[index + 1],
+				value: tokens[index + 2],
+			})
+		}
+	}
 
-// 	if (selectorTargetIndex !== null) {
-// 	}
+	return tokens
+}
 
-// 	// if(!tokens[selectorTargetIndex + 1] || tokens[selectorTargetIndex].word != )
+function parseBlockstateParameters(tokens: Token[]): Token[] {
+	tokens = tokens.filter((token) => token.type !== TokenType.Whitespace)
 
-// 	// return false
-// }
+	for (let index = 0; index < tokens.length; index++) {
+		if (
+			index + 2 < tokens.length &&
+			tokens[index].type === TokenType.String &&
+			tokens[index + 1].type === TokenType.Symbol &&
+			tokens[index + 1].word === ':' &&
+			[TokenType.Number, TokenType.String, TokenType.Range, TokenType.Unkown].includes(tokens[index + 2].type!)
+		) {
+			tokens.splice(index, 3, {
+				start: tokens[index].start,
+				end: tokens[index + 2].end,
+				type: TokenType.Parameter,
+				name: tokens[index],
+				operator: tokens[index + 1],
+				value: tokens[index + 2],
+			})
+		}
+	}
+
+	return tokens
+}
