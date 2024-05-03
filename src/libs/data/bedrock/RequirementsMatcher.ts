@@ -37,7 +37,7 @@ export class RequirementsMatcher {
 		this.latestFormatVersion = (await Data.get('packages/minecraftBedrock/formatVersions.json'))[0]
 	}
 
-	public matches(requirements: Requirements, behaviourManifest: any): boolean {
+	public matches(requirements: Requirements, behaviourManifest?: any): boolean {
 		for (const pack of requirements.packTypes ?? []) {
 			if (this.project.packs[pack] === undefined) return false
 		}
@@ -84,7 +84,7 @@ export class RequirementsMatcher {
 	}
 
 	private getDependencies(behaviourManifest: any): { moduleName: string; version: string }[] {
-		if (behaviourManifest === null) return []
+		if (!behaviourManifest) return []
 
 		if (behaviourManifest.dependencies === undefined) return []
 

@@ -1,4 +1,4 @@
-import { CancellationToken, Position, editor, languages, Range, Token } from 'monaco-editor'
+import { CancellationToken, Position, editor, languages, Range } from 'monaco-editor'
 import { colorCodes } from './Language'
 import { ProjectManager } from '@/libs/project/ProjectManager'
 import { BedrockProject } from '@/libs/project/BedrockProject'
@@ -72,11 +72,11 @@ export function setupMcFunction() {
 
 				return {
 					suggestions: commandData
-						.getCommandNames()
+						.getCommands()
 						.filter((command) => partialCommand === '' || command.startsWith(partialCommand))
 						.map((command) => ({
 							label: command,
-							insertText: command.substring(partialCommand.length),
+							insertText: command.substring(partialCommand.length) + ' ',
 							kind: languages.CompletionItemKind.Text,
 							//documentation,
 							range: new Range(
@@ -88,6 +88,10 @@ export function setupMcFunction() {
 						})),
 				}
 			}
+
+			const command = tokens[0].word
+
+			console.log(command)
 
 			return undefined
 
@@ -155,7 +159,7 @@ export function setupMcFunction() {
 		if (!(ProjectManager.currentProject instanceof BedrockProject)) return
 
 		updateTokensProvider(
-			ProjectManager.currentProject.commandData.getCommandNames(),
+			ProjectManager.currentProject.commandData.getCommands(),
 			ProjectManager.currentProject.commandData.getSelectorArgumentNames()
 		)
 	})
@@ -164,7 +168,7 @@ export function setupMcFunction() {
 
 	if (ProjectManager.currentProject && ProjectManager.currentProject instanceof BedrockProject)
 		updateTokensProvider(
-			ProjectManager.currentProject.commandData.getCommandNames(),
+			ProjectManager.currentProject.commandData.getCommands(),
 			ProjectManager.currentProject.commandData.getSelectorArgumentNames()
 		)
 }

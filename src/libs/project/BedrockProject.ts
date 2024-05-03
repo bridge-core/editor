@@ -19,7 +19,7 @@ export class BedrockProject extends Project {
 	public presetData = new PresetData()
 	public scriptTypeData = new ScriptTypeData(this)
 	public langData = new LangData(this)
-	public commandData = new CommandData()
+	public commandData = new CommandData(this)
 	public indexerService = new IndexerService(this)
 	public dashService = new DashService(this)
 	public requirementsMatcher = new RequirementsMatcher(this)
