@@ -60,6 +60,10 @@ export function setupMcFunction() {
 
 			const tokens = tokenize(line)
 
+			console.log(tokens)
+
+			return undefined
+
 			console.log('----------------')
 
 			const parsedTokens = parse(tokens)
@@ -356,7 +360,11 @@ function tokenize(line: string): Token[] {
 			})
 		}
 
-		if (cursorIndex + 1 < tokens.length && tokens[cursorIndex].word === '@') {
+		if (
+			cursorIndex + 1 < tokens.length &&
+			tokens[cursorIndex].word === '@' &&
+			!symbols.includes(tokens[cursorIndex + 1].word ?? '')
+		) {
 			tokens.splice(cursorIndex, 2, {
 				start: tokens[cursorIndex].start,
 				end: tokens[cursorIndex + 1].end,
