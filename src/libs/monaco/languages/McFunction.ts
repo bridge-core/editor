@@ -3,6 +3,7 @@ import { colorCodes } from './Language'
 import { ProjectManager } from '@/libs/project/ProjectManager'
 import { BedrockProject } from '@/libs/project/BedrockProject'
 import { Argument } from '@/libs/data/bedrock/CommandData'
+import { Data } from '@/libs/data/Data'
 
 window.reloadId = Math.random() // TODO: Remove
 
@@ -78,7 +79,7 @@ export function setupMcFunction() {
 						.map((command) => ({
 							label: command,
 							insertText: command.substring(partialCommand.length),
-							kind: languages.CompletionItemKind.Text,
+							kind: languages.CompletionItemKind.Keyword,
 							//TODO: ocumentation,
 							range: new Range(
 								position.lineNumber,
@@ -123,7 +124,7 @@ export function setupMcFunction() {
 
 			if (cursorTokenIndex < 0) cursorTokenIndex = previousArguments.length
 
-			const cursorToken = parsedTokens[cursorTokenIndex + 1]
+			const cursorToken: Token | undefined = parsedTokens[cursorTokenIndex + 1]
 
 			const possibleCurrentArguments = possibleVariations
 				.map((variation) => variation.arguments[cursorTokenIndex])
@@ -138,20 +139,52 @@ export function setupMcFunction() {
 			for (const argument of possibleCurrentArguments) {
 				if (argument.type === 'string') {
 					if (argument.additionalData?.values) {
+						const wordPart = cursorToken?.word ?? ''
+
 						suggestions = suggestions.concat(
-							argument.additionalData.values.map((value) => {
-								return {
-									label: value,
-									insertText: cursorToken ? value.substring(cursorToken.word?.length ?? 0) : value,
-									kind: languages.CompletionItemKind.Text,
-									range: new Range(
-										position.lineNumber,
-										position.column,
-										position.lineNumber,
-										position.column
-									),
-								}
-							})
+							argument.additionalData.values
+								.filter((value: string) => value.startsWith(wordPart))
+								.map((value) => {
+									return {
+										label: value,
+										insertText: value.substring(wordPart.length),
+										kind: languages.CompletionItemKind.Enum,
+										range: new Range(
+											position.lineNumber,
+											position.column,
+											position.lineNumber,
+											position.column
+										),
+									}
+								})
+						)
+
+						continue
+					}
+
+					if (argument.additionalData?.schemaReference) {
+						const data = await ProjectManager.currentProject.schemaData.get(
+							argument.additionalData.schemaReference.substring(1)
+						)
+
+						const wordPart = cursorToken?.word ?? ''
+
+						suggestions = suggestions.concat(
+							data.enum
+								.filter((value: string) => value.startsWith(wordPart))
+								.map((value: string) => {
+									return {
+										label: value,
+										insertText: value.substring(wordPart.length),
+										kind: languages.CompletionItemKind.Enum,
+										range: new Range(
+											position.lineNumber,
+											position.column,
+											position.lineNumber,
+											position.column
+										),
+									}
+								})
 						)
 
 						continue

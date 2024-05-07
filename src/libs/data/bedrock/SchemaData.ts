@@ -290,6 +290,12 @@ export class SchemaData implements Disposable {
 		)
 	}
 
+	public async get(path: string): Promise<any> {
+		console.log(path, this.lightningCacheSchemas)
+
+		return this.lightningCacheSchemas[path] ?? this.schemas[path]
+	}
+
 	private updateDefaults() {
 		setSchemas(
 			Object.entries(this.fileSchemas)
