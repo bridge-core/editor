@@ -60,10 +60,6 @@ export function setupMcFunction() {
 
 			const tokens = tokenize(line)
 
-			console.log(tokens)
-
-			return undefined
-
 			console.log('----------------')
 
 			const parsedTokens = parse(tokens)
@@ -120,7 +116,53 @@ export function setupMcFunction() {
 
 			console.log(possibleVariations)
 
-			return undefined
+			let cursorTokenIndex =
+				parsedTokens.findIndex(
+					(token) => token.start <= position.column - 1 && token.end >= position.column - 1
+				) - 1
+
+			if (cursorTokenIndex < 0) cursorTokenIndex = previousArguments.length
+
+			const cursorToken = parsedTokens[cursorTokenIndex + 1]
+
+			const possibleCurrentArguments = possibleVariations
+				.map((variation) => variation.arguments[cursorTokenIndex])
+				.filter((variation) => variation)
+
+			console.log(cursorTokenIndex, cursorToken, possibleCurrentArguments)
+
+			if (possibleCurrentArguments.length === 0) return undefined
+
+			let suggestions: any[] = []
+
+			for (const argument of possibleCurrentArguments) {
+				if (argument.type === 'string') {
+					if (argument.additionalData?.values) {
+						suggestions = suggestions.concat(
+							argument.additionalData.values.map((value) => {
+								return {
+									label: value,
+									insertText:
+										(cursorToken ? value.substring(cursorToken.word?.length ?? 0) : value) + ' ',
+									kind: languages.CompletionItemKind.Text,
+									range: new Range(
+										position.lineNumber,
+										position.column,
+										position.lineNumber,
+										position.column
+									),
+								}
+							})
+						)
+
+						continue
+					}
+				}
+			}
+
+			return {
+				suggestions,
+			}
 		},
 	})
 
