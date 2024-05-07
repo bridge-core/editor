@@ -2,6 +2,7 @@ import { CancellationToken, Position, editor, languages, Range } from 'monaco-ed
 import { colorCodes } from './Language'
 import { ProjectManager } from '@/libs/project/ProjectManager'
 import { BedrockProject } from '@/libs/project/BedrockProject'
+import { Argument } from '@/libs/data/bedrock/CommandData'
 
 window.reloadId = Math.random() // TODO: Remove
 
@@ -57,11 +58,9 @@ export function setupMcFunction() {
 
 			const line = model.getLineContent(position.lineNumber)
 
-			const lineUntilCursor = line.slice(0, position.column - 1)
-
 			const tokens = tokenize(line)
 
-			console.log(tokens)
+			console.log('----------------')
 
 			const parsedTokens = parse(tokens)
 
@@ -80,7 +79,7 @@ export function setupMcFunction() {
 							label: command,
 							insertText: command.substring(partialCommand.length) + ' ',
 							kind: languages.CompletionItemKind.Text,
-							//documentation,
+							//TODO: ocumentation,
 							range: new Range(
 								position.lineNumber,
 								position.column,
@@ -91,68 +90,33 @@ export function setupMcFunction() {
 				}
 			}
 
-			const command = tokens[0].word
+			const command = parsedTokens[0].word
 
-			console.log(command)
+			let possibleVariations = commandData.getCommands().filter((variation) => variation.commandName === command)
+
+			console.log(possibleVariations)
+
+			const cursorTokenBound = parsedTokens.findLastIndex((token) => token.end < position.column - 1)
+
+			const previousArguments = parsedTokens.slice(
+				1,
+				cursorTokenBound !== -1 ? cursorTokenBound + 1 : parsedTokens.length
+			)
+
+			for (let tokenIndex = 0; tokenIndex < previousArguments.length; tokenIndex++) {
+				possibleVariations = possibleVariations.filter((variation) => {
+					const argument = variation.arguments[tokenIndex]
+					const token = previousArguments[tokenIndex]
+
+					if (argument === undefined) return false
+
+					return matchArgument(argument, token)
+				})
+			}
+
+			console.log(possibleVariations)
 
 			return undefined
-
-			// /**
-			//  * Auto-completions for target selector arguments
-			//  */
-			// const selector = isWithinTargetSelector(line, position.column - 1)
-			// if (selector) {
-			// 	const selectorStr = line.slice(selector.selectorStart, position.column - 1)
-			// 	const { tokens } = tokenizeTargetSelector(selectorStr, selector.selectorStart)
-			// 	const lastToken = tokens[tokens.length - 1]
-
-			// 	return {
-			// 		suggestions: await commandData.selectorArguments
-			// 			.getNextCompletionItems(tokens.map((token) => token.word))
-			// 			.then((completionItems) =>
-			// 				completionItems.map(({ label, insertText, documentation, kind, insertTextRules }) => ({
-			// 					label: label ?? insertText,
-			// 					insertText,
-			// 					documentation,
-			// 					kind,
-			// 					range: new Range(
-			// 						position.lineNumber,
-			// 						(lastToken?.startColumn ?? 0) + 1,
-			// 						position.lineNumber,
-			// 						(lastToken?.endColumn ?? 0) + 1
-			// 					),
-			// 					insertTextRules,
-			// 				}))
-			// 			),
-			// 	}
-			// }
-
-			// /**
-			//  * Normal command auto-completions
-			//  */
-			// const { tokens } = tokenizeCommand(lineUntilCursor)
-			// // Get the last token
-			// const lastToken = tokens[tokens.length - 1]
-
-			// const completionItems = await commandData.getNextCompletionItems(tokens.map((token) => token.word))
-
-			// return {
-			// 	suggestions: completionItems.map(
-			// 		({ label, insertText, documentation, kind, insertTextRules }: any) => ({
-			// 			label: label ?? insertText,
-			// 			insertText,
-			// 			documentation,
-			// 			kind,
-			// 			range: new Range(
-			// 				position.lineNumber,
-			// 				(lastToken?.startColumn ?? 0) + 1,
-			// 				position.lineNumber,
-			// 				(lastToken?.endColumn ?? 0) + 1
-			// 			),
-			// 			insertTextRules,
-			// 		})
-			// 	),
-			// }
 		},
 	})
 
@@ -291,6 +255,27 @@ function updateTokensProvider(commands: string[], selectorArguments: string[]) {
 			],
 		},
 	})
+}
+
+function matchArgument(parameter: Argument, token: Token) {
+	console.log('Matching', parameter, token)
+
+	if (parameter.type === 'string') {
+		if (parameter.additionalData?.values && !parameter.additionalData.values.includes(token.word ?? ''))
+			return false
+
+		return true
+	}
+
+	if (parameter.type === 'selector') {
+		if (token.type !== TokenType.Selector) return false
+
+		return true
+	}
+
+	console.warn('Unkown parameter type', parameter)
+
+	return false
 }
 
 /*
