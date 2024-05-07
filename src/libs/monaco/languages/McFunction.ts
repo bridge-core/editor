@@ -73,6 +73,8 @@ export function setupMcFunction() {
 				return {
 					suggestions: commandData
 						.getCommands()
+						.map((command) => command.commandName)
+						.filter((command, index, commands) => commands.indexOf(command) === index)
 						.filter((command) => partialCommand === '' || command.startsWith(partialCommand))
 						.map((command) => ({
 							label: command,
@@ -159,8 +161,14 @@ export function setupMcFunction() {
 		if (!(ProjectManager.currentProject instanceof BedrockProject)) return
 
 		updateTokensProvider(
-			ProjectManager.currentProject.commandData.getCommands(),
-			ProjectManager.currentProject.commandData.getSelectorArgumentNames()
+			ProjectManager.currentProject.commandData
+				.getCommands()
+				.map((command) => command.commandName)
+				.filter((command, index, commands) => commands.indexOf(command) === index),
+			ProjectManager.currentProject.commandData
+				.getSelectorArgument()
+				.map((argument) => argument.argumentName)
+				.filter((argument, index, argumentArray) => argumentArray.indexOf(argument) === index)
 		)
 	})
 
@@ -168,8 +176,14 @@ export function setupMcFunction() {
 
 	if (ProjectManager.currentProject && ProjectManager.currentProject instanceof BedrockProject)
 		updateTokensProvider(
-			ProjectManager.currentProject.commandData.getCommands(),
-			ProjectManager.currentProject.commandData.getSelectorArgumentNames()
+			ProjectManager.currentProject.commandData
+				.getCommands()
+				.map((command) => command.commandName)
+				.filter((command, index, commands) => commands.indexOf(command) === index),
+			ProjectManager.currentProject.commandData
+				.getSelectorArgument()
+				.map((argument) => argument.argumentName)
+				.filter((argument, index, argumentArray) => argumentArray.indexOf(argument) === index)
 		)
 }
 

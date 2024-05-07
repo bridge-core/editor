@@ -1,9 +1,7 @@
-import { fileSystem } from '@/libs/fileSystem/FileSystem'
 import { BedrockProject } from '@/libs/project/BedrockProject'
 import { TCompareOperator, compareVersions } from 'bridge-common-utils'
 import { TPackTypeId } from 'mc-project-core'
 import { Data } from '@/libs/data/Data'
-import { AsyncDisposable } from '@/libs/disposeable/Disposeable'
 
 export interface Requirements {
 	/**
