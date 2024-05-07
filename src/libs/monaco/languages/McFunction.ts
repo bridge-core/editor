@@ -77,7 +77,7 @@ export function setupMcFunction() {
 						.filter((command) => partialCommand === '' || command.startsWith(partialCommand))
 						.map((command) => ({
 							label: command,
-							insertText: command.substring(partialCommand.length) + ' ',
+							insertText: command.substring(partialCommand.length),
 							kind: languages.CompletionItemKind.Text,
 							//TODO: ocumentation,
 							range: new Range(
@@ -142,8 +142,7 @@ export function setupMcFunction() {
 							argument.additionalData.values.map((value) => {
 								return {
 									label: value,
-									insertText:
-										(cursorToken ? value.substring(cursorToken.word?.length ?? 0) : value) + ' ',
+									insertText: cursorToken ? value.substring(cursorToken.word?.length ?? 0) : value,
 									kind: languages.CompletionItemKind.Text,
 									range: new Range(
 										position.lineNumber,
@@ -157,6 +156,33 @@ export function setupMcFunction() {
 
 						continue
 					}
+				}
+
+				if (argument.type === 'selector') {
+					console.log(
+						commandData
+							.getSelectorArguments()
+							.map((argument) => argument.argumentName)
+							.filter((argument, index, argumentArray) => argumentArray.indexOf(argument) === index)
+					)
+
+					suggestions = suggestions.concat(
+						['@a', '@e', '@p', '@s', '@r', '@initiator'].map((value) => {
+							return {
+								label: value,
+								insertText: cursorToken ? value.substring(cursorToken.word?.length ?? 0) : value,
+								kind: languages.CompletionItemKind.Text,
+								range: new Range(
+									position.lineNumber,
+									position.column,
+									position.lineNumber,
+									position.column
+								),
+							}
+						})
+					)
+
+					continue
 				}
 			}
 
@@ -176,7 +202,7 @@ export function setupMcFunction() {
 				.map((command) => command.commandName)
 				.filter((command, index, commands) => commands.indexOf(command) === index),
 			ProjectManager.currentProject.commandData
-				.getSelectorArgument()
+				.getSelectorArguments()
 				.map((argument) => argument.argumentName)
 				.filter((argument, index, argumentArray) => argumentArray.indexOf(argument) === index)
 		)
@@ -191,7 +217,7 @@ export function setupMcFunction() {
 				.map((command) => command.commandName)
 				.filter((command, index, commands) => commands.indexOf(command) === index),
 			ProjectManager.currentProject.commandData
-				.getSelectorArgument()
+				.getSelectorArguments()
 				.map((argument) => argument.argumentName)
 				.filter((argument, index, argumentArray) => argumentArray.indexOf(argument) === index)
 		)

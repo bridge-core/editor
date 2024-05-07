@@ -49,7 +49,7 @@ export class CommandData {
 		return commands
 	}
 
-	public getSelectorArgument(): SelectorArgument[] {
+	public getSelectorArguments(): SelectorArgument[] {
 		return this.data.vanilla[0].selectorArguments
 	}
 }
