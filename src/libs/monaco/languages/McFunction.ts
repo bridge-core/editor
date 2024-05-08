@@ -59,169 +59,182 @@ export function setupMcFunction() {
 
 			const line = model.getLineContent(position.lineNumber)
 
-			const tokens = tokenize(line)
+			const cursor = position.column - 1
 
-			console.log('----------------')
+			let tokenCursor = 0
 
-			const parsedTokens = parse(tokens)
+			const command = getNextWord(line, tokenCursor)
 
-			console.log(parsedTokens)
-
-			if (tokens.length === 0 || (tokens.length === 1 && tokens[0].end === line.length)) {
-				let partialCommand = tokens[0]?.word || ''
-
+			if (command === null || cursor <= command.start + command.word.length) {
 				return {
 					suggestions: commandData
 						.getCommands()
 						.map((command) => command.commandName)
 						.filter((command, index, commands) => commands.indexOf(command) === index)
-						.filter((command) => partialCommand === '' || command.startsWith(partialCommand))
-						.map((command) => ({
-							label: command,
-							insertText: command.substring(partialCommand.length),
+						.filter((commandName) => command === null || commandName.startsWith(command.word))
+						.map((commandName) => ({
+							label: commandName,
+							insertText: commandName,
 							kind: languages.CompletionItemKind.Keyword,
 							//TODO: ocumentation,
 							range: new Range(
 								position.lineNumber,
-								position.column,
+								(command?.start ?? 0) + 1,
 								position.lineNumber,
-								position.column
+								(command === null ? 0 : command.start + command.word.length) + 1
 							),
 						})),
 				}
 			}
 
-			const command = parsedTokens[0].word
+			tokenCursor = command.start + command.word.length
 
-			let possibleVariations = commandData.getCommands().filter((variation) => variation.commandName === command)
+			return undefined
 
-			console.log(possibleVariations)
+			// const parsedTokens = parse(tokens)
 
-			const cursorTokenBound = parsedTokens.findLastIndex((token) => token.end < position.column - 1)
+			// if (tokens.length === 0 || (tokens.length === 1 && tokens[0].end === line.length)) {
+			// 	let partialCommand = tokens[0]?.word || ''
 
-			const previousArguments = parsedTokens.slice(
-				1,
-				cursorTokenBound !== -1 ? cursorTokenBound + 1 : parsedTokens.length
-			)
+			// 	return {
+			// 		suggestions: commandData
+			// 			.getCommands()
+			// 			.map((command) => command.commandName)
+			// 			.filter((command, index, commands) => commands.indexOf(command) === index)
+			// 			.filter((command) => partialCommand === '' || command.startsWith(partialCommand))
+			// 			.map((command) => ({
+			// 				label: command,
+			// 				insertText: command.substring(partialCommand.length),
+			// 				kind: languages.CompletionItemKind.Keyword,
+			// 				//TODO: ocumentation,
+			// 				range: new Range(
+			// 					position.lineNumber,
+			// 					position.column,
+			// 					position.lineNumber,
+			// 					position.column
+			// 				),
+			// 			})),
+			// 	}
+			// }
 
-			for (let tokenIndex = 0; tokenIndex < previousArguments.length; tokenIndex++) {
-				possibleVariations = possibleVariations.filter((variation) => {
-					const argument = variation.arguments[tokenIndex]
-					const token = previousArguments[tokenIndex]
+			// const command = parsedTokens[0].word
 
-					if (argument === undefined) return false
+			// let possibleVariations = commandData.getCommands().filter((variation) => variation.commandName === command)
 
-					return matchArgument(argument, token)
-				})
-			}
+			// const cursorTokenBound = parsedTokens.findLastIndex((token) => token.end < position.column - 1)
 
-			console.log(possibleVariations)
+			// const previousArguments = parsedTokens.slice(
+			// 	1,
+			// 	cursorTokenBound !== -1 ? cursorTokenBound + 1 : parsedTokens.length
+			// )
 
-			let cursorTokenIndex =
-				parsedTokens.findIndex(
-					(token) => token.start <= position.column - 1 && token.end >= position.column - 1
-				) - 1
+			// for (let tokenIndex = 0; tokenIndex < previousArguments.length; tokenIndex++) {
+			// 	possibleVariations = possibleVariations.filter((variation) => {
+			// 		const argument = variation.arguments[tokenIndex]
+			// 		const token = previousArguments[tokenIndex]
 
-			if (cursorTokenIndex < 0) cursorTokenIndex = previousArguments.length
+			// 		if (argument === undefined) return false
 
-			const cursorToken: Token | undefined = parsedTokens[cursorTokenIndex + 1]
+			// 		return matchArgument(argument, token)
+			// 	})
+			// }
 
-			const possibleCurrentArguments = possibleVariations
-				.map((variation) => variation.arguments[cursorTokenIndex])
-				.filter((variation) => variation)
+			// let cursorTokenIndex =
+			// 	parsedTokens.findIndex(
+			// 		(token) => token.start <= position.column - 1 && token.end >= position.column - 1
+			// 	) - 1
 
-			console.log(cursorTokenIndex, cursorToken, possibleCurrentArguments)
+			// if (cursorTokenIndex < 0) cursorTokenIndex = previousArguments.length
 
-			if (possibleCurrentArguments.length === 0) return undefined
+			// const cursorToken: Token | undefined = parsedTokens[cursorTokenIndex + 1]
 
-			let suggestions: any[] = []
+			// const possibleCurrentArguments = possibleVariations
+			// 	.map((variation) => variation.arguments[cursorTokenIndex])
+			// 	.filter((variation) => variation)
 
-			for (const argument of possibleCurrentArguments) {
-				if (argument.type === 'string') {
-					if (argument.additionalData?.values) {
-						const wordPart = cursorToken?.word ?? ''
+			// if (possibleCurrentArguments.length === 0) return undefined
 
-						suggestions = suggestions.concat(
-							argument.additionalData.values
-								.filter((value: string) => value.startsWith(wordPart))
-								.map((value) => {
-									return {
-										label: value,
-										insertText: value.substring(wordPart.length),
-										kind: languages.CompletionItemKind.Enum,
-										range: new Range(
-											position.lineNumber,
-											position.column,
-											position.lineNumber,
-											position.column
-										),
-									}
-								})
-						)
+			// let suggestions: any[] = []
 
-						continue
-					}
+			// for (const argument of possibleCurrentArguments) {
+			// 	if (argument.type === 'string') {
+			// 		if (argument.additionalData?.values) {
+			// 			const wordPart = cursorToken?.word ?? ''
 
-					if (argument.additionalData?.schemaReference) {
-						const data = await ProjectManager.currentProject.schemaData.get(
-							argument.additionalData.schemaReference.substring(1)
-						)
+			// 			suggestions = suggestions.concat(
+			// 				argument.additionalData.values
+			// 					.filter((value: string) => value.startsWith(wordPart))
+			// 					.map((value) => {
+			// 						return {
+			// 							label: value,
+			// 							insertText: value.substring(wordPart.length),
+			// 							kind: languages.CompletionItemKind.Enum,
+			// 							range: new Range(
+			// 								position.lineNumber,
+			// 								position.column,
+			// 								position.lineNumber,
+			// 								position.column
+			// 							),
+			// 						}
+			// 					})
+			// 			)
 
-						const wordPart = cursorToken?.word ?? ''
+			// 			continue
+			// 		}
 
-						suggestions = suggestions.concat(
-							data.enum
-								.filter((value: string) => value.startsWith(wordPart))
-								.map((value: string) => {
-									return {
-										label: value,
-										insertText: value.substring(wordPart.length),
-										kind: languages.CompletionItemKind.Enum,
-										range: new Range(
-											position.lineNumber,
-											position.column,
-											position.lineNumber,
-											position.column
-										),
-									}
-								})
-						)
+			// 		if (argument.additionalData?.schemaReference) {
+			// 			const data = await ProjectManager.currentProject.schemaData.get(
+			// 				argument.additionalData.schemaReference.substring(1)
+			// 			)
 
-						continue
-					}
-				}
+			// 			const wordPart = cursorToken?.word ?? ''
 
-				if (argument.type === 'selector') {
-					console.log(
-						commandData
-							.getSelectorArguments()
-							.map((argument) => argument.argumentName)
-							.filter((argument, index, argumentArray) => argumentArray.indexOf(argument) === index)
-					)
+			// 			suggestions = suggestions.concat(
+			// 				data.enum
+			// 					.filter((value: string) => value.startsWith(wordPart))
+			// 					.map((value: string) => {
+			// 						return {
+			// 							label: value,
+			// 							insertText: value.substring(wordPart.length),
+			// 							kind: languages.CompletionItemKind.Enum,
+			// 							range: new Range(
+			// 								position.lineNumber,
+			// 								position.column,
+			// 								position.lineNumber,
+			// 								position.column
+			// 							),
+			// 						}
+			// 					})
+			// 			)
 
-					suggestions = suggestions.concat(
-						['@a', '@e', '@p', '@s', '@r', '@initiator'].map((value) => {
-							return {
-								label: value,
-								insertText: cursorToken ? value.substring(cursorToken.word?.length ?? 0) : value,
-								kind: languages.CompletionItemKind.Text,
-								range: new Range(
-									position.lineNumber,
-									position.column,
-									position.lineNumber,
-									position.column
-								),
-							}
-						})
-					)
+			// 			continue
+			// 		}
+			// 	}
 
-					continue
-				}
-			}
+			// 	if (argument.type === 'selector') {
+			// 		suggestions = suggestions.concat(
+			// 			['@a', '@e', '@p', '@s', '@r', '@initiator'].map((value) => {
+			// 				return {
+			// 					label: value,
+			// 					insertText: cursorToken ? value.substring(cursorToken.word?.length ?? 0) : value,
+			// 					kind: languages.CompletionItemKind.Text,
+			// 					range: new Range(
+			// 						position.lineNumber,
+			// 						position.column,
+			// 						position.lineNumber,
+			// 						position.column
+			// 					),
+			// 				}
+			// 			})
+			// 		)
 
-			return {
-				suggestions,
-			}
+			// 		continue
+			// 	}
+			// }
+
+			// return {
+			// 	suggestions,
+			// }
 		},
 	})
 
@@ -362,414 +375,39 @@ function updateTokensProvider(commands: string[], selectorArguments: string[]) {
 	})
 }
 
-function matchArgument(parameter: Argument, token: Token) {
-	console.log('Matching', parameter, token)
+function getNextWord(line: string, cursor: number): { word: string; start: number } | null {
+	let initialSpaceCount = 0
 
-	if (parameter.type === 'string') {
-		if (parameter.additionalData?.values && !parameter.additionalData.values.includes(token.word ?? ''))
-			return false
+	while (line[initialSpaceCount] === ' ') initialSpaceCount++
 
-		return true
+	let spaceIndex = line.substring(cursor + initialSpaceCount).indexOf(' ') + cursor + initialSpaceCount
+	if (spaceIndex === -1) spaceIndex = line.length
+
+	if (spaceIndex <= cursor + initialSpaceCount) return null
+
+	return {
+		word: line.substring(cursor + initialSpaceCount, spaceIndex),
+		start: cursor + initialSpaceCount,
 	}
-
-	if (parameter.type === 'selector') {
-		if (token.type !== TokenType.Selector) return false
-
-		return true
-	}
-
-	console.warn('Unkown parameter type', parameter)
-
-	return false
 }
 
-/*
-For command tokenization we'll be using an algorithm I came up with after experimentation in various side projects.
-The old command parsing used something similar so I imagine it is not a novel concept but from my limitted'
-research I can't find the name for it.
+// function matchArgument(parameter: Argument, token: Token) {
+// 	console.log('Matching', parameter, token)
 
-How it works:
-The program runs a single for loop untill it encounters the end of the string.
+// 	if (parameter.type === 'string') {
+// 		if (parameter.additionalData?.values && !parameter.additionalData.values.includes(token.word ?? ''))
+// 			return false
 
-If it encounters a symbol such as '@', '.', or '{', all preceding text is added as a token. Then the symbol
-is added as its own token. And all of the text up to and including the token is spliced out.
+// 		return true
+// 	}
 
-Spaces also count as a symbol.
+// 	if (parameter.type === 'selector') {
+// 		if (token.type !== TokenType.Selector) return false
 
-After doing basic tokenization, we can run over the tokens and combine adjacent symbols into compound symbols like =!
-This also includes joining strings
+// 		return true
+// 	}
 
-Finally, if there is ever a text of length 0 trying to be added, it is ignorred.
-*/
-type Token = {
-	start: number
-	end: number
-	word?: string
-	type?: TokenType
-	[key: string]: any
-}
+// 	console.warn('Unkown parameter type', parameter)
 
-const symbols = ['!', '.', '{', '}', '[', ']', '=', ':', ' ', '"', ',']
-
-function tokenize(line: string): Token[] {
-	const tokens: Token[] = []
-
-	let cursorStart = 0
-
-	for (let cursorIndex = 0; cursorIndex < line.length; cursorIndex++) {
-		if (!symbols.includes(line[cursorIndex])) continue
-
-		if (cursorIndex - cursorStart > 0)
-			tokens.push({
-				start: cursorStart,
-				end: cursorIndex,
-				word: line.substring(cursorStart, cursorIndex),
-			})
-
-		tokens.push({
-			start: cursorIndex,
-			end: cursorIndex + 1,
-			word: line.substring(cursorIndex, cursorIndex + 1),
-		})
-
-		cursorStart = cursorIndex + 1
-	}
-
-	if (cursorStart < line.length)
-		tokens.push({
-			start: cursorStart,
-			end: line.length,
-			word: line.substring(cursorStart, line.length),
-		})
-
-	for (let cursorIndex = 0; cursorIndex < tokens.length; cursorIndex++) {
-		if (tokens[cursorIndex].word === '"') {
-			let endCursorIndex
-			for (endCursorIndex = cursorIndex + 1; endCursorIndex < tokens.length; endCursorIndex++) {
-				if (tokens[endCursorIndex].word === '"') break
-			}
-
-			if (endCursorIndex === tokens.length) endCursorIndex--
-
-			tokens.splice(cursorIndex, endCursorIndex - cursorIndex + 1, {
-				start: tokens[cursorIndex].start,
-				end: tokens[endCursorIndex].end,
-				word: tokens
-					.slice(cursorIndex, endCursorIndex + 1)
-					.map((token) => token.word)
-					.join(''),
-			})
-		}
-
-		if (
-			cursorIndex + 1 < tokens.length &&
-			tokens[cursorIndex].word === '@' &&
-			!symbols.includes(tokens[cursorIndex + 1].word ?? '')
-		) {
-			tokens.splice(cursorIndex, 2, {
-				start: tokens[cursorIndex].start,
-				end: tokens[cursorIndex + 1].end,
-				word: '@' + tokens[cursorIndex + 1].word,
-			})
-		}
-
-		if (
-			cursorIndex + 1 < tokens.length &&
-			tokens[cursorIndex].word === '=' &&
-			tokens[cursorIndex + 1].word === '!'
-		) {
-			tokens.splice(cursorIndex, 2, {
-				start: tokens[cursorIndex].start,
-				end: tokens[cursorIndex + 1].end,
-				word: '=!',
-			})
-		}
-
-		if (
-			cursorIndex + 1 < tokens.length &&
-			tokens[cursorIndex].word === '.' &&
-			tokens[cursorIndex + 1].word === '.'
-		) {
-			tokens.splice(cursorIndex, 2, {
-				start: tokens[cursorIndex].start,
-				end: tokens[cursorIndex + 1].end,
-				word: '..',
-			})
-		}
-
-		// We don't remove whitespace yet
-
-		// if (tokens[cursorIndex].word === ' ') {
-		// 	tokens.splice(cursorIndex, 1)
-
-		// 	cursorIndex--
-		// }
-	}
-
-	return tokens
-}
-
-enum TokenType {
-	Number = 'Number',
-	Boolean = 'Boolean',
-	Symbol = 'Symbol',
-	String = 'String',
-	Unkown = 'Unknown',
-	Whitespace = 'Whitespace',
-
-	Range = 'Range',
-	Offset = 'Offset',
-
-	Selector = 'Selector',
-	Json = 'Json',
-	BlockState = 'Blockstate',
-	Parameter = 'Parameter',
-	ParameterGroup = 'ParameterGroup',
-}
-
-function parse(tokens: Token[]): Token[] {
-	if (!ProjectManager.currentProject) return tokens
-	if (!(ProjectManager.currentProject instanceof BedrockProject)) return tokens
-
-	for (let index = 0; index < tokens.length; index++) {
-		if (tokens[index].word === 'true' || tokens[index].word === 'false') {
-			tokens[index].type = TokenType.Boolean
-		} else if (['!', '.', '{', '}', '[', ']', '=', ':', '"', ','].includes(tokens[index].word ?? '')) {
-			tokens[index].type = TokenType.Symbol
-		} else if (/^-?(([0-9]+)|([0-9]+\.)|(\.[0-9]+)|([0-9]+\.[0-9]+))$/.test(tokens[index].word ?? '')) {
-			tokens[index].type = TokenType.Number
-		} else if (/^(~|\^)((-|\+)?([0-9]+)|([0-9]+\.)|(\.[0-9]+)|([0-9]+\.[0-9]+))?$/.test(tokens[index].word ?? '')) {
-			tokens[index].type = TokenType.Offset
-		} else if (tokens[index].word?.startsWith('"') && tokens[index].word?.endsWith('"')) {
-			tokens[index].type = TokenType.String
-		} else if (tokens[index].word === ' ') {
-			tokens[index].type = TokenType.Whitespace
-		} else {
-			tokens[index].type = TokenType.Unkown
-		}
-	}
-
-	for (let index = 0; index < tokens.length; index++) {
-		if (
-			index - 1 >= 0 &&
-			index + 1 < tokens.length &&
-			tokens[index].type === TokenType.Symbol &&
-			tokens[index].word === ':' &&
-			tokens[index - 1].type === TokenType.Unkown &&
-			tokens[index + 1].type === TokenType.Unkown
-		) {
-			tokens.splice(index - 1, 3, {
-				start: tokens[index - 1].start,
-				end: tokens[index + 1].end,
-				word: tokens[index - 1].word! + tokens[index].word! + tokens[index + 1].word!,
-				type: TokenType.Unkown,
-			})
-		}
-
-		if (
-			index - 1 >= 0 &&
-			index + 1 < tokens.length &&
-			tokens[index].type === TokenType.Unkown &&
-			tokens[index].word === '..' &&
-			tokens[index - 1].type === TokenType.Number &&
-			tokens[index + 1].type === TokenType.Number
-		) {
-			tokens.splice(index - 1, 3, {
-				start: tokens[index - 1].start,
-				end: tokens[index + 1].end,
-				first: tokens[index - 1],
-				second: tokens[index + 1],
-				type: TokenType.Range,
-				word: tokens[index - 1].word + '..' + tokens[index + 1].word,
-			})
-		}
-	}
-
-	for (let index = 0; index < tokens.length; index++) {
-		// TODO: account for dynamic selectors
-		if (tokens[index].type === TokenType.Unkown && /^@(a|r|p|e|s|(initiator))$/.test(tokens[index].word!)) {
-			if (
-				index + 1 < tokens.length &&
-				tokens[index + 1].type === TokenType.Symbol &&
-				tokens[index + 1].word === '['
-			) {
-				let openBrackets = 1
-				let bracketIndex = index + 2
-
-				for (; openBrackets > 0 && bracketIndex < tokens.length; bracketIndex++) {
-					if (tokens[bracketIndex].type === TokenType.Symbol && tokens[bracketIndex].word === '[') {
-						openBrackets++
-					}
-
-					if (tokens[bracketIndex].type === TokenType.Symbol && tokens[bracketIndex].word === ']') {
-						openBrackets--
-					}
-				}
-
-				if (openBrackets > 0) continue
-
-				tokens.splice(index, bracketIndex - index, {
-					start: tokens[index].start,
-					end: tokens[bracketIndex - 1].end,
-					type: TokenType.Selector,
-					base: tokens[index],
-					parameters: parseSelectorParameters(tokens.slice(index + 2, bracketIndex - 1)),
-				})
-			} else {
-				tokens[index] = {
-					start: tokens[index].start,
-					end: tokens[index].end,
-					type: TokenType.Selector,
-					base: tokens[index],
-					parameters: [],
-				}
-			}
-		} else if (tokens[index].type === TokenType.Symbol && tokens[index].word === '[') {
-			let openBrackets = 1
-			let bracketIndex = index + 2
-
-			for (; openBrackets > 0 && bracketIndex < tokens.length; bracketIndex++) {
-				if (tokens[bracketIndex].type === TokenType.Symbol && tokens[bracketIndex].word === '[') {
-					openBrackets++
-				}
-
-				if (tokens[bracketIndex].type === TokenType.Symbol && tokens[bracketIndex].word === ']') {
-					openBrackets--
-				}
-			}
-
-			if (openBrackets > 0) continue
-
-			tokens.splice(index, bracketIndex - index, {
-				start: tokens[index].start,
-				end: tokens[bracketIndex - 1].end,
-				type: TokenType.BlockState,
-				parameters: parseBlockstateParameters(tokens.slice(index + 1, bracketIndex - 1)),
-			})
-		} else if (tokens[index].type === TokenType.Symbol && tokens[index].word === '{') {
-			let openBrackets = 1
-			let bracketIndex = index + 2
-
-			for (; openBrackets > 0 && bracketIndex < tokens.length; bracketIndex++) {
-				if (tokens[bracketIndex].type === TokenType.Symbol && tokens[bracketIndex].word === '{') {
-					openBrackets++
-				}
-
-				if (tokens[bracketIndex].type === TokenType.Symbol && tokens[bracketIndex].word === '}') {
-					openBrackets--
-				}
-			}
-
-			if (openBrackets > 0) continue
-
-			tokens.splice(index, bracketIndex - index, {
-				start: tokens[index].start,
-				end: tokens[bracketIndex - 1].end,
-				word: tokens
-					.slice(index, bracketIndex)
-					.map((token) => token.word)
-					.join(''),
-				type: TokenType.Json,
-			})
-		}
-	}
-
-	tokens = tokens.filter((token) => token.type !== TokenType.Whitespace)
-
-	return tokens
-}
-
-function parseSelectorParameters(tokens: Token[]): Token[] {
-	tokens = tokens.filter((token) => token.type !== TokenType.Whitespace)
-
-	for (let index = 0; index < tokens.length; index++) {
-		if (
-			index + 2 < tokens.length &&
-			tokens[index].type === TokenType.Unkown &&
-			tokens[index + 1].type === TokenType.Symbol &&
-			['=', '=!'].includes(tokens[index + 1].word!) &&
-			[TokenType.Number, TokenType.String, TokenType.Range, TokenType.Unkown].includes(tokens[index + 2].type!)
-		) {
-			tokens.splice(index, 3, {
-				start: tokens[index].start,
-				end: tokens[index + 2].end,
-				type: TokenType.Parameter,
-				name: tokens[index],
-				operator: tokens[index + 1],
-				value: tokens[index + 2],
-			})
-		}
-	}
-
-	for (let index = 0; index < tokens.length; index++) {
-		if (tokens[index].type === TokenType.Symbol && tokens[index].word === '{') {
-			let openBrackets = 1
-			let bracketIndex = index + 2
-
-			for (; openBrackets > 0 && bracketIndex < tokens.length; bracketIndex++) {
-				if (tokens[bracketIndex].type === TokenType.Symbol && tokens[bracketIndex].word === '{') {
-					openBrackets++
-				}
-
-				if (tokens[bracketIndex].type === TokenType.Symbol && tokens[bracketIndex].word === '}') {
-					openBrackets--
-				}
-			}
-
-			if (openBrackets > 0) continue
-
-			tokens.splice(index, bracketIndex - index, {
-				start: tokens[index].start,
-				end: tokens[bracketIndex - 1].end,
-				type: TokenType.ParameterGroup,
-				parameters: tokens.slice(index + 1, bracketIndex - 1),
-			})
-		}
-	}
-
-	for (let index = 0; index < tokens.length; index++) {
-		if (
-			index + 2 < tokens.length &&
-			tokens[index].type === TokenType.Unkown &&
-			tokens[index + 1].type === TokenType.Symbol &&
-			['=', '=!'].includes(tokens[index + 1].word!) &&
-			tokens[index + 2].type == TokenType.ParameterGroup
-		) {
-			tokens.splice(index, 3, {
-				start: tokens[index].start,
-				end: tokens[index + 2].end,
-				type: TokenType.Parameter,
-				name: tokens[index],
-				operator: tokens[index + 1],
-				value: tokens[index + 2],
-			})
-		}
-	}
-
-	return tokens
-}
-
-function parseBlockstateParameters(tokens: Token[]): Token[] {
-	tokens = tokens.filter((token) => token.type !== TokenType.Whitespace)
-
-	for (let index = 0; index < tokens.length; index++) {
-		if (
-			index + 2 < tokens.length &&
-			tokens[index].type === TokenType.String &&
-			tokens[index + 1].type === TokenType.Symbol &&
-			tokens[index + 1].word === ':' &&
-			[TokenType.Number, TokenType.String, TokenType.Range, TokenType.Unkown].includes(tokens[index + 2].type!)
-		) {
-			tokens.splice(index, 3, {
-				start: tokens[index].start,
-				end: tokens[index + 2].end,
-				type: TokenType.Parameter,
-				name: tokens[index],
-				operator: tokens[index + 1],
-				value: tokens[index + 2],
-			})
-		}
-	}
-
-	return tokens
-}
+// 	return false
+// }
