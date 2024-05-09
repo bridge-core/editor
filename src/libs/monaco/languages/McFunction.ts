@@ -2,9 +2,9 @@ import { CancellationToken, Position, editor, languages, Range } from 'monaco-ed
 import { colorCodes } from './Language'
 import { ProjectManager } from '@/libs/project/ProjectManager'
 import { BedrockProject } from '@/libs/project/BedrockProject'
-import { Argument, Command, CommandData } from '@/libs/data/bedrock/CommandData'
-import { Data } from '@/libs/data/Data'
+import { Command } from '@/libs/data/bedrock/CommandData'
 
+//@ts-ignore
 window.reloadId = Math.random() // TODO: Remove
 
 export function setupMcFunction() {
@@ -40,6 +40,7 @@ export function setupMcFunction() {
 		],
 	})
 
+	//@ts-ignore
 	const id = window.reloadId // TODO: Remove
 
 	languages.registerCompletionItemProvider('mcfunction', {
@@ -50,6 +51,7 @@ export function setupMcFunction() {
 			context: languages.CompletionContext,
 			token: CancellationToken
 		) {
+			//@ts-ignore
 			if (id !== window.reloadId) return // TODO: Remove
 
 			if (!ProjectManager.currentProject) return
@@ -59,152 +61,7 @@ export function setupMcFunction() {
 
 			const cursor = position.column - 1
 
-			return getCommandCompletions(line, cursor, 0, position)
-
-			// const parsedTokens = parse(tokens)
-
-			// if (tokens.length === 0 || (tokens.length === 1 && tokens[0].end === line.length)) {
-			// 	let partialCommand = tokens[0]?.word || ''
-
-			// 	return {
-			// 		suggestions: commandData
-			// 			.getCommands()
-			// 			.map((command) => command.commandName)
-			// 			.filter((command, index, commands) => commands.indexOf(command) === index)
-			// 			.filter((command) => partialCommand === '' || command.startsWith(partialCommand))
-			// 			.map((command) => ({
-			// 				label: command,
-			// 				insertText: command.substring(partialCommand.length),
-			// 				kind: languages.CompletionItemKind.Keyword,
-			// 				//TODO: ocumentation,
-			// 				range: new Range(
-			// 					position.lineNumber,
-			// 					position.column,
-			// 					position.lineNumber,
-			// 					position.column
-			// 				),
-			// 			})),
-			// 	}
-			// }
-
-			// const command = parsedTokens[0].word
-
-			// let possibleVariations = commandData.getCommands().filter((variation) => variation.commandName === command)
-
-			// const cursorTokenBound = parsedTokens.findLastIndex((token) => token.end < position.column - 1)
-
-			// const previousArguments = parsedTokens.slice(
-			// 	1,
-			// 	cursorTokenBound !== -1 ? cursorTokenBound + 1 : parsedTokens.length
-			// )
-
-			// for (let tokenIndex = 0; tokenIndex < previousArguments.length; tokenIndex++) {
-			// 	possibleVariations = possibleVariations.filter((variation) => {
-			// 		const argument = variation.arguments[tokenIndex]
-			// 		const token = previousArguments[tokenIndex]
-
-			// 		if (argument === undefined) return false
-
-			// 		return matchArgument(argument, token)
-			// 	})
-			// }
-
-			// let cursorTokenIndex =
-			// 	parsedTokens.findIndex(
-			// 		(token) => token.start <= position.column - 1 && token.end >= position.column - 1
-			// 	) - 1
-
-			// if (cursorTokenIndex < 0) cursorTokenIndex = previousArguments.length
-
-			// const cursorToken: Token | undefined = parsedTokens[cursorTokenIndex + 1]
-
-			// const possibleCurrentArguments = possibleVariations
-			// 	.map((variation) => variation.arguments[cursorTokenIndex])
-			// 	.filter((variation) => variation)
-
-			// if (possibleCurrentArguments.length === 0) return undefined
-
-			// let suggestions: any[] = []
-
-			// for (const argument of possibleCurrentArguments) {
-			// 	if (argument.type === 'string') {
-			// 		if (argument.additionalData?.values) {
-			// 			const wordPart = cursorToken?.word ?? ''
-
-			// 			suggestions = suggestions.concat(
-			// 				argument.additionalData.values
-			// 					.filter((value: string) => value.startsWith(wordPart))
-			// 					.map((value) => {
-			// 						return {
-			// 							label: value,
-			// 							insertText: value.substring(wordPart.length),
-			// 							kind: languages.CompletionItemKind.Enum,
-			// 							range: new Range(
-			// 								position.lineNumber,
-			// 								position.column,
-			// 								position.lineNumber,
-			// 								position.column
-			// 							),
-			// 						}
-			// 					})
-			// 			)
-
-			// 			continue
-			// 		}
-
-			// 		if (argument.additionalData?.schemaReference) {
-			// 			const data = await ProjectManager.currentProject.schemaData.get(
-			// 				argument.additionalData.schemaReference.substring(1)
-			// 			)
-
-			// 			const wordPart = cursorToken?.word ?? ''
-
-			// 			suggestions = suggestions.concat(
-			// 				data.enum
-			// 					.filter((value: string) => value.startsWith(wordPart))
-			// 					.map((value: string) => {
-			// 						return {
-			// 							label: value,
-			// 							insertText: value.substring(wordPart.length),
-			// 							kind: languages.CompletionItemKind.Enum,
-			// 							range: new Range(
-			// 								position.lineNumber,
-			// 								position.column,
-			// 								position.lineNumber,
-			// 								position.column
-			// 							),
-			// 						}
-			// 					})
-			// 			)
-
-			// 			continue
-			// 		}
-			// 	}
-
-			// 	if (argument.type === 'selector') {
-			// 		suggestions = suggestions.concat(
-			// 			['@a', '@e', '@p', '@s', '@r', '@initiator'].map((value) => {
-			// 				return {
-			// 					label: value,
-			// 					insertText: cursorToken ? value.substring(cursorToken.word?.length ?? 0) : value,
-			// 					kind: languages.CompletionItemKind.Text,
-			// 					range: new Range(
-			// 						position.lineNumber,
-			// 						position.column,
-			// 						position.lineNumber,
-			// 						position.column
-			// 					),
-			// 				}
-			// 			})
-			// 		)
-
-			// 		continue
-			// 	}
-			// }
-
-			// return {
-			// 	suggestions,
-			// }
+			return await getCommandCompletions(line, cursor, 0, position)
 		},
 	})
 
@@ -345,12 +202,12 @@ function updateTokensProvider(commands: string[], selectorArguments: string[]) {
 	})
 }
 
-function getCommandCompletions(
+async function getCommandCompletions(
 	line: string,
 	cursor: number,
 	tokenCursor: number,
 	position: Position
-): { suggestions: any[] } | undefined {
+): Promise<{ suggestions: any[] } | undefined> {
 	if (!ProjectManager.currentProject || !(ProjectManager.currentProject instanceof BedrockProject)) return undefined
 
 	const commandData = ProjectManager.currentProject.commandData
@@ -383,33 +240,94 @@ function getCommandCompletions(
 
 	let possibleVariations = commandData.getCommands().filter((variation) => variation.commandName === command.word)
 
-	console.log('Possible variations', possibleVariations)
-
-	return getArgumentCompletions(line, cursor, tokenCursor, position, possibleVariations, 0)
+	return await getArgumentCompletions(line, cursor, tokenCursor, position, possibleVariations, 0)
 }
 
-function getArgumentCompletions(
+async function getArgumentCompletions(
 	line: string,
 	cursor: number,
 	tokenCursor: number,
 	position: Position,
 	variations: Command[],
 	argumentIndex: number
-): { suggestions: any[] } | undefined {
+): Promise<{ suggestions: any[] } | undefined> {
+	if (!ProjectManager.currentProject || !(ProjectManager.currentProject instanceof BedrockProject)) return undefined
+
 	const argument = getNextWord(line, tokenCursor)
 
 	if (argument === null || cursor <= argument.start + argument.word.length) {
-		console.log('Suggest more completions!', variations)
-
 		const suggestions: any[] = []
 
 		for (const variation of variations) {
-			if (variation.arguments[argumentIndex].type === 'string') {
-				continue
+			const argumentType = variation.arguments[argumentIndex]
+
+			if (argumentType.type === 'string') {
+				if (argumentType.additionalData?.values) {
+					for (const value of argumentType.additionalData!.values as string[]) {
+						if (argument && !value.startsWith(argument.word)) continue
+
+						suggestions.push({
+							label: value,
+							insertText: value,
+							kind: languages.CompletionItemKind.Keyword,
+							//TODO: ocumentation,
+							range: new Range(
+								position.lineNumber,
+								(argument?.start ?? cursor) + 1,
+								position.lineNumber,
+								(argument === null ? cursor : argument.start + argument.word.length) + 1
+							),
+						})
+					}
+				}
+
+				if (argumentType.additionalData?.schemaReference) {
+					const data = await ProjectManager.currentProject.schemaData.get(
+						argumentType.additionalData.schemaReference.substring(1)
+					)
+
+					for (const value of data.enum as string[]) {
+						if (argument && !value.startsWith(argument.word)) continue
+
+						suggestions.push({
+							label: value,
+							insertText: value,
+							kind: languages.CompletionItemKind.Keyword,
+							//TODO: ocumentation,
+							range: new Range(
+								position.lineNumber,
+								(argument?.start ?? cursor) + 1,
+								position.lineNumber,
+								(argument === null ? cursor : argument.start + argument.word.length) + 1
+							),
+						})
+					}
+				}
 			}
 
-			if (variation.arguments[argumentIndex].type === 'selector') {
+			if (argumentType.type === 'boolean') {
+				for (const value of ['true', 'false']) {
+					if (argument && !value.startsWith(argument.word)) continue
+
+					suggestions.push({
+						label: value,
+						insertText: value,
+						kind: languages.CompletionItemKind.Keyword,
+						//TODO: ocumentation,
+						range: new Range(
+							position.lineNumber,
+							(argument?.start ?? cursor) + 1,
+							position.lineNumber,
+							(argument === null ? cursor : argument.start + argument.word.length) + 1
+						),
+					})
+				}
+			}
+
+			if (argumentType.type === 'selector') {
 				for (const selector of ['p', 'r', 'a', 'e', 's', 'initiator']) {
+					if (argument && !('@' + selector).startsWith(argument.word)) continue
+
 					suggestions.push({
 						label: '@' + selector,
 						insertText: '@' + selector,
@@ -425,8 +343,6 @@ function getArgumentCompletions(
 				}
 			}
 		}
-
-		console.log(suggestions)
 
 		return {
 			suggestions,
@@ -455,6 +371,12 @@ function matchArgument(argument: Token, type: any): boolean {
 	if (type === undefined) return false
 
 	if (type.type === 'string') return true
+	//TODO: match enum?
+
+	if (type.type === 'boolean' && /^(true|false)$/) return true
+
+	//TODO: make selector matching more robust?
+	if (type.type === 'selector' && /^@(a|e|r|s|p|(initiator))/.test(argument.word)) return true
 
 	return false
 }
@@ -465,7 +387,7 @@ function getNextWord(line: string, cursor: number): Token | null {
 	while (line[initialSpaceCount + cursor] === ' ') initialSpaceCount++
 
 	let spaceIndex = line.substring(cursor + initialSpaceCount).indexOf(' ') + cursor + initialSpaceCount
-	if (spaceIndex === -1) spaceIndex = line.length
+	if (spaceIndex === cursor + initialSpaceCount - 1) spaceIndex = line.length
 
 	if (spaceIndex <= cursor + initialSpaceCount) return null
 
@@ -474,24 +396,3 @@ function getNextWord(line: string, cursor: number): Token | null {
 		start: cursor + initialSpaceCount,
 	}
 }
-
-// function matchArgument(parameter: Argument, token: Token) {
-// 	console.log('Matching', parameter, token)
-
-// 	if (parameter.type === 'string') {
-// 		if (parameter.additionalData?.values && !parameter.additionalData.values.includes(token.word ?? ''))
-// 			return false
-
-// 		return true
-// 	}
-
-// 	if (parameter.type === 'selector') {
-// 		if (token.type !== TokenType.Selector) return false
-
-// 		return true
-// 	}
-
-// 	console.warn('Unkown parameter type', parameter)
-
-// 	return false
-// }
