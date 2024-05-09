@@ -2,7 +2,7 @@ import { CancellationToken, Position, editor, languages, Range } from 'monaco-ed
 import { colorCodes } from './Language'
 import { ProjectManager } from '@/libs/project/ProjectManager'
 import { BedrockProject } from '@/libs/project/BedrockProject'
-import { Argument } from '@/libs/data/bedrock/CommandData'
+import { Argument, Command, CommandData } from '@/libs/data/bedrock/CommandData'
 import { Data } from '@/libs/data/Data'
 
 window.reloadId = Math.random() // TODO: Remove
@@ -55,41 +55,11 @@ export function setupMcFunction() {
 			if (!ProjectManager.currentProject) return
 			if (!(ProjectManager.currentProject instanceof BedrockProject)) return
 
-			const commandData = ProjectManager.currentProject.commandData
-
 			const line = model.getLineContent(position.lineNumber)
 
 			const cursor = position.column - 1
 
-			let tokenCursor = 0
-
-			const command = getNextWord(line, tokenCursor)
-
-			if (command === null || cursor <= command.start + command.word.length) {
-				return {
-					suggestions: commandData
-						.getCommands()
-						.map((command) => command.commandName)
-						.filter((command, index, commands) => commands.indexOf(command) === index)
-						.filter((commandName) => command === null || commandName.startsWith(command.word))
-						.map((commandName) => ({
-							label: commandName,
-							insertText: commandName,
-							kind: languages.CompletionItemKind.Keyword,
-							//TODO: ocumentation,
-							range: new Range(
-								position.lineNumber,
-								(command?.start ?? 0) + 1,
-								position.lineNumber,
-								(command === null ? 0 : command.start + command.word.length) + 1
-							),
-						})),
-				}
-			}
-
-			tokenCursor = command.start + command.word.length
-
-			return undefined
+			return getCommandCompletions(line, cursor, 0, position)
 
 			// const parsedTokens = parse(tokens)
 
@@ -375,10 +345,124 @@ function updateTokensProvider(commands: string[], selectorArguments: string[]) {
 	})
 }
 
-function getNextWord(line: string, cursor: number): { word: string; start: number } | null {
+function getCommandCompletions(
+	line: string,
+	cursor: number,
+	tokenCursor: number,
+	position: Position
+): { suggestions: any[] } | undefined {
+	if (!ProjectManager.currentProject || !(ProjectManager.currentProject instanceof BedrockProject)) return undefined
+
+	const commandData = ProjectManager.currentProject.commandData
+
+	const command = getNextWord(line, tokenCursor)
+
+	if (command === null || cursor <= command.start + command.word.length) {
+		return {
+			suggestions: commandData
+				.getCommands()
+				.map((command) => command.commandName)
+				.filter((command, index, commands) => commands.indexOf(command) === index)
+				.filter((commandName) => command === null || commandName.startsWith(command.word))
+				.map((commandName) => ({
+					label: commandName,
+					insertText: commandName,
+					kind: languages.CompletionItemKind.Keyword,
+					//TODO: ocumentation,
+					range: new Range(
+						position.lineNumber,
+						(command?.start ?? 0) + 1,
+						position.lineNumber,
+						(command === null ? 0 : command.start + command.word.length) + 1
+					),
+				})),
+		}
+	}
+
+	tokenCursor = command.start + command.word.length
+
+	let possibleVariations = commandData.getCommands().filter((variation) => variation.commandName === command.word)
+
+	console.log('Possible variations', possibleVariations)
+
+	return getArgumentCompletions(line, cursor, tokenCursor, position, possibleVariations, 0)
+}
+
+function getArgumentCompletions(
+	line: string,
+	cursor: number,
+	tokenCursor: number,
+	position: Position,
+	variations: Command[],
+	argumentIndex: number
+): { suggestions: any[] } | undefined {
+	const argument = getNextWord(line, tokenCursor)
+
+	if (argument === null || cursor <= argument.start + argument.word.length) {
+		console.log('Suggest more completions!', variations)
+
+		const suggestions: any[] = []
+
+		for (const variation of variations) {
+			if (variation.arguments[argumentIndex].type === 'string') {
+				continue
+			}
+
+			if (variation.arguments[argumentIndex].type === 'selector') {
+				for (const selector of ['p', 'r', 'a', 'e', 's', 'initiator']) {
+					suggestions.push({
+						label: '@' + selector,
+						insertText: '@' + selector,
+						kind: languages.CompletionItemKind.Keyword,
+						//TODO: ocumentation,
+						range: new Range(
+							position.lineNumber,
+							(argument?.start ?? cursor) + 1,
+							position.lineNumber,
+							(argument === null ? cursor : argument.start + argument.word.length) + 1
+						),
+					})
+				}
+			}
+		}
+
+		console.log(suggestions)
+
+		return {
+			suggestions,
+		}
+	}
+
+	tokenCursor = argument.start + argument.word.length
+
+	variations = variations.filter(
+		(variation) =>
+			matchArgument(argument, variation.arguments[argumentIndex]) &&
+			variation.arguments.length > argumentIndex + 1
+	)
+
+	if (variations.length === 0) return undefined
+
+	return getArgumentCompletions(line, cursor, tokenCursor, position, variations, argumentIndex + 1)
+}
+
+interface Token {
+	word: string
+	start: number
+}
+
+function matchArgument(argument: Token, type: any): boolean {
+	if (type === undefined) return false
+
+	if (type.type === 'string') return true
+
+	return false
+}
+
+function getNextWord(line: string, cursor: number): Token | null {
 	let initialSpaceCount = 0
 
-	while (line[initialSpaceCount] === ' ') initialSpaceCount++
+	while (line[initialSpaceCount + cursor] === ' ') initialSpaceCount++
 
 	let spaceIndex = line.substring(cursor + initialSpaceCount).indexOf(' ') + cursor + initialSpaceCount
 	if (spaceIndex === -1) spaceIndex = line.length
