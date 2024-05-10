@@ -251,6 +251,41 @@ async function getArgumentCompletions(
 	variations: Command[],
 	argumentIndex: number
 ): Promise<{ suggestions: any[] } | undefined> {
+	const basicVariations = variations.filter((variation) => variation.arguments[argumentIndex].type !== 'selector')
+	const selectorVariations = variations.filter((variation) => variation.arguments[argumentIndex].type === 'selector')
+
+	const basicCompletions =
+		basicVariations.length === 0
+			? undefined
+			: await getBasicCompletions(line, cursor, tokenCursor, position, basicVariations, argumentIndex)
+	const selectorCompletions =
+		selectorVariations.length === 0
+			? undefined
+			: await getSelectorCompletions(line, cursor, tokenCursor, position, selectorVariations, argumentIndex)
+
+	if (basicCompletions === undefined && selectorCompletions === undefined) return undefined
+
+	const completions: any = {
+		suggestions: [],
+	}
+
+	if (basicCompletions !== undefined)
+		completions.suggestions = completions.suggestions.concat(basicCompletions.suggestions)
+
+	if (selectorCompletions !== undefined)
+		completions.suggestions = completions.suggestions.concat(selectorCompletions.suggestions)
+
+	return completions
+}
+
+async function getBasicCompletions(
+	line: string,
+	cursor: number,
+	tokenCursor: number,
+	position: Position,
+	variations: Command[],
+	argumentIndex: number
+): Promise<{ suggestions: any[] } | undefined> {
 	if (!ProjectManager.currentProject || !(ProjectManager.currentProject instanceof BedrockProject)) return undefined
 
 	const argument = getNextWord(line, tokenCursor)
@@ -323,25 +358,57 @@ async function getArgumentCompletions(
 					})
 				}
 			}
+		}
 
-			if (argumentType.type === 'selector') {
-				for (const selector of ['p', 'r', 'a', 'e', 's', 'initiator']) {
-					if (argument && !('@' + selector).startsWith(argument.word)) continue
+		return {
+			suggestions,
+		}
+	}
 
-					suggestions.push({
-						label: '@' + selector,
-						insertText: '@' + selector,
-						kind: languages.CompletionItemKind.Keyword,
-						//TODO: ocumentation,
-						range: new Range(
-							position.lineNumber,
-							(argument?.start ?? cursor) + 1,
-							position.lineNumber,
-							(argument === null ? cursor : argument.start + argument.word.length) + 1
-						),
-					})
-				}
-			}
+	tokenCursor = argument.start + argument.word.length
+
+	variations = variations.filter(
+		(variation) =>
+			matchArgument(argument, variation.arguments[argumentIndex]) &&
+			variation.arguments.length > argumentIndex + 1
+	)
+
+	if (variations.length === 0) return undefined
+
+	return getArgumentCompletions(line, cursor, tokenCursor, position, variations, argumentIndex + 1)
+}
+
+async function getSelectorCompletions(
+	line: string,
+	cursor: number,
+	tokenCursor: number,
+	position: Position,
+	variations: Command[],
+	argumentIndex: number
+): Promise<{ suggestions: any[] } | undefined> {
+	if (!ProjectManager.currentProject || !(ProjectManager.currentProject instanceof BedrockProject)) return undefined
+
+	const argument = getNextWord(line, tokenCursor)
+	//TODO: read full selector
+
+	if (argument === null || cursor <= argument.start + argument.word.length) {
+		const suggestions: any[] = []
+
+		for (const selector of ['p', 'r', 'a', 'e', 's', 'initiator']) {
+			if (argument && !('@' + selector).startsWith(argument.word)) continue
+
+			suggestions.push({
+				label: '@' + selector,
+				insertText: '@' + selector,
+				kind: languages.CompletionItemKind.Keyword,
+				//TODO: ocumentation,
+				range: new Range(
+					position.lineNumber,
+					(argument?.start ?? cursor) + 1,
+					position.lineNumber,
+					(argument === null ? cursor : argument.start + argument.word.length) + 1
+				),
+			})
 		}
 
 		return {
