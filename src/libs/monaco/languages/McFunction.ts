@@ -378,6 +378,18 @@ async function getBasicCompletions(
 	return getArgumentCompletions(line, cursor, tokenCursor, position, variations, argumentIndex + 1)
 }
 
+function getBasicSelectorPart(word: string): string {
+	if (word[0] !== '@') return ''
+
+	if (word.length === 1) return word[0]
+
+	for (let index = 1; index < word.length; index++) {
+		if (!/[a-z]/.test(word[index])) return word.substring(0, index)
+	}
+
+	return word
+}
+
 async function getSelectorCompletions(
 	line: string,
 	cursor: number,
@@ -388,40 +400,93 @@ async function getSelectorCompletions(
 ): Promise<{ suggestions: any[] } | undefined> {
 	if (!ProjectManager.currentProject || !(ProjectManager.currentProject instanceof BedrockProject)) return undefined
 
-	const argument = getNextWord(line, tokenCursor)
-	//TODO: read full selector
+	const token = getNextSelector(line, tokenCursor)
 
-	if (argument === null || cursor <= argument.start + argument.word.length) {
-		const suggestions: any[] = []
+	if (token === null || cursor <= token.start + token.word.length) {
+		let basicSelector = ''
 
-		for (const selector of ['p', 'r', 'a', 'e', 's', 'initiator']) {
-			if (argument && !('@' + selector).startsWith(argument.word)) continue
+		if (token) basicSelector = getBasicSelectorPart(token.word)
 
-			suggestions.push({
-				label: '@' + selector,
-				insertText: '@' + selector,
-				kind: languages.CompletionItemKind.Keyword,
-				//TODO: ocumentation,
-				range: new Range(
-					position.lineNumber,
-					(argument?.start ?? cursor) + 1,
-					position.lineNumber,
-					(argument === null ? cursor : argument.start + argument.word.length) + 1
-				),
-			})
+		if (token === null || cursor <= token.start + basicSelector.length) {
+			const suggestions: any[] = []
+
+			for (const selector of ['p', 'r', 'a', 'e', 's', 'initiator']) {
+				if (token && !('@' + selector).startsWith(token.word)) continue
+
+				suggestions.push({
+					label: '@' + selector,
+					insertText: '@' + selector,
+					kind: languages.CompletionItemKind.Keyword,
+					//TODO: ocumentation,
+					range: new Range(
+						position.lineNumber,
+						(token?.start ?? cursor) + 1,
+						position.lineNumber,
+						(token === null ? cursor : token.start + token.word.length) + 1
+					),
+				})
+			}
+
+			return {
+				suggestions,
+			}
 		}
 
-		return {
-			suggestions,
+		tokenCursor = token.start + basicSelector.length
+
+		if (line[tokenCursor] !== '[') return undefined
+
+		tokenCursor++
+
+		let expects: 'parameter' | 'operator' | 'value' | 'comma' = 'parameter'
+
+		while (true) {
+			if (expects === 'parameter') {
+				let argument = getNextSelectorArgumentWord(line, tokenCursor)
+
+				console.log(argument)
+
+				if (argument === null) return undefined
+
+				if (cursor <= argument.start + argument.word.length) {
+					console.log('parameter suggestions')
+
+					const suggestions: any[] = []
+
+					return {
+						suggestions,
+					}
+				}
+
+				tokenCursor = argument.start + argument.word.length
+
+				expects = 'operator'
+			} else if (expects === 'operator') {
+				if (line[tokenCursor] + line[tokenCursor + 1] === '=!') {
+					tokenCursor += 2
+
+					expects = 'value'
+				} else if (line[tokenCursor] === '=') {
+					tokenCursor++
+
+					expects = 'value'
+				} else {
+					return undefined
+				}
+			} else if (expects === 'value') {
+			} else if (expects === 'comma') {
+				// if(cursor === tokenCursor) {}
+			} else {
+				return undefined
+			}
 		}
 	}
 
-	tokenCursor = argument.start + argument.word.length
+	tokenCursor = token.start + token.word.length
 
 	variations = variations.filter(
 		(variation) =>
-			matchArgument(argument, variation.arguments[argumentIndex]) &&
-			variation.arguments.length > argumentIndex + 1
+			matchArgument(token, variation.arguments[argumentIndex]) && variation.arguments.length > argumentIndex + 1
 	)
 
 	if (variations.length === 0) return undefined
@@ -460,6 +525,80 @@ function getNextWord(line: string, cursor: number): Token | null {
 
 	return {
 		word: line.substring(cursor + initialSpaceCount, spaceIndex),
+		start: cursor + initialSpaceCount,
+	}
+}
+
+function getNextSelector(line: string, cursor: number): Token | null {
+	let startCharacter = cursor
+
+	while (line[startCharacter] === ' ') startCharacter++
+
+	if (line[startCharacter] !== '@') return null
+
+	let endCharacter = startCharacter + 2
+
+	while (/^[a-z]+$/.test(line.slice(startCharacter + 1, endCharacter)) && endCharacter <= line.length) {
+		endCharacter++
+	}
+
+	endCharacter--
+
+	if (endCharacter === startCharacter + 1)
+		return {
+			word: '@',
+			start: startCharacter,
+		}
+
+	if (line[endCharacter] !== '[')
+		return {
+			word: line.substring(startCharacter, endCharacter),
+			start: startCharacter,
+		}
+
+	endCharacter++
+
+	let openBracketCount = 1
+
+	for (; endCharacter < line.length; endCharacter++) {
+		if (line[endCharacter] === ' ') {
+			startCharacter++
+		} else if (line[endCharacter] === '[') {
+			openBracketCount++
+		} else if (line[endCharacter] === ']') {
+			openBracketCount--
+
+			if (openBracketCount === 0) {
+				endCharacter++
+
+				break
+			}
+		}
+	}
+
+	return {
+		word: line.substring(startCharacter, endCharacter),
+		start: startCharacter,
+	}
+}
+
+function getNextSelectorArgumentWord(line: string, cursor: number): Token | null {
+	let initialSpaceCount = 0
+
+	while (line[initialSpaceCount + cursor] === ' ') initialSpaceCount++
+
+	let endCharacter = initialSpaceCount + cursor + 1
+
+	while (/^[a-z]+$/.test(line.slice(initialSpaceCount + cursor, endCharacter)) && endCharacter <= line.length) {
+		endCharacter++
+	}
+
+	endCharacter--
+
+	if (endCharacter === initialSpaceCount + cursor) return null
+
+	return {
+		word: line.substring(cursor + initialSpaceCount, endCharacter),
 		start: cursor + initialSpaceCount,
 	}
 }
