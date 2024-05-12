@@ -579,7 +579,7 @@ async function getSelectorArgumentCompletions(
 	tokenCursor = skipSpaces(line, tokenCursor)
 	token = getNextSelectorOperatorWord(line, tokenCursor)
 
-	if (cursor <= tokenCursor || token == null) {
+	if (cursor <= tokenCursor) {
 		return {
 			suggestions: ['=', '=!'].map((operator) => ({
 				label: operator,
@@ -589,6 +589,8 @@ async function getSelectorArgumentCompletions(
 			})),
 		}
 	}
+
+	if (!token) return undefined
 
 	tokenCursor = token.start + token.word.length
 
