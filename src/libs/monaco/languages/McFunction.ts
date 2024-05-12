@@ -39,7 +39,7 @@ export function setupMcFunction() {
 	const id = window.reloadId // TODO: Remove
 
 	languages.registerCompletionItemProvider('mcfunction', {
-		triggerCharacters: [' ', '[', '{', '=', ',', '!'],
+		triggerCharacters: [' ', '[', '{', '=', ',', '!', '@', '\n'],
 
 		async provideCompletionItems(
 			model: editor.ITextModel,
@@ -56,6 +56,8 @@ export function setupMcFunction() {
 			const line = model.getLineContent(position.lineNumber)
 
 			const cursor = position.column - 1
+
+			console.log('Triggered completions')
 
 			return await getCommandCompletions(line, cursor, 0, position)
 		},
@@ -204,21 +206,35 @@ async function getCommandCompletions(
 	tokenCursor: number,
 	position: Position
 ): Promise<{ suggestions: any[] } | undefined> {
-	console.log('Completions triggered')
-
 	if (!ProjectManager.currentProject || !(ProjectManager.currentProject instanceof BedrockProject)) return undefined
 
 	const commandData = ProjectManager.currentProject.commandData
 
-	const command = getNextWord(line, tokenCursor)
+	tokenCursor = skipSpaces(line, tokenCursor)
+	const token = getNextWord(line, tokenCursor)
 
-	if (command === null || cursor <= command.start + command.word.length) {
+	if (cursor < tokenCursor || (cursor == tokenCursor && !token))
 		return {
 			suggestions: commandData
 				.getCommands()
 				.map((command) => command.commandName)
 				.filter((command, index, commands) => commands.indexOf(command) === index)
-				.filter((commandName) => command === null || commandName.startsWith(command.word))
+				.map((commandName) => ({
+					label: commandName,
+					insertText: commandName,
+					kind: languages.CompletionItemKind.Keyword,
+					//TODO: ocumentation,
+					range: new Range(position.lineNumber, cursor + 1, position.lineNumber, cursor + 1),
+				})),
+		}
+
+	if (token && cursor <= token.start + token.word.length) {
+		return {
+			suggestions: commandData
+				.getCommands()
+				.map((command) => command.commandName)
+				.filter((command, index, commands) => commands.indexOf(command) === index)
+				.filter((commandName) => commandName.startsWith(token.word))
 				.map((commandName) => ({
 					label: commandName,
 					insertText: commandName,
@@ -226,17 +242,19 @@ async function getCommandCompletions(
 					//TODO: ocumentation,
 					range: new Range(
 						position.lineNumber,
-						(command?.start ?? 0) + 1,
+						token.start + 1,
 						position.lineNumber,
-						(command === null ? 0 : command.start + command.word.length) + 1
+						token.start + token.word.length + 1
 					),
 				})),
 		}
 	}
 
-	tokenCursor = command.start + command.word.length
+	if (!token) return undefined
 
-	let possibleVariations = commandData.getCommands().filter((variation) => variation.commandName === command.word)
+	tokenCursor = token.start + token.word.length
+
+	let possibleVariations = commandData.getCommands().filter((variation) => variation.commandName === token.word)
 
 	return await getArgumentCompletions(line, cursor, tokenCursor, position, possibleVariations, 0)
 }
@@ -286,9 +304,10 @@ async function getBasicCompletions(
 ): Promise<{ suggestions: any[] } | undefined> {
 	if (!ProjectManager.currentProject || !(ProjectManager.currentProject instanceof BedrockProject)) return undefined
 
-	const argument = getNextWord(line, tokenCursor)
+	tokenCursor = skipSpaces(line, tokenCursor)
+	const token = getNextWord(line, tokenCursor)
 
-	if (argument === null || cursor <= argument.start + argument.word.length) {
+	if (cursor < tokenCursor || (cursor == tokenCursor && !token)) {
 		const suggestions: any[] = []
 
 		for (const variation of variations) {
@@ -297,18 +316,68 @@ async function getBasicCompletions(
 			if (argumentType.type === 'string') {
 				if (argumentType.additionalData?.values) {
 					for (const value of argumentType.additionalData!.values as string[]) {
-						if (argument && !value.startsWith(argument.word)) continue
+						suggestions.push({
+							label: value,
+							insertText: value,
+							kind: languages.CompletionItemKind.Keyword,
+							range: new Range(position.lineNumber, cursor + 1, position.lineNumber, cursor + 1),
+						})
+					}
+				}
+
+				if (argumentType.additionalData?.schemaReference) {
+					const data = await ProjectManager.currentProject.schemaData.get(
+						argumentType.additionalData.schemaReference.substring(1)
+					)
+
+					for (const value of data.enum as string[]) {
+						suggestions.push({
+							label: value,
+							insertText: value,
+							kind: languages.CompletionItemKind.Keyword,
+							range: new Range(position.lineNumber, cursor + 1, position.lineNumber, cursor + 1),
+						})
+					}
+				}
+			}
+
+			if (argumentType.type === 'boolean') {
+				for (const value of ['true', 'false']) {
+					suggestions.push({
+						label: value,
+						insertText: value,
+						kind: languages.CompletionItemKind.Keyword,
+						range: new Range(position.lineNumber, cursor + 1, position.lineNumber, cursor + 1),
+					})
+				}
+			}
+		}
+
+		return {
+			suggestions,
+		}
+	}
+
+	if (token && cursor <= token.start + token.word.length) {
+		const suggestions: any[] = []
+
+		for (const variation of variations) {
+			const argumentType = variation.arguments[argumentIndex]
+
+			if (argumentType.type === 'string') {
+				if (argumentType.additionalData?.values) {
+					for (const value of argumentType.additionalData!.values as string[]) {
+						if (token && !value.startsWith(token.word)) continue
 
 						suggestions.push({
 							label: value,
 							insertText: value,
 							kind: languages.CompletionItemKind.Keyword,
-							//TODO: ocumentation,
 							range: new Range(
 								position.lineNumber,
-								(argument?.start ?? cursor) + 1,
+								token.start + 1,
 								position.lineNumber,
-								(argument === null ? cursor : argument.start + argument.word.length) + 1
+								token.start + token.word.length + 1
 							),
 						})
 					}
@@ -320,18 +389,17 @@ async function getBasicCompletions(
 					)
 
 					for (const value of data.enum as string[]) {
-						if (argument && !value.startsWith(argument.word)) continue
+						if (token && !value.startsWith(token.word)) continue
 
 						suggestions.push({
 							label: value,
 							insertText: value,
 							kind: languages.CompletionItemKind.Keyword,
-							//TODO: ocumentation,
 							range: new Range(
 								position.lineNumber,
-								(argument?.start ?? cursor) + 1,
+								token.start + 1,
 								position.lineNumber,
-								(argument === null ? cursor : argument.start + argument.word.length) + 1
+								token.start + token.word.length + 1
 							),
 						})
 					}
@@ -340,18 +408,17 @@ async function getBasicCompletions(
 
 			if (argumentType.type === 'boolean') {
 				for (const value of ['true', 'false']) {
-					if (argument && !value.startsWith(argument.word)) continue
+					if (token && !value.startsWith(token.word)) continue
 
 					suggestions.push({
 						label: value,
 						insertText: value,
 						kind: languages.CompletionItemKind.Keyword,
-						//TODO: ocumentation,
 						range: new Range(
 							position.lineNumber,
-							(argument?.start ?? cursor) + 1,
+							token.start + 1,
 							position.lineNumber,
-							(argument === null ? cursor : argument.start + argument.word.length) + 1
+							token.start + token.word.length + 1
 						),
 					})
 				}
@@ -363,12 +430,13 @@ async function getBasicCompletions(
 		}
 	}
 
-	tokenCursor = argument.start + argument.word.length
+	if (!token) return undefined
+
+	tokenCursor = token.start + token.word.length
 
 	variations = variations.filter(
 		(variation) =>
-			matchArgument(argument, variation.arguments[argumentIndex]) &&
-			variation.arguments.length > argumentIndex + 1
+			matchArgument(token, variation.arguments[argumentIndex]) && variation.arguments.length > argumentIndex + 1
 	)
 
 	if (variations.length === 0) return undefined
@@ -396,17 +464,26 @@ async function getSelectorCompletions(
 	variations: Command[],
 	argumentIndex: number
 ): Promise<{ suggestions: any[] } | undefined> {
-	console.log('Selector Completions')
-
 	if (!ProjectManager.currentProject || !(ProjectManager.currentProject instanceof BedrockProject)) return undefined
 
+	tokenCursor = skipSpaces(line, tokenCursor)
 	const token = getNextSelector(line, tokenCursor)
-	if (token === null || cursor <= token.start + token.word.length) {
-		let basicSelector = ''
 
-		if (token) basicSelector = getBasicSelectorPart(token.word)
+	if (cursor < tokenCursor || (cursor == tokenCursor && !token)) {
+		return {
+			suggestions: ['p', 'r', 'a', 'e', 's', 'initiator'].map((selector) => ({
+				label: '@' + selector,
+				insertText: '@' + selector,
+				kind: languages.CompletionItemKind.Keyword,
+				range: new Range(position.lineNumber, cursor + 1, position.lineNumber, cursor + 1),
+			})),
+		}
+	}
 
-		if (token === null || cursor <= token.start + basicSelector.length) {
+	if (token && cursor <= token.start + token.word.length) {
+		let basicSelector = getBasicSelectorPart(token.word)
+
+		if (cursor <= token.start + basicSelector.length) {
 			const suggestions: any[] = []
 
 			for (const selector of ['p', 'r', 'a', 'e', 's', 'initiator']) {
@@ -416,12 +493,11 @@ async function getSelectorCompletions(
 					label: '@' + selector,
 					insertText: '@' + selector,
 					kind: languages.CompletionItemKind.Keyword,
-					//TODO: ocumentation,
 					range: new Range(
 						position.lineNumber,
-						(token?.start ?? cursor) + 1,
+						token.start + 1,
 						position.lineNumber,
-						(token === null ? cursor : token.start + token.word.length) + 1
+						token.start + token.word.length + 1
 					),
 				})
 			}
@@ -441,6 +517,8 @@ async function getSelectorCompletions(
 
 		return await getSelectorArgumentCompletions(line, cursor, tokenCursor, position)
 	}
+
+	if (!token) return undefined
 
 	tokenCursor = token.start + token.word.length
 
@@ -464,25 +542,30 @@ async function getSelectorArgumentCompletions(
 
 	tokenCursor = skipSpaces(line, tokenCursor)
 	let token = getNextSelectorArgumentWord(line, tokenCursor)
-	console.log(token)
 
-	if (cursor <= tokenCursor || (token && cursor <= token.start + token.word.length))
+	if (cursor < tokenCursor || (cursor == tokenCursor && !token))
 		return {
-			suggestions: ProjectManager.currentProject.commandData
-				.getSelectorArguments()
-				.map((argument) => argument.argumentName)
-				.map((argument) => ({
-					label: argument,
-					insertText: argument,
-					kind: languages.CompletionItemKind.Keyword,
-					//TODO: documentation,
-					range: new Range(
-						position.lineNumber,
-						(token?.start ?? cursor) + 1,
-						position.lineNumber,
-						(token === null ? cursor : token.start + token.word.length) + 1
-					),
-				})),
+			suggestions: ProjectManager.currentProject.commandData.getSelectorArguments().map((argument) => ({
+				label: argument.argumentName,
+				insertText: argument.argumentName,
+				kind: languages.CompletionItemKind.Keyword,
+				range: new Range(position.lineNumber, cursor + 1, position.lineNumber, cursor + 1),
+			})),
+		}
+
+	if (token && cursor <= token.start + token.word.length)
+		return {
+			suggestions: ProjectManager.currentProject.commandData.getSelectorArguments().map((argument) => ({
+				label: argument.argumentName,
+				insertText: argument.argumentName,
+				kind: languages.CompletionItemKind.Keyword,
+				range: new Range(
+					position.lineNumber,
+					token!.start + 1,
+					position.lineNumber,
+					token!.start + token!.word.length + 1
+				),
+			})),
 		}
 
 	if (!token) return undefined
@@ -491,7 +574,6 @@ async function getSelectorArgumentCompletions(
 
 	tokenCursor = skipSpaces(line, tokenCursor)
 	token = getNextSelectorOperatorWord(line, tokenCursor)
-	console.log(token)
 
 	if (cursor <= tokenCursor || token == null) {
 		return {
@@ -499,7 +581,6 @@ async function getSelectorArgumentCompletions(
 				label: operator,
 				insertText: operator,
 				kind: languages.CompletionItemKind.Operator,
-				//TODO: documentation,
 				range: new Range(position.lineNumber, cursor + 1, position.lineNumber, cursor + 1),
 			})),
 		}
@@ -508,9 +589,7 @@ async function getSelectorArgumentCompletions(
 	tokenCursor = token.start + token.word.length
 
 	tokenCursor = skipSpaces(line, tokenCursor)
-
 	token = getNextSelectorValueWord(line, tokenCursor)
-	console.log(token)
 
 	if (cursor < tokenCursor || (cursor == tokenCursor && !token))
 		return {
@@ -581,46 +660,38 @@ function skipSpaces(line: string, cursor: number): number {
 }
 
 function getNextWord(line: string, cursor: number): Token | null {
-	let initialSpaceCount = 0
+	let spaceIndex = line.substring(cursor).indexOf(' ') + cursor
+	if (spaceIndex === cursor - 1) spaceIndex = line.length
 
-	while (line[initialSpaceCount + cursor] === ' ') initialSpaceCount++
-
-	let spaceIndex = line.substring(cursor + initialSpaceCount).indexOf(' ') + cursor + initialSpaceCount
-	if (spaceIndex === cursor + initialSpaceCount - 1) spaceIndex = line.length
-
-	if (spaceIndex <= cursor + initialSpaceCount) return null
+	if (spaceIndex <= cursor) return null
 
 	return {
-		word: line.substring(cursor + initialSpaceCount, spaceIndex),
-		start: cursor + initialSpaceCount,
+		word: line.substring(cursor, spaceIndex),
+		start: cursor,
 	}
 }
 
 function getNextSelector(line: string, cursor: number): Token | null {
-	let startCharacter = cursor
+	if (line[cursor] !== '@') return null
 
-	while (line[startCharacter] === ' ') startCharacter++
+	let endCharacter = cursor + 2
 
-	if (line[startCharacter] !== '@') return null
-
-	let endCharacter = startCharacter + 2
-
-	while (/^[a-z]+$/.test(line.slice(startCharacter + 1, endCharacter)) && endCharacter <= line.length) {
+	while (/^[a-z]+$/.test(line.slice(cursor + 1, endCharacter)) && endCharacter <= line.length) {
 		endCharacter++
 	}
 
 	endCharacter--
 
-	if (endCharacter === startCharacter + 1)
+	if (endCharacter === cursor + 1)
 		return {
 			word: '@',
-			start: startCharacter,
+			start: cursor,
 		}
 
 	if (line[endCharacter] !== '[')
 		return {
-			word: line.substring(startCharacter, endCharacter),
-			start: startCharacter,
+			word: line.substring(cursor, endCharacter),
+			start: cursor,
 		}
 
 	endCharacter++
@@ -642,8 +713,8 @@ function getNextSelector(line: string, cursor: number): Token | null {
 	}
 
 	return {
-		word: line.substring(startCharacter, endCharacter),
-		start: startCharacter,
+		word: line.substring(cursor, endCharacter),
+		start: cursor,
 	}
 }
 
