@@ -217,13 +217,15 @@ async function getCommandCompletions(
 		return {
 			suggestions: commandData
 				.getCommands()
-				.map((command) => command.commandName)
-				.filter((command, index, commands) => commands.indexOf(command) === index)
-				.map((commandName) => ({
-					label: commandName,
-					insertText: commandName,
+				.filter(
+					(command, index, commands) =>
+						commands.findIndex((otherCommand) => command.commandName === otherCommand.commandName) === index
+				)
+				.map((command) => ({
+					label: command.commandName,
+					insertText: command.commandName,
 					kind: languages.CompletionItemKind.Keyword,
-					//TODO: ocumentation,
+					detail: command.description,
 					range: new Range(position.lineNumber, cursor + 1, position.lineNumber, cursor + 1),
 				})),
 		}
@@ -232,14 +234,16 @@ async function getCommandCompletions(
 		return {
 			suggestions: commandData
 				.getCommands()
-				.map((command) => command.commandName)
-				.filter((command, index, commands) => commands.indexOf(command) === index)
-				.filter((commandName) => commandName.startsWith(token.word))
-				.map((commandName) => ({
-					label: commandName,
-					insertText: commandName,
+				.filter(
+					(command, index, commands) =>
+						commands.findIndex((otherCommand) => command.commandName === otherCommand.commandName) === index
+				)
+				.filter((command) => command.commandName.startsWith(token.word))
+				.map((command) => ({
+					label: command.commandName,
+					insertText: command.commandName,
 					kind: languages.CompletionItemKind.Keyword,
-					//TODO: ocumentation,
+					detail: command.description,
 					range: new Range(
 						position.lineNumber,
 						token.start + 1,
