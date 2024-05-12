@@ -375,7 +375,7 @@ async function getBasicCompletions(
 
 	if (variations.length === 0) return undefined
 
-	return getArgumentCompletions(line, cursor, tokenCursor, position, variations, argumentIndex + 1)
+	return await getArgumentCompletions(line, cursor, tokenCursor, position, variations, argumentIndex + 1)
 }
 
 function getBasicSelectorPart(word: string): string {
@@ -398,6 +398,8 @@ async function getSelectorCompletions(
 	variations: Command[],
 	argumentIndex: number
 ): Promise<{ suggestions: any[] } | undefined> {
+	console.log('Selector Completions')
+
 	if (!ProjectManager.currentProject || !(ProjectManager.currentProject instanceof BedrockProject)) return undefined
 
 	const token = getNextSelector(line, tokenCursor)
@@ -438,48 +440,9 @@ async function getSelectorCompletions(
 
 		tokenCursor++
 
-		let expects: 'parameter' | 'operator' | 'value' | 'comma' = 'parameter'
+		if (cursor === token.start + token.word.length) return undefined
 
-		while (true) {
-			if (expects === 'parameter') {
-				let argument = getNextSelectorArgumentWord(line, tokenCursor)
-
-				console.log(argument)
-
-				if (argument === null) return undefined
-
-				if (cursor <= argument.start + argument.word.length) {
-					console.log('parameter suggestions')
-
-					const suggestions: any[] = []
-
-					return {
-						suggestions,
-					}
-				}
-
-				tokenCursor = argument.start + argument.word.length
-
-				expects = 'operator'
-			} else if (expects === 'operator') {
-				if (line[tokenCursor] + line[tokenCursor + 1] === '=!') {
-					tokenCursor += 2
-
-					expects = 'value'
-				} else if (line[tokenCursor] === '=') {
-					tokenCursor++
-
-					expects = 'value'
-				} else {
-					return undefined
-				}
-			} else if (expects === 'value') {
-			} else if (expects === 'comma') {
-				// if(cursor === tokenCursor) {}
-			} else {
-				return undefined
-			}
-		}
+		return await getSelectorArgumentCompletions(line, cursor, tokenCursor, position)
 	}
 
 	tokenCursor = token.start + token.word.length
@@ -491,7 +454,125 @@ async function getSelectorCompletions(
 
 	if (variations.length === 0) return undefined
 
-	return getArgumentCompletions(line, cursor, tokenCursor, position, variations, argumentIndex + 1)
+	return await getArgumentCompletions(line, cursor, tokenCursor, position, variations, argumentIndex + 1)
+}
+
+async function getSelectorArgumentCompletions(
+	line: string,
+	cursor: number,
+	tokenCursor: number,
+	position: Position
+): Promise<{ suggestions: any[] } | undefined> {
+	if (!ProjectManager.currentProject || !(ProjectManager.currentProject instanceof BedrockProject)) return undefined
+
+	tokenCursor = skipSpaces(line, tokenCursor)
+	let token = getNextSelectorArgumentWord(line, tokenCursor)
+	console.log(token)
+
+	if (cursor <= tokenCursor || (token && cursor <= token.start + token.word.length))
+		return {
+			suggestions: ProjectManager.currentProject.commandData
+				.getSelectorArguments()
+				.map((argument) => argument.argumentName)
+				.map((argument) => ({
+					label: argument,
+					insertText: argument,
+					kind: languages.CompletionItemKind.Keyword,
+					//TODO: documentation,
+					range: new Range(
+						position.lineNumber,
+						(token?.start ?? cursor) + 1,
+						position.lineNumber,
+						(token === null ? cursor : token.start + token.word.length) + 1
+					),
+				})),
+		}
+
+	if (!token) return undefined
+
+	tokenCursor = token.start + token.word.length
+
+	tokenCursor = skipSpaces(line, tokenCursor)
+	token = getNextSelectorOperatorWord(line, tokenCursor)
+	console.log(token)
+
+	if (cursor <= tokenCursor || (token && cursor <= token.start + token.word.length)) {
+		console.log('Returning...')
+
+		return {
+			suggestions: ['=', '=!'].map((operator) => ({
+				label: operator,
+				insertText: operator,
+				kind: languages.CompletionItemKind.Operator,
+				//TODO: documentation,
+				range: new Range(
+					position.lineNumber,
+					(token?.start ?? cursor) + 1,
+					position.lineNumber,
+					(token === null ? cursor : token.start + token.word.length) + 1
+				),
+			})),
+		}
+	}
+
+	if (!token) return undefined
+
+	tokenCursor = token.start + token.word.length
+
+	tokenCursor = skipSpaces(line, tokenCursor)
+
+	token = getNextSelectorValueWord(line, tokenCursor)
+	console.log(token)
+
+	if (cursor < tokenCursor || (cursor == tokenCursor && !token))
+		return {
+			suggestions: [
+				{
+					label: 'test',
+					insertText: 'test',
+					kind: languages.CompletionItemKind.Keyword,
+					range: new Range(position.lineNumber, cursor + 1, position.lineNumber, cursor + 1),
+				},
+			],
+		}
+
+	if (token && cursor <= token.start + token.word.length)
+		return {
+			suggestions: [
+				{
+					label: 'test',
+					insertText: 'test',
+					kind: languages.CompletionItemKind.Keyword,
+					range: new Range(
+						position.lineNumber,
+						token.start + 1,
+						position.lineNumber,
+						token.start + token.word.length + 1
+					),
+				},
+			],
+		}
+
+	if (token === null) return undefined
+
+	tokenCursor = token.start + token.word.length
+
+	tokenCursor = skipSpaces(line, tokenCursor)
+	if (line[tokenCursor] !== ',')
+		return {
+			suggestions: [
+				{
+					label: ',',
+					insertText: ',',
+					kind: languages.CompletionItemKind.Operator,
+					range: new Range(position.lineNumber, cursor + 1, position.lineNumber, cursor + 1),
+				},
+			],
+		}
+
+	tokenCursor++
+
+	return await getSelectorArgumentCompletions(line, cursor, tokenCursor, position)
 }
 
 interface Token {
@@ -511,6 +592,14 @@ function matchArgument(argument: Token, type: any): boolean {
 	if (type.type === 'selector' && /^@(a|e|r|s|p|(initiator))/.test(argument.word)) return true
 
 	return false
+}
+
+function skipSpaces(line: string, cursor: number): number {
+	let startCharacter = cursor
+
+	while (line[startCharacter] === ' ') startCharacter++
+
+	return startCharacter
 }
 
 function getNextWord(line: string, cursor: number): Token | null {
@@ -561,9 +650,7 @@ function getNextSelector(line: string, cursor: number): Token | null {
 	let openBracketCount = 1
 
 	for (; endCharacter < line.length; endCharacter++) {
-		if (line[endCharacter] === ' ') {
-			startCharacter++
-		} else if (line[endCharacter] === '[') {
+		if (line[endCharacter] === '[') {
 			openBracketCount++
 		} else if (line[endCharacter] === ']') {
 			openBracketCount--
@@ -583,22 +670,47 @@ function getNextSelector(line: string, cursor: number): Token | null {
 }
 
 function getNextSelectorArgumentWord(line: string, cursor: number): Token | null {
-	let initialSpaceCount = 0
+	let endCharacter = cursor + 1
 
-	while (line[initialSpaceCount + cursor] === ' ') initialSpaceCount++
-
-	let endCharacter = initialSpaceCount + cursor + 1
-
-	while (/^[a-z]+$/.test(line.slice(initialSpaceCount + cursor, endCharacter)) && endCharacter <= line.length) {
+	while (/^[a-z]+$/.test(line.slice(cursor, endCharacter)) && endCharacter <= line.length) {
 		endCharacter++
 	}
 
 	endCharacter--
 
-	if (endCharacter === initialSpaceCount + cursor) return null
+	if (endCharacter === cursor) return null
 
 	return {
-		word: line.substring(cursor + initialSpaceCount, endCharacter),
-		start: cursor + initialSpaceCount,
+		word: line.substring(cursor, endCharacter),
+		start: cursor,
+	}
+}
+
+function getNextSelectorOperatorWord(line: string, cursor: number): Token | null {
+	if (line[cursor] + line[cursor + 1] === '=!') {
+		return {
+			word: '=!',
+			start: cursor,
+		}
+	}
+
+	if (line[cursor] === '=') {
+		return {
+			word: '=',
+			start: cursor,
+		}
+	}
+
+	return null
+}
+
+function getNextSelectorValueWord(line: string, cursor: number): Token | null {
+	const match = line.substring(cursor).match(/^[a-z]+/)
+
+	if (match === null) return null
+
+	return {
+		word: line.substring(cursor, cursor + match[0].length),
+		start: cursor,
 	}
 }
