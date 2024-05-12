@@ -11,15 +11,10 @@ export function setupMcFunction() {
 	languages.register({ id: 'mcfunction', extensions: ['.mcfunction'], aliases: ['mcfunction'] })
 
 	languages.setLanguageConfiguration('mcfunction', {
-		wordPattern: /[aA-zZ]+/,
+		wordPattern: /[aA-zZ]/, // Hack to make autocompletions work within an empty selector. Hopefully there are now implicit side effects.
 		comments: {
 			lineComment: '#',
 		},
-		brackets: [
-			['(', ')'],
-			['[', ']'],
-			['{', '}'],
-		],
 		autoClosingPairs: [
 			{
 				open: '(',
@@ -45,6 +40,7 @@ export function setupMcFunction() {
 
 	languages.registerCompletionItemProvider('mcfunction', {
 		triggerCharacters: [' ', '[', '{', '=', ',', '!'],
+
 		async provideCompletionItems(
 			model: editor.ITextModel,
 			position: Position,
@@ -208,6 +204,8 @@ async function getCommandCompletions(
 	tokenCursor: number,
 	position: Position
 ): Promise<{ suggestions: any[] } | undefined> {
+	console.log('Completions triggered')
+
 	if (!ProjectManager.currentProject || !(ProjectManager.currentProject instanceof BedrockProject)) return undefined
 
 	const commandData = ProjectManager.currentProject.commandData
@@ -403,7 +401,6 @@ async function getSelectorCompletions(
 	if (!ProjectManager.currentProject || !(ProjectManager.currentProject instanceof BedrockProject)) return undefined
 
 	const token = getNextSelector(line, tokenCursor)
-
 	if (token === null || cursor <= token.start + token.word.length) {
 		let basicSelector = ''
 
@@ -440,7 +437,7 @@ async function getSelectorCompletions(
 
 		tokenCursor++
 
-		if (cursor === token.start + token.word.length) return undefined
+		if (cursor === token.start + token.word.length && line[tokenCursor] === ']') return undefined
 
 		return await getSelectorArgumentCompletions(line, cursor, tokenCursor, position)
 	}
@@ -496,26 +493,17 @@ async function getSelectorArgumentCompletions(
 	token = getNextSelectorOperatorWord(line, tokenCursor)
 	console.log(token)
 
-	if (cursor <= tokenCursor || (token && cursor <= token.start + token.word.length)) {
-		console.log('Returning...')
-
+	if (cursor <= tokenCursor || token == null) {
 		return {
 			suggestions: ['=', '=!'].map((operator) => ({
 				label: operator,
 				insertText: operator,
 				kind: languages.CompletionItemKind.Operator,
 				//TODO: documentation,
-				range: new Range(
-					position.lineNumber,
-					(token?.start ?? cursor) + 1,
-					position.lineNumber,
-					(token === null ? cursor : token.start + token.word.length) + 1
-				),
+				range: new Range(position.lineNumber, cursor + 1, position.lineNumber, cursor + 1),
 			})),
 		}
 	}
-
-	if (!token) return undefined
 
 	tokenCursor = token.start + token.word.length
 
@@ -558,17 +546,7 @@ async function getSelectorArgumentCompletions(
 	tokenCursor = token.start + token.word.length
 
 	tokenCursor = skipSpaces(line, tokenCursor)
-	if (line[tokenCursor] !== ',')
-		return {
-			suggestions: [
-				{
-					label: ',',
-					insertText: ',',
-					kind: languages.CompletionItemKind.Operator,
-					range: new Range(position.lineNumber, cursor + 1, position.lineNumber, cursor + 1),
-				},
-			],
-		}
+	if (line[tokenCursor] !== ',') return undefined
 
 	tokenCursor++
 
