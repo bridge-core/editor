@@ -24,6 +24,7 @@
 		"mc-project-core": "^0.3.23",
 		"monaco-editor": "^0.44.0",
 		"path-browserify": "^1.0.1",
+		"pathe": "^1.1.2",
 		"uuid": "^9.0.1",
 		"vue": "^3.3.10",
 		"vue-template-compiler": "^2.7.16"
