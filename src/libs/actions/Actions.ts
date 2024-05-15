@@ -1,7 +1,7 @@
 import { PromptWindow } from '@/components/Windows/Prompt/PromptWindow'
 import { TabManager } from '@/components/TabSystem/TabManager'
 import { TextTab } from '@/components/Tabs/Text/TextTab'
-import { dirname, join, parse } from '@/libs/path'
+import { dirname, join, parse } from 'pathe'
 import { getClipboard, setClipboard } from '@/libs/Clipboard'
 import { BaseEntry } from '@/libs/fileSystem/BaseFileSystem'
 import { ActionManager } from './ActionManager'

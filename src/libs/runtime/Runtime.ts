@@ -1,5 +1,5 @@
 import { Runtime as BridgeRuntime } from 'bridge-js-runtime'
-import { basename } from '@/libs/path'
+import { basename } from 'pathe'
 import { BaseFileSystem } from '../fileSystem/BaseFileSystem'
 
 export class Runtime extends BridgeRuntime {

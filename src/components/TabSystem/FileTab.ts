@@ -1,4 +1,4 @@
-import { basename } from '@/libs/path'
+import { basename } from 'pathe'
 import { Tab } from './Tab'
 
 export class FileTab extends Tab {

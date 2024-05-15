@@ -1,6 +1,6 @@
 import { FileSystem } from 'dash-compiler'
 import { BaseFileSystem } from './BaseFileSystem'
-import { basename, join, sep } from '@/libs/path'
+import { basename, join, sep } from 'pathe'
 
 export class CompatabilityFileSystem extends FileSystem {
 	constructor(public fileSystem: BaseFileSystem) {
@@ -21,8 +21,7 @@ export class CompatabilityFileSystem extends FileSystem {
 		for (const piece of pathSlices.slice(0, pathSlices.length - 1)) {
 			currentPath = join(currentPath, piece)
 
-			if (!(await this.fileSystem.exists(currentPath)))
-				await this.fileSystem.makeDirectory(currentPath)
+			if (!(await this.fileSystem.exists(currentPath))) await this.fileSystem.makeDirectory(currentPath)
 		}
 
 		await this.fileSystem.writeFile(path, content)
@@ -38,15 +37,13 @@ export class CompatabilityFileSystem extends FileSystem {
 	> {
 		if (!(await this.fileSystem.exists(path))) return []
 
-		return (await this.fileSystem.readDirectoryEntries(path)).map(
-			(entry) => {
-				return {
-					name: basename(entry.path),
-					kind: entry.type,
-					path: entry.path,
-				}
+		return (await this.fileSystem.readDirectoryEntries(path)).map((entry) => {
+			return {
+				name: basename(entry.path),
+				kind: entry.type,
+				path: entry.path,
 			}
-		)
+		})
 	}
 	async mkdir(path: string): Promise<void> {
 		throw new Error('Method not implemented.')

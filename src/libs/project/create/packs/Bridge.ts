@@ -1,4 +1,4 @@
-import { join } from '@/libs/path'
+import { join } from 'pathe'
 import { BaseFileSystem } from '@/libs/fileSystem/BaseFileSystem'
 import { Pack } from './Pack'
 import { CreateProjectConfig } from '../../CreateProjectConfig'

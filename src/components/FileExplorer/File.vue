@@ -4,7 +4,7 @@ import ContextMenuItem from '@/components/Common/ContextMenuItem.vue'
 import Icon from '@/components/Common/Icon.vue'
 
 import { TabManager } from '@/components/TabSystem/TabManager'
-import { basename } from '@/libs/path'
+import { basename } from 'pathe'
 import { ref, Ref } from 'vue'
 import { ActionManager } from '@/libs/actions/ActionManager'
 

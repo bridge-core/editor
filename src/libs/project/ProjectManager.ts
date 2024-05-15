@@ -1,6 +1,6 @@
 import { fileSystem } from '@/libs/fileSystem/FileSystem'
 import { Project, validProject } from './Project'
-import { basename, join } from '@/libs/path'
+import { basename, join } from 'pathe'
 import { PWAFileSystem } from '@/libs/fileSystem/PWAFileSystem'
 import { BaseFileSystem } from '@/libs/fileSystem/BaseFileSystem'
 import { CreateProjectConfig } from './CreateProjectConfig'

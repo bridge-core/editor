@@ -1,4 +1,4 @@
-import { join } from '@/libs/path'
+import { join } from 'pathe'
 import DashWorker from './DashWorker?worker'
 import { BedrockProject } from '@/libs/project/BedrockProject'
 import { WorkerFileSystemEntryPoint } from '@/libs/fileSystem/WorkerFileSystem'

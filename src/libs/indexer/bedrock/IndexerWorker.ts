@@ -1,5 +1,5 @@
 import { WorkerFileSystemEndPoint } from '@/libs/fileSystem/WorkerFileSystem'
-import { join } from '@/libs/path'
+import { join } from 'pathe'
 import { Runtime } from '@/libs/runtime/Runtime'
 import { sendAndWait } from '@/libs/worker/Communication'
 import { walkObject } from 'bridge-common-utils'

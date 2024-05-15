@@ -1,6 +1,6 @@
 import { CreateProjectConfig } from '../../../../CreateProjectConfig'
 import { BaseFileSystem } from '@/libs/fileSystem/BaseFileSystem'
-import { join } from '@/libs/path'
+import { join } from 'pathe'
 
 export class SkinsFile {
 	public readonly id: string = 'skins'

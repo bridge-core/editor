@@ -1,7 +1,7 @@
 import { CreateProjectConfig } from '../../../../CreateProjectConfig'
 import { ConfigurableFile } from '../ConfigurableFile'
 import { BaseFileSystem } from '@/libs/fileSystem/BaseFileSystem'
-import { join } from '@/libs/path'
+import { join } from 'pathe'
 
 export class BiomesClientFile extends ConfigurableFile {
 	public readonly id: string = 'biomesClient'

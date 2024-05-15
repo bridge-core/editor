@@ -2,7 +2,7 @@ import { Data } from '@/libs/data/Data'
 import { CreateProjectConfig } from '@/libs/project/CreateProjectConfig'
 import { ConfigurableFile } from '../ConfigurableFile'
 import { BaseFileSystem } from '@/libs/fileSystem/BaseFileSystem'
-import { join } from '@/libs/path'
+import { join } from 'pathe'
 
 export class PlayerFile extends ConfigurableFile {
 	public readonly id: string = 'player'

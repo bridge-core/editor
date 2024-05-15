@@ -1,4 +1,4 @@
-import { extname, sep } from '@/libs/path'
+import { extname, sep } from 'pathe'
 import { isMatch } from 'bridge-common-utils'
 import { ProjectManager } from '@/libs/project/ProjectManager'
 import { Data } from '@/libs/data/Data'

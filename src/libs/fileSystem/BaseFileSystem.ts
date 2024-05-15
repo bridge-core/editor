@@ -1,4 +1,4 @@
-import { basename, dirname, join } from '@/libs/path'
+import { basename, dirname, join } from 'pathe'
 import { Event } from '@/libs/event/Event'
 
 export class BaseFileSystem {

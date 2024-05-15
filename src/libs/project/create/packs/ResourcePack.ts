@@ -1,4 +1,4 @@
-import { join } from '@/libs/path'
+import { join } from 'pathe'
 import { BaseFileSystem } from '@/libs/fileSystem/BaseFileSystem'
 import { createManifest } from '../files/Manifest'
 import { createIcon } from '../files/Icon'
@@ -14,26 +14,12 @@ import { TerrainTextureFile } from '../files/configurable/resourcePack/TerrainTe
 import { createLang } from '../files/Lang'
 
 export class ResourcePack extends Pack {
-	async create(
-		fileSystem: BaseFileSystem,
-		projectPath: string,
-		config: CreateProjectConfig,
-		packPath: string
-	) {
+	async create(fileSystem: BaseFileSystem, projectPath: string, config: CreateProjectConfig, packPath: string) {
 		await fileSystem.makeDirectory(packPath)
 
-		await createManifest(
-			fileSystem,
-			join(projectPath, 'RP/manifest.json'),
-			config,
-			'resourcePack'
-		)
+		await createManifest(fileSystem, join(projectPath, 'RP/manifest.json'), config, 'resourcePack')
 
-		await createIcon(
-			fileSystem,
-			join(projectPath, 'RP/pack_icon.png'),
-			config.icon
-		)
+		await createIcon(fileSystem, join(projectPath, 'RP/pack_icon.png'), config.icon)
 
 		await createLang(fileSystem, packPath, config)
 

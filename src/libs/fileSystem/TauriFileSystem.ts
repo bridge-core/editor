@@ -9,7 +9,7 @@ import {
 	writeBinaryFile,
 } from '@tauri-apps/api/fs'
 import { BaseEntry, BaseFileSystem } from './BaseFileSystem'
-import { join } from '@/libs/path'
+import { join } from 'pathe'
 import { sep } from '@tauri-apps/api/path'
 import { listen } from '@tauri-apps/api/event'
 

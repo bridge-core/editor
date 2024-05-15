@@ -1,4 +1,4 @@
-import { join } from '@/libs/path'
+import { join } from 'pathe'
 import { BaseFileSystem } from '@/libs/fileSystem/BaseFileSystem'
 import { createManifest } from '../files/Manifest'
 import { createIcon } from '../files/Icon'
@@ -17,17 +17,8 @@ export class BehaviourPack extends Pack {
 	) {
 		await fileSystem.makeDirectory(packPath)
 
-		await createManifest(
-			fileSystem,
-			join(projectPath, 'BP/manifest.json'),
-			config,
-			'behaviorPack'
-		)
-		await createIcon(
-			fileSystem,
-			join(projectPath, 'BP/pack_icon.png'),
-			config.icon
-		)
+		await createManifest(fileSystem, join(projectPath, 'BP/manifest.json'), config, 'behaviorPack')
+		await createIcon(fileSystem, join(projectPath, 'BP/pack_icon.png'), config.icon)
 
 		await createLang(fileSystem, packPath, config)
 

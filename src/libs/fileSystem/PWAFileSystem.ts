@@ -1,4 +1,4 @@
-import { sep, parse, basename, join } from '@/libs/path'
+import { sep, parse, basename, join } from 'pathe'
 import { BaseEntry, BaseFileSystem } from './BaseFileSystem'
 import { Ref, onMounted, onUnmounted, ref } from 'vue'
 import { md5 } from 'js-md5'

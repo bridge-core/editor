@@ -5,7 +5,7 @@ import FreeContextMenu from '@/components/Common/FreeContextMenu.vue'
 import ContextMenuItem from '@/components/Common/ContextMenuItem.vue'
 
 import { Ref, onMounted, onUnmounted, ref } from 'vue'
-import { basename } from '@/libs/path'
+import { basename } from 'pathe'
 import { BaseEntry } from '@/libs/fileSystem/BaseFileSystem'
 import { fileSystem } from '@/libs/fileSystem/FileSystem'
 import { ActionManager } from '@/libs/actions/ActionManager'

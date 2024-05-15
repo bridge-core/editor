@@ -1,4 +1,4 @@
-import { join } from '@/libs/path'
+import { join } from 'pathe'
 import { BaseFileSystem } from '@/libs/fileSystem/BaseFileSystem'
 import { createManifest } from '../files/Manifest'
 import { createIcon } from '../files/Icon'
@@ -8,26 +8,12 @@ import { SkinsFile } from '../files/configurable/skinPack/Skins'
 import { createLang } from '../files/Lang'
 
 export class SkinPack extends Pack {
-	async create(
-		fileSystem: BaseFileSystem,
-		projectPath: string,
-		config: CreateProjectConfig,
-		pathPack: string
-	) {
+	async create(fileSystem: BaseFileSystem, projectPath: string, config: CreateProjectConfig, pathPack: string) {
 		await fileSystem.makeDirectory(pathPack)
 
-		await createManifest(
-			fileSystem,
-			join(projectPath, 'SP/manifest.json'),
-			config,
-			'skinPack'
-		)
+		await createManifest(fileSystem, join(projectPath, 'SP/manifest.json'), config, 'skinPack')
 
-		await createIcon(
-			fileSystem,
-			join(projectPath, 'SP/pack_icon.png'),
-			config.icon
-		)
+		await createIcon(fileSystem, join(projectPath, 'SP/pack_icon.png'), config.icon)
 
 		await createLang(fileSystem, pathPack, config)
 

@@ -1,5 +1,5 @@
 import { fileSystem } from '@/libs/fileSystem/FileSystem'
-import { basename, dirname, extname, join } from '@/libs/path'
+import { basename, dirname, extname, join } from 'pathe'
 import { ProjectManager } from '@/libs/project/ProjectManager'
 import { Runtime } from '@/libs/runtime/Runtime'
 import { compareVersions, deepMerge } from 'bridge-common-utils'

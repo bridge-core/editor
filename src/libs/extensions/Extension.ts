@@ -1,5 +1,5 @@
 import { fileSystem } from '@/libs/fileSystem/FileSystem'
-import { join } from '@/libs/path'
+import { join } from 'pathe'
 import { dark, light } from '@/libs/theme/DefaultThemes'
 import { ThemeManager } from '@/libs/theme/ThemeManager'
 import { Theme } from '@/libs/theme/Theme'

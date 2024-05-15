@@ -1,5 +1,5 @@
 import { fileSystem } from '@/libs/fileSystem/FileSystem'
-import { extname, join } from '@/libs/path'
+import { extname, join } from 'pathe'
 import { Unzipped, unzip } from 'fflate'
 import { Extension, ExtensionManifest } from './Extension'
 import { PWAFileSystem } from '@/libs/fileSystem/PWAFileSystem'
