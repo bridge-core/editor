@@ -168,7 +168,7 @@ export class SchemaData implements Disposable {
 
 					references.push(this.resolveSchemaPath(schemaPath, reference).split('#')[0])
 
-					reference = Uri.file(join(basePath, resolve(schemaPath, reference).split('#')[0])).toString()
+					reference = join(basePath, this.resolveSchemaPath(schemaPath, reference.split('#')[0]))
 
 					schemaPart[key] = reference
 
@@ -189,6 +189,8 @@ export class SchemaData implements Disposable {
 	}
 
 	public async updateSchemaForFile(path: string, fileType?: string, schemaUri?: string) {
+		path = resolve('/', path)
+
 		if (schemaUri === undefined) {
 			if (this.fileSchemas[path] !== undefined) delete this.fileSchemas[path]
 
@@ -266,11 +268,11 @@ export class SchemaData implements Disposable {
 				rebasedSchemas.push(reference)
 			}
 
-			localSchemas[Uri.file(join(path, schemaPathToRebase)).toString()] = result.rebasedSchemaPart
+			localSchemas[join(path, schemaPathToRebase)] = result.rebasedSchemaPart
 		}
 
 		this.fileSchemas[path] = {
-			main: Uri.file(join(path, schemaUri)).toString(),
+			main: join(path, schemaUri),
 			localSchemas,
 		}
 
