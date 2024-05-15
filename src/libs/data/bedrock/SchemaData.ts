@@ -1,7 +1,6 @@
 import { setSchemas } from '@/libs/monaco/Json'
 import { Runtime } from '@/libs/runtime/Runtime'
 import { fileSystem } from '@/libs/fileSystem/FileSystem'
-import { basename, dirname, join } from '@/libs/path'
 import { CompatabilityFileSystem } from '@/libs/fileSystem/CompatabilityFileSystem'
 import { BedrockProject } from '@/libs/project/BedrockProject'
 import { v4 as uuid } from 'uuid'
@@ -9,6 +8,7 @@ import { walkObject } from 'bridge-common-utils'
 import { ProjectManager } from '@/libs/project/ProjectManager'
 import { Data } from '@/libs/data/Data'
 import { Disposable, disposeAll } from '@/libs/disposeable/Disposeable'
+import { join, basename, dirname, resolve } from 'pathe'
 
 /*
 Building the schema for a file is a little complicated.
@@ -57,7 +57,7 @@ export class SchemaData implements Disposable {
 
 	private fixPaths(schemas: { [key: string]: any }) {
 		return Object.fromEntries(
-			Object.entries(schemas).map(([path, schema]) => [path.substring('file:///'.length), schema])
+			Object.entries(schemas).map(([path, schema]) => [path.substring('file://'.length), schema])
 		)
 	}
 
@@ -68,11 +68,11 @@ export class SchemaData implements Disposable {
 		this.indexerUpdated()
 
 		this.schemas = {
-			...this.fixPaths(await Data.get('packages/common/schemas.json')),
-			...this.fixPaths(await Data.get('packages/minecraftBedrock/schemas.json')),
+			...this.fixPaths(await Data.get('/packages/common/schemas.json')),
+			...this.fixPaths(await Data.get('/packages/minecraftBedrock/schemas.json')),
 		}
 
-		this.schemaScripts = this.fixPaths(await Data.get('packages/minecraftBedrock/schemaScripts.json'))
+		this.schemaScripts = this.fixPaths(await Data.get('/packages/minecraftBedrock/schemaScripts.json'))
 
 		await this.runAllSchemaScripts()
 	}
@@ -95,7 +95,7 @@ export class SchemaData implements Disposable {
 				return accumulator
 			}, {})
 
-			const baseUrl = `data/packages/minecraftBedrock/schema/${fileType}/dynamic`
+			const baseUrl = `/data/packages/minecraftBedrock/schema/${fileType}/dynamic`
 
 			for (const key in collectedData) {
 				this.lightningCacheSchemas[join(baseUrl, `${key}Enum.json`)] = {
@@ -199,12 +199,12 @@ export class SchemaData implements Disposable {
 			return
 		}
 
-		if (schemaUri.startsWith('file:///')) schemaUri = schemaUri.substring('file:///'.length)
+		if (schemaUri.startsWith('file://')) schemaUri = schemaUri.substring('file://'.length)
 
 		const generatedGlobalSchemas: Record<string, any> = {}
 
 		for (const [scriptPath, result] of Object.entries(this.globalSchemaScriptResults)) {
-			generatedGlobalSchemas[join('data/packages/minecraftBedrock/schema/', result.data.generateFile)] =
+			generatedGlobalSchemas[join('/data/packages/minecraftBedrock/schema/', result.data.generateFile)] =
 				result.result
 		}
 
@@ -215,7 +215,7 @@ export class SchemaData implements Disposable {
 
 			if (result === null) continue
 
-			generatedDynamicSchemas[join('data/packages/minecraftBedrock/schema/', result.data.generateFile)] =
+			generatedDynamicSchemas[join('/data/packages/minecraftBedrock/schema/', result.data.generateFile)] =
 				result.result
 		}
 
@@ -223,7 +223,7 @@ export class SchemaData implements Disposable {
 
 		if (fileType) {
 			const collectedData = this.project.indexerService.getCachedData(fileType, path)
-			const baseUrl = `data/packages/minecraftBedrock/schema/${fileType}/dynamic`
+			const baseUrl = `/data/packages/minecraftBedrock/schema/${fileType}/dynamic`
 
 			for (const key in collectedData) {
 				contextLightningCacheSchemas[join(baseUrl, 'currentContext', `${key}Enum.json`)] = {
@@ -290,8 +290,76 @@ export class SchemaData implements Disposable {
 		)
 	}
 
-	public async get(path: string): Promise<any> {
-		return this.lightningCacheSchemas[path] ?? this.schemas[path]
+	public get(path: string, schemaBase?: any): any {
+		if (path.startsWith('#')) {
+			const objectPath = path.substring(1)
+
+			let subSchema = null
+			walkObject(objectPath, schemaBase, (foundData) => (subSchema = foundData))
+
+			if (subSchema === null) {
+				console.error(`Failed to find schema '${path}'`)
+
+				return {}
+			}
+
+			return subSchema
+		} else if (path.includes('#')) {
+			const schemaPath = path.split('#')[0]
+			const objectPath = path.split('#')[1].substring(1)
+
+			let data = JSON.parse(JSON.stringify(this.lightningCacheSchemas[schemaPath] ?? this.schemas[schemaPath]))
+
+			if (!data) return undefined
+
+			data = this.resolveReferences(schemaPath, data, data)
+
+			let subSchema = null
+			walkObject(objectPath, data, (foundData) => (subSchema = foundData))
+
+			if (subSchema === null) {
+				console.error(`Failed to find schema '${path}'`)
+
+				return {}
+			}
+
+			return subSchema
+		}
+
+		const data = JSON.parse(JSON.stringify(this.lightningCacheSchemas[path] ?? this.schemas[path]))
+
+		if (!data) return undefined
+
+		return this.resolveReferences(path, data, data)
+	}
+
+	private resolveSchemaPath(source: string, path: string): string {
+		if (path.startsWith('#')) return source + path
+
+		return resolve(dirname(source), path)
+	}
+
+	private resolveReferences(path: string, schemaPart: any, schemaBase: any): any {
+		for (const key of Object.keys(schemaPart)) {
+			if (key === '$ref') {
+				let reference = this.resolveSchemaPath(path, schemaPart[key])
+
+				const data = this.get(reference, schemaBase)
+
+				for (const otherKey of Object.keys(data)) {
+					schemaPart[otherKey] = data[otherKey]
+				}
+
+				delete schemaPart['$ref']
+
+				continue
+			}
+
+			if (typeof schemaPart[key] === 'object')
+				schemaPart[key] = this.resolveReferences(path, schemaPart[key], schemaBase)
+		}
+
+		return schemaPart
 	}
 
 	private updateDefaults() {
@@ -329,7 +397,7 @@ export class SchemaData implements Disposable {
 
 		const compatabilityFileSystem = new CompatabilityFileSystem(fileSystem)
 
-		const formatVersions = (await Data.get('packages/minecraftBedrock/formatVersions.json')).formatVersions
+		const formatVersions = (await Data.get('/packages/minecraftBedrock/formatVersions.json')).formatVersions
 
 		let fileJson: any = undefined
 

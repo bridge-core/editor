@@ -330,7 +330,7 @@ async function getBasicCompletions(
 				}
 
 				if (argumentType.additionalData?.schemaReference) {
-					const data = await ProjectManager.currentProject.schemaData.get(
+					const data = ProjectManager.currentProject.schemaData.get(
 						argumentType.additionalData.schemaReference.substring(1)
 					)
 
@@ -388,7 +388,7 @@ async function getBasicCompletions(
 				}
 
 				if (argumentType.additionalData?.schemaReference) {
-					const data = await ProjectManager.currentProject.schemaData.get(
+					const data = ProjectManager.currentProject.schemaData.get(
 						argumentType.additionalData.schemaReference.substring(1)
 					)
 
@@ -574,6 +574,10 @@ async function getSelectorArgumentCompletions(
 
 	if (!token) return undefined
 
+	const argumentData = ProjectManager.currentProject.commandData
+		.getSelectorArguments()
+		.find((data) => data.argumentName === token!.word)
+
 	tokenCursor = token.start + token.word.length
 
 	tokenCursor = skipSpaces(line, tokenCursor)
@@ -597,34 +601,54 @@ async function getSelectorArgumentCompletions(
 	tokenCursor = skipSpaces(line, tokenCursor)
 	token = getNextSelectorValueWord(line, tokenCursor)
 
-	if (cursor < tokenCursor || (cursor == tokenCursor && !token))
-		return {
-			suggestions: [
-				{
-					label: 'test',
-					insertText: 'test',
-					kind: languages.CompletionItemKind.Keyword,
-					range: new Range(position.lineNumber, cursor + 1, position.lineNumber, cursor + 1),
-				},
-			],
+	if (cursor < tokenCursor || (cursor == tokenCursor && !token)) {
+		if (!argumentData) return undefined
+
+		console.log(argumentData)
+
+		if (argumentData.type === 'string') {
+			if (argumentData.additionalData?.values)
+				return {
+					suggestions: argumentData.additionalData.values.map((value) => ({
+						label: value,
+						insertText: value,
+						kind: languages.CompletionItemKind.Keyword,
+						range: new Range(position.lineNumber, cursor + 1, position.lineNumber, cursor + 1),
+					})),
+				}
+
+			//TODO: Schema Reference
 		}
 
-	if (token && cursor <= token.start + token.word.length)
-		return {
-			suggestions: [
-				{
-					label: 'test',
-					insertText: 'test',
-					kind: languages.CompletionItemKind.Keyword,
-					range: new Range(
-						position.lineNumber,
-						token.start + 1,
-						position.lineNumber,
-						token.start + token.word.length + 1
-					),
-				},
-			],
+		return undefined
+	}
+
+	if (token && cursor <= token.start + token.word.length) {
+		if (!argumentData) return undefined
+
+		console.log(argumentData)
+
+		if (argumentData.type === 'string') {
+			if (argumentData.additionalData && argumentData.additionalData.values)
+				return {
+					suggestions: argumentData.additionalData.values.map((value) => ({
+						label: value,
+						insertText: value,
+						kind: languages.CompletionItemKind.Keyword,
+						range: new Range(
+							position.lineNumber,
+							token.start + 1,
+							position.lineNumber,
+							token.start + token.word.length + 1
+						),
+					})),
+				}
+
+			//TODO: Schema Reference
 		}
+
+		return undefined
+	}
 
 	if (token === null) return undefined
 
