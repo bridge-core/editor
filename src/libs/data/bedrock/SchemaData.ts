@@ -9,6 +9,7 @@ import { ProjectManager } from '@/libs/project/ProjectManager'
 import { Data } from '@/libs/data/Data'
 import { Disposable, disposeAll } from '@/libs/disposeable/Disposeable'
 import { join, basename, dirname, resolve } from 'pathe'
+import { Uri } from 'monaco-editor'
 
 /*
 Building the schema for a file is a little complicated.
@@ -163,14 +164,11 @@ export class SchemaData implements Disposable {
 				if (key === '$ref') {
 					let reference = schemaPart[key]
 
-					if (reference.startsWith('#')) {
-					} else if (reference.startsWith('/')) {
-						references.push(reference.substring(1))
+					if (reference.startsWith('#')) continue
 
-						reference = 'file:///' + join(basePath, reference.substring(1).split('#')[0])
-					} else {
-						references.push(join(dirname(schemaPath), reference.split('#')[0]))
-					}
+					references.push(this.resolveSchemaPath(schemaPath, reference).split('#')[0])
+
+					reference = Uri.file(join(basePath, resolve(schemaPath, reference).split('#')[0])).toString()
 
 					schemaPart[key] = reference
 
@@ -268,13 +266,15 @@ export class SchemaData implements Disposable {
 				rebasedSchemas.push(reference)
 			}
 
-			localSchemas[join(path, schemaPathToRebase)] = result.rebasedSchemaPart
+			localSchemas[Uri.file(join(path, schemaPathToRebase)).toString()] = result.rebasedSchemaPart
 		}
 
 		this.fileSchemas[path] = {
-			main: join(path, schemaUri),
+			main: Uri.file(join(path, schemaUri)).toString(),
 			localSchemas,
 		}
+
+		console.log(this.fileSchemas[path])
 
 		this.updateDefaults()
 	}
