@@ -32,7 +32,7 @@ export class Project implements AsyncDisposable {
 	private disposables: Disposable[] = []
 
 	constructor(public name: string) {
-		this.path = join('projects', this.name)
+		this.path = join('/projects', this.name)
 
 		this.projectOutputFolderHandleKey = `projectOutputFolderHandle-${this.name}`
 		this.usingProjectOutputFolderKey = `usingProjectFolder-${this.name}`

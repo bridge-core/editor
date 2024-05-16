@@ -54,6 +54,15 @@ export class WorkerFileSystemEntryPoint implements Disposable {
 			})
 		}
 
+		if (event.data.action === 'ensureDirectory') {
+			await this.fileSystem.ensureDirectory(event.data.path)
+
+			this.worker.postMessage({
+				id: event.data.id,
+				fileSystemName: this.name,
+			})
+		}
+
 		if (event.data.action === 'exists') {
 			this.worker.postMessage({
 				exists: await this.fileSystem.exists(event.data.path),
@@ -111,6 +120,16 @@ export class WorkerFileSystemEndPoint extends BaseFileSystem {
 
 		await sendAndWait({
 			action: 'makeDirectory',
+			path,
+			fileSystemName: this.name,
+		})
+	}
+
+	public async ensureDirectory(path: string) {
+		// console.log('Worker ensure directory', path)
+
+		await sendAndWait({
+			action: 'ensureDirectory',
 			path,
 			fileSystemName: this.name,
 		})

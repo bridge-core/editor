@@ -59,9 +59,8 @@ export class TextTab extends FileTab {
 
 		this.model = monaco.getModel(Uri.file(this.path))
 
-		if (this.model === null) {
+		if (this.model === null)
 			this.model = monaco.createModel(fileContent, this.fileType?.meta?.language, Uri.file(this.path))
-		}
 
 		this.language.value = this.model.getLanguageId()
 

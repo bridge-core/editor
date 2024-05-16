@@ -15,14 +15,7 @@ export class CompatabilityFileSystem extends FileSystem {
 		return file
 	}
 	async writeFile(path: string, content: string | Uint8Array): Promise<void> {
-		let currentPath = ''
-
-		const pathSlices = path.split(sep)
-		for (const piece of pathSlices.slice(0, pathSlices.length - 1)) {
-			currentPath = join(currentPath, piece)
-
-			if (!(await this.fileSystem.exists(currentPath))) await this.fileSystem.makeDirectory(currentPath)
-		}
+		await this.fileSystem.ensureDirectory(path)
 
 		await this.fileSystem.writeFile(path, content)
 	}

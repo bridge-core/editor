@@ -1,4 +1,4 @@
-import { resolve } from 'pathe'
+import { parse, resolve, sep } from 'pathe'
 import { BaseFileSystem } from './BaseFileSystem'
 import { del, get, keys, set } from 'idb-keyval'
 
@@ -92,6 +92,23 @@ export class LocalFileSystem extends BaseFileSystem {
 
 		if (this.pathsToWatch.find((watchPath) => path.startsWith(watchPath)) !== undefined)
 			this.pathUpdated.dispatch(path)
+	}
+
+	public async ensureDirectory(path: string): Promise<void> {
+		if (this.rootName === null) throw new Error('Root name not set')
+
+		path = resolve('/', path)
+
+		const directoryNames = parse(path).dir.split(sep)
+
+		if (directoryNames[0] === '' || directoryNames[0] === '.') directoryNames.shift()
+
+		let currentPath = ''
+		for (const directoryName of directoryNames) {
+			currentPath += '/' + directoryName
+
+			await this.makeDirectory(currentPath)
+		}
 	}
 
 	public async exists(path: string): Promise<boolean> {
