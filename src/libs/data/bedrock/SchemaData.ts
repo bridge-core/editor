@@ -293,7 +293,7 @@ export class SchemaData implements Disposable {
 		)
 	}
 
-	public get(path: string, schemaBase?: any): any {
+	public getAndResolve(path: string, schemaBase?: any): any {
 		if (path.startsWith('#')) {
 			const objectPath = path.substring(1)
 
@@ -313,7 +313,11 @@ export class SchemaData implements Disposable {
 
 			let data = JSON.parse(JSON.stringify(this.lightningCacheSchemas[schemaPath] ?? this.schemas[schemaPath]))
 
-			if (!data) return undefined
+			if (!data) {
+				console.error(`Failed to find schema '${path}'`)
+
+				return {}
+			}
 
 			data = this.resolveReferences(schemaPath, data, data)
 
@@ -331,9 +335,29 @@ export class SchemaData implements Disposable {
 
 		const data = JSON.parse(JSON.stringify(this.lightningCacheSchemas[path] ?? this.schemas[path]))
 
-		if (!data) return undefined
+		if (!data) {
+			console.error(`Failed to find schema '${path}'`)
+
+			return {}
+		}
 
 		return this.resolveReferences(path, data, data)
+	}
+
+	public getAutocompletions(schema: any): string[] {
+		if (typeof schema !== 'object') return []
+
+		let completions: string[] = []
+
+		for (const key of Object.keys(schema)) {
+			if (key === 'enum') {
+				return schema[key]
+			}
+
+			completions = completions.concat(this.getAutocompletions(schema[key]))
+		}
+
+		return completions
 	}
 
 	private resolveSchemaPath(source: string, path: string): string {
@@ -347,7 +371,7 @@ export class SchemaData implements Disposable {
 			if (key === '$ref') {
 				let reference = this.resolveSchemaPath(path, schemaPart[key])
 
-				const data = this.get(reference, schemaBase)
+				const data = this.getAndResolve(reference, schemaBase)
 
 				for (const otherKey of Object.keys(data)) {
 					schemaPart[otherKey] = data[otherKey]

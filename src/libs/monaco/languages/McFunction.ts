@@ -330,7 +330,7 @@ async function getBasicCompletions(
 				}
 
 				if (argumentType.additionalData?.schemaReference) {
-					const data = ProjectManager.currentProject.schemaData.get(
+					const data = ProjectManager.currentProject.schemaData.getAndResolve(
 						argumentType.additionalData.schemaReference.substring(1)
 					)
 
@@ -388,7 +388,7 @@ async function getBasicCompletions(
 				}
 
 				if (argumentType.additionalData?.schemaReference) {
-					const data = ProjectManager.currentProject.schemaData.get(
+					const data = ProjectManager.currentProject.schemaData.getAndResolve(
 						argumentType.additionalData.schemaReference.substring(1)
 					)
 
@@ -617,7 +617,22 @@ async function getSelectorArgumentCompletions(
 					})),
 				}
 
-			//TODO: Schema Reference
+			if (argumentData.additionalData?.schemaReference) {
+				const schema = ProjectManager.currentProject.schemaData.getAndResolve(
+					argumentData.additionalData.schemaReference
+				)
+
+				const completions = ProjectManager.currentProject.schemaData.getAutocompletions(schema)
+
+				return {
+					suggestions: completions.map((value) => ({
+						label: value,
+						insertText: value,
+						kind: languages.CompletionItemKind.Keyword,
+						range: new Range(position.lineNumber, cursor + 1, position.lineNumber, cursor + 1),
+					})),
+				}
+			}
 		}
 
 		return undefined
@@ -644,7 +659,27 @@ async function getSelectorArgumentCompletions(
 					})),
 				}
 
-			//TODO: Schema Reference
+			if (argumentData.additionalData?.schemaReference) {
+				const schema = ProjectManager.currentProject.schemaData.getAndResolve(
+					argumentData.additionalData.schemaReference
+				)
+
+				const completions = ProjectManager.currentProject.schemaData.getAutocompletions(schema)
+
+				return {
+					suggestions: completions.map((value) => ({
+						label: value,
+						insertText: value,
+						kind: languages.CompletionItemKind.Keyword,
+						range: new Range(
+							position.lineNumber,
+							token.start + 1,
+							position.lineNumber,
+							token.start + token.word.length + 1
+						),
+					})),
+				}
+			}
 		}
 
 		return undefined
