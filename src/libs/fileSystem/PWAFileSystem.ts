@@ -1,4 +1,4 @@
-import { sep, parse, basename, join } from 'pathe'
+import { sep, parse, basename, join, resolve } from 'pathe'
 import { BaseEntry, BaseFileSystem } from './BaseFileSystem'
 import { Ref, onMounted, onUnmounted, ref } from 'vue'
 import { md5 } from 'js-md5'
@@ -32,6 +32,8 @@ export class PWAFileSystem extends BaseFileSystem {
 	protected async traverse(path: string): Promise<FileSystemDirectoryHandle> {
 		if (!this.baseHandle) throw new Error('Base handle not set!')
 
+		path = resolve('/', path)
+
 		const directoryNames = parse(path).dir.split(sep)
 
 		if (directoryNames[0] === '' || directoryNames[0] === '.') directoryNames.shift()
@@ -49,6 +51,8 @@ export class PWAFileSystem extends BaseFileSystem {
 
 	public async readFile(path: string): Promise<ArrayBuffer> {
 		if (this.baseHandle === null) throw new Error('Base handle not set!')
+
+		path = resolve('/', path)
 
 		try {
 			const handle = await (await this.traverse(path)).getFileHandle(basename(path))
@@ -74,6 +78,8 @@ export class PWAFileSystem extends BaseFileSystem {
 	public async readFileJson(path: string): Promise<any> {
 		if (this.baseHandle === null) throw new Error('Base handle not set!')
 
+		path = resolve('/', path)
+
 		try {
 			const handle = await (await this.traverse(path)).getFileHandle(basename(path))
 
@@ -97,6 +103,8 @@ export class PWAFileSystem extends BaseFileSystem {
 
 	public async readFileText(path: string): Promise<string> {
 		if (this.baseHandle === null) throw new Error('Base handle not set!')
+
+		path = resolve('/', path)
 
 		try {
 			const handle = await (await this.traverse(path)).getFileHandle(basename(path))
@@ -122,6 +130,8 @@ export class PWAFileSystem extends BaseFileSystem {
 	public async readFileDataUrl(path: string): Promise<string> {
 		if (this.baseHandle === null) throw new Error('Base handle not set!')
 
+		path = resolve('/', path)
+
 		try {
 			const handle = await (await this.traverse(path)).getFileHandle(basename(path))
 
@@ -146,6 +156,8 @@ export class PWAFileSystem extends BaseFileSystem {
 	public async writeFile(path: string, content: FileSystemWriteChunkType) {
 		if (this.baseHandle === null) throw new Error('Base handle not set!')
 
+		path = resolve('/', path)
+
 		try {
 			const handle = await (
 				await this.traverse(path)
@@ -165,6 +177,8 @@ export class PWAFileSystem extends BaseFileSystem {
 	public async removeFile(path: string) {
 		if (this.baseHandle === null) throw new Error('Base handle not set!')
 
+		path = resolve('/', path)
+
 		try {
 			const baseHandle = await await this.traverse(path)
 
@@ -176,6 +190,8 @@ export class PWAFileSystem extends BaseFileSystem {
 
 	public async ensureDirectory(path: string) {
 		if (this.baseHandle === null) throw new Error('Base handle not set!')
+
+		path = resolve('/', path)
 
 		try {
 			const directoryNames = parse(path).dir.split(sep)
@@ -201,6 +217,8 @@ export class PWAFileSystem extends BaseFileSystem {
 	public async readDirectoryEntries(path: string): Promise<BaseEntry[]> {
 		if (this.baseHandle === null) throw new Error('Base handle not set!')
 
+		path = resolve('/', path)
+
 		try {
 			const handle =
 				path === '/' ? this.baseHandle : await (await this.traverse(path)).getDirectoryHandle(basename(path))
@@ -225,6 +243,8 @@ export class PWAFileSystem extends BaseFileSystem {
 	public async makeDirectory(path: string) {
 		if (this.baseHandle === null) throw new Error('Base handle not set!')
 
+		path = resolve('/', path)
+
 		try {
 			const rootHandle = await await this.traverse(path)
 
@@ -241,6 +261,8 @@ export class PWAFileSystem extends BaseFileSystem {
 	public async removeDirectory(path: string) {
 		if (this.baseHandle === null) throw new Error('Base handle not set!')
 
+		path = resolve('/', path)
+
 		try {
 			const rootHandle = await await this.traverse(path)
 
@@ -256,6 +278,8 @@ export class PWAFileSystem extends BaseFileSystem {
 
 	public async exists(path: string): Promise<boolean> {
 		if (this.baseHandle === null) throw new Error('Base handle not set!')
+
+		path = resolve('/', path)
 
 		const itemNames = path.split(sep)
 		if (itemNames[0] === '') itemNames.shift()
@@ -305,12 +329,16 @@ export class PWAFileSystem extends BaseFileSystem {
 	}
 
 	public async watch(path: string) {
+		path = resolve('/', path)
+
 		await this.indexPath(path)
 
 		this.pathsToWatch.push(path)
 	}
 
 	public async unwatch(path: string) {
+		path = resolve('/', path)
+
 		this.pathsToWatch.splice(this.pathsToWatch.indexOf(path), 1)
 	}
 
