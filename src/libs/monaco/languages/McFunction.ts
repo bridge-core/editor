@@ -635,6 +635,17 @@ async function getSelectorArgumentCompletions(
 			}
 		}
 
+		if (argumentData.type === 'boolean') {
+			return {
+				suggestions: ['true', 'false'].map((value) => ({
+					label: value,
+					insertText: value,
+					kind: languages.CompletionItemKind.Keyword,
+					range: new Range(position.lineNumber, cursor + 1, position.lineNumber, cursor + 1),
+				})),
+			}
+		}
+
 		return undefined
 	}
 
@@ -679,6 +690,22 @@ async function getSelectorArgumentCompletions(
 						),
 					})),
 				}
+			}
+		}
+
+		if (argumentData.type === 'boolean') {
+			return {
+				suggestions: ['true', 'false'].map((value) => ({
+					label: value,
+					insertText: value,
+					kind: languages.CompletionItemKind.Keyword,
+					range: new Range(
+						position.lineNumber,
+						token.start + 1,
+						position.lineNumber,
+						token.start + token.word.length + 1
+					),
+				})),
 			}
 		}
 
