@@ -35,9 +35,9 @@ export function setupLang() {
 			if (!ProjectManager.currentProject) return
 			if (!(ProjectManager.currentProject instanceof BedrockProject)) return
 
-			const fileType = ProjectManager.currentProject.fileTypeData.get(model.uri.path.substring(1))
+			const fileType = ProjectManager.currentProject.fileTypeData.get(model.uri.path)
 
-			if (!fileType || fileType.id === 'clientLang') return
+			if (fileType?.id !== 'clientLang' && fileType?.id !== 'lang') return
 
 			const currentLine = model.getLineContent(position.lineNumber)
 
@@ -72,8 +72,8 @@ export function setupLang() {
 						validLangKeys.map(async (key) => ({
 							range: new Range(position.lineNumber, 1, position.lineNumber, position.column),
 							kind: languages.CompletionItemKind.Text,
-							label: key + '=',
-							insertText: key + '=',
+							label: key,
+							insertText: key,
 						}))
 					))
 				)
