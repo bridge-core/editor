@@ -258,7 +258,25 @@ async function getCommandCompletions(
 
 	tokenCursor = token.start + token.word.length
 
-	let possibleVariations = commandData.getCommands().filter((variation) => variation.commandName === token.word)
+	let possibleVariations: Command[] = commandData
+		.getCommands()
+		.filter((variation) => variation.commandName === token.word)
+		.map((variation) => ({
+			commandName: variation.commandName,
+			description: variation.description,
+			arguments: variation.arguments.flatMap((argument) => {
+				if (argument.type === '$coordinates') {
+					return [1, 2, 3].map(() => ({
+						...argument,
+						type: 'coordinate',
+					}))
+				}
+
+				//TODO: Lookup the custom type in the data
+
+				return [argument]
+			}),
+		}))
 
 	return await getArgumentCompletions(line, cursor, tokenCursor, position, possibleVariations, 0)
 }
@@ -330,11 +348,13 @@ async function getBasicCompletions(
 				}
 
 				if (argumentType.additionalData?.schemaReference) {
-					const data = ProjectManager.currentProject.schemaData.getAndResolve(
-						argumentType.additionalData.schemaReference.substring(1)
+					const schema = ProjectManager.currentProject.schemaData.getAndResolve(
+						argumentType.additionalData.schemaReference
 					)
 
-					for (const value of data.enum as string[]) {
+					const completions = ProjectManager.currentProject.schemaData.getAutocompletions(schema)
+
+					for (const value of completions) {
 						suggestions.push({
 							label: value,
 							insertText: value,
@@ -388,11 +408,13 @@ async function getBasicCompletions(
 				}
 
 				if (argumentType.additionalData?.schemaReference) {
-					const data = ProjectManager.currentProject.schemaData.getAndResolve(
-						argumentType.additionalData.schemaReference.substring(1)
+					const schema = ProjectManager.currentProject.schemaData.getAndResolve(
+						argumentType.additionalData.schemaReference
 					)
 
-					for (const value of data.enum as string[]) {
+					const completions = ProjectManager.currentProject.schemaData.getAutocompletions(schema)
+
+					for (const value of completions) {
 						if (token && !value.startsWith(token.word)) continue
 
 						suggestions.push({
@@ -604,8 +626,6 @@ async function getSelectorArgumentCompletions(
 	if (cursor < tokenCursor || (cursor == tokenCursor && !token)) {
 		if (!argumentData) return undefined
 
-		console.log(argumentData)
-
 		if (argumentData.type === 'string') {
 			if (argumentData.additionalData?.values)
 				return {
@@ -651,8 +671,6 @@ async function getSelectorArgumentCompletions(
 
 	if (token && cursor <= token.start + token.word.length) {
 		if (!argumentData) return undefined
-
-		console.log(argumentData)
 
 		if (argumentData.type === 'string') {
 			if (argumentData.additionalData && argumentData.additionalData.values)
@@ -739,6 +757,8 @@ function matchArgument(argument: Token, type: any): boolean {
 
 	//TODO: make selector matching more robust?
 	if (type.type === 'selector' && /^@(a|e|r|s|p|(initiator))/.test(argument.word)) return true
+
+	if (type.type === 'coordinate' && /^[~^]?(-?(([0-9]*\.[0-9]+)|[0-9]+))?$/.test(argument.word)) return true
 
 	return false
 }
@@ -846,7 +866,7 @@ function getNextSelectorOperatorWord(line: string, cursor: number): Token | null
 }
 
 function getNextSelectorValueWord(line: string, cursor: number): Token | null {
-	const match = line.substring(cursor).match(/^[a-z]+/)
+	const match = line.substring(cursor).match(/^[a-z_:A-Z0-9]+/)
 
 	if (match === null) return null
 
