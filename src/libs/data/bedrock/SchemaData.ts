@@ -308,16 +308,18 @@ export class SchemaData implements Disposable {
 
 			return subSchema
 		} else if (path.includes('#')) {
-			const schemaPath = path.split('#')[0]
+			const schemaPath = resolve('/', path.split('#')[0])
 			const objectPath = path.split('#')[1].substring(1)
 
-			let data = JSON.parse(JSON.stringify(this.lightningCacheSchemas[schemaPath] ?? this.schemas[schemaPath]))
+			let data = this.lightningCacheSchemas[schemaPath] ?? this.schemas[schemaPath]
 
 			if (!data) {
 				console.error(`Failed to find schema '${path}'`)
 
 				return {}
 			}
+
+			data = JSON.parse(JSON.stringify(data))
 
 			data = this.resolveReferences(schemaPath, data, data)
 
@@ -333,13 +335,17 @@ export class SchemaData implements Disposable {
 			return subSchema
 		}
 
-		const data = JSON.parse(JSON.stringify(this.lightningCacheSchemas[path] ?? this.schemas[path]))
+		path = resolve('/', path)
+
+		let data = this.lightningCacheSchemas[path] ?? this.schemas[path]
 
 		if (!data) {
 			console.error(`Failed to find schema '${path}'`)
 
 			return {}
 		}
+
+		data = JSON.parse(JSON.stringify(data))
 
 		return this.resolveReferences(path, data, data)
 	}
