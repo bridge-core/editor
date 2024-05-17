@@ -750,8 +750,11 @@ interface Token {
 function matchArgument(argument: Token, type: any): boolean {
 	if (type === undefined) return false
 
-	if (type.type === 'string') return true
-	//TODO: match enum?
+	if (type.type === 'string') {
+		if (type.additionalData?.values && !type.additionalData.values.includes(argument.word)) return false
+
+		return true
+	}
 
 	if (type.type === 'boolean' && /^(true|false)$/) return true
 
