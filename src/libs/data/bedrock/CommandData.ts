@@ -2,7 +2,7 @@ import { BedrockProject } from '@/libs/project/BedrockProject'
 import { Data } from '../Data'
 
 export interface Argument {
-	type: 'string' | 'boolean' | 'selector' | '$coordinates' | 'number' | 'coordinate' // TODO: add more types here
+	type: 'string' | 'boolean' | 'selector' | '$coordinates' | 'number' | 'coordinate' | 'blockState' // TODO: add more types here
 	argumentName: string
 	additionalData?: {
 		values?: string[]
@@ -12,7 +12,7 @@ export interface Argument {
 }
 
 export interface SelectorArgument {
-	type: 'string' | 'boolean' | 'selector' | '$coordinates' | 'number' // TODO: add more types here
+	type: 'string' | 'boolean' | 'scoreData' | 'number' // TODO: add more types here
 	argumentName: string
 	additionalData?: {
 		values?: string[]

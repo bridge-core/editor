@@ -772,6 +772,25 @@ function skipSpaces(line: string, cursor: number): number {
 }
 
 function getNextWord(line: string, cursor: number): Token | null {
+	if (line[cursor] === '"') {
+		let closingIndex = -1
+
+		for (let index = cursor + 1; index < line.length; index++) {
+			if (line[index] !== '"') continue
+
+			if (line[index - 1] === '\\') continue
+
+			closingIndex = index + 1
+		}
+
+		if (closingIndex === -1) closingIndex = line.length
+
+		return {
+			word: line.substring(cursor, closingIndex),
+			start: cursor,
+		}
+	}
+
 	let spaceIndex = line.substring(cursor).indexOf(' ') + cursor
 	if (spaceIndex === cursor - 1) spaceIndex = line.length
 
@@ -866,6 +885,25 @@ function getNextSelectorOperatorWord(line: string, cursor: number): Token | null
 }
 
 function getNextSelectorValueWord(line: string, cursor: number): Token | null {
+	if (line[cursor] === '"') {
+		let closingIndex = -1
+
+		for (let index = cursor + 1; index < line.length; index++) {
+			if (line[index] !== '"') continue
+
+			if (line[index - 1] === '\\') continue
+
+			closingIndex = index + 1
+		}
+
+		if (closingIndex === -1) closingIndex = line.length
+
+		return {
+			word: line.substring(cursor, closingIndex),
+			start: cursor,
+		}
+	}
+
 	const match = line.substring(cursor).match(/^[a-z_:A-Z0-9]+/)
 
 	if (match === null) return null
@@ -874,4 +912,6 @@ function getNextSelectorValueWord(line: string, cursor: number): Token | null {
 		word: line.substring(cursor, cursor + match[0].length),
 		start: cursor,
 	}
+
+	//TODO: Handle scores
 }
