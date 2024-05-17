@@ -2,7 +2,16 @@ import { BedrockProject } from '@/libs/project/BedrockProject'
 import { Data } from '../Data'
 
 export interface Argument {
-	type: 'string' | 'boolean' | 'selector' | '$coordinates' | 'number' | 'coordinate' | 'blockState' // TODO: add more types here
+	type:
+		| 'string'
+		| 'boolean'
+		| 'selector'
+		| '$coordinates'
+		| 'number'
+		| 'coordinate'
+		| 'blockState'
+		| 'subcommand'
+		| 'command'
 	argumentName: string
 	additionalData?: {
 		values?: string[]
@@ -12,7 +21,7 @@ export interface Argument {
 }
 
 export interface SelectorArgument {
-	type: 'string' | 'boolean' | 'scoreData' | 'number' // TODO: add more types here
+	type: 'string' | 'boolean' | 'scoreData' | 'number' // seperate string and identifier. name = "works" but type = "type" doesn't
 	argumentName: string
 	additionalData?: {
 		values?: string[]
@@ -44,6 +53,18 @@ export class CommandData {
 			if (entry.requires !== undefined && !this.project.requirementsMatcher.matches(entry.requires)) continue
 
 			commands = commands.concat(entry.commands)
+		}
+
+		return commands
+	}
+
+	public getSubcommands(): Command[] {
+		let commands: Command[] = []
+
+		for (const entry of this.data.vanilla) {
+			if (entry.requires !== undefined && !this.project.requirementsMatcher.matches(entry.requires)) continue
+
+			commands = commands.concat(entry.subcommands)
 		}
 
 		return commands
