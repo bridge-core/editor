@@ -278,7 +278,7 @@ async function getCommandCompletions(
 			}),
 		}))
 
-	return await getArgumentCompletions(line, cursor, tokenCursor, position, possibleVariations, 0)
+	return await getArgumentCompletions(line, cursor, tokenCursor, position, possibleVariations, 0, token.word)
 }
 
 async function getArgumentCompletions(
@@ -287,28 +287,68 @@ async function getArgumentCompletions(
 	tokenCursor: number,
 	position: Position,
 	variations: Command[],
-	argumentIndex: number
+	argumentIndex: number,
+	command: string
 ): Promise<{ suggestions: any[] } | undefined> {
+	if (!ProjectManager.currentProject || !(ProjectManager.currentProject instanceof BedrockProject)) return undefined
+
+	const commandData = ProjectManager.currentProject.commandData
+
+	variations = variations.flatMap((variation) => {
+		if (variation.arguments[argumentIndex]?.type === 'subcommand') {
+			return commandData
+				.getSubcommands()
+				.find((commandData) => commandData.commandName === command)!
+				.commands.map((subcommand) => {
+					const args = JSON.parse(JSON.stringify(variation.arguments))
+					args.splice(
+						argumentIndex,
+						1,
+						{
+							argumentName: 'subcommand',
+							type: 'string',
+							additionalData: {
+								values: [subcommand.commandName],
+							},
+						},
+						...subcommand.arguments
+					)
+
+					return {
+						...variation,
+						arguments: args,
+					}
+				})
+		}
+
+		return [variation]
+	})
+
 	const basicVariations = variations.filter((variation) => variation.arguments[argumentIndex].type !== 'selector')
 	const selectorVariations = variations.filter((variation) => variation.arguments[argumentIndex].type === 'selector')
-	const subcommandVariations = variations.filter(
-		(variation) => variation.arguments[argumentIndex].type === 'subcommand'
-	)
+	const commandVariations = variations.filter((variation) => variation.arguments[argumentIndex].type === 'command')
 
 	const basicCompletions =
 		basicVariations.length === 0
 			? undefined
-			: await getBasicCompletions(line, cursor, tokenCursor, position, basicVariations, argumentIndex)
+			: await getBasicCompletions(line, cursor, tokenCursor, position, basicVariations, argumentIndex, command)
 	const selectorCompletions =
 		selectorVariations.length === 0
 			? undefined
-			: await getSelectorCompletions(line, cursor, tokenCursor, position, selectorVariations, argumentIndex)
-	const subcommandCompletions =
-		subcommandVariations.length === 0
-			? undefined
-			: await getSubcommandCompletions(line, cursor, tokenCursor, position, subcommandVariations, argumentIndex)
+			: await getSelectorCompletions(
+					line,
+					cursor,
+					tokenCursor,
+					position,
+					selectorVariations,
+					argumentIndex,
+					command
+			  )
 
-	if (basicCompletions === undefined && selectorCompletions === undefined && subcommandCompletions === undefined)
+	const commandCompletions =
+		commandVariations.length === 0 ? undefined : await getCommandCompletions(line, cursor, tokenCursor, position)
+
+	if (basicCompletions === undefined && selectorCompletions === undefined && commandCompletions === undefined)
 		return undefined
 
 	const completions: any = {
@@ -321,8 +361,8 @@ async function getArgumentCompletions(
 	if (selectorCompletions !== undefined)
 		completions.suggestions = completions.suggestions.concat(selectorCompletions.suggestions)
 
-	if (subcommandCompletions !== undefined)
-		completions.suggestions = completions.suggestions.concat(subcommandCompletions.suggestions)
+	if (commandCompletions !== undefined)
+		completions.suggestions = completions.suggestions.concat(commandCompletions.suggestions)
 
 	return completions
 }
@@ -333,7 +373,8 @@ async function getBasicCompletions(
 	tokenCursor: number,
 	position: Position,
 	variations: Command[],
-	argumentIndex: number
+	argumentIndex: number,
+	command: string
 ): Promise<{ suggestions: any[] } | undefined> {
 	if (!ProjectManager.currentProject || !(ProjectManager.currentProject instanceof BedrockProject)) return undefined
 
@@ -478,7 +519,7 @@ async function getBasicCompletions(
 
 	if (variations.length === 0) return undefined
 
-	return await getArgumentCompletions(line, cursor, tokenCursor, position, variations, argumentIndex + 1)
+	return await getArgumentCompletions(line, cursor, tokenCursor, position, variations, argumentIndex + 1, command)
 }
 
 function getBasicSelectorPart(word: string): string {
@@ -499,7 +540,8 @@ async function getSelectorCompletions(
 	tokenCursor: number,
 	position: Position,
 	variations: Command[],
-	argumentIndex: number
+	argumentIndex: number,
+	command: string
 ): Promise<{ suggestions: any[] } | undefined> {
 	if (!ProjectManager.currentProject || !(ProjectManager.currentProject instanceof BedrockProject)) return undefined
 
@@ -566,7 +608,7 @@ async function getSelectorCompletions(
 
 	if (variations.length === 0) return undefined
 
-	return await getArgumentCompletions(line, cursor, tokenCursor, position, variations, argumentIndex + 1)
+	return await getArgumentCompletions(line, cursor, tokenCursor, position, variations, argumentIndex + 1, command)
 }
 
 async function getSelectorArgumentCompletions(
@@ -751,82 +793,6 @@ async function getSelectorArgumentCompletions(
 	tokenCursor++
 
 	return await getSelectorArgumentCompletions(line, cursor, tokenCursor, position)
-}
-
-async function getSubcommandCompletions(
-	line: string,
-	cursor: number,
-	tokenCursor: number,
-	position: Position,
-	variations: Command[],
-	argumentIndex: number
-): Promise<{ suggestions: any[] } | undefined> {
-	if (!ProjectManager.currentProject || !(ProjectManager.currentProject instanceof BedrockProject)) return undefined
-
-	tokenCursor = skipSpaces(line, tokenCursor)
-	const token = getNextSelector(line, tokenCursor)
-
-	if (cursor < tokenCursor || (cursor == tokenCursor && !token)) {
-		return {
-			suggestions: ['p', 'r', 'a', 'e', 's', 'initiator'].map((selector) => ({
-				label: '@' + selector,
-				insertText: '@' + selector,
-				kind: languages.CompletionItemKind.Keyword,
-				range: new Range(position.lineNumber, cursor + 1, position.lineNumber, cursor + 1),
-			})),
-		}
-	}
-
-	if (token && cursor <= token.start + token.word.length) {
-		let basicSelector = getBasicSelectorPart(token.word)
-
-		if (cursor <= token.start + basicSelector.length) {
-			const suggestions: any[] = []
-
-			for (const selector of ['p', 'r', 'a', 'e', 's', 'initiator']) {
-				if (token && !('@' + selector).startsWith(token.word)) continue
-
-				suggestions.push({
-					label: '@' + selector,
-					insertText: '@' + selector,
-					kind: languages.CompletionItemKind.Keyword,
-					range: new Range(
-						position.lineNumber,
-						token.start + 1,
-						position.lineNumber,
-						token.start + token.word.length + 1
-					),
-				})
-			}
-
-			return {
-				suggestions,
-			}
-		}
-
-		tokenCursor = token.start + basicSelector.length
-
-		if (line[tokenCursor] !== '[') return undefined
-
-		tokenCursor++
-
-		if (cursor === token.start + token.word.length && line[tokenCursor] === ']') return undefined
-
-		return await getSelectorArgumentCompletions(line, cursor, tokenCursor, position)
-	}
-
-	if (!token) return undefined
-
-	tokenCursor = token.start + token.word.length
-
-	variations = variations.filter(
-		(variation) =>
-			matchArgument(token, variation.arguments[argumentIndex]) && variation.arguments.length > argumentIndex + 1
-	)
-
-	if (variations.length === 0) return undefined
-
-	return await getArgumentCompletions(line, cursor, tokenCursor, position, variations, argumentIndex + 1)
 }
 
 interface Token {

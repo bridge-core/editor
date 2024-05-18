@@ -37,6 +37,11 @@ export interface Command {
 	arguments: Argument[]
 }
 
+export interface Subommand {
+	commandName: string
+	commands: Command[]
+}
+
 export class CommandData {
 	private data: any
 
@@ -55,17 +60,21 @@ export class CommandData {
 			commands = commands.concat(entry.commands)
 		}
 
+		commands = commands.filter((command) => command)
+
 		return commands
 	}
 
-	public getSubcommands(): Command[] {
-		let commands: Command[] = []
+	public getSubcommands(): Subommand[] {
+		let commands: Subommand[] = []
 
 		for (const entry of this.data.vanilla) {
 			if (entry.requires !== undefined && !this.project.requirementsMatcher.matches(entry.requires)) continue
 
 			commands = commands.concat(entry.subcommands)
 		}
+
+		commands = commands.filter((command) => command)
 
 		return commands
 	}
