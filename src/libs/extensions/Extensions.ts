@@ -20,6 +20,8 @@ export class Extensions {
 	public static async load() {
 		if (fileSystem instanceof PWAFileSystem && !fileSystem.setup) return
 
+		if (!(await fileSystem.exists('extensions'))) await fileSystem.makeDirectory('extensions')
+
 		for (const entry of await fileSystem.readDirectoryEntries('extensions')) {
 			await Extensions.loadExtension(entry.path)
 		}

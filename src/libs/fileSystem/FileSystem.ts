@@ -30,6 +30,6 @@ export async function selectOrLoadBridgeFolder() {
 			})) ?? null
 		)
 
-		set('bridgeFolderHandle', fileSystem.baseHandle)
+		await set('bridgeFolderHandle', fileSystem.baseHandle)
 	} catch {}
 }
