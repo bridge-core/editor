@@ -295,6 +295,23 @@ async function getArgumentCompletions(
 	const commandData = ProjectManager.currentProject.commandData
 
 	variations = variations.flatMap((variation) => {
+		if (variation.arguments[argumentIndex]?.allowMultiple) {
+			const modifiedArguments = JSON.parse(JSON.stringify(variation.arguments))
+			modifiedArguments.splice(argumentIndex, 0, JSON.parse(JSON.stringify(variation.arguments[argumentIndex])))
+
+			return [
+				variation,
+				{
+					...variation,
+					arguments: modifiedArguments,
+				},
+			]
+		}
+
+		return [variation]
+	})
+
+	variations = variations.flatMap((variation) => {
 		if (variation.arguments[argumentIndex]?.type === 'subcommand') {
 			return commandData
 				.getSubcommands()
@@ -363,6 +380,11 @@ async function getArgumentCompletions(
 
 	if (commandCompletions !== undefined)
 		completions.suggestions = completions.suggestions.concat(commandCompletions.suggestions)
+
+	completions.suggestions = completions.suggestions.filter(
+		(suggestion: any, index: any, suggestions: any) =>
+			suggestions.findIndex((otherSuggestion: any) => suggestion.label === otherSuggestion.label) === index
+	)
 
 	return completions
 }

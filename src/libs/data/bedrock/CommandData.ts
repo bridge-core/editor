@@ -18,6 +18,7 @@ export interface Argument {
 		schemaReference?: string
 	}
 	isOptional?: boolean
+	allowMultiple?: boolean
 }
 
 export interface SelectorArgument {
