@@ -1054,7 +1054,7 @@ function getNextSelectorValueWord(line: string, cursor: number): Token | null {
 		}
 	}
 
-	const match = line.substring(cursor).match(/^[a-z_:A-Z0-9]+/)
+	const match = line.substring(cursor).match(/^[a-z_:A-Z0-9.]+/)
 
 	if (match === null) return null
 
