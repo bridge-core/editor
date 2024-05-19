@@ -3,6 +3,7 @@ import { colorCodes } from './Language'
 import { ProjectManager } from '@/libs/project/ProjectManager'
 import { BedrockProject } from '@/libs/project/BedrockProject'
 import { Command } from '@/libs/data/bedrock/CommandData'
+import { tokenizeCommand } from 'bridge-common-utils'
 
 //@ts-ignore
 window.reloadId = Math.random() // TODO: Remove
@@ -370,7 +371,7 @@ async function getArgumentCompletions(
 		commandVariations.length === 0 ? undefined : await getCommandCompletions(line, cursor, tokenCursor, position)
 
 	const blockStateCompletions =
-		selectorVariations.length === 0
+		blockStateVariations.length === 0
 			? undefined
 			: await getBlockStateCompletions(
 					line,
@@ -899,6 +900,12 @@ function matchArgument(argument: Token, type: any): boolean {
 
 	if (type.type === 'coordinate' && /^[~^]?(-?(([0-9]*\.[0-9]+)|[0-9]+))?$/.test(argument.word)) return true
 
+	if (type.type === 'number' && /^-?(([0-9]*\.[0-9]+)|[0-9]+)$/.test(argument.word)) return true
+
+	if (type.type === 'blockState' && /^(\[|[0-9]+)/.test(argument.word)) return true
+
+	console.warn('Failed to match', argument, type)
+
 	return false
 }
 
@@ -1067,7 +1074,22 @@ function getNextSelectorValueWord(line: string, cursor: number): Token | null {
 }
 
 function getNextBlockState(line: string, cursor: number): Token | null {
-	if (line[cursor] !== '[') return null
+	if (line[cursor] !== '[') {
+		let endCharacter = cursor + 1
+
+		while (/^[0-9]+$/.test(line.slice(cursor, endCharacter)) && endCharacter <= line.length) {
+			endCharacter++
+		}
+
+		endCharacter--
+
+		if (endCharacter === cursor) return null
+
+		return {
+			word: line.substring(cursor, endCharacter),
+			start: cursor,
+		}
+	}
 
 	let endCharacter = cursor + 1
 
@@ -1104,6 +1126,7 @@ function getNextBlockState(line: string, cursor: number): Token | null {
 	}
 }
 
+// Unused untill we start adding data to actually provide block state autocompletions
 function getNextSelectorBlockStateWord(line: string, cursor: number): Token | null {
 	if (line[cursor] === '"') {
 		let closingIndex = -1
