@@ -344,11 +344,15 @@ async function getArgumentCompletions(
 	const basicVariations = variations.filter((variation) => variation.arguments[argumentIndex].type !== 'selector')
 	const selectorVariations = variations.filter((variation) => variation.arguments[argumentIndex].type === 'selector')
 	const commandVariations = variations.filter((variation) => variation.arguments[argumentIndex].type === 'command')
+	const blockStateVariations = variations.filter(
+		(variation) => variation.arguments[argumentIndex].type === 'blockState'
+	)
 
 	const basicCompletions =
 		basicVariations.length === 0
 			? undefined
 			: await getBasicCompletions(line, cursor, tokenCursor, position, basicVariations, argumentIndex, command)
+
 	const selectorCompletions =
 		selectorVariations.length === 0
 			? undefined
@@ -365,7 +369,25 @@ async function getArgumentCompletions(
 	const commandCompletions =
 		commandVariations.length === 0 ? undefined : await getCommandCompletions(line, cursor, tokenCursor, position)
 
-	if (basicCompletions === undefined && selectorCompletions === undefined && commandCompletions === undefined)
+	const blockStateCompletions =
+		selectorVariations.length === 0
+			? undefined
+			: await getBlockStateCompletions(
+					line,
+					cursor,
+					tokenCursor,
+					position,
+					blockStateVariations,
+					argumentIndex,
+					command
+			  )
+
+	if (
+		basicCompletions === undefined &&
+		selectorCompletions === undefined &&
+		commandCompletions === undefined &&
+		blockStateCompletions === undefined
+	)
 		return undefined
 
 	const completions: any = {
@@ -380,6 +402,9 @@ async function getArgumentCompletions(
 
 	if (commandCompletions !== undefined)
 		completions.suggestions = completions.suggestions.concat(commandCompletions.suggestions)
+
+	if (blockStateCompletions !== undefined)
+		completions.suggestions = completions.suggestions.concat(blockStateCompletions.suggestions)
 
 	completions.suggestions = completions.suggestions.filter(
 		(suggestion: any, index: any, suggestions: any) =>
@@ -817,6 +842,42 @@ async function getSelectorArgumentCompletions(
 	return await getSelectorArgumentCompletions(line, cursor, tokenCursor, position)
 }
 
+async function getBlockStateCompletions(
+	line: string,
+	cursor: number,
+	tokenCursor: number,
+	position: Position,
+	variations: Command[],
+	argumentIndex: number,
+	command: string
+): Promise<{ suggestions: any[] } | undefined> {
+	if (!ProjectManager.currentProject || !(ProjectManager.currentProject instanceof BedrockProject)) return undefined
+
+	tokenCursor = skipSpaces(line, tokenCursor)
+	const token = getNextBlockState(line, tokenCursor)
+
+	if (cursor < tokenCursor || (cursor == tokenCursor && !token)) {
+		return undefined
+	}
+
+	if (token && cursor <= token.start + token.word.length) {
+		return undefined
+	}
+
+	if (!token) return undefined
+
+	tokenCursor = token.start + token.word.length
+
+	variations = variations.filter(
+		(variation) =>
+			matchArgument(token, variation.arguments[argumentIndex]) && variation.arguments.length > argumentIndex + 1
+	)
+
+	if (variations.length === 0) return undefined
+
+	return await getArgumentCompletions(line, cursor, tokenCursor, position, variations, argumentIndex + 1, command)
+}
+
 interface Token {
 	word: string
 	start: number
@@ -906,8 +967,19 @@ function getNextSelector(line: string, cursor: number): Token | null {
 	endCharacter++
 
 	let openBracketCount = 1
+	let withinString = false
 
 	for (; endCharacter < line.length; endCharacter++) {
+		if (line[endCharacter] === '"') {
+			if (!withinString) {
+				withinString = true
+			} else if (line[endCharacter - 1] !== '\\') {
+				withinString = false
+			}
+		}
+
+		if (withinString) continue
+
 		if (line[endCharacter] === '[') {
 			openBracketCount++
 		} else if (line[endCharacter] === ']') {
@@ -992,4 +1064,78 @@ function getNextSelectorValueWord(line: string, cursor: number): Token | null {
 	}
 
 	//TODO: Handle scores
+}
+
+function getNextBlockState(line: string, cursor: number): Token | null {
+	if (line[cursor] !== '[') return null
+
+	let endCharacter = cursor + 1
+
+	let openBracketCount = 1
+	let withinString = false
+
+	for (; endCharacter < line.length; endCharacter++) {
+		if (line[endCharacter] === '"') {
+			if (!withinString) {
+				withinString = true
+			} else if (line[endCharacter - 1] !== '\\') {
+				withinString = false
+			}
+		}
+
+		if (withinString) continue
+
+		if (line[endCharacter] === '[') {
+			openBracketCount++
+		} else if (line[endCharacter] === ']') {
+			openBracketCount--
+
+			if (openBracketCount === 0) {
+				endCharacter++
+
+				break
+			}
+		}
+	}
+
+	return {
+		word: line.substring(cursor, endCharacter),
+		start: cursor,
+	}
+}
+
+function getNextSelectorBlockStateWord(line: string, cursor: number): Token | null {
+	if (line[cursor] === '"') {
+		let closingIndex = -1
+
+		for (let index = cursor + 1; index < line.length; index++) {
+			if (line[index] !== '"') continue
+
+			if (line[index - 1] === '\\') continue
+
+			closingIndex = index + 1
+		}
+
+		if (closingIndex === -1) closingIndex = line.length
+
+		return {
+			word: line.substring(cursor, closingIndex),
+			start: cursor,
+		}
+	}
+
+	let endCharacter = cursor + 1
+
+	while (/^[0-9]+$/.test(line.slice(cursor, endCharacter)) && endCharacter <= line.length) {
+		endCharacter++
+	}
+
+	endCharacter--
+
+	if (endCharacter === cursor) return null
+
+	return {
+		word: line.substring(cursor, endCharacter),
+		start: cursor,
+	}
 }
