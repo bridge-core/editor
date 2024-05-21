@@ -16,7 +16,7 @@ export interface INotificationConfig {
 }
 
 export class Notification {
-	protected id: string
+	public id: string
 	protected _isVisible: boolean = false
 
 	constructor(protected config: INotificationConfig) {

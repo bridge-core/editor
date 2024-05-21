@@ -175,7 +175,7 @@ export class CreateProjectWindow extends NewBaseWindow {
 		// Ask user whether we should save the current project
 		if (removeOldProject) {
 			const confirmWindow = new ConfirmationWindow({
-				description: 'windows.createProject.saveCurrentProject',
+				description: 'windows.createProject.replaceCurrentProject',
 				cancelText: 'general.no',
 				confirmText: 'general.yes',
 			})
