@@ -165,20 +165,34 @@ export class TypeLoader {
 		const matcher = new RequiresMatcher()
 		await matcher.setup()
 
-		const libs = await this.load(
-			types
+		let libDefinitions = types
+			.map((type) => {
+				if (typeof type === 'string') return [type]
+
+				const { definition, requires, moduleName } = type
+
+				if (!requires || matcher.isValid(requires as IRequirements))
+					return [definition, moduleName]
+
+				return []
+			})
+			.filter((type) => type[0]) as [string, string?][]
+
+		if (libDefinitions.length === 0) {
+			libDefinitions = types
 				.map((type) => {
 					if (typeof type === 'string') return [type]
 
 					const { definition, requires, moduleName } = type
 
-					if (!requires || matcher.isValid(requires as IRequirements))
-						return [definition, moduleName]
-
-					return []
+					return [definition, moduleName]
 				})
 				.filter((type) => type[0]) as [string, string?][]
-		)
+		}
+
+		console.log(libDefinitions)
+
+		const libs = await this.load(libDefinitions)
 
 		for (const [typePath, lib] of libs) {
 			const uri = Uri.file(typePath)
