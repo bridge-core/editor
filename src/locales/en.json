@@ -669,6 +669,7 @@
 			"bdsProject": "Set project for use with Bedrock Dedicated Servers",
 			"create": "Create",
 			"saveCurrentProject": "Do you want to save your current project before creating the new one? Any unsaved changes will get lost!",
+			"replaceCurrentProject": "If you create a new project, your old project will be REPLACED! If you confirm, you can still download an export of the old project while the new one is open.",
 			"individualFiles": {
 				"name": "Individual Files",
 				"file": {
