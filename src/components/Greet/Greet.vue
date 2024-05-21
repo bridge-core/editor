@@ -3,7 +3,7 @@
 		<div class="d-flex flex-column projects-container">
 			<Logo
 				style="height: 160px; width: 160px"
-				class="ml-auto mr-auto mb-24 -mt-24"
+				class="ml-auto mr-auto mb-20 -mt-36"
 				alt="Logo of bridge. v2"
 			/>
 
@@ -172,16 +172,54 @@
 					{{ t('windows.settings.general.selectBridgeFolder.name') }}
 				</p>
 			</div>
+
+			<div class="flex">
+				<SidebarButton
+					v-for="notification in NotificationStore"
+					v-if="notification.isVisible"
+					:key="notification.id"
+					:displayName="notification.message"
+					:icon="notification.icon"
+					:color="notification.color"
+					:iconColor="notification.textColor"
+					@click="notification.onClick()"
+					@middleClick="notification.onMiddleClick()"
+				/>
+
+				<SidebarButton
+					v-for="(task, i) in tasks"
+					:key="`${i}`"
+					:displayName="task.name"
+					:icon="task.icon"
+					color="primary"
+					isLoading
+					alwaysAllowClick
+					@click="task.createWindow()"
+				>
+					<v-progress-circular
+						rotate="-90"
+						size="24"
+						width="2"
+						color="white"
+						:indeterminate="task.progress === undefined"
+						:value="task.progress"
+					/>
+				</SidebarButton>
+			</div>
 		</div>
 	</main>
 </template>
 
 <script setup lang="ts">
 import Logo from '/@/components/UIElements/Logo.vue'
+import SidebarButton from '/@/components/Sidebar/Button.vue'
+
 import { App } from '/@/App'
 import { computed, onMounted, onUnmounted, Ref, ref } from 'vue'
 import { useTranslations } from '/@/components/Composables/useTranslations'
 import { isUsingFileSystemPolyfill } from '/@/components/FileSystem/Polyfill'
+import { NotificationStore } from '/@/components/Notifications/state'
+import { tasks } from '/@/components/TaskManager/TaskManager'
 
 const tauri = import.meta.env.VITE_IS_TAURI_APP
 
@@ -266,6 +304,10 @@ async function pin(project: any) {
 	sortProjects()
 	await saveProjects()
 }
+
+const hasVisibleNotifications = computed(() => {
+	return Object.values(NotificationStore).some(({ isVisible }) => isVisible)
+})
 
 onMounted(async () => {
 	loadProjects()

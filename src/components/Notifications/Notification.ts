@@ -16,7 +16,7 @@ export interface INotificationConfig {
 }
 
 export class Notification {
-	protected id: string
+	public id: string
 	protected _isVisible: boolean = false
 
 	constructor(protected config: INotificationConfig) {
@@ -69,9 +69,7 @@ export class Notification {
 	}
 
 	protected updateAppBadge() {
-		// @ts-expect-error
 		if (typeof navigator.setAppBadge === 'function')
-			// @ts-expect-error
 			navigator.setAppBadge(
 				Object.values(NotificationStore).filter(
 					({ isVisible }) => isVisible

@@ -49,6 +49,7 @@ import { InformationWindow } from '/@/components/Windows/Common/Information/Info
 import { BottomPanel } from '/@/components/BottomPanel/BottomPanel'
 import { SolidWindowManager } from './components/Solid/Window/Manager'
 import { setupActions } from './components/Actions/Actions'
+import { createNotification } from './components/Notifications/create'
 
 if (import.meta.env.VITE_IS_TAURI_APP) {
 	// Import Tauri updater for native builds
@@ -275,10 +276,7 @@ export class App {
 			`--- Running bridge. ${appVersion} on a "${platform()}" machine ---`
 		)
 		console.time('[APP] beforeStartUp()')
-		// @ts-expect-error
-		if (navigator.clearAppBadge)
-			// @ts-expect-error
-			navigator.clearAppBadge()
+		if (navigator.clearAppBadge) navigator.clearAppBadge()
 
 		setupSidebar()
 		setupDefaultMenus(this)
