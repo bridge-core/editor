@@ -3,7 +3,6 @@ import { colorCodes } from './Language'
 import { ProjectManager } from '@/libs/project/ProjectManager'
 import { BedrockProject } from '@/libs/project/BedrockProject'
 import { Command } from '@/libs/data/bedrock/CommandData'
-import { tokenizeCommand } from 'bridge-common-utils'
 
 //@ts-ignore
 window.reloadId = Math.random() // TODO: Remove
@@ -770,7 +769,7 @@ async function getSelectorArgumentCompletions(
 		return undefined
 	}
 
-	if (token && cursor <= token.start + token.word.length) {
+	if (token !== null && cursor <= token.start + token.word.length) {
 		if (!argumentData) return undefined
 
 		if (argumentData.type === 'string') {
