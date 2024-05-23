@@ -115,7 +115,7 @@ export class ViewComMojangProject extends SidebarContent {
 		this.disposables.forEach((d) => d.dispose())
 		this.disposables = []
 
-		App.eventSystem.dispatch('comMojangProjectChanged')
+		App.eventSystem.dispatch('comMojangProjectChanged', undefined)
 	}
 
 	onContentRightClick(event: MouseEvent): void {
