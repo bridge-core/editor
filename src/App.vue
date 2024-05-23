@@ -165,6 +165,13 @@ export default {
 					() => (this.isNoProjectSelected = app.isNoProjectSelected)
 				)
 			)
+
+			this.disposables.push(
+				App.eventSystem.on(
+					'comMojangProjectChanged',
+					() => (this.isNoProjectSelected = app.isNoProjectSelected)
+				)
+			)
 		})
 
 		setFullscreenElement(this.$refs.appContainer.$el)

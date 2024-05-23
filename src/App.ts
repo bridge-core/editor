@@ -77,6 +77,7 @@ export class App {
 		'availableProjectsFileChanged',
 		'beforeModifiedProject',
 		'modifiedProject',
+		'comMojangProjectChanged',
 	])
 	public static readonly ready = new Signal<App>()
 	protected static _instance: Readonly<App>
@@ -128,8 +129,9 @@ export class App {
 
 	get isNoProjectSelected() {
 		return (
-			this.projectManager.currentProject === null ||
-			this.projectManager.currentProject.isVirtualProject
+			(this.projectManager.currentProject === null ||
+				this.projectManager.currentProject.isVirtualProject) &&
+			!this.viewComMojangProject.hasComMojangProjectLoaded
 		)
 	}
 

@@ -104,7 +104,7 @@ export default {
 
 			this.actions = [
 				...baseActions,
-				...(app.isNoProjectSelected
+				...(app.isNoProjectSelected || app.project.isVirtualProject
 					? []
 					: await this.loadFilesFromProject(app.project)),
 				...extensionActions,

@@ -97,6 +97,8 @@ export class ViewComMojangProject extends SidebarContent {
 
 		this.headerSlot = ProjectHeaderComponent
 		this.sidebarElement.select()
+
+		App.eventSystem.dispatch('comMojangProjectChanged', project)
 	}
 	async clearComMojangProject() {
 		const app = await App.getApp()
@@ -112,6 +114,8 @@ export class ViewComMojangProject extends SidebarContent {
 
 		this.disposables.forEach((d) => d.dispose())
 		this.disposables = []
+
+		App.eventSystem.dispatch('comMojangProjectChanged')
 	}
 
 	onContentRightClick(event: MouseEvent): void {
