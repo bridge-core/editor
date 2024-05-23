@@ -769,7 +769,7 @@ async function getSelectorArgumentCompletions(
 		return undefined
 	}
 
-	if (token !== null && cursor <= token.start + token.word.length) {
+	if (token && cursor <= token.start + token.word.length) {
 		if (!argumentData) return undefined
 
 		if (argumentData.type === 'string') {
@@ -781,9 +781,9 @@ async function getSelectorArgumentCompletions(
 						kind: languages.CompletionItemKind.Keyword,
 						range: new Range(
 							position.lineNumber,
-							token.start + 1,
+							token!.start + 1,
 							position.lineNumber,
-							token.start + token.word.length + 1
+							token!.start + token!.word.length + 1
 						),
 					})),
 				}
@@ -802,9 +802,9 @@ async function getSelectorArgumentCompletions(
 						kind: languages.CompletionItemKind.Keyword,
 						range: new Range(
 							position.lineNumber,
-							token.start + 1,
+							token!.start + 1,
 							position.lineNumber,
-							token.start + token.word.length + 1
+							token!.start + token!.word.length + 1
 						),
 					})),
 				}
@@ -819,9 +819,9 @@ async function getSelectorArgumentCompletions(
 					kind: languages.CompletionItemKind.Keyword,
 					range: new Range(
 						position.lineNumber,
-						token.start + 1,
+						token!.start + 1,
 						position.lineNumber,
-						token.start + token.word.length + 1
+						token!.start + token!.word.length + 1
 					),
 				})),
 			}
