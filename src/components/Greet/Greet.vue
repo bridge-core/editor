@@ -98,14 +98,14 @@
 				>
 					<div class="project-icon w-full overflow-hidden">
 						<img
-							:src="project.icon"
+							:src="project.icon ?? project.packs[0].packIcon"
 							class="w-full aspect-video object-cover"
 						/>
 					</div>
 					<p
 						class="text-sm text-center mt-auto mb-auto ml-0.5 mr-0.5"
 					>
-						{{ project.displayName }}
+						{{ project.displayName ?? project.name }}
 					</p>
 
 					<v-tooltip color="tooltip" left>
@@ -220,6 +220,8 @@ import { useTranslations } from '/@/components/Composables/useTranslations'
 import { isUsingFileSystemPolyfill } from '/@/components/FileSystem/Polyfill'
 import { NotificationStore } from '/@/components/Notifications/state'
 import { tasks } from '/@/components/TaskManager/TaskManager'
+import { ComMojangProjectLoader } from '/@/components/OutputFolders/ComMojang/ProjectLoader'
+import { virtualProjectName } from '../Projects/Project/Project'
 
 const tauri = import.meta.env.VITE_IS_TAURI_APP
 
@@ -247,11 +249,14 @@ async function loadFolder() {
 	const app = await App.getApp()
 
 	await app.setupBridgeFolder(bridgeFolderSelected.value)
+	await app.comMojang.setupComMojang()
 }
 
 let disposables: any[] = []
 
 let projects: Ref<any> = ref([])
+
+let comMojangProjectLoader: null | ComMojangProjectLoader = null
 
 async function loadProjects() {
 	const app = await App.getApp()
@@ -259,6 +264,15 @@ async function loadProjects() {
 	projects.value = await app.fileSystem
 		.readJSON('~local/data/projects.json')
 		.catch(() => [])
+
+	if (comMojangProjectLoader !== null) {
+		projects.value = projects.value.concat(
+			(await comMojangProjectLoader.loadProjects()).map((project) => ({
+				...project,
+				comMojang: true,
+			}))
+		)
+	}
 
 	await sortProjects()
 }
@@ -272,7 +286,7 @@ function sortProjects() {
 		const revalence = (b.lastOpened ?? 0) - (a.lastOpened ?? 0)
 		if (revalence !== 0) return revalence
 
-		return a.displayName.localeCompare(b.displayName)
+		return (a.displayName ?? a.name).localeCompare(b.displayName ?? b.name)
 	})
 }
 
@@ -285,7 +299,14 @@ async function selectProject(project: any) {
 		if (!wasSuccessful) return
 	}
 
-	await app.projectManager.selectProject(project.name, true)
+	if (project.comMojang) {
+		await app.projectManager.selectProject(virtualProjectName)
+		app.viewComMojangProject.loadComMojangProject(project)
+
+		return
+	}
+
+	await app.projectManager.selectProject(project.name)
 }
 
 async function saveProjects() {
@@ -323,6 +344,8 @@ onMounted(async () => {
 			bridgeFolderSelected.value = true
 		}, true)
 	)
+
+	comMojangProjectLoader = new ComMojangProjectLoader(app)
 })
 
 onUnmounted(() => {
