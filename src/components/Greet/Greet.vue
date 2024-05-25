@@ -98,7 +98,12 @@
 				>
 					<div class="project-icon w-full overflow-hidden">
 						<img
-							:src="project.icon ?? project.packs[0].packIcon"
+							:src="
+								project.icon ??
+								(project.packs && project.packs[0]
+									? project.packs[0].packIcon
+									: '')
+							"
 							class="w-full aspect-video object-cover"
 						/>
 					</div>
