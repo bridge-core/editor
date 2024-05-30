@@ -903,6 +903,8 @@ function matchArgument(argument: Token, type: any): boolean {
 
 	if (type.type === 'blockState' && /^(\[|[0-9]+)/.test(argument.word)) return true
 
+	if (type.type === 'jsonData' && /^(\{|\[)/.test(argument.word)) return true
+
 	console.warn('Failed to match', argument, type)
 
 	return false
@@ -917,6 +919,42 @@ function skipSpaces(line: string, cursor: number): number {
 }
 
 function getNextWord(line: string, cursor: number): Token | null {
+	if (line[cursor] === '{') {
+		let endCharacter = cursor + 1
+
+		let openBracketCount = 1
+		let withinString = false
+
+		for (; endCharacter < line.length; endCharacter++) {
+			if (line[endCharacter] === '"') {
+				if (!withinString) {
+					withinString = true
+				} else if (line[endCharacter - 1] !== '\\') {
+					withinString = false
+				}
+			}
+
+			if (withinString) continue
+
+			if (line[endCharacter] === '{') {
+				openBracketCount++
+			} else if (line[endCharacter] === '}') {
+				openBracketCount--
+
+				if (openBracketCount === 0) {
+					endCharacter++
+
+					break
+				}
+			}
+		}
+
+		return {
+			word: line.substring(cursor, endCharacter),
+			start: cursor,
+		}
+	}
+
 	if (line[cursor] === '"') {
 		let closingIndex = -1
 
