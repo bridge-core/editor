@@ -1041,6 +1041,42 @@ function getNextSelectorOperatorWord(line: string, cursor: number): Token | null
 }
 
 function getNextSelectorValueWord(line: string, cursor: number): Token | null {
+	if (line[cursor] === '{') {
+		let endCharacter = cursor + 1
+
+		let openBracketCount = 1
+		let withinString = false
+
+		for (; endCharacter < line.length; endCharacter++) {
+			if (line[endCharacter] === '"') {
+				if (!withinString) {
+					withinString = true
+				} else if (line[endCharacter - 1] !== '\\') {
+					withinString = false
+				}
+			}
+
+			if (withinString) continue
+
+			if (line[endCharacter] === '{') {
+				openBracketCount++
+			} else if (line[endCharacter] === '}') {
+				openBracketCount--
+
+				if (openBracketCount === 0) {
+					endCharacter++
+
+					break
+				}
+			}
+		}
+
+		return {
+			word: line.substring(cursor, endCharacter),
+			start: cursor,
+		}
+	}
+
 	if (line[cursor] === '"') {
 		let closingIndex = -1
 
@@ -1068,8 +1104,6 @@ function getNextSelectorValueWord(line: string, cursor: number): Token | null {
 		word: line.substring(cursor, cursor + match[0].length),
 		start: cursor,
 	}
-
-	//TODO: Handle scores
 }
 
 function getNextBlockState(line: string, cursor: number): Token | null {
