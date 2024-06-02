@@ -380,12 +380,14 @@ async function getSelectorCompletions(
 
 	if (cursor < tokenCursor || (cursor == tokenCursor && !token)) {
 		return {
-			suggestions: ['p', 'r', 'a', 'e', 's', 'initiator'].map((selector) => ({
-				label: '@' + selector,
-				insertText: '@' + selector,
-				kind: languages.CompletionItemKind.Keyword,
-				range: new Range(position.lineNumber, cursor + 1, position.lineNumber, cursor + 1),
-			})),
+			suggestions: makeCompletions(
+				['@p', '@r', '@a', '@e', '@s', '@initiator'],
+				undefined,
+				languages.CompletionItemKind.Enum,
+				position.lineNumber,
+				cursor,
+				undefined
+			),
 		}
 	}
 
@@ -393,26 +395,15 @@ async function getSelectorCompletions(
 		let basicSelector = getBasicSelectorPart(token.word)
 
 		if (cursor <= token.start + basicSelector.length) {
-			const suggestions: any[] = []
-
-			for (const selector of ['p', 'r', 'a', 'e', 's', 'initiator']) {
-				if (token && !('@' + selector).startsWith(token.word)) continue
-
-				suggestions.push({
-					label: '@' + selector,
-					insertText: '@' + selector,
-					kind: languages.CompletionItemKind.Keyword,
-					range: new Range(
-						position.lineNumber,
-						token.start + 1,
-						position.lineNumber,
-						token.start + token.word.length + 1
-					),
-				})
-			}
-
 			return {
-				suggestions,
+				suggestions: makeCompletions(
+					['@p', '@r', '@a', '@e', '@s', '@initiator'],
+					undefined,
+					languages.CompletionItemKind.Enum,
+					position.lineNumber,
+					cursor,
+					token
+				),
 			}
 		}
 
@@ -452,30 +443,20 @@ async function getSelectorArgumentCompletions(
 	tokenCursor = skipSpaces(line, tokenCursor)
 	let token = getNextSelectorArgumentWord(line, tokenCursor)
 
-	if (cursor < tokenCursor || (cursor == tokenCursor && !token))
+	if (!token || cursor <= token.start + token.word.length) {
 		return {
-			suggestions: ProjectManager.currentProject.commandData.getSelectorArguments().map((argument) => ({
-				label: argument.argumentName,
-				insertText: argument.argumentName,
-				kind: languages.CompletionItemKind.Keyword,
-				range: new Range(position.lineNumber, cursor + 1, position.lineNumber, cursor + 1),
-			})),
+			suggestions: makeCompletions(
+				ProjectManager.currentProject.commandData
+					.getSelectorArguments()
+					.map((argument) => argument.argumentName),
+				undefined,
+				languages.CompletionItemKind.Enum,
+				position.lineNumber,
+				cursor,
+				cursor < tokenCursor ? undefined : token
+			),
 		}
-
-	if (token && cursor <= token.start + token.word.length)
-		return {
-			suggestions: ProjectManager.currentProject.commandData.getSelectorArguments().map((argument) => ({
-				label: argument.argumentName,
-				insertText: argument.argumentName,
-				kind: languages.CompletionItemKind.Keyword,
-				range: new Range(
-					position.lineNumber,
-					token!.start + 1,
-					position.lineNumber,
-					token!.start + token!.word.length + 1
-				),
-			})),
-		}
+	}
 
 	if (!token) return undefined
 
@@ -490,12 +471,14 @@ async function getSelectorArgumentCompletions(
 
 	if (cursor <= tokenCursor) {
 		return {
-			suggestions: ['=', '=!'].map((operator) => ({
-				label: operator,
-				insertText: operator,
-				kind: languages.CompletionItemKind.Operator,
-				range: new Range(position.lineNumber, cursor + 1, position.lineNumber, cursor + 1),
-			})),
+			suggestions: makeCompletions(
+				['=', '=!'],
+				undefined,
+				languages.CompletionItemKind.Operator,
+				position.lineNumber,
+				cursor,
+				undefined
+			),
 		}
 	}
 
