@@ -1,206 +1,10 @@
-import { CancellationToken, Position, editor, languages, Range } from 'monaco-editor'
-import { colorCodes } from './Language'
+import { Position, languages, Range } from 'monaco-editor'
+import { Command } from '@/libs/data/bedrock/CommandData'
+import { Token } from './Common'
 import { ProjectManager } from '@/libs/project/ProjectManager'
 import { BedrockProject } from '@/libs/project/BedrockProject'
-import { Command } from '@/libs/data/bedrock/CommandData'
 
-//@ts-ignore
-window.reloadId = Math.random() // TODO: Remove
-
-export function setupMcFunction() {
-	languages.register({ id: 'mcfunction', extensions: ['.mcfunction'], aliases: ['mcfunction'] })
-
-	languages.setLanguageConfiguration('mcfunction', {
-		wordPattern: /[aA-zZ]/, // Hack to make autocompletions work within an empty selector. Hopefully there are now implicit side effects.
-		comments: {
-			lineComment: '#',
-		},
-		autoClosingPairs: [
-			{
-				open: '(',
-				close: ')',
-			},
-			{
-				open: '[',
-				close: ']',
-			},
-			{
-				open: '{',
-				close: '}',
-			},
-			{
-				open: '"',
-				close: '"',
-			},
-		],
-	})
-
-	//@ts-ignore
-	const id = window.reloadId // TODO: Remove
-
-	languages.registerCompletionItemProvider('mcfunction', {
-		triggerCharacters: [' ', '[', '{', '=', ',', '!', '@', '\n'],
-
-		async provideCompletionItems(
-			model: editor.ITextModel,
-			position: Position,
-			context: languages.CompletionContext,
-			token: CancellationToken
-		) {
-			//@ts-ignore
-			if (id !== window.reloadId) return // TODO: Remove
-
-			if (!ProjectManager.currentProject) return
-			if (!(ProjectManager.currentProject instanceof BedrockProject)) return
-
-			const line = model.getLineContent(position.lineNumber)
-
-			const cursor = position.column - 1
-
-			console.log('Triggered completions')
-
-			return await getCommandCompletions(line, cursor, 0, position)
-		},
-	})
-
-	ProjectManager.updatedCurrentProject.on(() => {
-		if (!ProjectManager.currentProject) return
-		if (!(ProjectManager.currentProject instanceof BedrockProject)) return
-
-		updateTokensProvider(
-			ProjectManager.currentProject.commandData
-				.getCommands()
-				.map((command) => command.commandName)
-				.filter((command, index, commands) => commands.indexOf(command) === index),
-			ProjectManager.currentProject.commandData
-				.getSelectorArguments()
-				.map((argument) => argument.argumentName)
-				.filter((argument, index, argumentArray) => argumentArray.indexOf(argument) === index)
-		)
-	})
-
-	updateTokensProvider([], [])
-
-	if (ProjectManager.currentProject && ProjectManager.currentProject instanceof BedrockProject)
-		updateTokensProvider(
-			ProjectManager.currentProject.commandData
-				.getCommands()
-				.map((command) => command.commandName)
-				.filter((command, index, commands) => commands.indexOf(command) === index),
-			ProjectManager.currentProject.commandData
-				.getSelectorArguments()
-				.map((argument) => argument.argumentName)
-				.filter((argument, index, argumentArray) => argumentArray.indexOf(argument) === index)
-		)
-}
-
-function updateTokensProvider(commands: string[], selectorArguments: string[]) {
-	languages.setMonarchTokensProvider('mcfunction', {
-		brackets: [
-			{
-				open: '(',
-				close: ')',
-				token: 'delimiter.parenthesis',
-			},
-			{
-				open: '[',
-				close: ']',
-				token: 'delimiter.square',
-			},
-			{
-				open: '{',
-				close: '}',
-				token: 'delimiter.curly',
-			},
-		],
-		keywords: commands,
-		selectors: ['@a', '@e', '@p', '@r', '@s', '@initiator'],
-		targetSelectorArguments: selectorArguments,
-
-		tokenizer: {
-			root: [
-				[/#.*/, 'comment'],
-
-				[
-					/\{/,
-					{
-						token: 'delimiter.bracket',
-						bracket: '@open',
-						next: '@embeddedJson',
-					},
-				],
-				[
-					/\[/,
-					{
-						token: 'delimiter.bracket',
-						next: '@targetSelectorArguments',
-						bracket: '@open',
-					},
-				],
-				{ include: '@common' },
-				...colorCodes,
-				[
-					/[a-z_][\w\/]*/,
-					{
-						cases: {
-							'@keywords': 'keyword',
-							'@default': 'identifier',
-						},
-					},
-				],
-				[
-					/(@[a-z]+)/,
-					{
-						cases: {
-							'@selectors': 'type.identifier',
-							'@default': 'identifier',
-						},
-					},
-				],
-			],
-
-			common: [
-				[/(\\)?"[^"]*"|'[^']*'/, 'string'],
-				[/\=|\,|\!|%=|\*=|\+=|-=|\/=|<|=|>|<>/, 'definition'],
-				[/true|false/, 'number'],
-				[/-?([0-9]+(\.[0-9]+)?)|((\~|\^)-?([0-9]+(\.[0-9]+)?)?)/, 'number'],
-			],
-
-			embeddedJson: [
-				[/\{/, 'delimiter.bracket', '@embeddedJson'],
-				[/\}/, 'delimiter.bracket', '@pop'],
-				{ include: '@common' },
-			],
-			targetSelectorArguments: [
-				[/\]/, { token: '@brackets', bracket: '@close', next: '@pop' }],
-				[
-					/{/,
-					{
-						token: '@brackets',
-						bracket: '@open',
-						next: '@targetSelectorScore',
-					},
-				],
-				[
-					/[a-z_][\w\/]*/,
-					{
-						cases: {
-							'@targetSelectorArguments': 'variable',
-							'@default': 'identifier',
-						},
-					},
-				],
-				{ include: '@common' },
-			],
-			targetSelectorScore: [
-				[/}/, { token: '@brackets', bracket: '@close', next: '@pop' }],
-				{ include: '@common' },
-			],
-		},
-	})
-}
-
-async function getCommandCompletions(
+export async function getCommandCompletions(
 	line: string,
 	cursor: number,
 	tokenCursor: number,
@@ -213,44 +17,23 @@ async function getCommandCompletions(
 	tokenCursor = skipSpaces(line, tokenCursor)
 	const token = getNextWord(line, tokenCursor)
 
-	if (cursor < tokenCursor || (cursor == tokenCursor && !token))
-		return {
-			suggestions: commandData
-				.getCommands()
-				.filter(
-					(command, index, commands) =>
-						commands.findIndex((otherCommand) => command.commandName === otherCommand.commandName) === index
-				)
-				.map((command) => ({
-					label: command.commandName,
-					insertText: command.commandName,
-					kind: languages.CompletionItemKind.Keyword,
-					detail: command.description,
-					range: new Range(position.lineNumber, cursor + 1, position.lineNumber, cursor + 1),
-				})),
-		}
+	if (!token || cursor <= token.start + token.word.length) {
+		const commands = commandData
+			.getCommands()
+			.filter(
+				(command, index, commands) =>
+					commands.findIndex((otherCommand) => command.commandName === otherCommand.commandName) === index
+			)
 
-	if (token && cursor <= token.start + token.word.length) {
 		return {
-			suggestions: commandData
-				.getCommands()
-				.filter(
-					(command, index, commands) =>
-						commands.findIndex((otherCommand) => command.commandName === otherCommand.commandName) === index
-				)
-				.filter((command) => command.commandName.startsWith(token.word))
-				.map((command) => ({
-					label: command.commandName,
-					insertText: command.commandName,
-					kind: languages.CompletionItemKind.Keyword,
-					detail: command.description,
-					range: new Range(
-						position.lineNumber,
-						token.start + 1,
-						position.lineNumber,
-						token.start + token.word.length + 1
-					),
-				})),
+			suggestions: makeCompletions(
+				commands.map((command) => command.commandName),
+				commands.map((command) => command.description),
+				languages.CompletionItemKind.Enum,
+				position.lineNumber,
+				cursor,
+				cursor < tokenCursor ? undefined : token
+			),
 		}
 	}
 
@@ -878,11 +661,6 @@ async function getBlockStateCompletions(
 	return await getArgumentCompletions(line, cursor, tokenCursor, position, variations, argumentIndex + 1, command)
 }
 
-interface Token {
-	word: string
-	start: number
-}
-
 function matchArgument(argument: Token, type: any): boolean {
 	if (type === undefined) return false
 
@@ -1232,4 +1010,33 @@ function getNextSelectorBlockStateWord(line: string, cursor: number): Token | nu
 		word: line.substring(cursor, endCharacter),
 		start: cursor,
 	}
+}
+
+function makeCompletions(
+	options: string[],
+	detail: string[] | undefined,
+	kind: languages.CompletionItemKind,
+	lineNumber: number,
+	cursor: number,
+	token?: Token | null
+) {
+	if (!token) {
+		return options.map((option, index) => ({
+			label: option,
+			insertText: option,
+			detail: detail ? detail[index] : undefined,
+			kind,
+			range: new Range(lineNumber, cursor + 1, lineNumber, cursor + 1),
+		}))
+	}
+
+	return options
+		.filter((option) => option.startsWith(token.word))
+		.map((option, index) => ({
+			label: option,
+			insertText: option,
+			detail: detail ? detail[index] : undefined,
+			kind,
+			range: new Range(lineNumber, token.start + 1, lineNumber, token.start + token.word.length + 1),
+		}))
 }
