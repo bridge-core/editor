@@ -1,6 +1,6 @@
 import { Position, languages, Range } from 'monaco-editor'
 import { Command } from '@/libs/data/bedrock/CommandData'
-import { Token } from './Common'
+import { Token } from './Parser'
 import { ProjectManager } from '@/libs/project/ProjectManager'
 import { BedrockProject } from '@/libs/project/BedrockProject'
 

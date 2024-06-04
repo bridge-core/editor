@@ -1,8 +1,8 @@
-import { CancellationToken, Position, editor, languages } from 'monaco-editor'
+import { CancellationToken, Position, editor, languages, Range } from 'monaco-editor'
 import { colorCodes } from '../Language'
 import { ProjectManager } from '@/libs/project/ProjectManager'
 import { BedrockProject } from '@/libs/project/BedrockProject'
-import { getCommandCompletions } from './Completions'
+import { ArgumentContext, Token, getContext } from './Parser'
 
 //@ts-ignore
 window.reloadId = Math.random() // TODO: Remove
@@ -50,14 +50,90 @@ export function setupMcFunction() {
 			//@ts-ignore
 			if (id !== window.reloadId) return // TODO: Remove
 
-			if (!ProjectManager.currentProject) return
-			if (!(ProjectManager.currentProject instanceof BedrockProject)) return
+			if (!(ProjectManager.currentProject instanceof BedrockProject)) return undefined
 
 			const line = model.getLineContent(position.lineNumber)
 
 			const cursor = position.column - 1
 
-			return await getCommandCompletions(line, cursor, 0, position)
+			const contexts = await getContext(line, cursor)
+			console.log(contexts)
+
+			let completions: languages.CompletionItem[] = []
+
+			const commandData = ProjectManager.currentProject.commandData
+
+			for (const context of contexts) {
+				if (context.kind === 'command') {
+					const commands = commandData
+						.getCommands()
+						.filter(
+							(command, index, commands) =>
+								commands.findIndex(
+									(otherCommand) => command.commandName === otherCommand.commandName
+								) === index
+						)
+
+					completions = completions.concat(
+						makeCompletions(
+							commands.map((command) => command.commandName),
+							commands.map((command) => command.description),
+							languages.CompletionItemKind.Enum,
+							position,
+							context.token
+						)
+					)
+				}
+			}
+
+			return {
+				suggestions: completions,
+			}
+
+			// return await getCommandCompletions(line, cursor, 0, position)
+		},
+	})
+
+	languages.registerSignatureHelpProvider('mcfunction', {
+		signatureHelpTriggerCharacters: [' ', '[', '{', '=', ',', '!', '@', '\n'],
+
+		async provideSignatureHelp(model, position, token, _) {
+			//@ts-ignore
+			if (id !== window.reloadId) return // TODO: Remove
+
+			const line = model.getLineContent(position.lineNumber)
+
+			const cursor = position.column - 1
+
+			const contexts = await getContext(line, cursor)
+			console.log(contexts)
+
+			let signatures: languages.SignatureInformation[] = []
+
+			for (const context of contexts) {
+				if (context.kind === 'argument') {
+					const argumentContext = <ArgumentContext>context
+
+					signatures = signatures.concat(
+						argumentContext.variations.map((variation) => ({
+							label: `${variation.commandName} => ${
+								variation.arguments[argumentContext.argumentIndex].argumentName
+							}: ${variation.arguments[argumentContext.argumentIndex].type}`,
+							parameters: [],
+							documentation: variation.description,
+						}))
+					)
+				}
+			}
+
+			return {
+				value: {
+					activeParameter: 0,
+					activeSignature: 0,
+					signatures,
+				},
+				dispose() {},
+			}
 		},
 	})
 
@@ -196,4 +272,37 @@ function updateTokensProvider(commands: string[], selectorArguments: string[]) {
 			],
 		},
 	})
+}
+
+function makeCompletions(
+	options: string[],
+	detail: string[] | undefined,
+	kind: languages.CompletionItemKind,
+	position: Position,
+	token?: Token | null
+) {
+	if (!token) {
+		return options.map((option, index) => ({
+			label: option,
+			insertText: option,
+			detail: detail ? detail[index] : undefined,
+			kind,
+			range: new Range(position.lineNumber, position.column, position.lineNumber, position.column),
+		}))
+	}
+
+	return options
+		.filter((option) => option.startsWith(token.word))
+		.map((option, index) => ({
+			label: option,
+			insertText: option,
+			detail: detail ? detail[index] : undefined,
+			kind,
+			range: new Range(
+				position.lineNumber,
+				position.column,
+				position.lineNumber,
+				token.start + token.word.length + 1
+			),
+		}))
 }
