@@ -300,7 +300,7 @@ function makeCompletions(
 			kind,
 			range: new Range(
 				position.lineNumber,
-				position.column,
+				token.start + 1,
 				position.lineNumber,
 				token.start + token.word.length + 1
 			),
