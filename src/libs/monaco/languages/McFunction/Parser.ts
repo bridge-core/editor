@@ -1,6 +1,6 @@
 import { BedrockProject } from '@/libs/project/BedrockProject'
 import { ProjectManager } from '@/libs/project/ProjectManager'
-import { Argument, Command, SelectorArgument } from '@/libs/data/bedrock/CommandData'
+import { Command, SelectorArgument } from '@/libs/data/bedrock/CommandData'
 
 export interface Token {
 	word: string
