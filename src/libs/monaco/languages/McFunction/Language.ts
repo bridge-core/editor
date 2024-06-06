@@ -2,7 +2,8 @@ import { CancellationToken, Position, editor, languages, Range } from 'monaco-ed
 import { colorCodes } from '../Language'
 import { ProjectManager } from '@/libs/project/ProjectManager'
 import { BedrockProject } from '@/libs/project/BedrockProject'
-import { ArgumentContext, Token, getContext } from './Parser'
+import { Token, getContext } from './Parser'
+import { provideSignatureHelp } from './Signature'
 
 //@ts-ignore
 window.reloadId = Math.random() // TODO: Remove
@@ -101,39 +102,7 @@ export function setupMcFunction() {
 			//@ts-ignore
 			if (id !== window.reloadId) return // TODO: Remove
 
-			const line = model.getLineContent(position.lineNumber)
-
-			const cursor = position.column - 1
-
-			const contexts = await getContext(line, cursor)
-			console.log(contexts)
-
-			let signatures: languages.SignatureInformation[] = []
-
-			for (const context of contexts) {
-				if (context.kind === 'argument') {
-					const argumentContext = <ArgumentContext>context
-
-					signatures = signatures.concat(
-						argumentContext.variations.map((variation) => ({
-							label: `${variation.commandName} => ${
-								variation.arguments[argumentContext.argumentIndex].argumentName
-							}: ${variation.arguments[argumentContext.argumentIndex].type}`,
-							parameters: [],
-							documentation: variation.description,
-						}))
-					)
-				}
-			}
-
-			return {
-				value: {
-					activeParameter: 0,
-					activeSignature: 0,
-					signatures,
-				},
-				dispose() {},
-			}
+			return provideSignatureHelp(model, position, token, _)
 		},
 	})
 

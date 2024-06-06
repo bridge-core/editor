@@ -53,6 +53,7 @@ async function getCommandContext(line: string, cursor: number, tokenCursor: numb
 
 				return [argument]
 			}),
+			original: JSON.parse(JSON.stringify(variation)),
 		}))
 
 	return await getArgumentContext(line, cursor, tokenCursor, possibleVariations, 0, token.word)
@@ -199,7 +200,7 @@ async function getBasicContext(
 			{
 				kind: 'argument',
 				token: token ?? undefined,
-				variations: variations,
+				variations,
 				command,
 				argumentIndex,
 			} as ArgumentContext,
@@ -240,9 +241,12 @@ async function getSelectorContext(
 	if (!token || cursor <= tokenCursor)
 		return [
 			{
-				kind: 'selector',
+				kind: 'argument',
 				token: undefined,
-			},
+				variations,
+				command,
+				argumentIndex,
+			} as ArgumentContext,
 		]
 
 	if (cursor <= token.start + token.word.length) {
@@ -251,9 +255,12 @@ async function getSelectorContext(
 		if (cursor <= token.start + basicSelector.length)
 			return [
 				{
-					kind: 'selector',
+					kind: 'argument',
 					token: token,
-				},
+					variations,
+					command,
+					argumentIndex,
+				} as ArgumentContext,
 			]
 
 		tokenCursor = token.start + basicSelector.length
