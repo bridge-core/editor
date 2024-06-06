@@ -304,7 +304,7 @@ async function getSelectorContext(
 	return await getArgumentContext(line, cursor, tokenCursor, variations, argumentIndex + 1, command)
 }
 
-export interface SelectorArgumentContext extends Context {
+export interface SelectorValueContext extends Context {
 	argument: SelectorArgument
 }
 
@@ -319,7 +319,7 @@ async function getSelectorArgumentContext(line: string, cursor: number, tokenCur
 		return [
 			{
 				kind: 'selectorArgument',
-				token: undefined,
+				token: token ?? undefined,
 			},
 		]
 	}
@@ -337,7 +337,7 @@ async function getSelectorArgumentContext(line: string, cursor: number, tokenCur
 		return [
 			{
 				kind: 'selectorOperator',
-				token: undefined,
+				token: token ?? undefined,
 			},
 		]
 	}
@@ -350,10 +350,10 @@ async function getSelectorArgumentContext(line: string, cursor: number, tokenCur
 	if (!token || cursor < tokenCursor)
 		return [
 			{
-				kind: 'selectorArgument',
+				kind: 'selectorValue',
 				token: token ?? undefined,
 				argument: argumentData,
-			} as SelectorArgumentContext,
+			} as SelectorValueContext,
 		]
 
 	tokenCursor = token.start + token.word.length

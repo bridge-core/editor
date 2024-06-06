@@ -2,7 +2,7 @@ import { CancellationToken, Position, editor, languages, Range } from 'monaco-ed
 import { colorCodes } from '../Language'
 import { ProjectManager } from '@/libs/project/ProjectManager'
 import { BedrockProject } from '@/libs/project/BedrockProject'
-import { Token, getContext } from './Parser'
+import { ArgumentContext, SelectorValueContext, Token, getContext } from './Parser'
 import { provideSignatureHelp } from './Signature'
 
 //@ts-ignore
@@ -58,7 +58,6 @@ export function setupMcFunction() {
 			const cursor = position.column - 1
 
 			const contexts = await getContext(line, cursor)
-			console.log(contexts)
 
 			let completions: languages.CompletionItem[] = []
 
@@ -79,13 +78,163 @@ export function setupMcFunction() {
 						makeCompletions(
 							commands.map((command) => command.commandName),
 							commands.map((command) => command.description),
-							languages.CompletionItemKind.Enum,
+							languages.CompletionItemKind.Keyword,
 							position,
 							context.token
 						)
 					)
 				}
+
+				if (context.kind === 'argument') {
+					const argumentContext = context as ArgumentContext
+
+					for (const variation of argumentContext.variations) {
+						const argumentType = variation.arguments[argumentContext.argumentIndex]
+
+						if (argumentType.type === 'string') {
+							if (argumentType.additionalData?.values) {
+								completions = completions.concat(
+									makeCompletions(
+										argumentType.additionalData.values,
+										undefined,
+										languages.CompletionItemKind.Enum,
+										position,
+										context.token
+									)
+								)
+							}
+
+							if (argumentType.additionalData?.schemaReference) {
+								const schema = ProjectManager.currentProject.schemaData.getAndResolve(
+									argumentType.additionalData.schemaReference
+								)
+
+								const values = ProjectManager.currentProject.schemaData.getAutocompletions(schema)
+
+								completions = completions.concat(
+									makeCompletions(
+										values,
+										undefined,
+										languages.CompletionItemKind.Enum,
+										position,
+										context.token
+									)
+								)
+							}
+						}
+
+						if (argumentType.type === 'boolean') {
+							completions = completions.concat(
+								makeCompletions(
+									['true', 'false'],
+									undefined,
+									languages.CompletionItemKind.Enum,
+									position,
+									context.token
+								)
+							)
+						}
+
+						if (argumentType.type === 'selector') {
+							completions = completions.concat(
+								makeCompletions(
+									['@p', '@r', '@a', '@e', '@s', '@initiator'],
+									undefined,
+									languages.CompletionItemKind.Enum,
+									position,
+									context.token
+								)
+							)
+						}
+					}
+				}
+
+				if (context.kind === 'selectorArgument') {
+					const selectorArguments = commandData
+						.getSelectorArguments()
+						.filter(
+							(argument, index, selectorArguments) =>
+								selectorArguments.findIndex(
+									(otherArgument) => argument.argumentName === otherArgument.argumentName
+								) === index
+						)
+
+					completions = completions.concat(
+						makeCompletions(
+							selectorArguments.map((command) => command.argumentName),
+							undefined,
+							languages.CompletionItemKind.Keyword,
+							position,
+							context.token
+						)
+					)
+				}
+
+				if (context.kind === 'selectorOperator') {
+					completions = completions.concat(
+						makeCompletions(
+							['=', '=!'],
+							undefined,
+							languages.CompletionItemKind.Keyword,
+							position,
+							context.token
+						)
+					)
+				}
+
+				if (context.kind === 'selectorValue') {
+					const selectorValueContext = context as SelectorValueContext
+
+					if (selectorValueContext.argument.type === 'string') {
+						if (selectorValueContext.argument.additionalData?.values) {
+							completions = completions.concat(
+								makeCompletions(
+									selectorValueContext.argument.additionalData.values,
+									undefined,
+									languages.CompletionItemKind.Enum,
+									position,
+									context.token
+								)
+							)
+						}
+
+						if (selectorValueContext.argument.additionalData?.schemaReference) {
+							const schema = ProjectManager.currentProject.schemaData.getAndResolve(
+								selectorValueContext.argument.additionalData.schemaReference
+							)
+
+							const values = ProjectManager.currentProject.schemaData.getAutocompletions(schema)
+
+							completions = completions.concat(
+								makeCompletions(
+									values,
+									undefined,
+									languages.CompletionItemKind.Enum,
+									position,
+									context.token
+								)
+							)
+						}
+					}
+
+					if (selectorValueContext.argument.type === 'boolean') {
+						completions = completions.concat(
+							makeCompletions(
+								['true', 'false'],
+								undefined,
+								languages.CompletionItemKind.Enum,
+								position,
+								context.token
+							)
+						)
+					}
+				}
 			}
+
+			completions = completions.filter(
+				(completion, index, completions) =>
+					completions.findIndex((otherCompletion) => otherCompletion.label === completion.label) === index
+			)
 
 			return {
 				suggestions: completions,

@@ -13,7 +13,6 @@ export async function provideSignatureHelp(
 	const cursor = position.column - 1
 
 	const contexts = await getContext(line, cursor)
-	console.log(contexts)
 
 	let signatures: languages.SignatureInformation[] = []
 
