@@ -1,10 +1,9 @@
 <template>
 	<ToggleSheet
 		:value="value"
-		@input="$emit('input', $event)"
+		@input="onClick"
 		:dark="true"
 		:isToggleable="isToggleable"
-		@click.native="onClick"
 	>
 		<template #default="{ value }">
 			<div class="d-flex align-center">
@@ -53,10 +52,12 @@ export default {
 		isInProjectChooser: Boolean,
 	},
 	methods: {
-		onClick() {
+		onClick(value) {
+			this.$emit('input', value)
+
 			if (this.experiment.id == 'holidayCreatorFeatures') {
-				if (this.isInProjectChooser && this.value) return
-				if (!this.isInProjectChooser && !this.value) return
+				if (!value) return
+
 				new InformationWindow({
 					title: 'experimentalGameplay.experimentDeprecation.title',
 					description:
