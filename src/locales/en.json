@@ -588,6 +588,10 @@
 		}
 	},
 	"experimentalGameplay": {
+		"experimentDeprecation": {
+			"title": "Upcoming Experiment Deprecation",
+			"hcfDescription": "The Holiday Creator Features experiment will be removed in 1.21.20, block and item events will be replaced with custom components."
+		},
 		"cavesAndCliffs": {
 			"name": "Caves and Cliffs",
 			"description": "Enables auto-completions for the new mountain generation inside of biomes."
@@ -953,7 +957,6 @@
 					"name": "JSON Editor",
 					"description": "Choose how you want to edit JSON files"
 				},
-
 				"bracketPairColorization": {
 					"name": "Bracket Pair Colorization",
 					"description": "Give matching brackets an unique color"

@@ -1,7 +1,7 @@
 <template>
 	<ToggleSheet
 		:value="value"
-		@input="$emit('input', $event)"
+		@input="onClick"
 		:dark="true"
 		:isToggleable="isToggleable"
 	>
@@ -29,6 +29,7 @@
 import ToggleSheet from '/@/components/UIElements/ToggleSheet.vue'
 import SelectedStatus from '/@/components/UIElements/SelectedStatus.vue'
 import { TranslationMixin } from '/@/components/Mixins/TranslationMixin'
+import { InformationWindow } from '../../Windows/Common/Information/InformationWindow'
 
 export default {
 	name: 'ExperimentalGameplay',
@@ -48,6 +49,22 @@ export default {
 		},
 		value: Boolean,
 		dense: Boolean,
+		isInProjectChooser: Boolean,
+	},
+	methods: {
+		onClick(value) {
+			this.$emit('input', value)
+
+			if (this.experiment.id == 'holidayCreatorFeatures') {
+				if (!value) return
+
+				new InformationWindow({
+					title: 'experimentalGameplay.experimentDeprecation.title',
+					description:
+						'experimentalGameplay.experimentDeprecation.hcfDescription',
+				})
+			}
+		},
 	},
 }
 </script>
