@@ -4,6 +4,7 @@
 		@input="$emit('input', $event)"
 		:dark="true"
 		:isToggleable="isToggleable"
+		@click.native="onClick"
 	>
 		<template #default="{ value }">
 			<div class="d-flex align-center">
@@ -29,6 +30,7 @@
 import ToggleSheet from '/@/components/UIElements/ToggleSheet.vue'
 import SelectedStatus from '/@/components/UIElements/SelectedStatus.vue'
 import { TranslationMixin } from '/@/components/Mixins/TranslationMixin'
+import { InformationWindow } from '../../Windows/Common/Information/InformationWindow'
 
 export default {
 	name: 'ExperimentalGameplay',
@@ -48,6 +50,18 @@ export default {
 		},
 		value: Boolean,
 		dense: Boolean,
+	},
+	methods: {
+		onClick() {
+			if (this.experiment.id == 'holidayCreatorFeatures') {
+				if (this.value == false) return
+				new InformationWindow({
+					title: 'Upcoming Deprecation',
+					description:
+						'Holiday Creator Features will be deprecated in the future.',
+				})
+			}
+		},
 	},
 }
 </script>
