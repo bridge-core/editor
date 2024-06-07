@@ -56,9 +56,9 @@ export default {
 			if (this.experiment.id == 'holidayCreatorFeatures') {
 				if (this.value == false) return
 				new InformationWindow({
-					title: 'Upcoming Deprecation',
+					title: 'experimentalGameplay.experimentDeprecation.title',
 					description:
-						'Holiday Creator Features will be deprecated in the future.',
+						'experimentalGameplay.experimentDeprecation.hcfDescription',
 				})
 			}
 		},
