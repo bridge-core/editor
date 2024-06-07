@@ -139,6 +139,7 @@
 							:experiment="experiment"
 							:isToggleable="true"
 							:value="experiment.isActive"
+							:isInProjectChooser="true"
 							@click.native="onToggleExperiment(experiment)"
 							style="height: 100%"
 						/>

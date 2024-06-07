@@ -50,11 +50,13 @@ export default {
 		},
 		value: Boolean,
 		dense: Boolean,
+		isInProjectChooser: Boolean,
 	},
 	methods: {
 		onClick() {
 			if (this.experiment.id == 'holidayCreatorFeatures') {
-				if (this.value == false) return
+				if (this.isInProjectChooser && this.value) return
+				if (!this.isInProjectChooser && !this.value) return
 				new InformationWindow({
 					title: 'experimentalGameplay.experimentDeprecation.title',
 					description:
