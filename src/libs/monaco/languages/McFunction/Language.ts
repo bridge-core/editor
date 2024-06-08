@@ -3,7 +3,7 @@ import { colorCodes } from '../Language'
 import { ProjectManager } from '@/libs/project/ProjectManager'
 import { BedrockProject } from '@/libs/project/BedrockProject'
 import { provideSignatureHelp } from './Signature'
-import { provideCompletionItems } from './Completions'
+import { provideCompletionItems, provideInlineJsonCompletionItems } from './Completions'
 
 //@ts-ignore
 window.reloadId = Math.random() // TODO: Remove
@@ -12,7 +12,7 @@ export function setupMcFunction() {
 	languages.register({ id: 'mcfunction', extensions: ['.mcfunction'], aliases: ['mcfunction'] })
 
 	languages.setLanguageConfiguration('mcfunction', {
-		wordPattern: /[aA-zZ]/, // Hack to make autocompletions work within an empty selector. Hopefully there are now implicit side effects.
+		wordPattern: /[aA-zZ]/, // Hack to make autocompletions work within an empty selector. Hopefully there are no implicit side effects.
 		comments: {
 			lineComment: '#',
 		},
@@ -52,6 +52,22 @@ export function setupMcFunction() {
 			if (id !== window.reloadId) return // TODO: Remove
 
 			return provideCompletionItems(model, position, context, token)
+		},
+	})
+
+	languages.registerCompletionItemProvider('json', {
+		triggerCharacters: ['"', ' ', '[', '{', '=', ','],
+
+		async provideCompletionItems(
+			model: editor.ITextModel,
+			position: Position,
+			context: languages.CompletionContext,
+			token: CancellationToken
+		) {
+			//@ts-ignore
+			if (id !== window.reloadId) return // TODO: Remove
+
+			return provideInlineJsonCompletionItems(model, position, context, token)
 		},
 	})
 

@@ -12,8 +12,8 @@ export interface Context {
 	token: Token | undefined
 }
 
-export async function getContext(line: string, cursor: number): Promise<Context[]> {
-	return getCommandContext(line, cursor, 0)
+export async function getContext(line: string, cursor: number, tokenCursor: number = 0): Promise<Context[]> {
+	return getCommandContext(line, cursor, tokenCursor)
 }
 
 async function getCommandContext(line: string, cursor: number, tokenCursor: number): Promise<Context[]> {

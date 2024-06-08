@@ -2,6 +2,217 @@ import { Position, languages, Range, editor, CancellationToken } from 'monaco-ed
 import { ArgumentContext, SelectorValueContext, Token, getContext } from './Parser'
 import { ProjectManager } from '@/libs/project/ProjectManager'
 import { BedrockProject } from '@/libs/project/BedrockProject'
+import { Data } from '@/libs/data/Data'
+import { isMatch } from 'bridge-common-utils'
+import { getLocation as jsoncGetLocation } from 'jsonc-parser'
+
+export async function provideInlineJsonCompletionItems(
+	model: editor.ITextModel,
+	position: Position,
+	context: languages.CompletionContext,
+	_: CancellationToken
+): Promise<languages.CompletionList | undefined> {
+	if (!(ProjectManager.currentProject instanceof BedrockProject)) return undefined
+
+	const validCommandLocations = await Data.get('/packages/minecraftBedrock/location/validCommand.json')
+
+	const fileType = await ProjectManager.currentProject.fileTypeData.get(model.uri.path)
+
+	if (!fileType) return undefined
+
+	const locationPatterns = validCommandLocations[fileType.id]
+
+	const location = await getLocation(model, position)
+
+	if (!isMatch(location, locationPatterns)) return undefined
+
+	const commandsUseSlash = fileType.meta?.commandsUseSlash === true
+
+	let line = model.getLineContent(position.lineNumber)
+
+	const cursor = position.column - 1
+
+	let stringStart = 0
+	let stringEnd = line.length
+	let withinString = false
+	let cursorWithinString = false
+
+	for (let index = 0; index < line.length; index++) {
+		if (index === cursor && withinString) cursorWithinString = true
+
+		if (line[index] !== '"') continue
+
+		withinString = !withinString
+
+		if (withinString) stringStart = index + 1
+
+		if (!withinString && index >= cursor) {
+			stringEnd = index
+
+			break
+		}
+	}
+
+	if (!cursorWithinString) return undefined
+
+	if (commandsUseSlash && line[stringStart] !== '/') return undefined
+
+	if (line[stringStart] === '/') stringStart++
+
+	line = line.substring(0, stringEnd)
+
+	const contexts = await getContext(line, cursor, stringStart)
+
+	let completions: languages.CompletionItem[] = []
+
+	const commandData = ProjectManager.currentProject.commandData
+
+	for (const context of contexts) {
+		// We don't provide command completions because we only want completions if we are pretty sure it is a command.
+
+		if (context.kind === 'argument') {
+			const argumentContext = context as ArgumentContext
+
+			for (const variation of argumentContext.variations) {
+				const argumentType = variation.arguments[argumentContext.argumentIndex]
+
+				if (argumentType.type === 'string') {
+					if (argumentType.additionalData?.values) {
+						completions = completions.concat(
+							makeCompletions(
+								argumentType.additionalData.values,
+								undefined,
+								languages.CompletionItemKind.Enum,
+								position,
+								context.token
+							)
+						)
+					}
+
+					if (argumentType.additionalData?.schemaReference) {
+						const schema = ProjectManager.currentProject.schemaData.getAndResolve(
+							argumentType.additionalData.schemaReference
+						)
+
+						const values = ProjectManager.currentProject.schemaData.getAutocompletions(schema)
+
+						completions = completions.concat(
+							makeCompletions(
+								values,
+								undefined,
+								languages.CompletionItemKind.Enum,
+								position,
+								context.token
+							)
+						)
+					}
+				}
+
+				if (argumentType.type === 'boolean') {
+					completions = completions.concat(
+						makeCompletions(
+							['true', 'false'],
+							undefined,
+							languages.CompletionItemKind.Enum,
+							position,
+							context.token
+						)
+					)
+				}
+
+				if (argumentType.type === 'selector') {
+					completions = completions.concat(
+						makeCompletions(
+							['@p', '@r', '@a', '@e', '@s', '@initiator'],
+							undefined,
+							languages.CompletionItemKind.Enum,
+							position,
+							context.token
+						)
+					)
+				}
+			}
+		}
+
+		if (context.kind === 'selectorArgument') {
+			const selectorArguments = commandData
+				.getSelectorArguments()
+				.filter(
+					(argument, index, selectorArguments) =>
+						selectorArguments.findIndex(
+							(otherArgument) => argument.argumentName === otherArgument.argumentName
+						) === index
+				)
+
+			completions = completions.concat(
+				makeCompletions(
+					selectorArguments.map((command) => command.argumentName),
+					undefined,
+					languages.CompletionItemKind.Keyword,
+					position,
+					context.token
+				)
+			)
+		}
+
+		if (context.kind === 'selectorOperator') {
+			completions = completions.concat(
+				makeCompletions(['=', '=!'], undefined, languages.CompletionItemKind.Keyword, position, context.token)
+			)
+		}
+
+		if (context.kind === 'selectorValue') {
+			const selectorValueContext = context as SelectorValueContext
+
+			if (selectorValueContext.argument.type === 'string') {
+				if (selectorValueContext.argument.additionalData?.values) {
+					completions = completions.concat(
+						makeCompletions(
+							selectorValueContext.argument.additionalData.values,
+							undefined,
+							languages.CompletionItemKind.Enum,
+							position,
+							context.token
+						)
+					)
+				}
+
+				if (selectorValueContext.argument.additionalData?.schemaReference) {
+					const schema = ProjectManager.currentProject.schemaData.getAndResolve(
+						selectorValueContext.argument.additionalData.schemaReference
+					)
+
+					const values = ProjectManager.currentProject.schemaData.getAutocompletions(schema)
+
+					completions = completions.concat(
+						makeCompletions(values, undefined, languages.CompletionItemKind.Enum, position, context.token)
+					)
+				}
+			}
+
+			if (selectorValueContext.argument.type === 'boolean') {
+				completions = completions.concat(
+					makeCompletions(
+						['true', 'false'],
+						undefined,
+						languages.CompletionItemKind.Enum,
+						position,
+						context.token
+					)
+				)
+			}
+		}
+	}
+
+	completions = completions.filter(
+		(completion, index, completions) =>
+			completions.findIndex((otherCompletion) => otherCompletion.label === completion.label) === index
+	)
+
+	return {
+		suggestions: completions,
+	}
+}
 
 export async function provideCompletionItems(
 	model: editor.ITextModel,
@@ -216,4 +427,12 @@ function makeCompletions(
 				token.start + token.word.length + 1
 			),
 		}))
+}
+
+export async function getLocation(model: editor.ITextModel, position: Position): Promise<string> {
+	const locationArr = jsoncGetLocation(model.getValue(), model.getOffsetAt(position)).path
+
+	if (!isNaN(Number(locationArr[locationArr.length - 1]))) locationArr.pop()
+
+	return locationArr.join('/')
 }

@@ -277,8 +277,6 @@ export class SchemaData implements Disposable {
 			localSchemas,
 		}
 
-		console.log(this.fileSchemas[path])
-
 		this.updateDefaults()
 	}
 
