@@ -24,6 +24,7 @@ export async function selectOrLoadBridgeFolder() {
 	}
 
 	try {
+		//No mobile detection support?
 		fileSystem.setBaseHandle(
 			(await window.showDirectoryPicker({
 				mode: 'readwrite',

@@ -1,5 +1,6 @@
 import ColorScheme from './Appearance/ColorScheme.vue'
 import OutputFolder from './Projects/OutputFolder.vue'
+import ActionsList from './Actions/ActionsList.vue'
 
 import { Windows } from '@/components/Windows/Windows'
 import { ComputedRef, Ref, computed, ref } from 'vue'
@@ -101,6 +102,11 @@ function setupActionsCategory() {
 	SettingsWindow.addCategory('actions', {
 		label: 'windows.settings.actions.name',
 		icon: 'keyboard',
+	})
+
+	SettingsWindow.addItem('actions', 'actionsList', <CustomItem>{
+		type: 'custom',
+		component: ActionsList,
 	})
 }
 
