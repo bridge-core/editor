@@ -11,6 +11,8 @@ import { ProjectInfo, ProjectManager } from '@/libs/project/ProjectManager'
 import { Windows } from '@/components/Windows/Windows'
 import { fileSystem, selectOrLoadBridgeFolder } from '@/libs/fileSystem/FileSystem'
 import { CreateProjectWindow } from '@/components/Windows/CreateProject/CreateProjectWindow'
+import { Sidebar } from '@/components/Sidebar/Sidebar'
+import Notification from '@/components/Sidebar/Notification.vue'
 
 const t = useTranslate()
 
@@ -88,6 +90,22 @@ async function edit(name: string) {}
 				</p>
 
 				<TextButton :text="t('greet.selectBridgeFolder')" @click="selectOrLoadBridgeFolder" />
+			</div>
+			<div class="flex flex-row overflow-hidden mt-5">
+				<Notification
+					class="mr-3 shrink-0"
+					v-for="item in Sidebar.notifications.value"
+					:key="item.id"
+					@click="() => Sidebar.activateNotification(item)"
+					:icon="item.icon"
+					:type="item.type"
+					:progress="item.progress"
+					:max-progress="item.progress"
+					:color="item.color"
+					:color-hover="item.color ? 'accent' : undefined"
+					icon-color="accent"
+					:icon-color-hover="item.color ? 'accentSecondary' : undefined"
+				/>
 			</div>
 		</div>
 	</main>

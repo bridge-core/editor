@@ -3,6 +3,9 @@ import { BaseFileSystem } from './BaseFileSystem'
 import { PWAFileSystem } from './PWAFileSystem'
 import { TauriFileSystem } from './TauriFileSystem'
 import { get, set } from 'idb-keyval'
+import { Sidebar } from '@/components/Sidebar/Sidebar'
+import { Windows } from '@/components/Windows/Windows'
+import { AlertWindow } from '@/components/Windows/Alert/AlertWindow'
 
 export function getFileSystem(): BaseFileSystem {
 	if (tauriBuild) return new TauriFileSystem()
@@ -32,5 +35,14 @@ export async function selectOrLoadBridgeFolder() {
 		)
 
 		await set('bridgeFolderHandle', fileSystem.baseHandle)
-	} catch {}
+	} catch (ex: any) {
+		const error: string = ex
+		Sidebar.addNotification(
+			'alert-circle',
+			() => {
+				Windows.open(new AlertWindow(error.toString()))
+			},
+			'error'
+		)
+	}
 }
