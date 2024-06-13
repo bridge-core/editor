@@ -38,7 +38,7 @@ export async function selectOrLoadBridgeFolder() {
 	} catch (ex: any) {
 		const error: string = ex
 		Sidebar.addNotification(
-			'alert-circle',
+			'error',
 			() => {
 				Windows.open(new AlertWindow(error.toString()))
 			},
