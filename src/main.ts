@@ -1,6 +1,6 @@
 import './style.css'
 
-import { initRuntimes } from 'dash-compiler'
+import { initRuntimes } from '@bridge-editor/dash-compiler'
 import wasmUrl from '@swc/wasm-web/wasm-web_bg.wasm?url'
 import editorWorker from 'monaco-editor/esm/vs/editor/editor.worker.js?worker'
 import jsonWorker from 'monaco-editor/esm/vs/language/json/json.worker.js?worker'
