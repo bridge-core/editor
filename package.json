@@ -12,6 +12,7 @@
 		"build": "vue-tsc --noEmit && vite build"
 	},
 	"dependencies": {
+		"@bridge-editor/molang": "^2.0.2",
 		"@tauri-apps/api": "^1.5.3",
 		"bridge-common-utils": "^0.3.3",
 		"bridge-js-runtime": "^0.4.1",
