@@ -1,6 +1,6 @@
 import { BedrockProject } from '@/libs/project/BedrockProject'
 import { ProjectManager } from '@/libs/project/ProjectManager'
-import { Command, SelectorArgument } from '@/libs/data/bedrock/CommandData'
+import { Argument, Command, SelectorArgument } from '@/libs/data/bedrock/CommandData'
 
 export interface Token {
 	word: string
@@ -35,6 +35,8 @@ async function getCommandContext(line: string, cursor: number, tokenCursor: numb
 
 	tokenCursor = token.start + token.word.length
 
+	const customTypes = commandData.getCustomTypes()
+
 	let possibleVariations: Command[] = commandData
 		.getCommands()
 		.filter((variation) => variation.commandName === token.word)
@@ -42,14 +44,15 @@ async function getCommandContext(line: string, cursor: number, tokenCursor: numb
 			commandName: variation.commandName,
 			description: variation.description,
 			arguments: variation.arguments.flatMap((argument) => {
-				if (argument.type === '$coordinates') {
-					return [1, 2, 3].map(() => ({
-						...argument,
-						type: 'coordinate',
-					}))
+				if (argument.type.startsWith('$') && customTypes[argument.type.substring(1)]) {
+					return customTypes[argument.type.substring(1)].map(
+						(customType) =>
+							({
+								...argument,
+								...customType,
+							} as Argument)
+					)
 				}
-
-				//TODO: Lookup the custom type in the data
 
 				return [argument]
 			}),
@@ -438,7 +441,6 @@ function matchArgument(argument: Token, type: any): boolean {
 
 	if (type.type === 'boolean' && /^(true|false)$/) return true
 
-	//TODO: make selector matching more robust?
 	if (type.type === 'selector' && /^@(a|e|r|s|p|(initiator))/.test(argument.word)) return true
 
 	if (type.type === 'coordinate' && /^[~^]?(-?(([0-9]*\.[0-9]+)|[0-9]+))?$/.test(argument.word)) return true
