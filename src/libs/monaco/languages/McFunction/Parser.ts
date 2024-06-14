@@ -304,11 +304,20 @@ async function getSelectorContext(
 	return await getArgumentContext(line, cursor, tokenCursor, variations, argumentIndex + 1, command)
 }
 
-export interface SelectorValueContext extends Context {
+export interface SelectorContext extends Context {
+	previousArguments: string[]
+}
+
+export interface SelectorValueContext extends SelectorContext {
 	argument: SelectorArgument
 }
 
-async function getSelectorArgumentContext(line: string, cursor: number, tokenCursor: number): Promise<Context[]> {
+async function getSelectorArgumentContext(
+	line: string,
+	cursor: number,
+	tokenCursor: number,
+	previousArguments: string[] = []
+): Promise<Context[]> {
 	if (!(ProjectManager.currentProject instanceof BedrockProject))
 		throw new Error('The current project must be a bedrock project!')
 
@@ -320,9 +329,12 @@ async function getSelectorArgumentContext(line: string, cursor: number, tokenCur
 			{
 				kind: 'selectorArgument',
 				token: token ?? undefined,
-			},
+				previousArguments,
+			} as SelectorContext,
 		]
 	}
+
+	let selectorArgument = token.word
 
 	const argumentData = ProjectManager.currentProject.commandData
 		.getSelectorArguments()
@@ -338,7 +350,9 @@ async function getSelectorArgumentContext(line: string, cursor: number, tokenCur
 			{
 				kind: 'selectorOperator',
 				token: token ?? undefined,
-			},
+				argument: argumentData,
+				previousArguments,
+			} as SelectorValueContext,
 		]
 	}
 
@@ -353,6 +367,7 @@ async function getSelectorArgumentContext(line: string, cursor: number, tokenCur
 				kind: 'selectorValue',
 				token: token ?? undefined,
 				argument: argumentData,
+				previousArguments,
 			} as SelectorValueContext,
 		]
 
@@ -369,7 +384,7 @@ async function getSelectorArgumentContext(line: string, cursor: number, tokenCur
 
 	tokenCursor++
 
-	return await getSelectorArgumentContext(line, cursor, tokenCursor)
+	return await getSelectorArgumentContext(line, cursor, tokenCursor, [...previousArguments, selectorArgument])
 }
 
 async function getBlockStateContext(
