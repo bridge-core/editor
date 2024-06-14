@@ -49,11 +49,13 @@ function buildSignature(command: Command): string {
 		if (argument.isOptional) modifier = '[]'
 
 		signature += ` ${modifier[0]}${argument.argumentName ? argument.argumentName + ': ' : ''}${
-			argument.additionalData?.values ? argument.additionalData.values.join(' | ') : argument.type
+			argument.additionalData?.values
+				? argument.additionalData.values.join(' | ')
+				: argument.type.startsWith('$')
+				? argument.type.substring(1)
+				: argument.type
 		}${modifier[1]}${argument.allowMultiple ? '...' : ''}`
 	}
 
 	return signature
-
-	// return `${command.commandName} => ${command.arguments[0].argumentName}: ${command.arguments[0].type}`
 }
