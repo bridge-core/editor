@@ -81,6 +81,20 @@ export class CommandData {
 	}
 
 	public getSelectorArguments(): SelectorArgument[] {
-		return this.data.vanilla[0].selectorArguments
+		let selectorArguments: SelectorArgument[] = []
+
+		for (const entry of this.data.vanilla) {
+			if (entry.requires !== undefined && !this.project.requirementsMatcher.matches(entry.requires)) continue
+
+			selectorArguments = selectorArguments.concat(entry.selectorArguments)
+		}
+
+		selectorArguments = selectorArguments.filter((selectorArguments) => selectorArguments)
+
+		return selectorArguments
+	}
+
+	public getCustomTypes(): Record<string, { type: string }[]> {
+		return this.data.$customTypes
 	}
 }

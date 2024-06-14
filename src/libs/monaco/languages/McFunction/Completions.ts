@@ -1,5 +1,5 @@
 import { Position, languages, Range, editor, CancellationToken } from 'monaco-editor'
-import { ArgumentContext, SelectorValueContext, Token, getContext } from './Parser'
+import { ArgumentContext, SelectorContext, SelectorValueContext, Token, getContext } from './Parser'
 import { ProjectManager } from '@/libs/project/ProjectManager'
 import { BedrockProject } from '@/libs/project/BedrockProject'
 import { Data } from '@/libs/data/Data'
@@ -135,6 +135,8 @@ export async function provideInlineJsonCompletionItems(
 		}
 
 		if (context.kind === 'selectorArgument') {
+			const selectorContext = context as SelectorContext
+
 			const selectorArguments = commandData
 				.getSelectorArguments()
 				.filter(
@@ -146,7 +148,15 @@ export async function provideInlineJsonCompletionItems(
 
 			completions = completions.concat(
 				makeCompletions(
-					selectorArguments.map((command) => command.argumentName),
+					selectorArguments
+						.filter(
+							(argument) =>
+								!(
+									selectorContext.previousArguments.includes(argument.argumentName) &&
+									argument.additionalData?.multipleInstancesAllowed === 'never'
+								)
+						)
+						.map((argument) => argument.argumentName),
 					undefined,
 					languages.CompletionItemKind.Keyword,
 					position,
@@ -156,9 +166,23 @@ export async function provideInlineJsonCompletionItems(
 		}
 
 		if (context.kind === 'selectorOperator') {
-			completions = completions.concat(
-				makeCompletions(['=', '=!'], undefined, languages.CompletionItemKind.Keyword, position, context.token)
-			)
+			const selectorContext = context as SelectorValueContext
+
+			if (selectorContext.argument.additionalData?.supportsNegation) {
+				completions = completions.concat(
+					makeCompletions(
+						['=', '=!'],
+						undefined,
+						languages.CompletionItemKind.Keyword,
+						position,
+						context.token
+					)
+				)
+			} else {
+				completions = completions.concat(
+					makeCompletions(['='], undefined, languages.CompletionItemKind.Keyword, position, context.token)
+				)
+			}
 		}
 
 		if (context.kind === 'selectorValue') {
@@ -317,6 +341,8 @@ export async function provideCompletionItems(
 		}
 
 		if (context.kind === 'selectorArgument') {
+			const selectorContext = context as SelectorContext
+
 			const selectorArguments = commandData
 				.getSelectorArguments()
 				.filter(
@@ -328,7 +354,15 @@ export async function provideCompletionItems(
 
 			completions = completions.concat(
 				makeCompletions(
-					selectorArguments.map((command) => command.argumentName),
+					selectorArguments
+						.filter(
+							(argument) =>
+								!(
+									selectorContext.previousArguments.includes(argument.argumentName) &&
+									argument.additionalData?.multipleInstancesAllowed === 'never'
+								)
+						)
+						.map((argument) => argument.argumentName),
 					undefined,
 					languages.CompletionItemKind.Keyword,
 					position,
@@ -338,9 +372,23 @@ export async function provideCompletionItems(
 		}
 
 		if (context.kind === 'selectorOperator') {
-			completions = completions.concat(
-				makeCompletions(['=', '=!'], undefined, languages.CompletionItemKind.Keyword, position, context.token)
-			)
+			const selectorContext = context as SelectorValueContext
+
+			if (selectorContext.argument.additionalData?.supportsNegation) {
+				completions = completions.concat(
+					makeCompletions(
+						['=', '=!'],
+						undefined,
+						languages.CompletionItemKind.Keyword,
+						position,
+						context.token
+					)
+				)
+			} else {
+				completions = completions.concat(
+					makeCompletions(['='], undefined, languages.CompletionItemKind.Keyword, position, context.token)
+				)
+			}
 		}
 
 		if (context.kind === 'selectorValue') {

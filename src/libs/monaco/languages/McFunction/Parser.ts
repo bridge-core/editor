@@ -1,6 +1,6 @@
 import { BedrockProject } from '@/libs/project/BedrockProject'
 import { ProjectManager } from '@/libs/project/ProjectManager'
-import { Command, SelectorArgument } from '@/libs/data/bedrock/CommandData'
+import { Argument, Command, SelectorArgument } from '@/libs/data/bedrock/CommandData'
 
 export interface Token {
 	word: string
@@ -35,6 +35,8 @@ async function getCommandContext(line: string, cursor: number, tokenCursor: numb
 
 	tokenCursor = token.start + token.word.length
 
+	const customTypes = commandData.getCustomTypes()
+
 	let possibleVariations: Command[] = commandData
 		.getCommands()
 		.filter((variation) => variation.commandName === token.word)
@@ -42,14 +44,15 @@ async function getCommandContext(line: string, cursor: number, tokenCursor: numb
 			commandName: variation.commandName,
 			description: variation.description,
 			arguments: variation.arguments.flatMap((argument) => {
-				if (argument.type === '$coordinates') {
-					return [1, 2, 3].map(() => ({
-						...argument,
-						type: 'coordinate',
-					}))
+				if (argument.type.startsWith('$') && customTypes[argument.type.substring(1)]) {
+					return customTypes[argument.type.substring(1)].map(
+						(customType) =>
+							({
+								...argument,
+								...customType,
+							} as Argument)
+					)
 				}
-
-				//TODO: Lookup the custom type in the data
 
 				return [argument]
 			}),
@@ -304,11 +307,20 @@ async function getSelectorContext(
 	return await getArgumentContext(line, cursor, tokenCursor, variations, argumentIndex + 1, command)
 }
 
-export interface SelectorValueContext extends Context {
+export interface SelectorContext extends Context {
+	previousArguments: string[]
+}
+
+export interface SelectorValueContext extends SelectorContext {
 	argument: SelectorArgument
 }
 
-async function getSelectorArgumentContext(line: string, cursor: number, tokenCursor: number): Promise<Context[]> {
+async function getSelectorArgumentContext(
+	line: string,
+	cursor: number,
+	tokenCursor: number,
+	previousArguments: string[] = []
+): Promise<Context[]> {
 	if (!(ProjectManager.currentProject instanceof BedrockProject))
 		throw new Error('The current project must be a bedrock project!')
 
@@ -320,9 +332,12 @@ async function getSelectorArgumentContext(line: string, cursor: number, tokenCur
 			{
 				kind: 'selectorArgument',
 				token: token ?? undefined,
-			},
+				previousArguments,
+			} as SelectorContext,
 		]
 	}
+
+	let selectorArgument = token.word
 
 	const argumentData = ProjectManager.currentProject.commandData
 		.getSelectorArguments()
@@ -338,7 +353,9 @@ async function getSelectorArgumentContext(line: string, cursor: number, tokenCur
 			{
 				kind: 'selectorOperator',
 				token: token ?? undefined,
-			},
+				argument: argumentData,
+				previousArguments,
+			} as SelectorValueContext,
 		]
 	}
 
@@ -353,6 +370,7 @@ async function getSelectorArgumentContext(line: string, cursor: number, tokenCur
 				kind: 'selectorValue',
 				token: token ?? undefined,
 				argument: argumentData,
+				previousArguments,
 			} as SelectorValueContext,
 		]
 
@@ -369,7 +387,7 @@ async function getSelectorArgumentContext(line: string, cursor: number, tokenCur
 
 	tokenCursor++
 
-	return await getSelectorArgumentContext(line, cursor, tokenCursor)
+	return await getSelectorArgumentContext(line, cursor, tokenCursor, [...previousArguments, selectorArgument])
 }
 
 async function getBlockStateContext(
@@ -423,7 +441,6 @@ function matchArgument(argument: Token, type: any): boolean {
 
 	if (type.type === 'boolean' && /^(true|false)$/) return true
 
-	//TODO: make selector matching more robust?
 	if (type.type === 'selector' && /^@(a|e|r|s|p|(initiator))/.test(argument.word)) return true
 
 	if (type.type === 'coordinate' && /^[~^]?(-?(([0-9]*\.[0-9]+)|[0-9]+))?$/.test(argument.word)) return true
