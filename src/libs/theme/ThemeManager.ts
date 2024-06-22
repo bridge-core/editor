@@ -75,13 +75,16 @@ export class ThemeManager {
 		this.addTheme(dark)
 		this.addTheme(light)
 
-		if (!Extensions.loaded) this.addTheme(this.previouslyUsedTheme)
+		if (Extensions.loaded) {
+			if (!this.hasTheme(Settings.get('darkTheme'))) Settings.set('darkTheme', dark.id)
+			if (!this.hasTheme(Settings.get('lightTheme'))) Settings.set('lightTheme', light.id)
+		} else {
+			this.addTheme(this.previouslyUsedTheme)
+		}
 
 		for (const theme of Extensions.themes) {
 			this.addTheme(theme)
 		}
-
-		console.log(Extensions.loaded, this.currentTheme, this.hasTheme(this.currentTheme))
 
 		if (this.hasTheme(this.currentTheme)) {
 			this.applyTheme(this.currentTheme)
