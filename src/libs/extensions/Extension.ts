@@ -3,6 +3,7 @@ import { join } from 'pathe'
 import { dark, light } from '@/libs/theme/DefaultThemes'
 import { ThemeManager } from '@/libs/theme/ThemeManager'
 import { Theme } from '@/libs/theme/Theme'
+import { Snippet, SnippetData } from './snippets/Snippet'
 
 export interface ExtensionManifest {
 	author: string
@@ -22,9 +23,9 @@ export class Extension {
 	public id: string = 'unloaded'
 
 	private manifest: ExtensionManifest | null = null
-	private themes: Theme[] = []
-	private presets: any[] = []
-	private snippets: any[] = []
+	public themes: Theme[] = []
+	public presets: any[] = []
+	public snippets: Snippet[] = []
 
 	constructor(public path: string) {}
 
@@ -67,9 +68,9 @@ export class Extension {
 		const snippetsPath = join(this.path, 'snippets')
 		if (await fileSystem.exists(snippetsPath)) {
 			for (const entry of await fileSystem.readDirectoryEntries(snippetsPath)) {
-				const snippet: any = await fileSystem.readFileJson(entry.path)
+				const snippet: SnippetData = await fileSystem.readFileJson(entry.path)
 
-				this.snippets.push(snippet)
+				this.snippets.push(new Snippet(snippet))
 			}
 		}
 	}

@@ -9,9 +9,9 @@ import { Event } from '@/libs/event/Event'
 import { Disposable } from '@/libs/disposeable/Disposeable'
 
 export class Extensions {
-	private static globalExtensions: Extension[] = []
-	private static projectExtensions: Extension[] = []
-	private static updated: Event<undefined> = new Event()
+	public static globalExtensions: Extension[] = []
+	public static projectExtensions: Extension[] = []
+	public static updated: Event<undefined> = new Event()
 
 	public static setup() {
 		if (fileSystem instanceof PWAFileSystem) fileSystem.reloaded.on(Extensions.fileSystemReloaded)

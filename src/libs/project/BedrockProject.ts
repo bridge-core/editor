@@ -11,6 +11,7 @@ import { RequirementsMatcher } from '@/libs/data/bedrock/RequirementsMatcher'
 import { Data } from '@/libs/data/Data'
 import { LangData } from '@/libs/data/bedrock/LangData'
 import { CommandData } from '@/libs/data/bedrock/CommandData'
+import { SnippetLoader } from '../extensions/snippets/SnippetLoader'
 
 export class BedrockProject extends Project {
 	public packDefinitions: IPackType[] = []
@@ -23,6 +24,7 @@ export class BedrockProject extends Project {
 	public indexerService = new IndexerService(this)
 	public dashService = new DashService(this)
 	public requirementsMatcher = new RequirementsMatcher(this)
+	public snippetLoader = new SnippetLoader()
 
 	public async load() {
 		await super.load()

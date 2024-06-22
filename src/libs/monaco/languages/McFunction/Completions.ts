@@ -4,7 +4,7 @@ import { ProjectManager } from '@/libs/project/ProjectManager'
 import { BedrockProject } from '@/libs/project/BedrockProject'
 import { Data } from '@/libs/data/Data'
 import { isMatch } from 'bridge-common-utils'
-import { getLocation as jsoncGetLocation } from 'jsonc-parser'
+import { getLocation } from '../Language'
 
 export async function provideInlineJsonCompletionItems(
 	model: editor.ITextModel,
@@ -475,12 +475,4 @@ function makeCompletions(
 				token.start + token.word.length + 1
 			),
 		}))
-}
-
-export async function getLocation(model: editor.ITextModel, position: Position): Promise<string> {
-	const locationArr = jsoncGetLocation(model.getValue(), model.getOffsetAt(position)).path
-
-	if (!isNaN(Number(locationArr[locationArr.length - 1]))) locationArr.pop()
-
-	return locationArr.join('/')
 }
