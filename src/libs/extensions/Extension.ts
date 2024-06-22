@@ -1,7 +1,6 @@
 import { fileSystem } from '@/libs/fileSystem/FileSystem'
 import { join } from 'pathe'
 import { dark, light } from '@/libs/theme/DefaultThemes'
-import { ThemeManager } from '@/libs/theme/ThemeManager'
 import { Theme } from '@/libs/theme/Theme'
 import { Snippet, SnippetData } from './snippets/Snippet'
 
@@ -40,20 +39,20 @@ export class Extension {
 			for (const entry of await fileSystem.readDirectoryEntries(themesPath)) {
 				const theme: Theme = await fileSystem.readFileJson(entry.path)
 
+				const base = theme.colorScheme === 'dark' ? dark : light
+
 				if (manifest.target != 'v2.1') {
 					theme.colors.menuAlternate = theme.colors.sidebarNavigation
+					theme.colors.accent = base.colors.text
 				}
 
 				theme.colors = {
-					...(theme.colorScheme === 'dark' ? dark.colors : light.colors),
+					...base.colors,
 					...theme.colors,
 				}
 
-				ThemeManager.addTheme(theme)
 				this.themes.push(theme)
 			}
-
-			ThemeManager.reloadTheme()
 		}
 
 		const presetsPath = join(this.path, 'presets')
@@ -72,12 +71,6 @@ export class Extension {
 
 				this.snippets.push(new Snippet(snippet))
 			}
-		}
-	}
-
-	public async unload() {
-		for (const theme of this.themes) {
-			ThemeManager.removeTheme(theme)
 		}
 	}
 }

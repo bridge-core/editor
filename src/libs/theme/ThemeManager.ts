@@ -5,6 +5,7 @@ import { Settings } from '@/libs/settings/Settings'
 import { get, set } from 'idb-keyval'
 import { Event } from '@/libs/event/Event'
 import { Disposable } from '@/libs/disposeable/Disposeable'
+import { Extensions } from '@/libs/extensions/Extensions'
 
 export class ThemeManager {
 	public static themes: Theme[] = []
@@ -12,10 +13,9 @@ export class ThemeManager {
 	public static themesUpdated: Event<undefined> = new Event()
 	public static themeChanged: Event<undefined> = new Event()
 
-	public static setup() {
-		this.addTheme(dark)
-		this.addTheme(light)
+	private static previouslyUsedTheme: Theme = this.prefersDarkMode() ? dark : light
 
+	public static setup() {
 		Settings.addSetting('colorScheme', {
 			default: 'auto',
 		})
@@ -42,19 +42,22 @@ export class ThemeManager {
 
 			ThemeManager.applyTheme(themeId)
 		})
+
+		Extensions.updated.on((event) => {
+			this.reloadThemes()
+		})
 	}
 
 	public static async load() {
-		let lastUsedTheme: Theme = this.prefersDarkMode() ? dark : light
 		try {
-			lastUsedTheme = JSON.parse((await get('lastUsedTheme')) as string)
+			this.previouslyUsedTheme = JSON.parse((await get('lastUsedTheme')) as string)
 		} catch {}
 
-		this.addTheme(lastUsedTheme)
-		this.applyTheme(lastUsedTheme.id)
+		this.reloadThemes()
+		this.applyTheme(this.previouslyUsedTheme.id)
 	}
 
-	public static addTheme(theme: Theme) {
+	private static addTheme(theme: Theme) {
 		const duplicateIndex = this.themes.findIndex((otherTheme) => otherTheme.id === theme.id)
 
 		if (duplicateIndex !== -1) {
@@ -66,15 +69,28 @@ export class ThemeManager {
 		this.themesUpdated.dispatch(undefined)
 	}
 
-	public static removeTheme(theme: Theme) {
-		this.themes = this.themes.filter((otherTheme) => otherTheme.id !== theme.id)
+	private static reloadThemes() {
+		this.themes = []
 
-		this.themesUpdated.dispatch(undefined)
+		this.addTheme(dark)
+		this.addTheme(light)
 
-		if (this.currentTheme === theme.id) this.applyTheme(dark.id)
+		if (!Extensions.loaded) this.addTheme(this.previouslyUsedTheme)
+
+		for (const theme of Extensions.themes) {
+			this.addTheme(theme)
+		}
+
+		console.log(Extensions.loaded, this.currentTheme, this.hasTheme(this.currentTheme))
+
+		if (this.hasTheme(this.currentTheme)) {
+			this.applyTheme(this.currentTheme)
+		} else {
+			this.applyTheme(this.prefersDarkMode() ? dark.id : light.id)
+		}
 	}
 
-	public static applyTheme(themeId: string) {
+	private static applyTheme(themeId: string) {
 		const theme = this.themes.find((theme) => theme.id === themeId)
 
 		this.currentTheme = themeId
@@ -92,15 +108,15 @@ export class ThemeManager {
 		this.themeChanged.dispatch(undefined)
 	}
 
-	public static reloadTheme() {
-		this.applyTheme(this.currentTheme)
-	}
-
-	public static get(currentTheme: string): Theme {
+	public static get(themeId: string): Theme {
 		return {
 			...dark,
-			...this.themes.find((theme) => theme.id === this.currentTheme),
+			...this.themes.find((theme) => theme.id === themeId),
 		}
+	}
+
+	public static hasTheme(themeId: string): boolean {
+		return this.themes.find((theme) => theme.id === themeId) !== undefined
 	}
 
 	public static useThemes() {

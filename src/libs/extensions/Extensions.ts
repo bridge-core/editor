@@ -7,26 +7,41 @@ import { ProjectManager } from '@/libs/project/ProjectManager'
 import { Ref, onMounted, onUnmounted, ref } from 'vue'
 import { Event } from '@/libs/event/Event'
 import { Disposable } from '@/libs/disposeable/Disposeable'
+import { Theme } from '@/libs/theme/Theme'
 
 export class Extensions {
-	public static globalExtensions: Extension[] = []
-	public static projectExtensions: Extension[] = []
+	public static globalExtensions: Record<string, Extension> = {}
+	public static projectExtensions: Record<string, Extension> = {}
+	public static activeExtensions: Record<string, Extension> = {}
+
 	public static updated: Event<undefined> = new Event()
 
+	public static themes: Theme[] = []
+
+	public static loaded: boolean = false
+
 	public static setup() {
-		if (fileSystem instanceof PWAFileSystem) fileSystem.reloaded.on(Extensions.fileSystemReloaded)
+		if (fileSystem instanceof PWAFileSystem) fileSystem.reloaded.on(this.fileSystemReloaded.bind(this))
 	}
 
 	public static async load() {
 		if (fileSystem instanceof PWAFileSystem && !fileSystem.setup) return
 
+		await this.loadGlobalExtensions()
+
+		this.loaded = true
+	}
+
+	public static async loadGlobalExtensions() {
 		if (!(await fileSystem.exists('extensions'))) await fileSystem.makeDirectory('extensions')
 
 		for (const entry of await fileSystem.readDirectoryEntries('extensions')) {
-			await Extensions.loadExtension(entry.path)
+			const extension = await this.loadExtension(entry.path)
+
+			this.globalExtensions[extension.id] = extension
 		}
 
-		Extensions.updated.dispatch(undefined)
+		await this.updateExtensions()
 	}
 
 	public static async loadProjectExtensions() {
@@ -35,20 +50,26 @@ export class Extensions {
 		for (const entry of await fileSystem.readDirectoryEntries(
 			join(ProjectManager.currentProject.path, '.bridge/extensions')
 		)) {
-			await Extensions.loadProjectExtension(entry.path)
+			const extension = await this.loadExtension(entry.path)
+
+			this.projectExtensions[extension.id] = extension
 		}
 
-		Extensions.updated.dispatch(undefined)
+		await this.updateExtensions()
 	}
 
-	public static disposeProjectExtensions() {
-		Extensions.projectExtensions = []
+	public static unloadProjectExtensions() {
+		this.projectExtensions = {}
 	}
 
 	public static async installGlobal(extension: ExtensionManifest) {
 		const path = join('extensions', extension.name.replace(/\s+/g, ''))
 
-		await Extensions.installExtension(extension, path)
+		const loadedExtension = await this.installExtension(extension, path)
+
+		this.globalExtensions[loadedExtension.id] = loadedExtension
+
+		await this.updateExtensions()
 	}
 
 	public static async installProject(extension: ExtensionManifest) {
@@ -56,107 +77,41 @@ export class Extensions {
 
 		const path = join(ProjectManager.currentProject.path, '.bridge/extensions', extension.name.replace(/\s+/g, ''))
 
-		await Extensions.installExtension(extension, path)
+		const loadedExtension = await this.installExtension(extension, path)
+
+		this.globalExtensions[loadedExtension.id] = loadedExtension
+
+		await this.updateExtensions()
 	}
 
 	public static async uninstall(id: string) {
-		const projectExtension = Extensions.projectExtensions.find((extension) => extension.id == id)
+		const projectExtension = this.projectExtensions[id]
 
-		const extension = projectExtension ?? Extensions.globalExtensions.find((extension) => extension.id == id)
+		const extension = projectExtension ?? this.globalExtensions[id]
 
 		if (extension === undefined) return
-
-		await extension.unload()
 
 		await fileSystem.removeDirectory(extension.path)
 
 		if (projectExtension !== undefined) {
-			Extensions.projectExtensions = Extensions.projectExtensions.filter(
-				(otherExtension) => otherExtension.id !== extension.id
-			)
+			delete this.projectExtensions[id]
 		} else {
-			Extensions.globalExtensions = Extensions.globalExtensions.filter(
-				(otherExtension) => otherExtension.id !== extension.id
-			)
+			delete this.globalExtensions[id]
 		}
 
-		Extensions.updated.dispatch(undefined)
+		await this.updateExtensions()
 	}
 
-	public static isInstalledGlobal(id: string): boolean {
-		return Extensions.globalExtensions.find((extension) => id === extension.id) !== undefined
+	private static async updateExtensions() {
+		this.activeExtensions = { ...this.globalExtensions, ...this.projectExtensions }
+
+		this.themes = Object.values(this.activeExtensions).flatMap((extension) => extension.themes)
+
+		this.updated.dispatch(undefined)
 	}
 
-	public static isInstalledProject(id: string): boolean {
-		return Extensions.projectExtensions.find((extension) => id === extension.id) !== undefined
-	}
-
-	public static isInstalled(id: string): boolean {
-		return Extensions.isInstalledGlobal(id) || Extensions.isInstalledProject(id)
-	}
-
-	public static useIsInstalledGlobal(): Ref<(id: string) => boolean> {
-		const isInstalledGlobal = ref((id: string) => Extensions.isInstalledGlobal(id))
-
-		const update = () => {
-			isInstalledGlobal.value = (id: string) => Extensions.isInstalledGlobal(id)
-		}
-
-		let disposable: Disposable
-
-		onMounted(() => {
-			disposable = Extensions.updated.on(update)
-		})
-
-		onUnmounted(() => {
-			disposable.dispose()
-		})
-
-		return isInstalledGlobal
-	}
-
-	public static useIsInstalledProject(): Ref<(id: string) => boolean> {
-		const isInstalledProject = ref((id: string) => Extensions.isInstalledProject(id))
-
-		const update = () => {
-			isInstalledProject.value = (id: string) => Extensions.isInstalledProject(id)
-		}
-
-		let disposable: Disposable
-
-		onMounted(() => {
-			disposable = Extensions.updated.on(update)
-		})
-
-		onUnmounted(() => {
-			disposable.dispose()
-		})
-
-		return isInstalledProject
-	}
-
-	public static useIsInstalled(): Ref<(id: string) => boolean> {
-		const isInstalled = ref((id: string) => Extensions.isInstalled(id))
-
-		const update = () => {
-			isInstalled.value = (id: string) => Extensions.isInstalled(id)
-		}
-
-		let disposable: Disposable
-
-		onMounted(() => {
-			disposable = Extensions.updated.on(update)
-		})
-
-		onUnmounted(() => {
-			disposable.dispose()
-		})
-
-		return isInstalled
-	}
-
-	private static async installExtension(extension: ExtensionManifest, path: string) {
-		const unzippedExtension = await Extensions.downloadExtension(extension)
+	private static async installExtension(extension: ExtensionManifest, path: string): Promise<Extension> {
+		const unzippedExtension = await this.downloadExtension(extension)
 
 		for (const filePath in unzippedExtension) {
 			if (filePath.startsWith('.')) continue
@@ -186,15 +141,11 @@ export class Extensions {
 					} else {
 						await fileSystem.copyFile(join(path, entryPath), resultPath)
 					}
-
-					console.log(contributeFiles, resultPath)
 				}
 			}
 		}
 
-		await Extensions.loadExtension(path)
-
-		Extensions.updated.dispatch(undefined)
+		return await this.loadExtension(path)
 	}
 
 	private static async downloadExtension(extension: ExtensionManifest): Promise<Unzipped> {
@@ -211,20 +162,85 @@ export class Extensions {
 	}
 
 	private static async fileSystemReloaded() {
-		await Extensions.load()
+		await this.load()
 	}
 
-	private static async loadExtension(path: string) {
+	private static async loadExtension(path: string): Promise<Extension> {
 		const extension = new Extension(path)
 		await extension.load()
 
-		Extensions.globalExtensions.push(extension)
+		return extension
 	}
 
-	private static async loadProjectExtension(path: string) {
-		const extension = new Extension(path)
-		await extension.load()
+	public static isInstalledGlobal(id: string): boolean {
+		return this.globalExtensions[id] !== undefined
+	}
 
-		Extensions.projectExtensions.push(extension)
+	public static isInstalledProject(id: string): boolean {
+		return this.projectExtensions[id] !== undefined
+	}
+
+	public static isInstalled(id: string): boolean {
+		return this.isInstalledGlobal(id) || this.isInstalledProject(id)
+	}
+
+	public static useIsInstalledGlobal(): Ref<(id: string) => boolean> {
+		const isInstalledGlobal = ref((id: string) => this.isInstalledGlobal(id))
+
+		const update = () => {
+			isInstalledGlobal.value = (id: string) => this.isInstalledGlobal(id)
+		}
+
+		let disposable: Disposable
+
+		onMounted(() => {
+			disposable = this.updated.on(update)
+		})
+
+		onUnmounted(() => {
+			disposable.dispose()
+		})
+
+		return isInstalledGlobal
+	}
+
+	public static useIsInstalledProject(): Ref<(id: string) => boolean> {
+		const isInstalledProject = ref((id: string) => this.isInstalledProject(id))
+
+		const update = () => {
+			isInstalledProject.value = (id: string) => this.isInstalledProject(id)
+		}
+
+		let disposable: Disposable
+
+		onMounted(() => {
+			disposable = this.updated.on(update)
+		})
+
+		onUnmounted(() => {
+			disposable.dispose()
+		})
+
+		return isInstalledProject
+	}
+
+	public static useIsInstalled(): Ref<(id: string) => boolean> {
+		const isInstalled = ref((id: string) => this.isInstalled(id))
+
+		const update = () => {
+			isInstalled.value = (id: string) => this.isInstalled(id)
+		}
+
+		let disposable: Disposable
+
+		onMounted(() => {
+			disposable = this.updated.on(update)
+		})
+
+		onUnmounted(() => {
+			disposable.dispose()
+		})
+
+		return isInstalled
 	}
 }
