@@ -65,7 +65,9 @@ export function setupMolang() {
 
 	const molang = new CustomMolang({})
 
-	editor.onDidChangeModelLanguage(({ model, oldLanguage }) => {
+	editor.onDidCreateModel((model) => {
+		if (model.getLanguageId() !== 'molang') return
+
 		model.onDidChangeContent(() => {
 			try {
 				molang.parse(model.getValue())
