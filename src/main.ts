@@ -8,7 +8,6 @@ import tsWorker from 'monaco-editor/esm/vs/language/typescript/ts.worker.js?work
 import { createApp } from 'vue'
 import App from '@/App.vue'
 
-// We have to do this in order to fix wasm not being intialized when testing dev builds of dash
 initRuntimes(wasmUrl)
 
 //@ts-ignore

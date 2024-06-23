@@ -1,9 +1,12 @@
-import { Runtime as BridgeRuntime } from 'bridge-js-runtime'
+import { Runtime as BridgeRuntime, initRuntimes } from 'bridge-js-runtime'
 import { basename } from 'pathe'
-import { BaseFileSystem } from '../fileSystem/BaseFileSystem'
+import { BaseFileSystem } from '@/libs/fileSystem/BaseFileSystem'
+import wasmUrl from '@swc/wasm-web/wasm-web_bg.wasm?url'
 
 export class Runtime extends BridgeRuntime {
 	constructor(public fileSystem: BaseFileSystem) {
+		initRuntimes(wasmUrl)
+
 		super()
 	}
 
