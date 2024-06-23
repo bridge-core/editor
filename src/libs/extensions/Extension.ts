@@ -2,7 +2,7 @@ import { fileSystem } from '@/libs/fileSystem/FileSystem'
 import { join } from 'pathe'
 import { dark, light } from '@/libs/theme/DefaultThemes'
 import { Theme } from '@/libs/theme/Theme'
-import { Snippet, SnippetData } from './snippets/Snippet'
+import { Snippet, SnippetData } from '../snippets/Snippet'
 
 export interface ExtensionManifest {
 	author: string

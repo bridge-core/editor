@@ -13,8 +13,9 @@ export interface SnippetData {
 }
 
 export class Snippet {
-	protected name: string
-	protected description: string | undefined
+	public name: string
+	public description: string | undefined
+
 	protected fileTypes: Set<string>
 	protected locations: string[]
 	protected data: unknown
@@ -31,29 +32,16 @@ export class Snippet {
 		this.maxTargetFormatVersion = targetFormatVersion?.max
 	}
 
-	get displayData() {
-		return {
-			name: this.name,
-			description: this.description,
-		}
-	}
-	get insertData() {
-		// This is a hacky solution for a vuetify bug
-		// Keeps the snippet searchable by name even though we just workaround
-		// Vuetify's missing ability to respect the "item-text" prop on the combobox component
-		// https://github.com/vuetifyjs/vuetify/issues/5479
-		return [this.name, this.data]
-	}
-	get insertText() {
+	public getInsertText() {
 		if (typeof this.data === 'string') return <string>this.data
 		else if (Array.isArray(this.data)) return this.data.join('\n')
 
 		return JSON.stringify(this.data, null, '\t').slice(1, -1).replaceAll('\n\t', '\n').trim()
 	}
 
-	isValid(formatVersion: unknown, fileType: string, locations: string[]) {
+	public isValid(formatVersion: unknown, fileType: string, locations: string[]) {
 		const formatVersionValid =
-			typeof formatVersion !== 'string' || //Format version inside of file is a string
+			typeof formatVersion !== 'string' ||
 			((!this.minTargetFormatVersion || compareVersions(formatVersion, this.minTargetFormatVersion, '>=')) &&
 				(!this.maxTargetFormatVersion || compareVersions(formatVersion, this.maxTargetFormatVersion, '<=')))
 

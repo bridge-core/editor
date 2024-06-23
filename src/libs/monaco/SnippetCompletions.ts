@@ -20,6 +20,7 @@ export function setupSnippetCompletions() {
 
 			const location = await getLocation(model, position)
 
+			// TODO: Use latest format version if no version is defined
 			const formatVersion: string =
 				(<any>json).format_version || ProjectManager.currentProject.config?.targetVersion
 
@@ -27,19 +28,48 @@ export function setupSnippetCompletions() {
 				location,
 			])
 
-			console.log(fileType, location, formatVersion)
-
-			console.log(snippets)
-
 			return {
 				suggestions: snippets.map((snippet) => ({
 					kind: languages.CompletionItemKind.Snippet,
-					label: snippet.displayData.name,
-					documentation: snippet.displayData.description,
-					insertText: snippet.insertText,
+					label: snippet.name,
+					documentation: snippet.description,
+					insertText: snippet.getInsertText(),
 					insertTextRules: languages.CompletionItemInsertTextRule.InsertAsSnippet,
 				})),
 			}
 		},
 	})
+
+	const textSnippetProvider = {
+		provideCompletionItems: async (model: editor.ITextModel, position: Position) => {
+			if (!(ProjectManager.currentProject instanceof BedrockProject)) return
+
+			const fileType = ProjectManager.currentProject.fileTypeData.get(model.uri.path)
+
+			// TODO: Use latest format version if no version is defined
+			const formatVersion = ProjectManager.currentProject.config?.targetVersion
+
+			const snippets = ProjectManager.currentProject.snippetLoader.getSnippets(
+				formatVersion ?? '',
+				fileType.id,
+				[]
+			)
+
+			console.log(fileType)
+
+			return {
+				suggestions: snippets.map((snippet) => ({
+					kind: languages.CompletionItemKind.Snippet,
+					label: snippet.name,
+					documentation: snippet.description,
+					insertText: snippet.getInsertText(),
+					insertTextRules: languages.CompletionItemInsertTextRule.InsertAsSnippet,
+				})),
+			}
+		},
+	}
+
+	;['mcfunction', 'molang', 'javascript', 'typescript'].forEach((lang) =>
+		languages.registerCompletionItemProvider(lang, <any>textSnippetProvider)
+	)
 }

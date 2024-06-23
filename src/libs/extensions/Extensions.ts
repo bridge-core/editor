@@ -8,6 +8,7 @@ import { Ref, onMounted, onUnmounted, ref } from 'vue'
 import { Event } from '@/libs/event/Event'
 import { Disposable } from '@/libs/disposeable/Disposeable'
 import { Theme } from '@/libs/theme/Theme'
+import { Snippet } from '@/libs/snippets/Snippet'
 
 export class Extensions {
 	public static globalExtensions: Record<string, Extension> = {}
@@ -17,6 +18,7 @@ export class Extensions {
 	public static updated: Event<undefined> = new Event()
 
 	public static themes: Theme[] = []
+	public static snippets: Snippet[] = []
 
 	public static loaded: boolean = false
 
@@ -106,6 +108,7 @@ export class Extensions {
 		this.activeExtensions = { ...this.globalExtensions, ...this.projectExtensions }
 
 		this.themes = Object.values(this.activeExtensions).flatMap((extension) => extension.themes)
+		this.snippets = Object.values(this.activeExtensions).flatMap((extension) => extension.snippets)
 
 		this.updated.dispatch(undefined)
 	}
