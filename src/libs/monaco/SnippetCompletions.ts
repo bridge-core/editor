@@ -2,6 +2,7 @@ import { BedrockProject } from '@/libs/project/BedrockProject'
 import { ProjectManager } from '@/libs/project/ProjectManager'
 import { Position, editor, languages } from 'monaco-editor'
 import { getLocation } from './languages/Language'
+import { getLatestStableFormatVersion } from '../data/bedrock/FormatVersion'
 
 export function setupSnippetCompletions() {
 	languages.registerCompletionItemProvider('json', {
@@ -20,9 +21,10 @@ export function setupSnippetCompletions() {
 
 			const location = await getLocation(model, position)
 
-			// TODO: Use latest format version if no version is defined
 			const formatVersion: string =
-				(<any>json).format_version || ProjectManager.currentProject.config?.targetVersion
+				(<any>json).format_version ??
+				ProjectManager.currentProject.config?.targetVersion ??
+				(await getLatestStableFormatVersion())
 
 			const snippets = ProjectManager.currentProject.snippetLoader.getSnippets(formatVersion, fileType.id, [
 				location,
@@ -46,8 +48,8 @@ export function setupSnippetCompletions() {
 
 			const fileType = ProjectManager.currentProject.fileTypeData.get(model.uri.path)
 
-			// TODO: Use latest format version if no version is defined
-			const formatVersion = ProjectManager.currentProject.config?.targetVersion
+			const formatVersion =
+				ProjectManager.currentProject.config?.targetVersion ?? (await getLatestStableFormatVersion())
 
 			const snippets = ProjectManager.currentProject.snippetLoader.getSnippets(
 				formatVersion ?? '',
