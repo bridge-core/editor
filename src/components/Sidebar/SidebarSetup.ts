@@ -31,7 +31,9 @@ export function setupSidebar() {
 		},
 		'primary'
 	)
+
 	// NotificationSystem.addNotification('link', () => {}, 'warning') // Don't remember why I put this, maybe a social media thing?
+
 	NotificationSystem.addNotification('help', () => {
 		window.open('https://bridge-core.app/guide/')
 	})

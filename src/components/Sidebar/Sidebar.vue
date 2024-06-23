@@ -7,7 +7,7 @@ import { NotificationSystem } from '@/components/Notifications/NotificationSyste
 </script>
 
 <template>
-	<div class="w-16 h-full bg-background-secondary rounded mt-2 flex flex-col gap-2 items-center p-3">
+	<div class="w-16 h-full bg-background-secondary rounded mt-2 flex flex-col gap-2 items-center p-3 overflow-y-auto">
 		<div v-for="item in Sidebar.items">
 			<div
 				class="w-10 h-10 bg-background rounded flex justify-center items-center hover:bg-primary transition-colors duration-100 ease-out cursor-pointer"

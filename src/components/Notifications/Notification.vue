@@ -38,7 +38,7 @@ defineProps({
 
 <template>
 	<div
-		class="w-10 h-10 bg-[var(--color)] hover:bg-[var(--color-hover)] rounded flex justify-center items-center transition-colors duration-100 ease-out cursor-pointer group"
+		class="w-10 h-10 shrink-0 bg-[var(--color)] hover:bg-[var(--color-hover)] rounded flex justify-center items-center transition-colors duration-100 ease-out cursor-pointer group"
 		:style="{
 			'--color': `var(--theme-color-${color})`,
 			'--color-hover': `var(--theme-color-${colorHover})`,
