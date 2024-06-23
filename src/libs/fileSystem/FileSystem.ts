@@ -3,9 +3,12 @@ import { BaseFileSystem } from './BaseFileSystem'
 import { PWAFileSystem } from './PWAFileSystem'
 import { TauriFileSystem } from './TauriFileSystem'
 import { get, set } from 'idb-keyval'
+import { LocalFileSystem } from './LocalFileSystem'
 
 export function getFileSystem(): BaseFileSystem {
 	if (tauriBuild) return new TauriFileSystem()
+
+	if (!supportsFileSystemApi()) return new LocalFileSystem()
 
 	return new PWAFileSystem()
 }
@@ -33,4 +36,32 @@ export async function selectOrLoadBridgeFolder() {
 
 		await set('bridgeFolderHandle', fileSystem.baseHandle)
 	} catch {}
+}
+
+/**
+ * Chrome 93 and 94 crash when we try to call createWritable on a file handle inside of a web worker
+ * We therefore enable this polyfill to work around the bug
+ *
+ * Additionally, Brave, Opera and similar browsers do not support the FileSystem API so we enable
+ * the polyfill for all browsers which are not Chrome or Edge
+ * (Brave and Opera still have the API methods but they're NOOPs so our detection doesn't work)
+ */
+function supportsFileSystemApi() {
+	const unsupportedChromeVersions = ['93', '94']
+
+	// @ts-ignore: TypeScript doesn't know about userAgentData yet
+	const userAgentData: any = navigator.userAgentData
+	if (!userAgentData) return false
+
+	if (typeof window.showDirectoryPicker !== 'function') return false
+
+	const chromeBrand = userAgentData.brands.find(({ brand }: any) => brand === 'Google Chrome')
+
+	if (chromeBrand) return !unsupportedChromeVersions.includes(chromeBrand.version)
+
+	const edgeBrand = userAgentData.brands.find(({ brand }: any) => brand === 'Microsoft Edge')
+
+	if (edgeBrand) return true
+
+	return false
 }

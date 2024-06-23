@@ -52,9 +52,9 @@ export class FindAndReplaceTab extends Tab {
 
 	private async searchDirectory(path: string, regex: RegExp, searchId: string) {
 		for (const entry of await fileSystem.readDirectoryEntries(path)) {
-			if (entry.type === 'directory') await this.searchDirectory(entry.path, regex, searchId)
+			if (entry.kind === 'directory') await this.searchDirectory(entry.path, regex, searchId)
 
-			if (entry.type === 'file' && (entry.path.endsWith('.txt') || entry.path.endsWith('.json'))) {
+			if (entry.kind === 'file' && (entry.path.endsWith('.txt') || entry.path.endsWith('.json'))) {
 				const content = await fileSystem.readFileText(entry.path)
 
 				if (this.currentQueryId !== searchId) return

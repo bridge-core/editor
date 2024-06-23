@@ -87,11 +87,11 @@ export function setupActions() {
 
 				const entry = await fileSystem.getEntry(path)
 
-				if (entry.type === 'directory') {
+				if (entry.kind === 'directory') {
 					await fileSystem.removeDirectory(path)
 				}
 
-				if (entry.type === 'file') {
+				if (entry.kind === 'file') {
 					await fileSystem.removeFile(path)
 				}
 			},
@@ -140,12 +140,12 @@ export function setupActions() {
 
 						const entry = await fileSystem.getEntry(path)
 
-						if (entry.type === 'directory') {
+						if (entry.kind === 'directory') {
 							await fileSystem.copyDirectory(path, join(dirname(path), newPath))
 							await fileSystem.removeDirectory(path)
 						}
 
-						if (entry.type === 'file') {
+						if (entry.kind === 'file') {
 							await fileSystem.copyFile(path, join(dirname(path), newPath))
 							await fileSystem.removeFile(path)
 						}
@@ -177,11 +177,11 @@ export function setupActions() {
 					newPath = newPathBase + additionalName + parsedPath.ext
 				}
 
-				if (entry.type === 'directory') {
+				if (entry.kind === 'directory') {
 					await fileSystem.copyDirectory(path, newPath)
 				}
 
-				if (entry.type === 'file') {
+				if (entry.kind === 'file') {
 					await fileSystem.copyFile(path, newPath)
 				}
 			},
@@ -214,7 +214,7 @@ export function setupActions() {
 				const sourceEntry = await fileSystem.getEntry(path)
 
 				const parsedPath = parse(clipboardEntry.path)
-				const newPathBase = join(sourceEntry.type === 'directory' ? path : dirname(path), parsedPath.name)
+				const newPathBase = join(sourceEntry.kind === 'directory' ? path : dirname(path), parsedPath.name)
 
 				let additionalName = ' copy'
 				let newPath = newPathBase + additionalName + parsedPath.ext
@@ -225,11 +225,11 @@ export function setupActions() {
 					newPath = newPathBase + additionalName + parsedPath.ext
 				}
 
-				if (clipboardEntry.type === 'directory') {
+				if (clipboardEntry.kind === 'directory') {
 					await fileSystem.copyDirectory(clipboardEntry.path, newPath)
 				}
 
-				if (clipboardEntry.type === 'file') {
+				if (clipboardEntry.kind === 'file') {
 					await fileSystem.copyFile(clipboardEntry.path, newPath)
 				}
 			},

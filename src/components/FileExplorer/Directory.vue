@@ -72,11 +72,11 @@ function executeContextMenuAction(action: string, data: any) {
 
 	<div class="ml-1 border-l pl-1 border-background-tertiary min-h-[1rem]" v-show="expanded">
 		<div
-			v-for="entry in entries.toSorted((a, b) => (a.type === 'file' ? 1 : 0) - (b.type === 'file' ? 1 : 0))"
+			v-for="entry in entries.toSorted((a, b) => (a.kind === 'file' ? 1 : 0) - (b.kind === 'file' ? 1 : 0))"
 			:key="entry.path"
 		>
-			<File :path="entry.path" :color="color" v-if="entry.type === 'file'" />
-			<Directory :path="entry.path" :color="color" v-if="entry.type === 'directory'" />
+			<File :path="entry.path" :color="color" v-if="entry.kind === 'file'" />
+			<Directory :path="entry.path" :color="color" v-if="entry.kind === 'directory'" />
 		</div>
 	</div>
 

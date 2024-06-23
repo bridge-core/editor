@@ -33,7 +33,7 @@ export class CompatabilityFileSystem extends FileSystem {
 		return (await this.fileSystem.readDirectoryEntries(path)).map((entry) => {
 			return {
 				name: basename(entry.path),
-				kind: entry.type,
+				kind: entry.kind,
 				path: entry.path,
 			}
 		})

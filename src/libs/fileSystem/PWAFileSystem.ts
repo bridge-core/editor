@@ -384,9 +384,9 @@ export class PWAFileSystem extends BaseFileSystem {
 		for (const entry of entries) {
 			hash += entry.path + '\n'
 
-			if (entry.type === 'file') this.cache[entry.path] = await this.generateFileHash(entry.path)
+			if (entry.kind === 'file') this.cache[entry.path] = await this.generateFileHash(entry.path)
 
-			if (entry.type === 'directory') await this.indexPath(entry.path)
+			if (entry.kind === 'directory') await this.indexPath(entry.path)
 		}
 
 		this.cache[path] = hash
@@ -400,7 +400,7 @@ export class PWAFileSystem extends BaseFileSystem {
 		for (const entry of entries) {
 			hash += entry.path + '\n'
 
-			if (entry.type === 'file') {
+			if (entry.kind === 'file') {
 				let fileHash = await this.generateFileHash(entry.path)
 
 				if (this.cache[entry.path] !== fileHash)
@@ -409,7 +409,7 @@ export class PWAFileSystem extends BaseFileSystem {
 				this.cache[entry.path] = fileHash
 			}
 
-			if (entry.type === 'directory') await this.checkForUpdate(entry.path)
+			if (entry.kind === 'directory') await this.checkForUpdate(entry.path)
 		}
 
 		if (this.cache[path] !== hash) {

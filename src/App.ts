@@ -19,6 +19,7 @@ import { setupLang } from '@/libs/monaco/languages/Lang'
 import { setupMcFunction } from '@/libs/monaco/languages/McFunction/Language'
 import { setupMolang } from '@/libs/monaco/languages/Molang'
 import { setupSnippetCompletions } from '@/libs/monaco/SnippetCompletions'
+import { LocalFileSystem } from './libs/fileSystem/LocalFileSystem'
 
 export function setupBeforeComponents() {
 	ProjectManager.setup()
@@ -47,6 +48,8 @@ export async function setup() {
 		})
 
 	if (fileSystem instanceof TauriFileSystem) await setupTauriFileSystem()
+
+	if (fileSystem instanceof LocalFileSystem) fileSystem.setRootName('fileSystemPolyfill')
 
 	setupTypescript()
 	setupLang()

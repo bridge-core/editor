@@ -124,7 +124,7 @@ export class DashService implements AsyncDisposable {
 
 		if (!path.startsWith(this.project.path)) return
 
-		if (path.startsWith(join(this.project.path, '.bridge/'))) return
+		if (path.startsWith(join(this.project.path, '.bridge'))) return
 
 		const requestId = uuid()
 

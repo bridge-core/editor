@@ -1,8 +1,9 @@
-import { parse, resolve, sep } from 'pathe'
-import { BaseFileSystem } from './BaseFileSystem'
+import { basename, parse, resolve, sep } from 'pathe'
+import { BaseEntry, BaseFileSystem } from './BaseFileSystem'
 import { del, get, keys, set } from 'idb-keyval'
 
 export class LocalFileSystem extends BaseFileSystem {
+	private textEncoder = new TextEncoder()
 	private textDecoder = new TextDecoder()
 
 	private rootName: string | null = null
@@ -18,7 +19,11 @@ export class LocalFileSystem extends BaseFileSystem {
 
 		path = resolve('/', path)
 
-		return new Uint8Array((await get(`localFileSystem/${this.rootName}${path}`)).content)
+		const data = (await get(`localFileSystem/${this.rootName}${path}`)).content
+
+		if (data instanceof Uint8Array) return data.buffer
+
+		return this.textEncoder.encode(data).buffer
 	}
 
 	public async readFileText(path: string): Promise<string> {
@@ -43,6 +48,34 @@ export class LocalFileSystem extends BaseFileSystem {
 		path = resolve('/', path)
 
 		return JSON.parse(await this.readFileText(path))
+	}
+
+	public async readFileDataUrl(path: string): Promise<string> {
+		if (this.rootName === null) throw new Error('Root name not set')
+
+		path = resolve('/', path)
+
+		try {
+			const content = (await get(`localFileSystem/${this.rootName}${path}`)).content
+
+			if (typeof content === 'string') throw new Error('Reading string as Data Url is not supported yet!')
+
+			const file = new File([new Blob([new Uint8Array(content)])], basename(path))
+
+			const reader = new FileReader()
+
+			return new Promise((resolve) => {
+				reader.onload = () => {
+					resolve(reader.result as string)
+				}
+
+				reader.readAsDataURL(file)
+			})
+		} catch (error) {
+			console.error(`Failed to read file as data Url "${path}"`)
+
+			throw error
+		}
 	}
 
 	public async writeFile(path: string, content: FileSystemWriteChunkType) {
@@ -107,7 +140,7 @@ export class LocalFileSystem extends BaseFileSystem {
 		for (const directoryName of directoryNames) {
 			currentPath += '/' + directoryName
 
-			await this.makeDirectory(currentPath)
+			if (!(await this.exists(currentPath))) await this.makeDirectory(currentPath)
 		}
 	}
 
@@ -129,6 +162,27 @@ export class LocalFileSystem extends BaseFileSystem {
 			.map((key) => key.substring(`localFileSystem/${this.rootName}`.length))
 
 		return localFSKeys
+	}
+
+	public async readDirectoryEntries(path: string): Promise<BaseEntry[]> {
+		if (this.rootName === null) throw new Error('Root name not set')
+
+		path = resolve('/', path)
+
+		const allEntries = await this.allEntries()
+
+		const entries = allEntries.filter((entry) => parse(entry).dir === path)
+
+		return Promise.all(
+			entries.map(async (entryPath) => {
+				const entry = await get(`localFileSystem/${this.rootName}${entryPath}`)
+
+				return {
+					path: entryPath,
+					kind: entry.kind,
+				}
+			})
+		)
 	}
 
 	public async watch(path: string) {

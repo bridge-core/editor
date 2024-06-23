@@ -75,7 +75,7 @@ export class ProjectManager {
 
 		let items = await fileSystem.readDirectoryEntries('projects')
 
-		const foldersToLoad = items.filter((item) => item.type === 'directory').map((item) => item.path)
+		const foldersToLoad = items.filter((item) => item.kind === 'directory').map((item) => item.path)
 
 		this.projects = []
 

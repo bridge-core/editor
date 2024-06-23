@@ -183,15 +183,15 @@ function executeContextMenuAction(action: string, data: any) {
 			<div class="h-full" @contextmenu.prevent="contextMenu?.open">
 				<div
 					v-for="entry in entries.toSorted(
-						(a, b) => (a.type === 'file' ? 1 : 0) - (b.type === 'file' ? 1 : 0)
+						(a, b) => (a.kind === 'file' ? 1 : 0) - (b.kind === 'file' ? 1 : 0)
 					)"
 					:key="entry.path"
 				>
-					<File :path="entry.path" :color="selectedPackDefinition!.color" v-if="entry.type === 'file'" />
+					<File :path="entry.path" :color="selectedPackDefinition!.color" v-if="entry.kind === 'file'" />
 					<Directory
 						:path="entry.path"
 						:color="selectedPackDefinition!.color"
-						v-if="entry.type === 'directory'"
+						v-if="entry.kind === 'directory'"
 					/>
 				</div>
 			</div>

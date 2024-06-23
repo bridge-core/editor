@@ -224,7 +224,7 @@ async function indexFile(path: string) {
 
 async function indexDirectory(path: string) {
 	for (const entry of await fileSystem.readDirectoryEntries(path)) {
-		if (entry.type == 'directory') {
+		if (entry.kind == 'directory') {
 			await indexDirectory(entry.path)
 		} else {
 			await indexFile(entry.path)

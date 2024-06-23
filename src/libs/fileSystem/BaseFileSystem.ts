@@ -78,11 +78,11 @@ export class BaseFileSystem {
 		await this.makeDirectory(newPath)
 
 		for (const entry of await this.readDirectoryEntries(path)) {
-			if (entry.type === 'file') {
+			if (entry.kind === 'file') {
 				await this.copyFile(entry.path, join(newPath, basename(entry.path)))
 			}
 
-			if (entry.type === 'directory') {
+			if (entry.kind === 'directory') {
 				await this.copyDirectory(entry.path, join(newPath, basename(entry.path)))
 			}
 		}
@@ -102,5 +102,5 @@ export class BaseFileSystem {
 }
 
 export class BaseEntry {
-	constructor(public path: string, public type: 'file' | 'directory') {}
+	constructor(public path: string, public kind: 'file' | 'directory') {}
 }
