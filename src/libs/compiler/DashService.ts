@@ -2,14 +2,13 @@ import { join } from 'pathe'
 import DashWorker from './DashWorker?worker'
 import { BedrockProject } from '@/libs/project/BedrockProject'
 import { WorkerFileSystemEntryPoint } from '@/libs/fileSystem/WorkerFileSystem'
-import { Sidebar } from '@/components/Sidebar/Sidebar'
 import { BaseFileSystem } from '@/libs/fileSystem/BaseFileSystem'
 import { sendAndWait } from '@/libs/worker/Communication'
-import { Notification } from '@/components/Sidebar/Sidebar'
 import { v4 as uuid } from 'uuid'
 import { Data } from '@/libs/data/Data'
 import { fileSystem } from '@/libs/fileSystem/FileSystem'
 import { Disposable, AsyncDisposable, disposeAll } from '@/libs/disposeable/Disposeable'
+import { NotificationSystem, Notification } from '@/components/Notifications/NotificationSystem'
 
 export class DashService implements AsyncDisposable {
 	public logs: string[] = []
@@ -51,7 +50,7 @@ export class DashService implements AsyncDisposable {
 		if (event.data.action === 'progress') {
 			if (this.progressNotification === null) return
 
-			Sidebar.setProgress(this.progressNotification, event.data.progress)
+			NotificationSystem.setProgress(this.progressNotification, event.data.progress)
 		}
 	}
 
@@ -94,7 +93,13 @@ export class DashService implements AsyncDisposable {
 
 		this.building = true
 
-		this.progressNotification = Sidebar.addProgressNotification('manufacturing', 0, 1, undefined, undefined)
+		this.progressNotification = NotificationSystem.addProgressNotification(
+			'manufacturing',
+			0,
+			1,
+			undefined,
+			undefined
+		)
 
 		await sendAndWait(
 			{
@@ -103,7 +108,7 @@ export class DashService implements AsyncDisposable {
 			this.worker
 		)
 
-		Sidebar.clearNotification(this.progressNotification)
+		NotificationSystem.clearNotification(this.progressNotification)
 
 		this.building = false
 

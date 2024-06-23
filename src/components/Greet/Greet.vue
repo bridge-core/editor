@@ -3,6 +3,7 @@ import Logo from '@/components/Common/Logo.vue'
 import IconButton from '@/components/Common/IconButton.vue'
 import ProjectGalleryEntry from './ProjectGalleryEntry.vue'
 import TextButton from '@/components/Common/TextButton.vue'
+import Notification from '@/components/Notifications/Notification.vue'
 
 import { PWAFileSystem } from '@/libs/fileSystem/PWAFileSystem'
 import { computed, ref } from 'vue'
@@ -11,6 +12,7 @@ import { ProjectInfo, ProjectManager } from '@/libs/project/ProjectManager'
 import { Windows } from '@/components/Windows/Windows'
 import { fileSystem, selectOrLoadBridgeFolder } from '@/libs/fileSystem/FileSystem'
 import { CreateProjectWindow } from '@/components/Windows/CreateProject/CreateProjectWindow'
+import { NotificationSystem } from '@/components/Notifications/NotificationSystem'
 
 const t = useTranslate()
 
@@ -88,6 +90,22 @@ async function edit(name: string) {}
 				</p>
 
 				<TextButton :text="t('greet.selectBridgeFolder')" @click="selectOrLoadBridgeFolder" />
+			</div>
+			<!-- SCUFFED! Needs Improvement, Or could be removed... -->
+			<div class="flex flex-row mt-5 overflow-x-auto gap-2">
+				<Notification
+					v-for="item in NotificationSystem.notifications.value"
+					:key="item.id"
+					@click="() => NotificationSystem.activateNotification(item)"
+					:icon="item.icon"
+					:type="item.type"
+					:progress="item.progress"
+					:max-progress="item.progress"
+					:color="item.color"
+					:color-hover="item.color ? 'accent' : undefined"
+					icon-color="accent"
+					:icon-color-hover="item.color ? 'accentSecondary' : undefined"
+				/>
 			</div>
 		</div>
 	</main>

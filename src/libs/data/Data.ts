@@ -4,10 +4,10 @@ import { LocalFileSystem } from '@/libs/fileSystem/LocalFileSystem'
 import { onMounted, onUnmounted, ref, Ref } from 'vue'
 import { Event } from '@/libs/event/Event'
 import { Disposable } from '@/libs/disposeable/Disposeable'
-import { Sidebar } from '@/components/Sidebar/Sidebar'
 import { Windows } from '@/components/Windows/Windows'
 import { AlertWindow } from '@/components/Windows/Alert/AlertWindow'
 import { Settings } from '@/libs/settings/Settings'
+import { NotificationSystem } from '@/components/Notifications/NotificationSystem'
 
 export interface FormatVersionDefinitions {
 	currentStable: string
@@ -81,7 +81,7 @@ export class Data {
 
 		console.log('[Data] Fetching data')
 
-		Sidebar.addNotification(
+		NotificationSystem.addNotification(
 			'package_2',
 			() => {
 				Windows.open(new AlertWindow('A new data update has been installed.'))

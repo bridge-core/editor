@@ -5,6 +5,7 @@ import { ExtensionLibraryWindow } from '@/components/Windows/ExtensionLibrary/Ex
 import { TabManager } from '@/components/TabSystem/TabManager'
 import { Windows } from '@/components/Windows/Windows'
 import { CompilerWindow } from '@/components/Windows/Compiler/CompilerWindow'
+import { NotificationSystem } from '@/components/Notifications/NotificationSystem'
 
 export function setupSidebar() {
 	Sidebar.addButton('folder', () => {
@@ -23,15 +24,17 @@ export function setupSidebar() {
 	})
 	Sidebar.addDivider()
 
-	Sidebar.addNotification(
+	NotificationSystem.addNotification(
 		'download',
 		() => {
 			window.open('https://bridge-core.app/guide/download/')
 		},
 		'primary'
 	)
-	// Sidebar.addNotification('link', () => {}, 'warning') // Don't remember why I put this, maybe a social media thing?
-	Sidebar.addNotification('help', () => {
+
+	// NotificationSystem.addNotification('link', () => {}, 'warning') // Don't remember why I put this, maybe a social media thing?
+
+	NotificationSystem.addNotification('help', () => {
 		window.open('https://bridge-core.app/guide/')
 	})
 }
