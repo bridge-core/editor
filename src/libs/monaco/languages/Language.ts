@@ -1,4 +1,5 @@
-import { languages } from 'monaco-editor'
+import { Position, editor, languages } from 'monaco-editor'
+import { getLocation as jsoncGetLocation } from 'jsonc-parser'
 
 export const colorCodes = [
 	[/§4[^§]*/, 'colorCode.darkRed'],
@@ -22,3 +23,11 @@ export const colorCodes = [
 	[/§l[^§]*/, 'colorCode.bold'],
 	[/§n[^§]*/, 'colorCode.underline'],
 ] as languages.IMonarchLanguageRule[]
+
+export async function getLocation(model: editor.ITextModel, position: Position): Promise<string> {
+	const locationArr = jsoncGetLocation(model.getValue(), model.getOffsetAt(position)).path
+
+	if (!isNaN(Number(locationArr[locationArr.length - 1]))) locationArr.pop()
+
+	return locationArr.join('/')
+}

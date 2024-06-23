@@ -9,7 +9,6 @@ import { ProjectManager } from '@/libs/project/ProjectManager'
 import { Data } from '@/libs/data/Data'
 import { Disposable, disposeAll } from '@/libs/disposeable/Disposeable'
 import { join, basename, dirname, resolve } from 'pathe'
-import { Uri } from 'monaco-editor'
 
 /*
 Building the schema for a file is a little complicated.

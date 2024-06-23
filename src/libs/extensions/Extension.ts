@@ -1,8 +1,8 @@
 import { fileSystem } from '@/libs/fileSystem/FileSystem'
 import { join } from 'pathe'
 import { dark, light } from '@/libs/theme/DefaultThemes'
-import { ThemeManager } from '@/libs/theme/ThemeManager'
 import { Theme } from '@/libs/theme/Theme'
+import { Snippet, SnippetData } from '../snippets/Snippet'
 
 export interface ExtensionManifest {
 	author: string
@@ -22,9 +22,9 @@ export class Extension {
 	public id: string = 'unloaded'
 
 	private manifest: ExtensionManifest | null = null
-	private themes: Theme[] = []
-	private presets: any[] = []
-	private snippets: any[] = []
+	public themes: Theme[] = []
+	public presets: any[] = []
+	public snippets: Snippet[] = []
 
 	constructor(public path: string) {}
 
@@ -39,20 +39,20 @@ export class Extension {
 			for (const entry of await fileSystem.readDirectoryEntries(themesPath)) {
 				const theme: Theme = await fileSystem.readFileJson(entry.path)
 
+				const base = theme.colorScheme === 'dark' ? dark : light
+
 				if (manifest.target != 'v2.1') {
 					theme.colors.menuAlternate = theme.colors.sidebarNavigation
+					theme.colors.accent = base.colors.text
 				}
 
 				theme.colors = {
-					...(theme.colorScheme === 'dark' ? dark.colors : light.colors),
+					...base.colors,
 					...theme.colors,
 				}
 
-				ThemeManager.addTheme(theme)
 				this.themes.push(theme)
 			}
-
-			ThemeManager.reloadTheme()
 		}
 
 		const presetsPath = join(this.path, 'presets')
@@ -67,16 +67,10 @@ export class Extension {
 		const snippetsPath = join(this.path, 'snippets')
 		if (await fileSystem.exists(snippetsPath)) {
 			for (const entry of await fileSystem.readDirectoryEntries(snippetsPath)) {
-				const snippet: any = await fileSystem.readFileJson(entry.path)
+				const snippet: SnippetData = await fileSystem.readFileJson(entry.path)
 
-				this.snippets.push(snippet)
+				this.snippets.push(new Snippet(snippet))
 			}
-		}
-	}
-
-	public async unload() {
-		for (const theme of this.themes) {
-			ThemeManager.removeTheme(theme)
 		}
 	}
 }

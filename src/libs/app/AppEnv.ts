@@ -4,7 +4,7 @@ export const appVersion = packageConfig.version
 
 export const baseUrl = import.meta.env.BASE_URL
 
-let dashVersionTemp = packageConfig.dependencies['dash-compiler']
+let dashVersionTemp = packageConfig.dependencies['@bridge-editor/dash-compiler']
 
 if (
 	dashVersionTemp.startsWith('^') ||

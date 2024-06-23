@@ -17,6 +17,8 @@ import { Sidebar } from '@/components/Sidebar/Sidebar'
 import { PWAFileSystem } from '@/libs/fileSystem/PWAFileSystem'
 import { setupLang } from '@/libs/monaco/languages/Lang'
 import { setupMcFunction } from '@/libs/monaco/languages/McFunction/Language'
+import { setupMolang } from '@/libs/monaco/languages/Molang'
+import { setupSnippetCompletions } from '@/libs/monaco/SnippetCompletions'
 
 export function setupBeforeComponents() {
 	ProjectManager.setup()
@@ -49,6 +51,8 @@ export async function setup() {
 	setupTypescript()
 	setupLang()
 	setupMcFunction()
+	setupMolang()
+	setupSnippetCompletions()
 
 	console.time('[App] Settings')
 	await Settings.load()

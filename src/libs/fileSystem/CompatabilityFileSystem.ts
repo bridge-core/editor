@@ -1,4 +1,4 @@
-import { FileSystem } from 'dash-compiler'
+import { FileSystem } from '@bridge-editor/dash-compiler'
 import { BaseFileSystem } from './BaseFileSystem'
 import { basename, join, sep } from 'pathe'
 
