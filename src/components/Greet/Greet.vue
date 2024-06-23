@@ -3,6 +3,7 @@ import Logo from '@/components/Common/Logo.vue'
 import IconButton from '@/components/Common/IconButton.vue'
 import ProjectGalleryEntry from './ProjectGalleryEntry.vue'
 import TextButton from '@/components/Common/TextButton.vue'
+import Notification from '@/components/Notifications/Notification.vue'
 
 import { PWAFileSystem } from '@/libs/fileSystem/PWAFileSystem'
 import { computed, ref } from 'vue'
@@ -11,8 +12,7 @@ import { ProjectInfo, ProjectManager } from '@/libs/project/ProjectManager'
 import { Windows } from '@/components/Windows/Windows'
 import { fileSystem, selectOrLoadBridgeFolder } from '@/libs/fileSystem/FileSystem'
 import { CreateProjectWindow } from '@/components/Windows/CreateProject/CreateProjectWindow'
-import { Sidebar } from '@/components/Sidebar/Sidebar'
-import Notification from '@/components/Sidebar/Notification.vue'
+import { NotificationSystem } from '@/components/Notifications/NotificationSystem'
 
 const t = useTranslate()
 
@@ -94,9 +94,9 @@ async function edit(name: string) {}
 			<div class="flex flex-row overflow-hidden mt-5">
 				<Notification
 					class="mr-3 shrink-0"
-					v-for="item in Sidebar.notifications.value"
+					v-for="item in NotificationSystem.notifications.value"
 					:key="item.id"
-					@click="() => Sidebar.activateNotification(item)"
+					@click="() => NotificationSystem.activateNotification(item)"
 					:icon="item.icon"
 					:type="item.type"
 					:progress="item.progress"

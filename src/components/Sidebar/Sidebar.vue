@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import Icon from '@/components/Common/Icon.vue'
-import Notification from './Notification.vue'
+import Notification from '@/components/Notifications/Notification.vue'
 
 import { Sidebar } from '@/components/Sidebar/Sidebar'
+import { NotificationSystem } from '@/components/Notifications/NotificationSystem'
 </script>
 
 <template>
@@ -20,9 +21,9 @@ import { Sidebar } from '@/components/Sidebar/Sidebar'
 		</div>
 
 		<Notification
-			v-for="item in Sidebar.notifications.value"
+			v-for="item in NotificationSystem.notifications.value"
 			:key="item.id"
-			@click="() => Sidebar.activateNotification(item)"
+			@click="() => NotificationSystem.activateNotification(item)"
 			:icon="item.icon"
 			:type="item.type"
 			:progress="item.progress"

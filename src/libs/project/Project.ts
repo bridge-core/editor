@@ -1,5 +1,4 @@
 import { Extensions } from '@/libs/extensions/Extensions'
-import { Sidebar } from '@/components/Sidebar/Sidebar'
 import { join } from 'pathe'
 import { ConfirmWindow } from '@/components/Windows/Confirm/ConfirmWindow'
 import { fileSystem } from '@/libs/fileSystem/FileSystem'
@@ -13,6 +12,7 @@ import { SettingsWindow } from '@/components/Windows/Settings/SettingsWindow'
 import { Windows } from '@/components/Windows/Windows'
 import { AsyncDisposable, Disposable, disposeAll } from '@/libs/disposeable/Disposeable'
 import { Event } from '@/libs/event/Event'
+import { NotificationSystem } from '@/components/Notifications/NotificationSystem'
 
 export class Project implements AsyncDisposable {
 	public path: string
@@ -170,7 +170,7 @@ export class Project implements AsyncDisposable {
 
 		this.usingProjectOutputFolderChanged.dispatch(undefined)
 
-		Sidebar.addNotification(
+		NotificationSystem.addNotification(
 			'warning',
 			() => {
 				Windows.open(
