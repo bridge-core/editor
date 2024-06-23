@@ -23,6 +23,9 @@ export function setupActions() {
 				focusedTab.save()
 			},
 			keyBinding: 'Ctrl + S',
+			name: 'actions.saveFile.name',
+			description: 'actions.saveFile.description',
+			icon: 'save',
 		})
 	)
 

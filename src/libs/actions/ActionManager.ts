@@ -1,7 +1,7 @@
 import { Action } from './Action'
 
 export class ActionManager {
-	private static actions: Record<string, Action> = {}
+	public static actions: Record<string, Action> = {}
 
 	public static addAction(action: Action) {
 		this.actions[action.id] = action

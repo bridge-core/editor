@@ -2,17 +2,28 @@ interface ActionConfig {
 	id: string
 	trigger: (data?: unknown) => void
 	keyBinding?: string
+	icon?: string
+	name?: string
+	description?: string
 }
 
 export class Action {
 	public id: string
 	public keyBinding?: string
+	public icon?: string
+	public name?: string
+	public description?: string
+
 	public trigger: (data?: unknown) => void
 
 	constructor(config: ActionConfig) {
 		this.id = config.id
 		this.trigger = config.trigger
 		this.keyBinding = config.keyBinding
+
+		this.icon = config.icon
+		this.name = config.name
+		this.description = config.description
 
 		if (!this.keyBinding) return
 
