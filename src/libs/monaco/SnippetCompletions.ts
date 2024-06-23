@@ -55,8 +55,6 @@ export function setupSnippetCompletions() {
 				[]
 			)
 
-			console.log(fileType)
-
 			return {
 				suggestions: snippets.map((snippet) => ({
 					kind: languages.CompletionItemKind.Snippet,
