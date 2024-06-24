@@ -280,7 +280,7 @@ export function setupActions() {
 			},
 			name: 'actions.formatDocument.name',
 			description: 'actions.formatDocument.description',
-			icon: 'format_align_left', //Needs a better icon
+			icon: 'edit_document',
 		})
 	)
 
@@ -298,7 +298,7 @@ export function setupActions() {
 			},
 			name: 'actions.goToSymbol.name',
 			description: 'actions.goToSymbol.description',
-			icon: 'go_to_line', //PLACEHOLDER
+			icon: 'arrow_forward',
 		})
 	)
 
@@ -334,7 +334,7 @@ export function setupActions() {
 			},
 			name: 'actions.goToDefinition.name',
 			description: 'actions.goToDefinition.description',
-			icon: 'jump_to_element', //PLACEHOLDER
+			icon: 'search', //PLACEHOLDER
 		})
 	)
 
