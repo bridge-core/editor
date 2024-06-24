@@ -334,7 +334,7 @@ export function setupActions() {
 			},
 			name: 'actions.goToDefinition.name',
 			description: 'actions.goToDefinition.description',
-			icon: 'search', //PLACEHOLDER
+			icon: 'search',
 		})
 	)
 
