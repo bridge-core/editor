@@ -9,7 +9,10 @@
 			</button>
 		</div>
 		<div class="flex gap-4 items-center">
-			<div class="flex gap-2 items-center" @click="openChangelog">
+			<div
+				class="flex gap-2 items-center hover:cursor-pointer transition ease-in-out hover:scale-110 duration-300"
+				@click="openChangelog"
+			>
 				<Logo class="w-4" />
 				<span class="text-sm text-textAlternate font-inter"> v{{ appVersion }} </span>
 			</div>
