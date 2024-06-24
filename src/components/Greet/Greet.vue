@@ -91,7 +91,6 @@ async function edit(name: string) {}
 
 				<TextButton :text="t('greet.selectBridgeFolder')" @click="selectOrLoadBridgeFolder" />
 			</div>
-			<!-- SCUFFED! Needs Improvement, Or could be removed... -->
 			<div class="flex flex-row mt-5 overflow-x-auto gap-2">
 				<Notification
 					v-for="item in NotificationSystem.notifications.value"
