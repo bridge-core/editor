@@ -42,6 +42,9 @@ export function setupActions() {
 				focusedTab.copy()
 			},
 			keyBinding: 'Ctrl + C',
+			name: 'actions.copy.name',
+			description: 'actions.copy.description',
+			icon: 'content_copy',
 		})
 	)
 
@@ -58,6 +61,9 @@ export function setupActions() {
 				focusedTab.paste()
 			},
 			keyBinding: 'Ctrl + V',
+			name: 'actions.paste.name',
+			description: 'actions.paste.description',
+			icon: 'content_paste',
 		})
 	)
 
@@ -74,6 +80,9 @@ export function setupActions() {
 				focusedTab.cut()
 			},
 			keyBinding: 'Ctrl + X',
+			name: 'actions.cut.name',
+			description: 'actions.cut.description',
+			icon: 'content_cut',
 		})
 	)
 
@@ -95,6 +104,9 @@ export function setupActions() {
 					await fileSystem.removeFile(path)
 				}
 			},
+			name: 'actions.delete.name',
+			description: 'actions.delete.description',
+			icon: 'delete',
 		})
 	)
 
@@ -110,6 +122,9 @@ export function setupActions() {
 					})
 				)
 			},
+			name: 'actions.createFile.name',
+			description: 'actions.createFile.description',
+			icon: 'note_add', //WHY IS THERE NO CREATE NEW FILE ICON?
 		})
 	)
 
@@ -125,6 +140,9 @@ export function setupActions() {
 					})
 				)
 			},
+			name: 'actions.createFolder.name',
+			description: 'actions.createFolder.description',
+			icon: 'create_new_folder',
 		})
 	)
 
@@ -152,6 +170,9 @@ export function setupActions() {
 					})
 				)
 			},
+			name: 'actions.rename.name',
+			description: 'actions.rename.description',
+			icon: 'text_fields_alt',
 		})
 	)
 
@@ -185,6 +206,9 @@ export function setupActions() {
 					await fileSystem.copyFile(path, newPath)
 				}
 			},
+			name: 'actions.duplicate.name',
+			description: 'actions.duplicate.description',
+			icon: 'file_copy',
 		})
 	)
 
@@ -198,6 +222,9 @@ export function setupActions() {
 
 				setClipboard(await fileSystem.getEntry(path))
 			},
+			name: 'actions.copyFile.name',
+			description: 'actions.copyFile.description',
+			icon: 'file_copy',
 		})
 	)
 
@@ -233,6 +260,9 @@ export function setupActions() {
 					await fileSystem.copyFile(clipboardEntry.path, newPath)
 				}
 			},
+			name: 'actions.pasteFile.name',
+			description: 'actions.pasteFile.description',
+			icon: 'content_paste',
 		})
 	)
 
@@ -248,6 +278,9 @@ export function setupActions() {
 
 				focusedTab.format()
 			},
+			name: 'actions.formatDocument.name',
+			description: 'actions.formatDocument.description',
+			icon: 'format_align_left', //Needs a better icon
 		})
 	)
 
@@ -263,6 +296,9 @@ export function setupActions() {
 
 				focusedTab.goToSymbol()
 			},
+			name: 'actions.goToSymbol.name',
+			description: 'actions.goToSymbol.description',
+			icon: 'go_to_line', //PLACEHOLDER
 		})
 	)
 
@@ -278,6 +314,9 @@ export function setupActions() {
 
 				focusedTab.changeAllOccurrences()
 			},
+			name: 'actions.changeAllOccurrences.name',
+			description: 'actions.changeAllOccurrences.description',
+			icon: 'change_circle', //PLACEHOLDER
 		})
 	)
 
@@ -293,6 +332,9 @@ export function setupActions() {
 
 				focusedTab.goToDefinition()
 			},
+			name: 'actions.goToDefinition.name',
+			description: 'actions.goToDefinition.description',
+			icon: 'jump_to_element', //PLACEHOLDER
 		})
 	)
 
@@ -308,6 +350,9 @@ export function setupActions() {
 
 				focusedTab.viewDocumentation()
 			},
+			name: 'actions.documentationLookup.name',
+			description: 'actions.documentationLookup.description', //INCORRECT LOCALISATION?
+			icon: 'menu_book',
 		})
 	)
 }
