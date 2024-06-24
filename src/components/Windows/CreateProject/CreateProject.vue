@@ -92,6 +92,7 @@ const selectedFiles: Ref<ConfigurableFile[]> = ref([])
 const formatVersionDefinitions: Ref<FormatVersionDefinitions | null> = ref(null)
 
 const dataValid = computed(() => {
+	if (selectedPackTypes.value.length === 0) return false
 	if (projectName.value === '') return false
 	if (projectName.value.match(/"|\\|\/|:|\||<|>|\*|\?|~/g) !== null) return false
 	if (projectName.value.endsWith('.')) return false
