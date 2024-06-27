@@ -191,12 +191,13 @@ export class TauriFileSystem extends BaseFileSystem {
 		if (this.basePath === null) throw new Error('Base path not set!')
 
 		try {
-			return (await readDir(join(this.basePath, path))).map((entry) => {
-				return {
-					type: (entry.children !== undefined ? 'directory' : 'file') as 'directory' | 'file',
-					path: entry.path.substring(this.basePath?.length ?? 0).replaceAll(sep, '/'),
-				}
-			})
+			return (await readDir(join(this.basePath, path))).map(
+				(entry) =>
+					new BaseEntry(
+						entry.path.substring(this.basePath?.length ?? 0).replaceAll(sep, '/'),
+						(entry.children !== undefined ? 'directory' : 'file') as 'directory' | 'file'
+					)
+			)
 		} catch (error) {
 			console.error(`Failed to read directory "${path}"`)
 
