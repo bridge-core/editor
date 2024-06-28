@@ -1,12 +1,13 @@
-import { Dash } from '@bridge-editor/dash-compiler'
+import { Dash, initRuntimes } from '@bridge-editor/dash-compiler'
 import { CompatabilityFileSystem } from '@/libs/fileSystem/CompatabilityFileSystem'
 import { WorkerFileSystemEndPoint } from '@/libs/fileSystem/WorkerFileSystem'
 import { CompatabilityFileType } from '@/libs/data/compatability/FileType'
 import { CompatabilityPackType } from '../data/compatability/PackType'
 import { sendAndWait } from '../worker/Communication'
 import wasmUrl from '@swc/wasm-web/wasm-web_bg.wasm?url'
-import { initRuntimes } from 'bridge-js-runtime'
+import { initRuntimes as initJsRuntimes } from 'bridge-js-runtime'
 
+initJsRuntimes(wasmUrl)
 initRuntimes(wasmUrl)
 
 //@ts-ignore make path browserify work in web worker
