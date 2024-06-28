@@ -119,6 +119,20 @@ export class DashService implements AsyncDisposable {
 		}
 	}
 
+	public async compileFile(filePath: string, fileData: Uint8Array): Promise<[string[], any]> {
+		return (
+			await sendAndWait(
+				{
+					action: 'compileFile',
+					filePath,
+					fileData,
+				},
+				this.worker,
+				[fileData.buffer]
+			)
+		).result
+	}
+
 	private pathUpdated(path: unknown) {
 		if (typeof path !== 'string') return
 

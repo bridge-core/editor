@@ -5,7 +5,7 @@ import { CompatabilityFileType } from '@/libs/data/compatability/FileType'
 import { CompatabilityPackType } from '../data/compatability/PackType'
 import { sendAndWait } from '../worker/Communication'
 import wasmUrl from '@swc/wasm-web/wasm-web_bg.wasm?url'
-import { initRuntimes as initJsRuntimes } from 'bridge-js-runtime'
+import { initRuntimes as initJsRuntimes } from '@bridge-editor/js-runtime'
 
 initJsRuntimes(wasmUrl)
 initRuntimes(wasmUrl)
@@ -70,7 +70,7 @@ async function setup(config: any, configPath: string, actionId: string) {
 		},
 	})
 
-	dash.progress.onChange((progress) => {
+	dash.progress.onChange((progress: { percentage: number }) => {
 		postMessage({
 			action: 'progress',
 			progress: progress.percentage,
@@ -103,10 +103,26 @@ async function build(actionId: string) {
 	})
 }
 
+async function compileFile(actionId: string, filePath: string, fileData: Uint8Array) {
+	if (!dash) {
+		console.warn('Tried compiling file but Dash is not setup yet!')
+
+		return
+	}
+
+	postMessage({
+		action: 'compileFileComplete',
+		id: actionId,
+		result: await dash.compileFile(filePath, fileData),
+	})
+}
+
 onmessage = (event: any) => {
 	if (!event.data) return
 
 	if (event.data.action === 'setup') setup(event.data.config, event.data.configPath, event.data.id)
 
 	if (event.data.action === 'build') build(event.data.id)
+
+	if (event.data.action === 'compileFile') compileFile(event.data.id, event.data.filePath, event.data.FileData)
 }
