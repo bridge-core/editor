@@ -1,7 +1,7 @@
 import { PromptWindow } from '@/components/Windows/Prompt/PromptWindow'
 import { TabManager } from '@/components/TabSystem/TabManager'
 import { TextTab } from '@/components/Tabs/Text/TextTab'
-import { dirname, join, parse } from 'pathe'
+import { basename, dirname, join, parse } from 'pathe'
 import { getClipboard, setClipboard } from '@/libs/Clipboard'
 import { BaseEntry } from '@/libs/fileSystem/BaseFileSystem'
 import { ActionManager } from './ActionManager'
@@ -117,7 +117,7 @@ export function setupActions() {
 				if (typeof path !== 'string') return
 
 				Windows.open(
-					new PromptWindow('Create File', 'File Name', 'File Name', (name) => {
+					new PromptWindow('Create File', 'File Name', 'File Name', '', (name) => {
 						fileSystem.writeFile(join(path, name), '')
 					})
 				)
@@ -135,7 +135,7 @@ export function setupActions() {
 				if (typeof path !== 'string') return
 
 				Windows.open(
-					new PromptWindow('Create Folder', 'Folder Name', 'Folder Name', (name) => {
+					new PromptWindow('Create Folder', 'Folder Name', 'Folder Name', '', (name) => {
 						fileSystem.makeDirectory(join(path, name))
 					})
 				)
@@ -152,8 +152,11 @@ export function setupActions() {
 			trigger: async (path: unknown) => {
 				if (typeof path !== 'string') return
 
+				if (!(await fileSystem.exists(path))) return
+				const fileName = basename((await fileSystem.getEntry(path)).path)
+
 				Windows.open(
-					new PromptWindow('Rename', 'Name', 'Name', async (newPath) => {
+					new PromptWindow('Rename', 'Name', 'Name', fileName, async (newPath) => {
 						if (!(await fileSystem.exists(path))) return
 
 						const entry = await fileSystem.getEntry(path)

@@ -7,6 +7,12 @@ import { Event } from '@/libs/event/Event'
 import { Disposable } from '@/libs/disposeable/Disposeable'
 import { Extensions } from '@/libs/extensions/Extensions'
 
+enum ThemeSettings {
+	ColorScheme = 'colorScheme',
+	DarkTheme = 'darkTheme',
+	LightTheme = 'lightTheme',
+}
+
 export class ThemeManager {
 	public static themes: Theme[] = []
 	public static currentTheme: string = dark.id
@@ -16,15 +22,15 @@ export class ThemeManager {
 	private static previouslyUsedTheme: Theme = this.prefersDarkMode() ? dark : light
 
 	public static setup() {
-		Settings.addSetting('colorScheme', {
+		Settings.addSetting(ThemeSettings.ColorScheme, {
 			default: 'auto',
 		})
 
-		Settings.addSetting('darkTheme', {
+		Settings.addSetting(ThemeSettings.DarkTheme, {
 			default: 'bridge.default.dark',
 		})
 
-		Settings.addSetting('lightTheme', {
+		Settings.addSetting(ThemeSettings.LightTheme, {
 			default: 'bridge.default.light',
 		})
 

@@ -4,13 +4,10 @@ import Button from '@/components/Common/Button.vue'
 import LabeledInput from '@/components/Common/LabeledInput.vue'
 
 import { useTranslate } from '@/libs/locales/Locales'
-import { ref } from 'vue'
 import type { PromptWindow } from './PromptWindow'
 import { Windows } from '../Windows'
 
 const t = useTranslate()
-
-const input = ref('')
 
 const { window } = defineProps({
 	window: {
@@ -19,7 +16,7 @@ const { window } = defineProps({
 }) as { window: PromptWindow }
 
 function confirm() {
-	window.confirm(input.value)
+	window.confirm(window.defaultValue)
 
 	Windows.close(window)
 }
@@ -40,8 +37,8 @@ function cancel() {
 					@focus="focus"
 					@blur="blur"
 					:placeholder="t(window.placeholder)"
-					:value="input"
-					@input="(event: Event) => (input = (<HTMLInputElement>event.target).value)"
+					:value="window.defaultValue"
+					@input="(event: Event) => (window.defaultValue = (<HTMLInputElement>event.target).value)"
 				/>
 			</LabeledInput>
 
