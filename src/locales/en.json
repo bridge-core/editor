@@ -422,6 +422,10 @@
 		},
 		"more": {
 			"name": "More"
+		},
+		"clearNotifications": {
+			"name": "Clear Notifications",
+			"description": "Clears all notifications"
 		}
 	},
 	"toolbar": {

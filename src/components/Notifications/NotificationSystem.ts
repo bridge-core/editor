@@ -88,6 +88,12 @@ export class NotificationSystem {
 		NotificationSystem.notifications.value = [...NotificationSystem.notifications.value]
 	}
 
+	public static clearNotifications() {
+		for (let i = this.notifications.value.length - 1; i >= 0; i--) {
+			this.clearNotification(this.notifications.value[i])
+		}
+	}
+
 	public static setProgress(notification: Notification, progress: number) {
 		notification.progress = progress
 		NotificationSystem.notifications.value = [...NotificationSystem.notifications.value]

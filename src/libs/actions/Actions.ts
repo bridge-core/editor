@@ -8,6 +8,7 @@ import { ActionManager } from './ActionManager'
 import { Action } from './Action'
 import { fileSystem } from '@/libs/fileSystem/FileSystem'
 import { Windows } from '@/components/Windows/Windows'
+import { NotificationSystem } from '@/components/Notifications/NotificationSystem'
 
 export function setupActions() {
 	ActionManager.addAction(
@@ -356,6 +357,18 @@ export function setupActions() {
 			name: 'actions.documentationLookup.name',
 			description: 'actions.documentationLookup.description', //INCORRECT LOCALISATION?
 			icon: 'menu_book',
+		})
+	)
+
+	ActionManager.addAction(
+		new Action({
+			id: 'clearNotifications',
+			trigger: () => {
+				NotificationSystem.clearNotifications()
+			},
+			name: 'actions.clearNotifications.name',
+			description: 'actions.clearNotifications.description',
+			icon: 'delete_forever',
 		})
 	)
 }
