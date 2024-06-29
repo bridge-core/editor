@@ -27,6 +27,7 @@ const isInstalled = Extensions.useIsInstalled()
 					v-slot="{ focus, blur }"
 					:label="t('Search Extensions')"
 					class="bg-background-secondary !mt-1"
+					border-color="backgroundTertiary"
 				>
 					<div class="flex gap-1">
 						<Icon icon="search" class="transition-colors duration-100 ease-out" />
