@@ -61,6 +61,16 @@ export class CommandData {
 			commands = commands.concat(entry.commands)
 		}
 
+		commands = commands.concat(
+			Object.entries(this.project.schemaData.dashComponentsData.get('command')).flatMap(([name, schemas]) => {
+				return schemas.map((schema: any) => ({
+					commandName: name,
+					description: schema.description,
+					arguments: schema.arguments,
+				}))
+			})
+		)
+
 		commands = commands.filter((command) => command)
 
 		return commands

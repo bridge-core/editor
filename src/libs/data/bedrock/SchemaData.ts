@@ -9,7 +9,7 @@ import { ProjectManager } from '@/libs/project/ProjectManager'
 import { Data } from '@/libs/data/Data'
 import { Disposable, disposeAll } from '@/libs/disposeable/Disposeable'
 import { join, basename, dirname, resolve } from 'pathe'
-import { DashComponentData } from './DashComponentData'
+import { DashData } from './DashData'
 
 /*
 Building the schema for a file is a little complicated.
@@ -51,12 +51,12 @@ export class SchemaData implements Disposable {
 	private filesToUpdate: { path: string; fileType?: string; schemaUri?: string }[] = []
 
 	private runtime = new Runtime(fileSystem)
-	private dashComponentsData
+	public dashComponentsData: DashData
 
 	private disposables: Disposable[] = []
 
 	constructor(public project: BedrockProject) {
-		this.dashComponentsData = new DashComponentData(this.project)
+		this.dashComponentsData = new DashData(this.project)
 	}
 
 	private fixPaths(schemas: { [key: string]: any }) {
