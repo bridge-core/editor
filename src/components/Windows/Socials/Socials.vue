@@ -13,7 +13,6 @@ function openDiscord() {
 }
 
 function openTwitter() {
-	//Should be X but I hate that name.
 	window.open('https://twitter.com/bridgeIDE')
 }
 
