@@ -23,7 +23,7 @@ export class Extension {
 
 	private manifest: ExtensionManifest | null = null
 	public themes: Theme[] = []
-	public presets: any[] = []
+	public presets: any = {}
 	public snippets: Snippet[] = []
 
 	constructor(public path: string) {}
@@ -55,13 +55,13 @@ export class Extension {
 			}
 		}
 
-		const presetsPath = join(this.path, 'presets')
-		if (await fileSystem.exists(presetsPath)) {
-			for (const entry of await fileSystem.readDirectoryEntries(presetsPath)) {
-				const preset: any = await fileSystem.readFileJson(entry.path)
+		const presetPath = join(this.path, 'presets.json')
+		if (await fileSystem.exists(presetPath)) {
+			const presets = await fileSystem.readFileJson(presetPath)
 
-				this.presets.push(preset)
-			}
+			this.presets = Object.fromEntries(
+				Object.entries(presets).map(([path, value]) => [join(this.path, path), value])
+			)
 		}
 
 		const snippetsPath = join(this.path, 'snippets')

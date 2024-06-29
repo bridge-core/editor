@@ -168,7 +168,7 @@ const filteredCategories = computed(() => {
 
 						<div v-for="[fieldName, fieldId, fieldOptions] of selectedPreset.fields" :key="fieldId">
 							<LabeledInput
-								v-if="!fieldOptions.type"
+								v-if="!fieldOptions || !fieldOptions.type"
 								:label="fieldName"
 								class="mb-6 flex-1 bg-background"
 								v-slot="{ focus, blur }"
@@ -187,7 +187,7 @@ const filteredCategories = computed(() => {
 							</LabeledInput>
 
 							<LabeledInput
-								v-if="fieldOptions.type === 'fileInput'"
+								v-if="fieldOptions && fieldOptions.type === 'fileInput'"
 								:label="fieldName"
 								class="mb-6 flex bg-background"
 								v-slot="{ focus, blur }"
@@ -204,7 +204,10 @@ const filteredCategories = computed(() => {
 								</button>
 							</LabeledInput>
 
-							<div v-if="fieldOptions.type === 'switch'" class="mb-6 flex gap-4 items-center">
+							<div
+								v-if="fieldOptions && fieldOptions.type === 'switch'"
+								class="mb-6 flex gap-4 items-center"
+							>
 								<Switch
 									:model-value="createPresetOptions[fieldId]"
 									@update:modelValue="
@@ -217,7 +220,9 @@ const filteredCategories = computed(() => {
 
 							<Dropdown
 								v-if="
-									fieldOptions.type === 'selectInput' && typeof fieldOptions.options[0] === 'object'
+									fieldOptions &&
+									fieldOptions.type === 'selectInput' &&
+									typeof fieldOptions.options[0] === 'object'
 								"
 								class="mb-6 flex-1"
 							>
@@ -264,7 +269,9 @@ const filteredCategories = computed(() => {
 
 							<Dropdown
 								v-if="
-									fieldOptions.type === 'selectInput' && typeof fieldOptions.options[0] === 'string'
+									fieldOptions &&
+									fieldOptions.type === 'selectInput' &&
+									typeof fieldOptions.options[0] === 'string'
 								"
 								class="mb-6 flex-1"
 							>

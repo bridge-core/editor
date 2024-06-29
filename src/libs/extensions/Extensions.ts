@@ -19,6 +19,7 @@ export class Extensions {
 
 	public static themes: Theme[] = []
 	public static snippets: Snippet[] = []
+	public static presets: Record<string, any> = {}
 
 	public static loaded: boolean = false
 
@@ -109,6 +110,11 @@ export class Extensions {
 
 		this.themes = Object.values(this.activeExtensions).flatMap((extension) => extension.themes)
 		this.snippets = Object.values(this.activeExtensions).flatMap((extension) => extension.snippets)
+
+		this.presets = {}
+		for (const extension of Object.values(this.activeExtensions)) {
+			this.presets = { ...this.presets, ...extension.presets }
+		}
 
 		this.updated.dispatch(undefined)
 	}

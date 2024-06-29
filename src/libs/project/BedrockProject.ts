@@ -53,6 +53,7 @@ export class BedrockProject extends Project {
 
 		this.indexerService.dispose()
 		this.schemaData.dispose()
+		this.presetData.dispose()
 
 		await this.dashService.dispose()
 
