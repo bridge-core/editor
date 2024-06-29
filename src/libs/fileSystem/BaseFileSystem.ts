@@ -38,6 +38,7 @@ export class BaseFileSystem {
 
 	public async copyFile(path: string, newPath: string) {
 		const contents = await this.readFile(path)
+
 		await this.writeFile(newPath, contents)
 	}
 
