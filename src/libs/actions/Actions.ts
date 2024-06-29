@@ -176,6 +176,7 @@ export function setupActions() {
 								await fileSystem.removeFile(path)
 							}
 						},
+						() => {},
 						fileName
 					)
 				)
