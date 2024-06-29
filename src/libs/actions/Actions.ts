@@ -118,7 +118,7 @@ export function setupActions() {
 				if (typeof path !== 'string') return
 
 				Windows.open(
-					new PromptWindow('Create File', 'File Name', 'File Name', '', (name) => {
+					new PromptWindow('Create File', 'File Name', 'File Name', (name) => {
 						fileSystem.writeFile(join(path, name), '')
 					})
 				)
@@ -136,7 +136,7 @@ export function setupActions() {
 				if (typeof path !== 'string') return
 
 				Windows.open(
-					new PromptWindow('Create Folder', 'Folder Name', 'Folder Name', '', (name) => {
+					new PromptWindow('Create Folder', 'Folder Name', 'Folder Name', (name) => {
 						fileSystem.makeDirectory(join(path, name))
 					})
 				)
@@ -157,21 +157,27 @@ export function setupActions() {
 				const fileName = basename((await fileSystem.getEntry(path)).path)
 
 				Windows.open(
-					new PromptWindow('Rename', 'Name', 'Name', fileName, async (newPath) => {
-						if (!(await fileSystem.exists(path))) return
+					new PromptWindow(
+						'Rename',
+						'Name',
+						'Name',
+						async (newPath) => {
+							if (!(await fileSystem.exists(path))) return
 
-						const entry = await fileSystem.getEntry(path)
+							const entry = await fileSystem.getEntry(path)
 
-						if (entry.kind === 'directory') {
-							await fileSystem.copyDirectory(path, join(dirname(path), newPath))
-							await fileSystem.removeDirectory(path)
-						}
+							if (entry.kind === 'directory') {
+								await fileSystem.copyDirectory(path, join(dirname(path), newPath))
+								await fileSystem.removeDirectory(path)
+							}
 
-						if (entry.kind === 'file') {
-							await fileSystem.copyFile(path, join(dirname(path), newPath))
-							await fileSystem.removeFile(path)
-						}
-					})
+							if (entry.kind === 'file') {
+								await fileSystem.copyFile(path, join(dirname(path), newPath))
+								await fileSystem.removeFile(path)
+							}
+						},
+						fileName
+					)
 				)
 			},
 			name: 'actions.rename.name',

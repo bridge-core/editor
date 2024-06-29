@@ -12,9 +12,9 @@ export class PromptWindow extends Window {
 		name: string,
 		public label: string,
 		public placeholder: string,
-		public defaultValue: string, //Can't exactly make default value optional...
 		public confirmCallback: (input: string) => void,
-		public cancelCallback: () => void = () => {}
+		public cancelCallback: () => void = () => {},
+		public defaultValue?: string
 	) {
 		super()
 
