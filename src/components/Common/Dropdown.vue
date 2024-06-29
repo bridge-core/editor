@@ -9,6 +9,7 @@ const emit = defineEmits(['expanded', 'collapsed'])
 
 function toggleExpanded() {
 	expanded.value = !expanded.value
+
 	if (expanded.value) {
 		emit('expanded')
 	} else {
