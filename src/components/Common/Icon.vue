@@ -27,6 +27,7 @@ const mdiMap: { [key: string]: string | undefined } = {
 	'mdi-ab-testing': 'help',
 	'mdi-alpha-m': 'help',
 	'mdi-alpha-m-box-outline': 'data_object',
+	'mdi-web': 'language',
 }
 
 defineProps({

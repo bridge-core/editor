@@ -371,6 +371,7 @@
 		},
 		"documentationLookup": {
 			"name": "View Documentation",
+			"description": "Opens relevant documentation",
 			"noDocumentation": "No documentation available for"
 		},
 		"toggleReadOnly": {
@@ -422,6 +423,10 @@
 		},
 		"more": {
 			"name": "More"
+		},
+		"clearNotifications": {
+			"name": "Clear Notifications",
+			"description": "Clears all notifications"
 		}
 	},
 	"toolbar": {

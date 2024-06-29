@@ -9,9 +9,11 @@
 			</button>
 		</div>
 		<div class="flex gap-4 items-center">
-			<div class="flex gap-2 items-center" @click="openChangelog">
+			<div class="flex gap-2 items-center hover:cursor-pointer" @click="openChangelog">
 				<Logo class="w-4" />
-				<span class="text-sm text-textAlternate font-inter"> v{{ appVersion }} </span>
+				<span class="text-sm text-text-secondary font-inter transition ease-out hover:text-accent duration-100">
+					v{{ appVersion }}
+				</span>
 			</div>
 
 			<div v-if="tauriBuild" class="flex gap-2 items-center">

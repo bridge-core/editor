@@ -13,7 +13,8 @@ export class PromptWindow extends Window {
 		public label: string,
 		public placeholder: string,
 		public confirmCallback: (input: string) => void,
-		public cancelCallback: () => void = () => {}
+		public cancelCallback: () => void = () => {},
+		public defaultValue?: string
 	) {
 		super()
 

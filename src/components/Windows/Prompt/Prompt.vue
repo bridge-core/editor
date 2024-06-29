@@ -10,13 +10,13 @@ import { Windows } from '../Windows'
 
 const t = useTranslate()
 
-const input = ref('')
-
 const { window } = defineProps({
 	window: {
 		required: true,
 	},
 }) as { window: PromptWindow }
+
+const input = ref(window.defaultValue ?? '')
 
 function confirm() {
 	window.confirm(input.value)

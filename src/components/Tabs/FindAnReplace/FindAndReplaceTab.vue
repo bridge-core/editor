@@ -128,19 +128,19 @@ function startSearch() {
 					class="cursor-pointer"
 					@click="TabManager.openFile(path)"
 				>
-					<span class="text-textAlternate">{{ result.previousContext ?? '' }}</span>
+					<span class="text-text-secondary">{{ result.previousContext ?? '' }}</span>
 
 					<span v-if="replace === '' || replace === search" class="text-primary font-bold">{{
 						result.value
 					}}</span>
 
 					<span v-else>
-						<span class="text-textAlternate line-through">{{ result.value }}</span>
+						<span class="text-text-secondary line-through">{{ result.value }}</span>
 
 						<span class="text-primary font-bold">{{ replace }}</span>
 					</span>
 
-					<span class="text-textAlternate">{{ result.nextContext ?? '' }}</span>
+					<span class="text-text-secondary">{{ result.nextContext ?? '' }}</span>
 				</div>
 			</div>
 		</div>

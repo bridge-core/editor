@@ -1,13 +1,14 @@
 import { PromptWindow } from '@/components/Windows/Prompt/PromptWindow'
 import { TabManager } from '@/components/TabSystem/TabManager'
 import { TextTab } from '@/components/Tabs/Text/TextTab'
-import { dirname, join, parse } from 'pathe'
+import { basename, dirname, join, parse } from 'pathe'
 import { getClipboard, setClipboard } from '@/libs/Clipboard'
 import { BaseEntry } from '@/libs/fileSystem/BaseFileSystem'
 import { ActionManager } from './ActionManager'
 import { Action } from './Action'
 import { fileSystem } from '@/libs/fileSystem/FileSystem'
 import { Windows } from '@/components/Windows/Windows'
+import { NotificationSystem } from '@/components/Notifications/NotificationSystem'
 
 export function setupActions() {
 	ActionManager.addAction(
@@ -42,6 +43,9 @@ export function setupActions() {
 				focusedTab.copy()
 			},
 			keyBinding: 'Ctrl + C',
+			name: 'actions.copy.name',
+			description: 'actions.copy.description',
+			icon: 'content_copy',
 		})
 	)
 
@@ -58,6 +62,9 @@ export function setupActions() {
 				focusedTab.paste()
 			},
 			keyBinding: 'Ctrl + V',
+			name: 'actions.paste.name',
+			description: 'actions.paste.description',
+			icon: 'content_paste',
 		})
 	)
 
@@ -74,6 +81,9 @@ export function setupActions() {
 				focusedTab.cut()
 			},
 			keyBinding: 'Ctrl + X',
+			name: 'actions.cut.name',
+			description: 'actions.cut.description',
+			icon: 'content_cut',
 		})
 	)
 
@@ -95,6 +105,9 @@ export function setupActions() {
 					await fileSystem.removeFile(path)
 				}
 			},
+			name: 'actions.delete.name',
+			description: 'actions.delete.description',
+			icon: 'delete',
 		})
 	)
 
@@ -110,6 +123,9 @@ export function setupActions() {
 					})
 				)
 			},
+			name: 'actions.createFile.name',
+			description: 'actions.createFile.description',
+			icon: 'note_add',
 		})
 	)
 
@@ -125,6 +141,9 @@ export function setupActions() {
 					})
 				)
 			},
+			name: 'actions.createFolder.name',
+			description: 'actions.createFolder.description',
+			icon: 'create_new_folder',
 		})
 	)
 
@@ -134,24 +153,36 @@ export function setupActions() {
 			trigger: async (path: unknown) => {
 				if (typeof path !== 'string') return
 
+				if (!(await fileSystem.exists(path))) return
+				const fileName = basename((await fileSystem.getEntry(path)).path)
+
 				Windows.open(
-					new PromptWindow('Rename', 'Name', 'Name', async (newPath) => {
-						if (!(await fileSystem.exists(path))) return
+					new PromptWindow(
+						'Rename',
+						'Name',
+						'Name',
+						async (newPath) => {
+							if (!(await fileSystem.exists(path))) return
 
-						const entry = await fileSystem.getEntry(path)
+							const entry = await fileSystem.getEntry(path)
 
-						if (entry.kind === 'directory') {
-							await fileSystem.copyDirectory(path, join(dirname(path), newPath))
-							await fileSystem.removeDirectory(path)
-						}
+							if (entry.kind === 'directory') {
+								await fileSystem.copyDirectory(path, join(dirname(path), newPath))
+								await fileSystem.removeDirectory(path)
+							}
 
-						if (entry.kind === 'file') {
-							await fileSystem.copyFile(path, join(dirname(path), newPath))
-							await fileSystem.removeFile(path)
-						}
-					})
+							if (entry.kind === 'file') {
+								await fileSystem.copyFile(path, join(dirname(path), newPath))
+								await fileSystem.removeFile(path)
+							}
+						},
+						fileName
+					)
 				)
 			},
+			name: 'actions.rename.name',
+			description: 'actions.rename.description',
+			icon: 'text_fields_alt',
 		})
 	)
 
@@ -185,6 +216,9 @@ export function setupActions() {
 					await fileSystem.copyFile(path, newPath)
 				}
 			},
+			name: 'actions.duplicate.name',
+			description: 'actions.duplicate.description',
+			icon: 'file_copy',
 		})
 	)
 
@@ -198,6 +232,9 @@ export function setupActions() {
 
 				setClipboard(await fileSystem.getEntry(path))
 			},
+			name: 'actions.copyFile.name',
+			description: 'actions.copyFile.description',
+			icon: 'file_copy',
 		})
 	)
 
@@ -233,6 +270,9 @@ export function setupActions() {
 					await fileSystem.copyFile(clipboardEntry.path, newPath)
 				}
 			},
+			name: 'actions.pasteFile.name',
+			description: 'actions.pasteFile.description',
+			icon: 'content_paste',
 		})
 	)
 
@@ -248,6 +288,9 @@ export function setupActions() {
 
 				focusedTab.format()
 			},
+			name: 'actions.formatDocument.name',
+			description: 'actions.formatDocument.description',
+			icon: 'edit_document',
 		})
 	)
 
@@ -263,6 +306,9 @@ export function setupActions() {
 
 				focusedTab.goToSymbol()
 			},
+			name: 'actions.goToSymbol.name',
+			description: 'actions.goToSymbol.description',
+			icon: 'arrow_forward',
 		})
 	)
 
@@ -278,6 +324,9 @@ export function setupActions() {
 
 				focusedTab.changeAllOccurrences()
 			},
+			name: 'actions.changeAllOccurrences.name',
+			description: 'actions.changeAllOccurrences.description',
+			icon: 'change_circle', // TODO: Pick a better icon
 		})
 	)
 
@@ -293,6 +342,9 @@ export function setupActions() {
 
 				focusedTab.goToDefinition()
 			},
+			name: 'actions.goToDefinition.name',
+			description: 'actions.goToDefinition.description',
+			icon: 'search',
 		})
 	)
 
@@ -308,6 +360,21 @@ export function setupActions() {
 
 				focusedTab.viewDocumentation()
 			},
+			name: 'actions.documentationLookup.name',
+			description: 'actions.documentationLookup.description',
+			icon: 'menu_book',
+		})
+	)
+
+	ActionManager.addAction(
+		new Action({
+			id: 'clearNotifications',
+			trigger: () => {
+				NotificationSystem.clearNotifications()
+			},
+			name: 'actions.clearNotifications.name',
+			description: 'actions.clearNotifications.description',
+			icon: 'delete_forever',
 		})
 	)
 }

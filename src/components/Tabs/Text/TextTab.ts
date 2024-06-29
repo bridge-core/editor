@@ -1,6 +1,6 @@
 import { Component, ref } from 'vue'
 import TextTabComponent from '@/components/Tabs/Text/TextTab.vue'
-import { Position, Uri, editor, editor as monaco, Range, languages } from 'monaco-editor'
+import { Position, Uri, editor, editor as monaco, Range } from 'monaco-editor'
 import { keyword } from 'color-convert'
 import { fileSystem } from '@/libs/fileSystem/FileSystem'
 import { setMonarchTokensProvider } from '@/libs/monaco/Json'
@@ -10,6 +10,27 @@ import { ProjectManager } from '@/libs/project/ProjectManager'
 import { FileTab } from '@/components/TabSystem/FileTab'
 import { Settings } from '@/libs/settings/Settings'
 import { Disposable, disposeAll } from '@/libs/disposeable/Disposeable'
+
+enum EditorSettings {
+	JsonEditor = 'jsonEditor',
+	BracketPairColorization = 'bracketPairColorization',
+	WordWrap = 'wordWrap',
+	WordWrapColumns = 'wordWrapColumns',
+	KeepTabsOpen = 'keepTabsOpen',
+	AutoSaveChanges = 'autoSaveChanges',
+	ShowTreeEditorLocationBar = 'showTreeEditorLocationBar',
+	BridgePredictions = 'bridgePredictions',
+	InlineDiagnostics = 'inlineDiagnostics',
+	AutoOpenTreeNodes = 'autoOpenTreeNodes',
+	DragAndDropTreeNodes = 'dragAndDropTreeNodes',
+	ShowArrayIndices = 'showArrayIndices',
+	HideBrackets = 'hideBrackets',
+}
+
+enum JSONEditorOptions {
+	TreeEditor = 'Tree Editor',
+	RawText = 'Raw Text',
+}
 
 export class TextTab extends FileTab {
 	public component: Component | null = TextTabComponent
@@ -36,9 +57,57 @@ export class TextTab extends FileTab {
 	}
 
 	public static setup() {
-		Settings.addSetting('bracketPairColorization', {
+		Settings.addSetting(EditorSettings.JsonEditor, {
+			default: JSONEditorOptions.TreeEditor,
+		}) // TODO: Move to New Location
+
+		Settings.addSetting(EditorSettings.BracketPairColorization, {
 			default: false,
 		})
+
+		Settings.addSetting(EditorSettings.WordWrap, {
+			default: false,
+		}) // TODO: Implement Option
+
+		Settings.addSetting(EditorSettings.WordWrapColumns, {
+			default: 120,
+		}) // TODO: Implement Option
+
+		Settings.addSetting(EditorSettings.KeepTabsOpen, {
+			default: false,
+		}) // TODO: Move to New Location
+
+		Settings.addSetting(EditorSettings.AutoSaveChanges, {
+			default: false,
+		}) // TODO: Move to New Location
+
+		Settings.addSetting(EditorSettings.ShowTreeEditorLocationBar, {
+			default: true,
+		}) // TODO: Move to New Location
+
+		Settings.addSetting(EditorSettings.BridgePredictions, {
+			default: true,
+		}) // TODO: Move to New Location
+
+		Settings.addSetting(EditorSettings.InlineDiagnostics, {
+			default: true,
+		}) // TODO: Move to New Location
+
+		Settings.addSetting(EditorSettings.AutoOpenTreeNodes, {
+			default: true,
+		}) // TODO: Move to New Location
+
+		Settings.addSetting(EditorSettings.DragAndDropTreeNodes, {
+			default: true,
+		}) // TODO: Move to New Location
+
+		Settings.addSetting(EditorSettings.ShowArrayIndices, {
+			default: false,
+		}) // TODO: Move to New Location
+
+		Settings.addSetting(EditorSettings.HideBrackets, {
+			default: false,
+		}) // TODO: Move to New Location
 	}
 
 	public async create() {

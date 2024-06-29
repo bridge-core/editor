@@ -6,6 +6,7 @@ import { TabManager } from '@/components/TabSystem/TabManager'
 import { Windows } from '@/components/Windows/Windows'
 import { CompilerWindow } from '@/components/Windows/Compiler/CompilerWindow'
 import { NotificationSystem } from '@/components/Notifications/NotificationSystem'
+import { SocialsWindow } from '@/components/Windows/Socials/SocialsWindow'
 
 export function setupSidebar() {
 	Sidebar.addButton('folder', () => {
@@ -32,7 +33,9 @@ export function setupSidebar() {
 		'primary'
 	)
 
-	// NotificationSystem.addNotification('link', () => {}, 'warning') // Don't remember why I put this, maybe a social media thing?
+	NotificationSystem.addNotification('link', () => {
+		Windows.open(SocialsWindow)
+	})
 
 	NotificationSystem.addNotification('help', () => {
 		window.open('https://bridge-core.app/guide/')

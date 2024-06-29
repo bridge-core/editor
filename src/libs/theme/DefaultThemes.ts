@@ -81,10 +81,10 @@ export const light = {
 		accent: '#ffffff',
 
 		text: '#000000',
-		textAlternate: '#000000AA',
+		textSecondary: '#000000AA',
 		background: '#fafafa',
-		menu: '#e8e8e8',
-		menuAlternate: '#e0e0e0',
+		backgroundSecondary: '#e8e8e8',
+		backgroundTertiary: '#e0e0e0',
 
 		behaviorPack: '#ff5252',
 		resourcePack: '#0073FF',

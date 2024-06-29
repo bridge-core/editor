@@ -21,7 +21,7 @@ function close() {
 
 		<div class="bg-background shadow-window relative rounded-md overflow-hidden window">
 			<div class="w-full flex justify-between align-center p-2">
-				<span class="select-none ml-1 text-textAlternate font-inter">
+				<span class="select-none ml-1 text-text-secondary font-inter">
 					{{ name }}
 				</span>
 

@@ -79,7 +79,7 @@ function triggerActionAndCloseContextMenu(action: string) {
 			<ContextMenuItem text="Format" icon="edit_note" @click="triggerActionAndCloseContextMenu('format')" />
 			<ContextMenuItem
 				v-if="instance.language.value !== 'json'"
-				text="Change All Occurances"
+				text="Change All Occurences"
 				icon="edit"
 				@click="triggerActionAndCloseContextMenu('changeAllOccurrences')"
 			/>
