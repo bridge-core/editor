@@ -4,7 +4,7 @@ import { Runtime } from '@/libs/runtime/Runtime'
 import { Command, Component, DefaultConsole } from '@bridge-editor/dash-compiler'
 import { Disposable, disposeAll } from '@/libs/disposeable/Disposeable'
 
-export class DashData {
+export class DashData implements Disposable {
 	private schemas: Record<string, Record<string, any>> = {
 		block: {},
 		item: {},
