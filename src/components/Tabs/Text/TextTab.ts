@@ -59,7 +59,7 @@ export class TextTab extends FileTab {
 	public static setup() {
 		Settings.addSetting(EditorSettings.JsonEditor, {
 			default: JSONEditorOptions.TreeEditor,
-		})
+		}) // TODO: Move to New Location
 
 		Settings.addSetting(EditorSettings.BracketPairColorization, {
 			default: false,
@@ -67,47 +67,47 @@ export class TextTab extends FileTab {
 
 		Settings.addSetting(EditorSettings.WordWrap, {
 			default: false,
-		})
+		}) // TODO: Implement Option
 
 		Settings.addSetting(EditorSettings.WordWrapColumns, {
-			default: 80,
-		})
+			default: 120,
+		}) // TODO: Implement Option
 
 		Settings.addSetting(EditorSettings.KeepTabsOpen, {
 			default: false,
-		})
+		}) // TODO: Move to New Location
 
 		Settings.addSetting(EditorSettings.AutoSaveChanges, {
 			default: false,
-		})
+		}) // TODO: Move to New Location
 
 		Settings.addSetting(EditorSettings.ShowTreeEditorLocationBar, {
 			default: true,
-		})
+		}) // TODO: Move to New Location
 
 		Settings.addSetting(EditorSettings.BridgePredictions, {
 			default: true,
-		})
+		}) // TODO: Move to New Location
 
 		Settings.addSetting(EditorSettings.InlineDiagnostics, {
 			default: true,
-		})
+		}) // TODO: Move to New Location
 
 		Settings.addSetting(EditorSettings.AutoOpenTreeNodes, {
 			default: true,
-		})
+		}) // TODO: Move to New Location
 
 		Settings.addSetting(EditorSettings.DragAndDropTreeNodes, {
 			default: true,
-		})
+		}) // TODO: Move to New Location
 
 		Settings.addSetting(EditorSettings.ShowArrayIndices, {
 			default: false,
-		})
+		}) // TODO: Move to New Location
 
 		Settings.addSetting(EditorSettings.HideBrackets, {
 			default: false,
-		})
+		}) // TODO: Move to New Location
 	}
 
 	public async create() {
