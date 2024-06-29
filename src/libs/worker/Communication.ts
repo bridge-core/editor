@@ -4,7 +4,8 @@ export async function sendAndWait(
 	message: {
 		[key: string]: any
 	},
-	worker?: Worker
+	worker?: Worker,
+	transfer?: Transferable[]
 ): Promise<any> {
 	let functionToUnbind: any = null
 
@@ -27,15 +28,36 @@ export async function sendAndWait(
 		}
 
 		if (worker) {
-			worker.postMessage({
-				...message,
-				id: messageId,
-			})
+			if (transfer) {
+				worker.postMessage(
+					{
+						...message,
+						id: messageId,
+					},
+					transfer
+				)
+			} else {
+				worker.postMessage({
+					...message,
+					id: messageId,
+				})
+			}
 		} else {
-			postMessage({
-				...message,
-				id: messageId,
-			})
+			if (transfer) {
+				postMessage(
+					{
+						...message,
+						id: messageId,
+					},
+					'/',
+					transfer
+				)
+			} else {
+				postMessage({
+					...message,
+					id: messageId,
+				})
+			}
 		}
 	})
 

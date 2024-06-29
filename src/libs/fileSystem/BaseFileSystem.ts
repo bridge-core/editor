@@ -47,12 +47,18 @@ export class BaseFileSystem {
 	}
 
 	public async getEntry(path: string): Promise<BaseEntry> {
+		path = this.resolvePath(path)
+
 		try {
 			const entries = await this.readDirectoryEntries(dirname(path))
 
 			const entry = entries.find((entry) => entry.path === path)
 
-			if (!entry) throw new Error('Entry does not exist')
+			if (!entry) {
+				console.log(entries)
+
+				throw new Error('Entry does not exist')
+			}
 
 			return entry
 		} catch (error) {
@@ -98,6 +104,10 @@ export class BaseFileSystem {
 
 	public async unwatch(path: string) {
 		throw new Error('Not implemented!')
+	}
+
+	protected resolvePath(path: string): string {
+		return path
 	}
 }
 

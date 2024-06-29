@@ -1,4 +1,4 @@
-import { Runtime as BridgeRuntime, initRuntimes } from 'bridge-js-runtime'
+import { Runtime as BridgeRuntime, initRuntimes } from '@bridge-editor/js-runtime'
 import { basename } from 'pathe'
 import { BaseFileSystem } from '@/libs/fileSystem/BaseFileSystem'
 import wasmUrl from '@swc/wasm-web/wasm-web_bg.wasm?url'
@@ -23,7 +23,7 @@ export class Runtime extends BridgeRuntime {
 			arrayBuffer: () => Promise.resolve(file),
 			slice: () => new Blob(),
 			stream: () => new ReadableStream(),
-			text: () => Promise.resolve(''),
+			text: async () => await new TextDecoder().decode(file),
 		}
 	}
 }

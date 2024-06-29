@@ -403,8 +403,7 @@ export class PWAFileSystem extends BaseFileSystem {
 			if (entry.kind === 'file') {
 				let fileHash = await this.generateFileHash(entry.path)
 
-				if (this.cache[entry.path] !== fileHash)
-					this.pathUpdated.dispatch(entry.path.startsWith('/') ? entry.path.substring(1) : entry.path)
+				if (this.cache[entry.path] !== fileHash) this.pathUpdated.dispatch(this.resolvePath(entry.path))
 
 				this.cache[entry.path] = fileHash
 			}
@@ -417,13 +416,11 @@ export class PWAFileSystem extends BaseFileSystem {
 			const newPaths = hash.split('\n').filter((path) => path.length > 0)
 
 			for (const previousPath of previousPaths) {
-				if (!newPaths.includes(previousPath))
-					this.pathUpdated.dispatch(previousPath.startsWith('/') ? previousPath.substring(1) : previousPath)
+				if (!newPaths.includes(previousPath)) this.pathUpdated.dispatch(this.resolvePath(previousPath))
 			}
 
 			for (const newPath of newPaths) {
-				if (!previousPaths.includes(newPath))
-					this.pathUpdated.dispatch(newPath.startsWith('/') ? newPath.substring(1) : newPath)
+				if (!previousPaths.includes(newPath)) this.pathUpdated.dispatch(this.resolvePath(newPath))
 			}
 
 			this.pathUpdated.dispatch(path)
@@ -432,7 +429,7 @@ export class PWAFileSystem extends BaseFileSystem {
 		this.cache[path] = hash
 	}
 
-	private resolvePath(path: string) {
+	protected resolvePath(path: string) {
 		return resolve('/', path)
 	}
 }

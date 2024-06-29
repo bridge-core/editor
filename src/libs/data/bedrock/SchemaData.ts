@@ -9,6 +9,7 @@ import { ProjectManager } from '@/libs/project/ProjectManager'
 import { Data } from '@/libs/data/Data'
 import { Disposable, disposeAll } from '@/libs/disposeable/Disposeable'
 import { join, basename, dirname, resolve } from 'pathe'
+import { DashComponentData } from './DashComponentData'
 
 /*
 Building the schema for a file is a little complicated.
@@ -50,10 +51,13 @@ export class SchemaData implements Disposable {
 	private filesToUpdate: { path: string; fileType?: string; schemaUri?: string }[] = []
 
 	private runtime = new Runtime(fileSystem)
+	private dashComponentsData
 
 	private disposables: Disposable[] = []
 
-	constructor(public project: BedrockProject) {}
+	constructor(public project: BedrockProject) {
+		this.dashComponentsData = new DashComponentData(this.project)
+	}
 
 	private fixPaths(schemas: { [key: string]: any }) {
 		return Object.fromEntries(
@@ -62,6 +66,8 @@ export class SchemaData implements Disposable {
 	}
 
 	public async load() {
+		await this.dashComponentsData.setup()
+
 		this.disposables.push(this.project.indexerService.updated.on(this.indexerUpdated.bind(this)))
 		this.disposables.push(fileSystem.pathUpdated.on(this.pathUpdated.bind(this)))
 
@@ -78,6 +84,8 @@ export class SchemaData implements Disposable {
 	}
 
 	public dispose() {
+		this.dashComponentsData.dispose()
+
 		disposeAll(this.disposables)
 	}
 
@@ -502,9 +510,7 @@ export class SchemaData implements Disposable {
 							return data
 						},
 						customComponents(fileType: any) {
-							console.warn('To be implemented when custom components are implemented')
-
-							return {}
+							return me.dashComponentsData.get(fileType)
 						},
 						getIndexedPaths(fileType: string, sort: boolean) {
 							if (!me.indexerSchemaScripts.includes(scriptPath)) me.indexerSchemaScripts.push(scriptPath)

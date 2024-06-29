@@ -5,7 +5,7 @@ import { sendAndWait } from '@/libs/worker/Communication'
 import { walkObject } from 'bridge-common-utils'
 import { IConfigJson } from 'mc-project-core'
 import wasmUrl from '@swc/wasm-web/wasm-web_bg.wasm?url'
-import { initRuntimes } from 'bridge-js-runtime'
+import { initRuntimes } from '@bridge-editor/js-runtime'
 
 initRuntimes(wasmUrl)
 

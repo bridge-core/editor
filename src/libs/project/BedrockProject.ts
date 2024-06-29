@@ -11,7 +11,7 @@ import { RequirementsMatcher } from '@/libs/data/bedrock/RequirementsMatcher'
 import { Data } from '@/libs/data/Data'
 import { LangData } from '@/libs/data/bedrock/LangData'
 import { CommandData } from '@/libs/data/bedrock/CommandData'
-import { SnippetManager } from '../snippets/SnippetManager'
+import { SnippetManager } from '@/libs/snippets/SnippetManager'
 
 export class BedrockProject extends Project {
 	public packDefinitions: IPackType[] = []
@@ -33,7 +33,6 @@ export class BedrockProject extends Project {
 
 		await this.fileTypeData.load()
 		await this.indexerService.setup()
-		await this.schemaData.load()
 		await this.presetData.load()
 		await this.scriptTypeData.setup()
 
@@ -41,6 +40,8 @@ export class BedrockProject extends Project {
 		await this.commandData.setup()
 
 		await this.dashService.setup()
+
+		await this.schemaData.load()
 
 		await this.requirementsMatcher.setup()
 

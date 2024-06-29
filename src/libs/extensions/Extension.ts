@@ -2,7 +2,7 @@ import { fileSystem } from '@/libs/fileSystem/FileSystem'
 import { join } from 'pathe'
 import { dark, light } from '@/libs/theme/DefaultThemes'
 import { Theme } from '@/libs/theme/Theme'
-import { Snippet, SnippetData } from '../snippets/Snippet'
+import { Snippet, SnippetData } from '@/libs/snippets/Snippet'
 
 export interface ExtensionManifest {
 	author: string
@@ -41,7 +41,7 @@ export class Extension {
 
 				const base = theme.colorScheme === 'dark' ? dark : light
 
-				if (manifest.target != 'v2.1') {
+				if (manifest.target !== 'v2.1') {
 					theme.colors.menuAlternate = theme.colors.sidebarNavigation
 					theme.colors.accent = base.colors.text
 				}
