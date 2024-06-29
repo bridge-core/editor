@@ -125,7 +125,7 @@ export function setupActions() {
 			},
 			name: 'actions.createFile.name',
 			description: 'actions.createFile.description',
-			icon: 'note_add', //WHY IS THERE NO CREATE NEW FILE ICON?
+			icon: 'note_add',
 		})
 	)
 
@@ -326,7 +326,7 @@ export function setupActions() {
 			},
 			name: 'actions.changeAllOccurrences.name',
 			description: 'actions.changeAllOccurrences.description',
-			icon: 'change_circle', //PLACEHOLDER
+			icon: 'change_circle', // TODO: Pick a better icon
 		})
 	)
 
@@ -361,7 +361,7 @@ export function setupActions() {
 				focusedTab.viewDocumentation()
 			},
 			name: 'actions.documentationLookup.name',
-			description: 'actions.documentationLookup.description', //INCORRECT LOCALISATION?
+			description: 'actions.documentationLookup.description',
 			icon: 'menu_book',
 		})
 	)
