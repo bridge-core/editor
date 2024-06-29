@@ -19,7 +19,7 @@
 		<div class="flex align-center mb-2">
 			<Icon
 				:icon="selected ? 'task_alt' : 'circle'"
-				:color="selected ? 'success' : 'textSecondary'"
+				:color="selected ? 'success' : 'text-secondary'"
 				class="text-base mr-1"
 				:class="{ 'no-fill': !selected }"
 			/>

@@ -142,7 +142,7 @@ SettingsWindow.setup()
 
 					<!--<Button v-if="item.type === 'button'" @click="item.trigger" :text="t(item.text)" />
 
-					<p v-if="item.type !== 'custom'" class="text-textAlternate mr-6">
+					<p v-if="item.type !== 'custom'" class="text-text-secondary mr-6">
 						{{ t(item.description) }}
 					</p> -->
 				</div>

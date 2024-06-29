@@ -32,7 +32,7 @@ onMounted(() => {
 
 			<div class="flex-1 w-min">
 				<div class="flex justify-between align-center p-2">
-					<span class="select-none ml-1 text-textAlternate font-inter">
+					<span class="select-none ml-1 text-text-secondary font-inter">
 						{{ name }}
 					</span>
 					<IconButton icon="close" class="text-sm" @click="close" />
