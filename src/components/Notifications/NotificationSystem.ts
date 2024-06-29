@@ -89,8 +89,8 @@ export class NotificationSystem {
 	}
 
 	public static clearNotifications() {
-		for (let i = this.notifications.value.length - 1; i >= 0; i--) {
-			this.clearNotification(this.notifications.value[i])
+		for (const notification of [...this.notifications.value]) {
+			this.clearNotification(notification)
 		}
 	}
 
