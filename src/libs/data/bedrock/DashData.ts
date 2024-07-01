@@ -28,8 +28,8 @@ export class DashData implements Disposable {
 
 		this.disposables.push(fileSystem.pathUpdated.on(this.pathUpdated.bind(this)))
 
-		await this.generateSchemasInPath(this.componentsPath)
-		await this.generateSchemasInPath(this.commandsPath)
+		if (await fileSystem.exists(this.componentsPath)) await this.generateSchemasInPath(this.componentsPath)
+		if (await fileSystem.exists(this.commandsPath)) await this.generateSchemasInPath(this.commandsPath)
 	}
 
 	public dispose() {

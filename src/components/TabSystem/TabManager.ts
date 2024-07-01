@@ -2,14 +2,15 @@ import { ShallowRef, shallowRef } from 'vue'
 import { Tab } from './Tab'
 import { TabSystem } from './TabSystem'
 import { TextTab } from '@/components/Tabs/Text/TextTab'
-import { ImageTab } from '../Tabs/Image/ImageTab'
+import { TreeEditorTab } from '@/components/Tabs/TreeEditor/TreeEditorTab'
+import { ImageTab } from '@/components/Tabs/Image/ImageTab'
 import { FileTab } from './FileTab'
 
 export class TabManager {
 	public static tabSystems: TabSystem[] = [new TabSystem()]
 	public static focusedTabSystem: ShallowRef<TabSystem | null> = shallowRef(null)
 
-	private static tabTypes: (typeof FileTab)[] = [ImageTab, TextTab]
+	private static tabTypes: (typeof FileTab)[] = [ImageTab, TreeEditorTab, TextTab]
 
 	public static async openTab(tab: Tab) {
 		for (const tabSystem of TabManager.tabSystems) {

@@ -1,5 +1,5 @@
 import { Component, ref } from 'vue'
-import TextTabComponent from '@/components/Tabs/Text/TextTab.vue'
+import TextTabComponent from './TextTab.vue'
 import { Position, Uri, editor, editor as monaco, Range } from 'monaco-editor'
 import { keyword } from 'color-convert'
 import { fileSystem } from '@/libs/fileSystem/FileSystem'
