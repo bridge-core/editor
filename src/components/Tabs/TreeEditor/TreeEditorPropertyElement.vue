@@ -7,7 +7,7 @@ import HighlightedText from './HighlightedText.vue'
 import { ref } from 'vue'
 import { TreeEditorTab } from './TreeEditorTab'
 
-defineProps({
+const { value } = defineProps({
 	editor: {
 		required: true,
 	},
@@ -21,12 +21,18 @@ defineProps({
 })
 
 const open = ref(false)
+
+function click() {
+	if (typeof value !== 'object') return
+
+	open.value = !open.value
+}
 </script>
 
 <template>
 	<div
 		class="hover:bg-background-secondary table px-1 rounded transition-colors ease-out duration-100 cursor-pointer"
-		@click="open = !open"
+		@click="click"
 	>
 		<span class="flex gap-2">
 			<Icon
@@ -35,10 +41,11 @@ const open = ref(false)
 				:style="{
 					rotate: open ? '90deg' : 'none',
 				}"
+				:color="typeof value === 'object' ? 'text' : 'textSecondary'"
 			/>
 
-			<span
-				>"<HighlightedText :known-words="(editor as TreeEditorTab).knownWords" :value="name" type="string" />":
+			<span class="select-none" :style="{ fontFamily: 'Consolas' }">
+				"<HighlightedText :known-words="(editor as TreeEditorTab).knownWords" :value="name" type="string" />":
 			</span>
 
 			<TreeEditorValueElement v-if="!open" :editor="editor" :value="value" />

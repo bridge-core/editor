@@ -13,14 +13,19 @@ defineProps({
 </script>
 
 <template>
-	<span v-if="typeof value === 'object'">{{ Object.keys(value as Object).length === 0 ? '{}' : '{...}' }}</span>
-	<span v-else-if="typeof value === 'string'"
-		>"<HighlightedText :known-words="(editor as TreeEditorTab).knownWords" :value="value" type="string" />"</span
-	>
-	<span v-else-if="value === undefined"
-		>"<HighlightedText :known-words="(editor as TreeEditorTab).knownWords" value="undefined" type="atom" />"</span
-	>
-	<span v-else
+	<span v-if="typeof value === 'object'" class="select-none" :style="{ fontFamily: 'Consolas' }">{{
+		Object.keys(value as Object).length === 0 ? '{}' : '{...}'
+	}}</span>
+
+	<span v-else-if="typeof value === 'string'" class="select-none" :style="{ fontFamily: 'Consolas' }">
+		"<HighlightedText :known-words="(editor as TreeEditorTab).knownWords" :value="value" type="string" />"
+	</span>
+
+	<span v-else-if="value === undefined" class="select-none" :style="{ fontFamily: 'Consolas' }">
+		"<HighlightedText :known-words="(editor as TreeEditorTab).knownWords" value="undefined" type="atom" />"
+	</span>
+
+	<span v-else class="select-none" :style="{ fontFamily: 'Consolas' }"
 		><HighlightedText
 			:known-words="(editor as TreeEditorTab).knownWords"
 			:value="value.toString()"
