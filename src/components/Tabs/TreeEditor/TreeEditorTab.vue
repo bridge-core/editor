@@ -29,7 +29,7 @@ function triggerActionAndCloseContextMenu(action: string) {
 <template>
 	<div class="w-full h-full" ref="tabElement">
 		<div class="h-full w-full" ref="editorContainer">
-			<TreeEditorObjectElement :value="instance.json" />
+			<TreeEditorObjectElement :editor="instance" :value="instance.json" />
 		</div>
 
 		<FreeContextMenu class="w-56" ref="contextMenu">

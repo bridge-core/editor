@@ -2,16 +2,20 @@
 import Icon from '@/components/Common/Icon.vue'
 import TreeEditorValueElement from './TreeEditorValueElement.vue'
 import TreeEditorObjectElement from './TreeEditorObjectElement.vue'
+import HighlightedText from './HighlightedText.vue'
 
 import { ref } from 'vue'
+import { TreeEditorTab } from './TreeEditorTab'
 
 defineProps({
+	editor: {
+		required: true,
+	},
 	name: {
 		type: String,
 		required: true,
 	},
 	value: {
-		type: Object,
 		required: true,
 	},
 })
@@ -33,15 +37,17 @@ const open = ref(false)
 				}"
 			/>
 
-			<span>"{{ name }}": </span>
+			<span
+				>"<HighlightedText :known-words="(editor as TreeEditorTab).knownWords" :value="name" type="string" />":
+			</span>
 
-			<TreeEditorValueElement v-if="!open" :value="value" />
+			<TreeEditorValueElement v-if="!open" :editor="editor" :value="value" />
 			<span v-else>{</span>
 		</span>
 	</div>
 	<div v-if="open">
 		<div class="ml-4">
-			<TreeEditorObjectElement :value="value" />
+			<TreeEditorObjectElement :editor="editor" :value="<Object>value" />
 		</div>
 
 		<span class="ml-2">}</span>

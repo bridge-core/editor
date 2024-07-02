@@ -13,6 +13,12 @@ export class TreeEditorTab extends FileTab {
 	public hasDocumentation = ref(false)
 
 	public json: Ref<any> = ref({})
+	public knownWords: Record<string, string[]> = {
+		keywords: [],
+		typeIdentifiers: [],
+		variables: [],
+		definitions: [],
+	}
 
 	private fileTypeIcon: string = 'data_object'
 
@@ -55,6 +61,27 @@ export class TreeEditorTab extends FileTab {
 		await schemaData.updateSchemaForFile(this.path, this.fileType?.id, this.fileType?.schema)
 
 		this.icon.value = this.fileTypeIcon
+
+		let keywords: string[] = ['minecraft', 'bridge', ProjectManager.currentProject?.config?.namespace].filter(
+			(item) => item !== undefined
+		) as string[]
+		let typeIdentifiers: string[] = []
+		let variables: string[] = []
+		let definitions: string[] = []
+
+		if (this.fileType && this.fileType.highlighterConfiguration) {
+			keywords = [...keywords, ...(this.fileType.highlighterConfiguration.keywords ?? [])]
+			typeIdentifiers = this.fileType.highlighterConfiguration.typeIdentifiers ?? []
+			variables = this.fileType.highlighterConfiguration.variables ?? []
+			definitions = this.fileType.highlighterConfiguration.definitions ?? []
+		}
+
+		this.knownWords = {
+			keywords,
+			typeIdentifiers,
+			variables,
+			definitions,
+		}
 	}
 
 	public async destroy() {
