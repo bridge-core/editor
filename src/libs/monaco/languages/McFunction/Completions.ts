@@ -337,6 +337,12 @@ export async function provideCompletionItems(
 						)
 					)
 				}
+
+				if (argumentType.type === 'jsonData') {
+					completions = completions.concat(
+						makeCompletions(['{}'], undefined, languages.CompletionItemKind.Class, position, context.token)
+					)
+				}
 			}
 		}
 

@@ -128,6 +128,7 @@ async function getArgumentContext(
 	const blockStateVariations = variations.filter(
 		(variation) => variation.arguments[argumentIndex].type === 'blockState'
 	)
+	const jsonDataVariations = variations.filter((variation) => variation.arguments[argumentIndex].type === 'jsonData')
 
 	const basicCompletions =
 		basicVariations.length === 0
@@ -147,11 +148,16 @@ async function getArgumentContext(
 			? undefined
 			: await getBlockStateContext(line, cursor, tokenCursor, blockStateVariations, argumentIndex, command)
 
+	const jsonDataCompletions =
+		jsonDataVariations.length === 0
+			? undefined
+			: await getJsonDataContext(line, cursor, tokenCursor, jsonDataVariations, argumentIndex, command)
 	if (
 		basicCompletions === undefined &&
 		selectorCompletions === undefined &&
 		commandCompletions === undefined &&
-		blockStateCompletions === undefined
+		blockStateCompletions === undefined &&
+		jsonDataCompletions === undefined
 	)
 		return [
 			{
@@ -169,6 +175,8 @@ async function getArgumentContext(
 	if (commandCompletions !== undefined) completions = completions.concat(commandCompletions)
 
 	if (blockStateCompletions !== undefined) completions = completions.concat(blockStateCompletions)
+
+	if (jsonDataCompletions !== undefined) completions = completions.concat(jsonDataCompletions)
 
 	completions = completions.filter(
 		(suggestion: any, index: any, suggestions: any) =>
@@ -428,6 +436,32 @@ async function getBlockStateContext(
 		]
 
 	return await getArgumentContext(line, cursor, tokenCursor, variations, argumentIndex + 1, command)
+}
+
+async function getJsonDataContext(
+	line: string,
+	cursor: number,
+	tokenCursor: number,
+	variations: Command[],
+	argumentIndex: number,
+	command: string
+): Promise<Context[]> {
+	if (!(ProjectManager.currentProject instanceof BedrockProject))
+		throw new Error('The current project must be a bedrock project!')
+
+	tokenCursor = skipSpaces(line, tokenCursor)
+	const token = getNextJsonData(line, tokenCursor)
+
+	if (!token) {
+		return [
+			{
+				kind: 'jsonData',
+				token: token ?? undefined,
+			},
+		]
+	}
+
+	return await getBasicContext(line, cursor, tokenCursor, variations, argumentIndex + 1, command)
 }
 
 function matchArgument(argument: Token, type: any): boolean {
@@ -753,4 +787,42 @@ function getNextBlockState(line: string, cursor: number): Token | null {
 		word: line.substring(cursor, endCharacter),
 		start: cursor,
 	}
+}
+
+function getNextJsonData(line: string, cursor: number): Token | null {
+	if (line[cursor] === '{') {
+		let endCharacter = cursor + 1
+
+		let openBracketCount = 1
+		let withinString = false
+
+		for (; endCharacter < line.length; endCharacter++) {
+			if (line[endCharacter] === '"') {
+				if (!withinString) {
+					withinString = true
+				} else if (line[endCharacter - 1] !== '\\') {
+					withinString = false
+				}
+			}
+
+			if (withinString) continue
+
+			if (line[endCharacter] === '{') {
+				openBracketCount++
+			} else if (line[endCharacter] === '}') {
+				openBracketCount--
+
+				if (openBracketCount === 0) {
+					endCharacter++
+
+					break
+				}
+			}
+		}
+		return {
+			word: line.substring(cursor, endCharacter),
+			start: cursor,
+		}
+	}
+	return null
 }
