@@ -1,4 +1,4 @@
-import { Component, Ref, ref } from 'vue'
+import { Component, computed, ComputedRef, Ref, ref } from 'vue'
 import TreeEditorTabComponent from './TreeEditorTab.vue'
 import { fileSystem } from '@/libs/fileSystem/FileSystem'
 import { BedrockProject } from '@/libs/project/BedrockProject'
@@ -15,7 +15,7 @@ export class TreeEditorTab extends FileTab {
 
 	public tree: TreeElement = new ObjectElement(null)
 
-	public selectedTree: Ref<{ key: string; tree: TreeElement } | null> = ref(null)
+	public selectedTree: Ref<{ tree: TreeElement; key?: string } | null> = ref(null)
 
 	public knownWords: Record<string, string[]> = {
 		keywords: [],
@@ -58,8 +58,6 @@ export class TreeEditorTab extends FileTab {
 
 		try {
 			this.tree = buildTree(JSON.parse(fileContent))
-
-			console.log(this.tree)
 		} catch {}
 
 		const schemaData = ProjectManager.currentProject.schemaData
@@ -120,7 +118,12 @@ export class TreeEditorTab extends FileTab {
 		this.icon.value = this.fileTypeIcon
 	}
 
-	public select(key: string, tree: TreeElement) {
+	public select(tree: TreeElement, key?: string) {
 		this.selectedTree.value = { key, tree }
+	}
+
+	public useIsSelected(tree: TreeElement, key?: string): ComputedRef<boolean> {
+		//Proxies don't equal eachother so we use an uuid
+		return computed(() => this.selectedTree.value?.tree.id === tree.id && this.selectedTree.value?.key === key)
 	}
 }

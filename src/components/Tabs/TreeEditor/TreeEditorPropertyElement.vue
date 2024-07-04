@@ -8,24 +8,28 @@ import { ref } from 'vue'
 import { TreeEditorTab } from './TreeEditorTab'
 import { TreeElement, ObjectElement } from './Tree'
 
-const { tree, name, editor }: { tree: TreeElement; name: string; editor: TreeEditorTab } = <any>defineProps({
-	editor: {
-		required: true,
-	},
-	name: {
-		type: String,
-		required: true,
-	},
-	tree: {
-		type: TreeElement,
-		required: true,
-	},
-})
+const { tree, propertyKey, editor }: { tree: TreeElement; propertyKey: string; editor: TreeEditorTab } = <any>(
+	defineProps({
+		editor: {
+			required: true,
+		},
+		propertyKey: {
+			type: String,
+			required: true,
+		},
+		tree: {
+			type: TreeElement,
+			required: true,
+		},
+	})
+)
 
 const open = ref(false)
 
+const selected = editor.useIsSelected(tree.parent!, propertyKey)
+
 function click() {
-	editor.select(name, tree)
+	editor.select(tree.parent!, propertyKey)
 
 	if (!(tree instanceof ObjectElement)) return
 
@@ -40,11 +44,7 @@ function click() {
 				class="flex items-center gap-1 bg-[var(--color)] hover:bg-background-secondary px-1 rounded transition-colors ease-out duration-100 cursor-pointer"
 				@click="click"
 				:style="{
-					'--color':
-						//Proxies don't equal eachother so we use an uuid
-						editor.selectedTree.value?.tree?.id === tree.id
-							? 'var(--theme-color-backgroundSecondary)'
-							: 'none',
+					'--color': selected ? 'var(--theme-color-backgroundSecondary)' : 'none',
 				}"
 			>
 				<Icon
@@ -59,7 +59,7 @@ function click() {
 				<span class="select-none" :style="{ fontFamily: 'Consolas' }">
 					"<HighlightedText
 						:known-words="(editor as TreeEditorTab).knownWords"
-						:value="name"
+						:value="propertyKey"
 						type="string"
 					/>":
 				</span>

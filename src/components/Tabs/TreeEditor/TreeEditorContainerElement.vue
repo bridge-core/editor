@@ -18,7 +18,7 @@ defineProps({
 		<TreeEditorPropertyElement
 			:editor="editor"
 			v-for="key in Object.keys(tree.children)"
-			:name="key"
+			:property-key="key"
 			:tree="tree.children[key]"
 		/>
 	</div>
