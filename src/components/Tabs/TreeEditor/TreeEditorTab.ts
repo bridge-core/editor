@@ -15,6 +15,8 @@ export class TreeEditorTab extends FileTab {
 
 	public tree: TreeElement = new ObjectElement(null)
 
+	public selectedTree: Ref<{ key: string; tree: TreeElement } | null> = ref(null)
+
 	public knownWords: Record<string, string[]> = {
 		keywords: [],
 		typeIdentifiers: [],
@@ -116,5 +118,9 @@ export class TreeEditorTab extends FileTab {
 		this.icon.value = 'loading'
 
 		this.icon.value = this.fileTypeIcon
+	}
+
+	public select(key: string, tree: TreeElement) {
+		this.selectedTree.value = { key, tree }
 	}
 }

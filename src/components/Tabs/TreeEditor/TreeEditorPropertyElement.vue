@@ -8,7 +8,7 @@ import { ref } from 'vue'
 import { TreeEditorTab } from './TreeEditorTab'
 import { TreeElement, ObjectElement } from './Tree'
 
-const { tree } = defineProps({
+const { tree, name, editor }: { tree: TreeElement; name: string; editor: TreeEditorTab } = <any>defineProps({
 	editor: {
 		required: true,
 	},
@@ -25,6 +25,8 @@ const { tree } = defineProps({
 const open = ref(false)
 
 function click() {
+	editor.select(name, tree)
+
 	if (!(tree instanceof ObjectElement)) return
 
 	open.value = !open.value
@@ -35,8 +37,15 @@ function click() {
 	<div class="table">
 		<span class="flex items-end gap-2">
 			<span
-				class="flex items-center gap-1 hover:bg-background-secondary px-1 rounded transition-colors ease-out duration-100 cursor-pointer"
+				class="flex items-center gap-1 bg-[var(--color)] hover:bg-background-secondary px-1 rounded transition-colors ease-out duration-100 cursor-pointer"
 				@click="click"
+				:style="{
+					'--color':
+						//Proxies don't equal eachother so we use an uuid
+						editor.selectedTree.value?.tree?.id === tree.id
+							? 'var(--theme-color-backgroundSecondary)'
+							: 'none',
+				}"
 			>
 				<Icon
 					icon="chevron_right"

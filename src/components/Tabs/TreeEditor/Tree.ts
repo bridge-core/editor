@@ -1,4 +1,8 @@
+import { v4 as uuid } from 'uuid'
+
 export class TreeElement {
+	public id = uuid()
+
 	public constructor(public parent: TreeElement | null) {}
 }
 
@@ -30,7 +34,7 @@ export function buildTree(
 	if (Array.isArray(json)) {
 		const element = new ArrayElement(parent)
 
-		element.children = json.map((child) => buildTree(child, element))
+		element.children = json.map((child, index) => buildTree(child, element))
 
 		return element
 	} else if (json === null) {
