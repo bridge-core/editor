@@ -38,7 +38,7 @@ function click() {
 
 <template>
 	<div class="table">
-		<span class="flex items-end gap-2">
+		<span class="flex items-end">
 			<span
 				class="flex items-center gap-1 bg-[var(--color)] hover:bg-background-secondary px-1 rounded transition-colors ease-out duration-100 cursor-pointer"
 				@click="click"

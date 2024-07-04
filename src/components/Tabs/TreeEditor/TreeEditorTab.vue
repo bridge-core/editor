@@ -1,11 +1,16 @@
 <script setup lang="ts">
 import ContextMenuItem from '@/components/Common/ContextMenuItem.vue'
 import TreeEditorObjectElement from './TreeEditorContainerElement.vue'
+import Dropdown from '@/components/Common/Dropdown.vue'
+import LabeledInput from '@/components/Common/LabeledInput.vue'
 
 import { Ref, onMounted, onUnmounted, ref } from 'vue'
 import { type TreeEditorTab } from './TreeEditorTab'
 import FreeContextMenu from '@/components/Common/FreeContextMenu.vue'
 import { ActionManager } from '@/libs/actions/ActionManager'
+import { useTranslate } from '@/libs/locales/Locales'
+
+const t = useTranslate()
 
 const { instance }: { instance: TreeEditorTab } = <any>defineProps({
 	instance: {
@@ -24,12 +29,19 @@ function triggerActionAndCloseContextMenu(action: string) {
 }
 
 //@contextmenu.prevent="contextMenu?.open"
+
+const addObjectValue = ref('')
+const addObjectSuggestions = ref(['cool', 'woah', 'okay'])
 </script>
 
 <template>
 	<div class="w-full h-full" ref="tabElement">
-		<div class="h-full w-full" ref="editorContainer">
-			<TreeEditorObjectElement :editor="instance" :tree="instance.tree" />
+		<div class="h-full w-full flex flex-col" ref="editorContainer">
+			<div class="w-full flex-1 overflow-auto">
+				<TreeEditorObjectElement :editor="instance" :tree="instance.tree" />
+			</div>
+
+			<div class="bg-background-secondary rounded-t w-full h-20 flex"></div>
 		</div>
 
 		<FreeContextMenu class="w-56" ref="contextMenu">

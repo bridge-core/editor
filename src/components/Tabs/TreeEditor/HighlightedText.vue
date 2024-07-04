@@ -78,6 +78,8 @@ function parse(): { word: string; color?: string }[] {
 
 	if (atoms.includes(value)) return [{ word: value, color: getColor('atom') }]
 
+	if (type === 'number') return [{ word: value, color: getColor('number') }]
+
 	return [{ word: value }]
 }
 
