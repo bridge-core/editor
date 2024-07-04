@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import HighlightedText from './HighlightedText.vue'
-import { ObjectElement, TreeElement, ValueElement } from './Tree'
+import { ArrayElement, ObjectElement, TreeElement, ValueElement } from './Tree'
 import { TreeEditorTab } from './TreeEditorTab'
 
 const { tree, editor }: { tree: TreeElement; editor: TreeEditorTab } = <any>defineProps({
@@ -16,7 +16,7 @@ const { tree, editor }: { tree: TreeElement; editor: TreeEditorTab } = <any>defi
 const emit = defineEmits(['click'])
 
 function click(event: Event) {
-	if (tree instanceof ObjectElement) emit('click')
+	if (tree instanceof ObjectElement || tree instanceof ArrayElement) emit('click')
 }
 
 function select(event: Event) {
@@ -36,6 +36,10 @@ const selected = editor.useIsSelected(tree)
 	>
 		<span v-if="tree instanceof ObjectElement" class="select-none" :style="{ fontFamily: 'Consolas' }">{{
 			Object.keys(tree.children).length === 0 ? '{}' : '{...}'
+		}}</span>
+
+		<span v-else-if="tree instanceof ArrayElement" class="select-none" :style="{ fontFamily: 'Consolas' }">{{
+			tree.children.length === 0 ? '[]' : '[...]'
 		}}</span>
 
 		<span

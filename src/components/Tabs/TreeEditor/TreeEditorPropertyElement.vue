@@ -6,15 +6,14 @@ import HighlightedText from './HighlightedText.vue'
 
 import { ref } from 'vue'
 import { TreeEditorTab } from './TreeEditorTab'
-import { TreeElement, ObjectElement } from './Tree'
+import { TreeElement, ObjectElement, ArrayElement } from './Tree'
 
-const { tree, propertyKey, editor }: { tree: TreeElement; propertyKey: string; editor: TreeEditorTab } = <any>(
+const { tree, elementKey, editor }: { tree: TreeElement; elementKey: string | number; editor: TreeEditorTab } = <any>(
 	defineProps({
 		editor: {
 			required: true,
 		},
-		propertyKey: {
-			type: String,
+		elementKey: {
 			required: true,
 		},
 		tree: {
@@ -26,12 +25,12 @@ const { tree, propertyKey, editor }: { tree: TreeElement; propertyKey: string; e
 
 const open = ref(false)
 
-const selected = editor.useIsSelected(tree.parent!, propertyKey)
+const selected = editor.useIsSelected(tree.parent!, elementKey)
 
 function click() {
-	editor.select(tree.parent!, propertyKey)
+	editor.select(tree.parent!, elementKey)
 
-	if (!(tree instanceof ObjectElement)) return
+	if (!(tree instanceof ObjectElement || tree instanceof ArrayElement)) return
 
 	open.value = !open.value
 }
@@ -53,13 +52,13 @@ function click() {
 					:style="{
 						rotate: open ? '90deg' : 'none',
 					}"
-					:color="tree instanceof ObjectElement ? 'text' : 'textSecondary'"
+					:color="tree instanceof ObjectElement || tree instanceof ArrayElement ? 'text' : 'textSecondary'"
 				/>
 
-				<span class="select-none" :style="{ fontFamily: 'Consolas' }">
+				<span v-if="typeof elementKey === 'string'" class="select-none" :style="{ fontFamily: 'Consolas' }">
 					"<HighlightedText
 						:known-words="(editor as TreeEditorTab).knownWords"
-						:value="propertyKey"
+						:value="elementKey"
 						type="string"
 					/>":
 				</span>
@@ -69,6 +68,7 @@ function click() {
 			<span v-else class="select-none">{</span>
 		</span>
 	</div>
+
 	<div v-if="open">
 		<div class="ml-4">
 			<TreeEditorObjectElement :editor="editor" :tree="tree" />

@@ -15,7 +15,7 @@ export class TreeEditorTab extends FileTab {
 
 	public tree: TreeElement = new ObjectElement(null)
 
-	public selectedTree: Ref<{ tree: TreeElement; key?: string } | null> = ref(null)
+	public selectedTree: Ref<{ tree: TreeElement; key?: string | number } | null> = ref(null)
 
 	public knownWords: Record<string, string[]> = {
 		keywords: [],
@@ -118,11 +118,11 @@ export class TreeEditorTab extends FileTab {
 		this.icon.value = this.fileTypeIcon
 	}
 
-	public select(tree: TreeElement, key?: string) {
+	public select(tree: TreeElement, key?: string | number) {
 		this.selectedTree.value = { key, tree }
 	}
 
-	public useIsSelected(tree: TreeElement, key?: string): ComputedRef<boolean> {
+	public useIsSelected(tree: TreeElement, key?: string | number): ComputedRef<boolean> {
 		//Proxies don't equal eachother so we use an uuid
 		return computed(() => this.selectedTree.value?.tree.id === tree.id && this.selectedTree.value?.key === key)
 	}
