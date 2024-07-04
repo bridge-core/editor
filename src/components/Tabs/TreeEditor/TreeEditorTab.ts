@@ -5,6 +5,7 @@ import { BedrockProject } from '@/libs/project/BedrockProject'
 import { ProjectManager } from '@/libs/project/ProjectManager'
 import { FileTab } from '@/components/TabSystem/FileTab'
 import { Disposable, disposeAll } from '@/libs/disposeable/Disposeable'
+import { buildTree, ObjectElement, TreeElement } from './Tree'
 
 export class TreeEditorTab extends FileTab {
 	public component: Component | null = TreeEditorTabComponent
@@ -12,7 +13,8 @@ export class TreeEditorTab extends FileTab {
 	public language = ref('plaintext')
 	public hasDocumentation = ref(false)
 
-	public json: Ref<any> = ref({})
+	public tree: TreeElement = new ObjectElement(null)
+
 	public knownWords: Record<string, string[]> = {
 		keywords: [],
 		typeIdentifiers: [],
@@ -53,7 +55,9 @@ export class TreeEditorTab extends FileTab {
 		const fileContent = await fileSystem.readFileText(this.path)
 
 		try {
-			this.json = JSON.parse(fileContent)
+			this.tree = buildTree(JSON.parse(fileContent))
+
+			console.log(this.tree)
 		} catch {}
 
 		const schemaData = ProjectManager.currentProject.schemaData

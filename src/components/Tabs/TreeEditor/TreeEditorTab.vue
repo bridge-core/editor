@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import ContextMenuItem from '@/components/Common/ContextMenuItem.vue'
-import TreeEditorObjectElement from './TreeEditorObjectElement.vue'
+import TreeEditorObjectElement from './TreeEditorContainerElement.vue'
 
 import { Ref, onMounted, onUnmounted, ref } from 'vue'
 import { type TreeEditorTab } from './TreeEditorTab'
@@ -29,7 +29,7 @@ function triggerActionAndCloseContextMenu(action: string) {
 <template>
 	<div class="w-full h-full" ref="tabElement">
 		<div class="h-full w-full" ref="editorContainer">
-			<TreeEditorObjectElement :editor="instance" :value="instance.json" />
+			<TreeEditorObjectElement :editor="instance" :tree="instance.tree" />
 		</div>
 
 		<FreeContextMenu class="w-56" ref="contextMenu">
