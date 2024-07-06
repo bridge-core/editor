@@ -8,29 +8,16 @@ import { ref } from 'vue'
 import { TreeEditorTab } from './TreeEditorTab'
 import { TreeElement, ObjectElement, ArrayElement } from './Tree'
 
-const { tree, elementKey, editor }: { tree: TreeElement; elementKey: string | number; editor: TreeEditorTab } = <any>(
-	defineProps({
-		editor: {
-			required: true,
-		},
-		elementKey: {
-			required: true,
-		},
-		tree: {
-			type: TreeElement,
-			required: true,
-		},
-	})
-)
+const props = defineProps<{ tree: TreeElement; elementKey: string | number; editor: TreeEditorTab }>()
 
 const open = ref(false)
 
-const selected = editor.useIsSelected(tree.parent!, elementKey)
+const selected = props.editor.useIsSelected(props.tree.parent!, props.elementKey)
 
 function click() {
-	editor.select(tree.parent!, elementKey)
+	props.editor.select(props.tree.parent!, props.elementKey)
 
-	if (!(tree instanceof ObjectElement || tree instanceof ArrayElement)) return
+	if (!(props.tree instanceof ObjectElement || props.tree instanceof ArrayElement)) return
 
 	open.value = !open.value
 }

@@ -3,7 +3,7 @@ import ContextMenuItem from '@/components/Common/ContextMenuItem.vue'
 import TreeEditorObjectElement from './TreeEditorContainerElement.vue'
 import LabeledTextInput from '@/components/Common/LabeledTextInput.vue'
 
-import { Ref, ref, watch } from 'vue'
+import { computed, Ref, ref, watch } from 'vue'
 import { type TreeEditorTab } from './TreeEditorTab'
 import FreeContextMenu from '@/components/Common/FreeContextMenu.vue'
 import { ActionManager } from '@/libs/actions/ActionManager'
@@ -28,33 +28,53 @@ function triggerActionAndCloseContextMenu(action: string) {
 //@contextmenu.prevent="contextMenu?.open"
 
 const addValue = ref('')
-const editValue = ref('')
 
-watch(props.instance.selectedTree, (selectedTree) => {
-	if (!selectedTree) return
+const editValue = computed<string>({
+	get() {
+		const selectedTree = props.instance.selectedTree.value
 
-	if (selectedTree.tree instanceof ValueElement) editValue.value = selectedTree.tree.value?.toString() ?? 'null'
+		if (!selectedTree) return ''
+
+		if (selectedTree.tree instanceof ValueElement) return selectedTree.tree.value?.toString() ?? 'null'
+
+		if (selectedTree.tree instanceof ObjectElement) return selectedTree.key?.toString() ?? ''
+
+		return ''
+	},
+	set(newValue) {
+		if (!props.instance.selectedTree.value) return
+
+		if (props.instance.selectedTree.value.tree instanceof ValueElement) {
+			props.instance.selectedTree.value.tree.value = newValue
+
+			return
+		}
+
+		if (!props.instance.selectedTree.value.key) return
+
+		if (props.instance.selectedTree.value.tree instanceof ObjectElement) {
+			const children = props.instance.selectedTree.value.tree.children
+
+			const child = props.instance.selectedTree.value.tree.children[props.instance.selectedTree.value.key]
+
+			delete children[props.instance.selectedTree.value.key]
+
+			children[newValue] = child
+
+			props.instance.selectedTree.value.tree.children = children
+
+			props.instance.selectedTree.value.key = newValue
+
+			console.log(props.instance.tree, props.instance.selectedTree)
+
+			return
+		}
+	},
 })
 
-watch(editValue, async (value) => {
-	if (!props.instance.selectedTree.value) return
+watch(props.instance.selectedTree, (selectedTree) => {})
 
-	if (props.instance.selectedTree.value.tree instanceof ValueElement) {
-		props.instance.selectedTree.value.tree.value = value
-
-		return
-	}
-
-	if (!props.instance.selectedTree.value.key) return
-
-	if (props.instance.selectedTree.value.tree instanceof ObjectElement) {
-		const child = props.instance.selectedTree.value.tree.children[props.instance.selectedTree.value.key]
-
-		if (child instanceof ValueElement) child.value = value
-
-		return
-	}
-})
+watch(editValue, async (value) => {})
 </script>
 
 <template>

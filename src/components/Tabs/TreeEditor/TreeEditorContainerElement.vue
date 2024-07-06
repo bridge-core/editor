@@ -1,16 +1,9 @@
 <script lang="ts" setup>
 import TreeEditorPropertyElement from './TreeEditorPropertyElement.vue'
 import { ArrayElement, ObjectElement, TreeElement } from './Tree'
+import { TreeEditorTab } from './TreeEditorTab'
 
-const { tree } = defineProps({
-	editor: {
-		required: true,
-	},
-	tree: {
-		type: TreeElement,
-		required: true,
-	},
-})
+defineProps<{ tree: TreeElement; editor: TreeEditorTab }>()
 </script>
 
 <template>
