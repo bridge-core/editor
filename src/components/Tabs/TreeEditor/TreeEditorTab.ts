@@ -13,7 +13,7 @@ export class TreeEditorTab extends FileTab {
 	public language = ref('plaintext')
 	public hasDocumentation = ref(false)
 
-	public tree: TreeElement = new ObjectElement(null)
+	public tree: Ref<TreeElement> = ref(new ObjectElement(null))
 
 	public selectedTree: Ref<{ tree: TreeElement; key?: string | number } | null> = ref(null)
 
@@ -57,7 +57,7 @@ export class TreeEditorTab extends FileTab {
 		const fileContent = await fileSystem.readFileText(this.path)
 
 		try {
-			this.tree = buildTree(JSON.parse(fileContent))
+			this.tree.value = buildTree(JSON.parse(fileContent))
 		} catch {}
 
 		const schemaData = ProjectManager.currentProject.schemaData

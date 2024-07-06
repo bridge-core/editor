@@ -2,7 +2,7 @@
 import TreeEditorPropertyElement from './TreeEditorPropertyElement.vue'
 import { ArrayElement, ObjectElement, TreeElement } from './Tree'
 
-defineProps({
+const { tree } = defineProps({
 	editor: {
 		required: true,
 	},
@@ -20,6 +20,7 @@ defineProps({
 			v-for="key in Object.keys(tree.children)"
 			:element-key="key"
 			:tree="tree.children[key]"
+			:key="tree.children[key].id"
 		/>
 	</div>
 
@@ -29,6 +30,7 @@ defineProps({
 			v-for="(value, index) in tree.children"
 			:element-key="index"
 			:tree="tree.children[index]"
+			:key="tree.children[index].id"
 		/>
 	</div>
 </template>

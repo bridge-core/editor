@@ -1,22 +1,19 @@
 <script setup lang="ts">
 import ContextMenuItem from '@/components/Common/ContextMenuItem.vue'
 import TreeEditorObjectElement from './TreeEditorContainerElement.vue'
-import Dropdown from '@/components/Common/Dropdown.vue'
-import LabeledInput from '@/components/Common/LabeledInput.vue'
+import LabeledTextInput from '@/components/Common/LabeledTextInput.vue'
 
-import { Ref, onMounted, onUnmounted, ref } from 'vue'
+import { Ref, ref, watch } from 'vue'
 import { type TreeEditorTab } from './TreeEditorTab'
 import FreeContextMenu from '@/components/Common/FreeContextMenu.vue'
 import { ActionManager } from '@/libs/actions/ActionManager'
 import { useTranslate } from '@/libs/locales/Locales'
+import TextButton from '@/components/Common/TextButton.vue'
+import { ObjectElement, ValueElement } from './Tree'
 
 const t = useTranslate()
 
-const { instance }: { instance: TreeEditorTab } = <any>defineProps({
-	instance: {
-		required: true,
-	},
-})
+const props = defineProps<{ instance: TreeEditorTab }>()
 
 const tabElement: Ref<HTMLDivElement | null> = ref(null)
 
@@ -30,18 +27,52 @@ function triggerActionAndCloseContextMenu(action: string) {
 
 //@contextmenu.prevent="contextMenu?.open"
 
-const addObjectValue = ref('')
-const addObjectSuggestions = ref(['cool', 'woah', 'okay'])
+const addValue = ref('')
+const editValue = ref('')
+
+watch(props.instance.selectedTree, (selectedTree) => {
+	if (!selectedTree) return
+
+	if (selectedTree.tree instanceof ValueElement) editValue.value = selectedTree.tree.value?.toString() ?? 'null'
+})
+
+watch(editValue, async (value) => {
+	if (!props.instance.selectedTree.value) return
+
+	if (props.instance.selectedTree.value.tree instanceof ValueElement) {
+		props.instance.selectedTree.value.tree.value = value
+
+		return
+	}
+
+	if (!props.instance.selectedTree.value.key) return
+
+	if (props.instance.selectedTree.value.tree instanceof ObjectElement) {
+		const child = props.instance.selectedTree.value.tree.children[props.instance.selectedTree.value.key]
+
+		if (child instanceof ValueElement) child.value = value
+
+		return
+	}
+})
 </script>
 
 <template>
 	<div class="w-full h-full" ref="tabElement">
 		<div class="h-full w-full flex flex-col" ref="editorContainer">
 			<div class="w-full flex-1 overflow-auto">
-				<TreeEditorObjectElement :editor="instance" :tree="instance.tree" />
+				<TreeEditorObjectElement :editor="instance" :tree="instance.tree.value" />
 			</div>
 
-			<div class="bg-background-secondary rounded-t w-full h-20 flex"></div>
+			<div class="border-background-secondary border-t-2 w-full h-56 p-2">
+				<div class="flex items-center gap-4 mt-3">
+					<LabeledTextInput label="Add" v-model="addValue" class="flex-1 !mt-0" />
+
+					<TextButton text="abc" />
+
+					<LabeledTextInput label="Edit" v-model="editValue" class="flex-1 !mt-0" />
+				</div>
+			</div>
 		</div>
 
 		<FreeContextMenu class="w-56" ref="contextMenu">

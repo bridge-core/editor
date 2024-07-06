@@ -14,4 +14,3 @@ import { ProjectManager } from '@/libs/project/ProjectManager'
 
 const currentProject = ProjectManager.useCurrentProject()
 </script>
-../FileExplorer/FileExplorer.vue../Sidebar/Sidebar.vue

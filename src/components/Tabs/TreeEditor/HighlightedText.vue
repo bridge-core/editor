@@ -1,22 +1,9 @@
 <script setup lang="ts">
-import { Ref, onMounted, ref } from 'vue'
+import { ComputedRef, computed } from 'vue'
 import { keyword } from 'color-convert'
 import { ThemeManager } from '@/libs/theme/ThemeManager'
 
-const { value, type, knownWords }: { value: string; type: String; knownWords: Record<string, string[]> } = defineProps({
-	knownWords: {
-		type: Object,
-		required: true,
-	},
-	value: {
-		type: String,
-		required: true,
-	},
-	type: {
-		type: String,
-		required: true,
-	},
-})
+const props = defineProps<{ value: string; type: String; knownWords: Record<string, string[]> }>()
 
 function convertColor(color: string): string {
 	if (!color) return color
@@ -44,24 +31,24 @@ function getColor(name: string): string {
 	)
 }
 
-const tokens: Ref<{ word: string; color?: string }[]> = ref([])
-
 const atoms = ['true', 'false', 'null']
 
 function parse(): { word: string; color?: string }[] {
-	if (type === 'string') {
-		if (knownWords.variables.includes(value)) return [{ word: value, color: getColor('variable') }]
-		if (knownWords.typeIdentifiers.includes(value)) return [{ word: value, color: getColor('type') }]
+	if (props.type === 'string') {
+		if (props.knownWords.variables.includes(props.value))
+			return [{ word: props.value, color: getColor('variable') }]
+		if (props.knownWords.typeIdentifiers.includes(props.value))
+			return [{ word: props.value, color: getColor('type') }]
 
-		if (value.includes(':')) {
+		if (props.value.includes(':')) {
 			let newTokens = []
 
-			const pieces = value.split(':')
+			const pieces = props.value.split(':')
 
 			for (let pieceIndex = 0; pieceIndex < pieces.length; pieceIndex++) {
 				const piece = pieces[pieceIndex]
 
-				if (knownWords.keywords.includes(piece)) {
+				if (props.knownWords.keywords.includes(piece)) {
 					newTokens.push({ word: piece, color: getColor('keyword') })
 				} else {
 					newTokens.push({ word: piece, color: getColor('string') })
@@ -73,19 +60,17 @@ function parse(): { word: string; color?: string }[] {
 			return newTokens
 		}
 
-		return [{ word: value, color: getColor('string') }]
+		return [{ word: props.value, color: getColor('string') }]
 	}
 
-	if (atoms.includes(value)) return [{ word: value, color: getColor('atom') }]
+	if (atoms.includes(props.value)) return [{ word: props.value, color: getColor('atom') }]
 
-	if (type === 'number') return [{ word: value, color: getColor('number') }]
+	if (props.type === 'number') return [{ word: props.value, color: getColor('number') }]
 
-	return [{ word: value }]
+	return [{ word: props.value }]
 }
 
-onMounted(() => {
-	tokens.value = parse()
-})
+const tokens: ComputedRef<{ word: string; color?: string }[]> = computed(() => parse())
 </script>
 
 <template>

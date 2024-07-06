@@ -1,29 +1,24 @@
 <script lang="ts" setup>
+import { computed } from 'vue'
 import HighlightedText from './HighlightedText.vue'
 import { ArrayElement, ObjectElement, TreeElement, ValueElement } from './Tree'
 import { TreeEditorTab } from './TreeEditorTab'
 
-const { tree, editor }: { tree: TreeElement; editor: TreeEditorTab } = <any>defineProps({
-	editor: {
-		required: true,
-	},
-	tree: {
-		type: TreeElement,
-		required: true,
-	},
-})
+const props = defineProps<{ tree: TreeElement; editor: TreeEditorTab }>()
 
 const emit = defineEmits(['click'])
 
 function click(event: Event) {
-	if (tree instanceof ObjectElement || tree instanceof ArrayElement) emit('click')
+	if (props.tree instanceof ObjectElement || props.tree instanceof ArrayElement) emit('click')
 }
 
 function select(event: Event) {
-	editor.select(tree)
+	props.editor.select(props.tree)
 }
 
-const selected = editor.useIsSelected(tree)
+const selected = props.editor.useIsSelected(props.tree)
+
+const value = computed(() => (props.tree instanceof ValueElement ? props.tree.value : null))
 </script>
 
 <template>
@@ -43,12 +38,12 @@ const selected = editor.useIsSelected(tree)
 		}}</span>
 
 		<span
-			v-else-if="tree instanceof ValueElement && typeof tree.value === 'string'"
+			v-else-if="tree instanceof ValueElement && typeof value === 'string'"
 			class="select-none"
 			:style="{ fontFamily: 'Consolas' }"
 			@click.stop="select"
 		>
-			"<HighlightedText :known-words="editor.knownWords" :value="tree.value" type="string" />"
+			"<HighlightedText :known-words="editor.knownWords" :value="value" type="string" />"
 		</span>
 
 		<span
@@ -59,8 +54,8 @@ const selected = editor.useIsSelected(tree)
 		>
 			<HighlightedText
 				:known-words="editor.knownWords"
-				:value="tree.value === null ? 'null' : tree.value.toString()"
-				:type="typeof tree.value"
+				:value="value === null ? 'null' : value.toString()"
+				:type="typeof value"
 			/>
 		</span>
 	</span>
