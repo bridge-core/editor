@@ -163,3 +163,19 @@ export class ModifyPropertyKeyEdit implements TreeEdit {
 		return { tree: this.element, key: this.oldKey }
 	}
 }
+
+export class AddPropertyEdit implements TreeEdit {
+	public constructor(public element: ObjectElement, public key: string, public value: TreeElement) {}
+
+	public apply(): TreeSelection {
+		this.element.children[this.key] = this.value
+
+		return { tree: this.element, key: this.key }
+	}
+
+	public undo(): TreeSelection {
+		delete this.element.children[this.key]
+
+		return null
+	}
+}

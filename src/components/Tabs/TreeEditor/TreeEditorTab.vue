@@ -3,13 +3,13 @@ import ContextMenuItem from '@/components/Common/ContextMenuItem.vue'
 import TreeEditorObjectElement from './EditorElements/TreeEditorContainerElement.vue'
 import LabeledTextInput from '@/components/Common/LabeledTextInput.vue'
 
-import { computed, Ref, ref, watch } from 'vue'
+import { computed, nextTick, Ref, ref, watch } from 'vue'
 import { type TreeEditorTab } from './TreeEditorTab'
 import FreeContextMenu from '@/components/Common/FreeContextMenu.vue'
 import { ActionManager } from '@/libs/actions/ActionManager'
 import { useTranslate } from '@/libs/locales/Locales'
 import TextButton from '@/components/Common/TextButton.vue'
-import { ModifyPropertyKeyEdit, ModifyValueEdit, ObjectElement, ValueElement } from './Tree'
+import { AddPropertyEdit, ModifyPropertyKeyEdit, ModifyValueEdit, ObjectElement, ValueElement } from './Tree'
 
 const t = useTranslate()
 
@@ -27,7 +27,42 @@ function triggerActionAndCloseContextMenu(action: string) {
 
 //@contextmenu.prevent="contextMenu?.open"
 
-const addValue = ref('')
+const _addValue = ref('')
+
+watch(props.instance.selectedTree, () => {
+	_addValue.value = ''
+})
+
+const addValue = computed<string>({
+	get() {
+		return _addValue.value
+	},
+	async set(newValue) {
+		if (!props.instance.selectedTree.value) return
+
+		const selectedTree = props.instance.selectedTree.value.tree
+
+		if (selectedTree instanceof ValueElement) return
+
+		const key = props.instance.selectedTree.value.key
+
+		if (!key) return
+
+		if (selectedTree instanceof ObjectElement) {
+			const value = selectedTree.children[key]
+
+			if (!(value instanceof ObjectElement)) return
+
+			props.instance.edit(new AddPropertyEdit(value as ObjectElement, newValue, new ObjectElement(value)))
+
+			await nextTick()
+
+			_addValue.value = ''
+
+			return
+		}
+	},
+})
 
 const editValue = computed<string>({
 	get() {
@@ -78,11 +113,11 @@ watch(editValue, async (value) => {})
 
 			<div class="border-background-secondary border-t-2 w-full h-56 p-2">
 				<div class="flex items-center gap-4 mt-3">
-					<LabeledTextInput label="Add" v-model="addValue" class="flex-1 !mt-0" />
+					<LabeledTextInput label="Add" v-model.lazy="addValue" class="flex-1 !mt-0" />
 
 					<TextButton text="abc" />
 
-					<LabeledTextInput label="Edit" v-model="editValue" class="flex-1 !mt-0" />
+					<LabeledTextInput label="Edit" v-model.lazy="editValue" class="flex-1 !mt-0" />
 				</div>
 			</div>
 		</div>
