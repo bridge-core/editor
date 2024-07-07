@@ -6,8 +6,25 @@ import { useTranslate } from '@/libs/locales/Locales'
 
 const t = useTranslate()
 
-const { modelValue, icon } = defineProps<{ label: string; modelValue: string; icon?: string; borderColor?: string }>()
-const emit = defineEmits(['update:modelValue'])
+const props = defineProps<{
+	label: string
+	icon?: string
+	borderColor?: string
+}>()
+
+const [model, modifiers] = defineModel()
+
+function input(this: any, event: Event) {
+	if (modifiers.lazy) return
+
+	model.value = (<HTMLInputElement>event.target).value
+}
+
+function change(event: Event) {
+	if (!modifiers.lazy) return
+
+	model.value = (<HTMLInputElement>event.target).value
+}
 </script>
 
 <template>
@@ -19,8 +36,9 @@ const emit = defineEmits(['update:modelValue'])
 				@focus="focus"
 				@blur="blur"
 				class="outline-none border-none bg-transparent font-inter flex-1"
-				v-bind:value="modelValue"
-				@change="(event) => emit('update:modelValue', (<HTMLInputElement>event.target).value)"
+				:value="model"
+				@input="input"
+				@change="change"
 			/>
 		</div>
 	</LabeledInput>
