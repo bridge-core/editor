@@ -105,9 +105,12 @@ export class ModifyValueEdit implements TreeEdit {
 
 export class ModifyPropertyKeyEdit implements TreeEdit {
 	private oldKey: string
+	private propertyIndex: number
 
 	public constructor(public element: ObjectElement, public key: string, public newKey: string) {
 		this.oldKey = key
+
+		this.propertyIndex = Object.keys(element.children).indexOf(key)
 	}
 
 	public apply() {
@@ -115,9 +118,13 @@ export class ModifyPropertyKeyEdit implements TreeEdit {
 
 		delete this.element.children[this.oldKey]
 
-		this.element.children[this.newKey] = child
+		const keys = Object.keys(this.element.children)
+		const values = Object.values(this.element.children)
 
-		this.element.children = this.element.children
+		keys.splice(this.propertyIndex, 0, this.newKey)
+		values.splice(this.propertyIndex, 0, child)
+
+		this.element.children = Object.fromEntries(keys.map((key, index) => [key, values[index]]))
 	}
 
 	public undo() {
@@ -125,8 +132,12 @@ export class ModifyPropertyKeyEdit implements TreeEdit {
 
 		delete this.element.children[this.newKey]
 
-		this.element.children[this.oldKey] = child
+		const keys = Object.keys(this.element.children)
+		const values = Object.values(this.element.children)
 
-		this.element.children = this.element.children
+		keys.splice(this.propertyIndex, 0, this.oldKey)
+		values.splice(this.propertyIndex, 0, child)
+
+		this.element.children = Object.fromEntries(keys.map((key, index) => [key, values[index]]))
 	}
 }

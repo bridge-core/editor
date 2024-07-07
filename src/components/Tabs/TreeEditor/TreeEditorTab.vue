@@ -59,6 +59,8 @@ const editValue = computed<string>({
 				new ModifyPropertyKeyEdit(props.instance.selectedTree.value.tree, <string>key, newValue)
 			)
 
+			props.instance.selectedTree.value.key = newValue
+
 			return
 		}
 	},
