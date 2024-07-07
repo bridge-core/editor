@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import ContextMenuItem from '@/components/Common/ContextMenuItem.vue'
-import TreeEditorObjectElement from './TreeEditorContainerElement.vue'
+import TreeEditorObjectElement from './EditorElements/TreeEditorContainerElement.vue'
 import LabeledTextInput from '@/components/Common/LabeledTextInput.vue'
 
 import { computed, Ref, ref, watch } from 'vue'
@@ -9,7 +9,7 @@ import FreeContextMenu from '@/components/Common/FreeContextMenu.vue'
 import { ActionManager } from '@/libs/actions/ActionManager'
 import { useTranslate } from '@/libs/locales/Locales'
 import TextButton from '@/components/Common/TextButton.vue'
-import { ObjectElement, ValueElement } from './Tree'
+import { ModifyValueEdit, ObjectElement, ValueElement } from './Tree'
 
 const t = useTranslate()
 
@@ -45,30 +45,36 @@ const editValue = computed<string>({
 		if (!props.instance.selectedTree.value) return
 
 		if (props.instance.selectedTree.value.tree instanceof ValueElement) {
-			props.instance.selectedTree.value.tree.value = newValue
+			props.instance.edit(new ModifyValueEdit(props.instance.selectedTree.value.tree, newValue))
 
 			return
 		}
 
-		if (!props.instance.selectedTree.value.key) return
+		// if (props.instance.selectedTree.value.tree instanceof ValueElement) {
+		// 	props.instance.selectedTree.value.tree.value = newValue
 
-		if (props.instance.selectedTree.value.tree instanceof ObjectElement) {
-			const children = props.instance.selectedTree.value.tree.children
+		// 	return
+		// }
 
-			const child = props.instance.selectedTree.value.tree.children[props.instance.selectedTree.value.key]
+		// if (!props.instance.selectedTree.value.key) return
 
-			delete children[props.instance.selectedTree.value.key]
+		// if (props.instance.selectedTree.value.tree instanceof ObjectElement) {
+		// 	const children = props.instance.selectedTree.value.tree.children
 
-			children[newValue] = child
+		// 	const child = props.instance.selectedTree.value.tree.children[props.instance.selectedTree.value.key]
 
-			props.instance.selectedTree.value.tree.children = children
+		// 	delete children[props.instance.selectedTree.value.key]
 
-			props.instance.selectedTree.value.key = newValue
+		// 	children[newValue] = child
 
-			console.log(props.instance.tree, props.instance.selectedTree)
+		// 	props.instance.selectedTree.value.tree.children = children
 
-			return
-		}
+		// 	props.instance.selectedTree.value.key = newValue
+
+		// 	console.log(props.instance.tree, props.instance.selectedTree)
+
+		// 	return
+		// }
 	},
 })
 

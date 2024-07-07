@@ -9,8 +9,47 @@ import { Action } from './Action'
 import { fileSystem } from '@/libs/fileSystem/FileSystem'
 import { Windows } from '@/components/Windows/Windows'
 import { NotificationSystem } from '@/components/Notifications/NotificationSystem'
+import { TreeEditorTab } from '@/components/Tabs/TreeEditor/TreeEditorTab'
 
 export function setupActions() {
+	ActionManager.addAction(
+		new Action({
+			id: 'undo',
+			trigger: () => {
+				const focusedTab = TabManager.getFocusedTab()
+
+				if (focusedTab === null) return
+
+				if (!(focusedTab instanceof TreeEditorTab)) return
+
+				focusedTab.undo()
+			},
+			keyBinding: 'Ctrl + Z',
+			name: 'actions.undo.name',
+			description: 'actions.undo.description',
+			icon: 'undo',
+		})
+	)
+
+	ActionManager.addAction(
+		new Action({
+			id: 'redo',
+			trigger: () => {
+				const focusedTab = TabManager.getFocusedTab()
+
+				if (focusedTab === null) return
+
+				if (!(focusedTab instanceof TreeEditorTab)) return
+
+				focusedTab.redo()
+			},
+			keyBinding: 'Ctrl + Y',
+			name: 'actions.redo.name',
+			description: 'actions.redo.description',
+			icon: 'redo',
+		})
+	)
+
 	ActionManager.addAction(
 		new Action({
 			id: 'save',

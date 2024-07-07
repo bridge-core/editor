@@ -1,8 +1,8 @@
 <script lang="ts" setup>
 import { computed } from 'vue'
-import HighlightedText from './HighlightedText.vue'
-import { ArrayElement, ObjectElement, TreeElement, ValueElement } from './Tree'
-import { TreeEditorTab } from './TreeEditorTab'
+import HighlightedText from '../HighlightedText.vue'
+import { ArrayElement, ObjectElement, TreeElement, ValueElement } from '../Tree'
+import { TreeEditorTab } from '../TreeEditorTab'
 
 const props = defineProps<{ tree: TreeElement; editor: TreeEditorTab }>()
 

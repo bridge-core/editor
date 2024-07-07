@@ -2,11 +2,11 @@
 import Icon from '@/components/Common/Icon.vue'
 import TreeEditorValueElement from './TreeEditorValueElement.vue'
 import TreeEditorObjectElement from './TreeEditorContainerElement.vue'
-import HighlightedText from './HighlightedText.vue'
+import HighlightedText from '../HighlightedText.vue'
 
 import { ref } from 'vue'
-import { TreeEditorTab } from './TreeEditorTab'
-import { TreeElement, ObjectElement, ArrayElement } from './Tree'
+import { TreeEditorTab } from '../TreeEditorTab'
+import { TreeElement, ObjectElement, ArrayElement } from '../Tree'
 
 const props = defineProps<{ tree: TreeElement; elementKey: string | number; editor: TreeEditorTab }>()
 

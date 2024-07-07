@@ -5,7 +5,7 @@ import { BedrockProject } from '@/libs/project/BedrockProject'
 import { ProjectManager } from '@/libs/project/ProjectManager'
 import { FileTab } from '@/components/TabSystem/FileTab'
 import { Disposable, disposeAll } from '@/libs/disposeable/Disposeable'
-import { buildTree, ObjectElement, TreeElement } from './Tree'
+import { buildTree, ObjectElement, TreeEdit, TreeElement } from './Tree'
 
 export class TreeEditorTab extends FileTab {
 	public component: Component | null = TreeEditorTabComponent
@@ -14,6 +14,9 @@ export class TreeEditorTab extends FileTab {
 	public hasDocumentation = ref(false)
 
 	public tree: Ref<TreeElement> = ref(new ObjectElement(null))
+
+	public history: TreeEdit[] = []
+	public currentEditIndex = -1
 
 	public selectedTree: Ref<{ tree: TreeElement; key?: string | number } | null> = ref(null)
 
@@ -120,6 +123,32 @@ export class TreeEditorTab extends FileTab {
 
 	public select(tree: TreeElement, key?: string | number) {
 		this.selectedTree.value = { key, tree }
+	}
+
+	public edit(edit: TreeEdit) {
+		if (this.currentEditIndex !== this.history.length - 1)
+			this.history = this.history.slice(0, this.currentEditIndex + 1)
+
+		this.history.push(edit)
+		this.currentEditIndex++
+
+		edit.apply(this.tree.value)
+	}
+
+	public undo() {
+		if (this.currentEditIndex < 0) return
+
+		this.history[this.currentEditIndex].undo(this.tree.value)
+
+		this.currentEditIndex--
+	}
+
+	public redo() {
+		if (this.currentEditIndex >= this.history.length - 1) return
+
+		this.currentEditIndex++
+
+		this.history[this.currentEditIndex].apply(this.tree.value)
 	}
 
 	public useIsSelected(tree: TreeElement, key?: string | number): ComputedRef<boolean> {
