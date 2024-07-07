@@ -9,7 +9,7 @@ import FreeContextMenu from '@/components/Common/FreeContextMenu.vue'
 import { ActionManager } from '@/libs/actions/ActionManager'
 import { useTranslate } from '@/libs/locales/Locales'
 import TextButton from '@/components/Common/TextButton.vue'
-import { ModifyValueEdit, ObjectElement, ValueElement } from './Tree'
+import { ModifyPropertyKeyEdit, ModifyValueEdit, ObjectElement, ValueElement } from './Tree'
 
 const t = useTranslate()
 
@@ -50,31 +50,17 @@ const editValue = computed<string>({
 			return
 		}
 
-		// if (props.instance.selectedTree.value.tree instanceof ValueElement) {
-		// 	props.instance.selectedTree.value.tree.value = newValue
+		const key = props.instance.selectedTree.value.key
 
-		// 	return
-		// }
+		if (!key) return
 
-		// if (!props.instance.selectedTree.value.key) return
+		if (props.instance.selectedTree.value.tree instanceof ObjectElement) {
+			props.instance.edit(
+				new ModifyPropertyKeyEdit(props.instance.selectedTree.value.tree, <string>key, newValue)
+			)
 
-		// if (props.instance.selectedTree.value.tree instanceof ObjectElement) {
-		// 	const children = props.instance.selectedTree.value.tree.children
-
-		// 	const child = props.instance.selectedTree.value.tree.children[props.instance.selectedTree.value.key]
-
-		// 	delete children[props.instance.selectedTree.value.key]
-
-		// 	children[newValue] = child
-
-		// 	props.instance.selectedTree.value.tree.children = children
-
-		// 	props.instance.selectedTree.value.key = newValue
-
-		// 	console.log(props.instance.tree, props.instance.selectedTree)
-
-		// 	return
-		// }
+			return
+		}
 	},
 })
 

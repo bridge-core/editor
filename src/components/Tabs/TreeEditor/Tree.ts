@@ -82,9 +82,9 @@ export function buildTree(
 }
 
 export interface TreeEdit {
-	apply(tree: TreeElement): void
+	apply(): void
 
-	undo(tree: TreeElement): void
+	undo(): void
 }
 
 export class ModifyValueEdit implements TreeEdit {
@@ -94,15 +94,39 @@ export class ModifyValueEdit implements TreeEdit {
 		this.oldValue = element.value
 	}
 
-	public apply(tree: TreeElement) {
+	public apply() {
 		this.element.value = this.value
-
-		return tree
 	}
 
-	public undo(tree: TreeElement) {
+	public undo() {
 		this.element.value = this.oldValue
+	}
+}
 
-		return tree
+export class ModifyPropertyKeyEdit implements TreeEdit {
+	private oldKey: string
+
+	public constructor(public element: ObjectElement, public key: string, public newKey: string) {
+		this.oldKey = key
+	}
+
+	public apply() {
+		const child = this.element.children[this.oldKey]
+
+		delete this.element.children[this.oldKey]
+
+		this.element.children[this.newKey] = child
+
+		this.element.children = this.element.children
+	}
+
+	public undo() {
+		const child = this.element.children[this.newKey]
+
+		delete this.element.children[this.newKey]
+
+		this.element.children[this.oldKey] = child
+
+		this.element.children = this.element.children
 	}
 }

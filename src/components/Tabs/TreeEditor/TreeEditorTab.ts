@@ -132,13 +132,13 @@ export class TreeEditorTab extends FileTab {
 		this.history.push(edit)
 		this.currentEditIndex++
 
-		edit.apply(this.tree.value)
+		edit.apply()
 	}
 
 	public undo() {
 		if (this.currentEditIndex < 0) return
 
-		this.history[this.currentEditIndex].undo(this.tree.value)
+		this.history[this.currentEditIndex].undo()
 
 		this.currentEditIndex--
 	}
@@ -148,7 +148,7 @@ export class TreeEditorTab extends FileTab {
 
 		this.currentEditIndex++
 
-		this.history[this.currentEditIndex].apply(this.tree.value)
+		this.history[this.currentEditIndex].apply()
 	}
 
 	public useIsSelected(tree: TreeElement, key?: string | number): ComputedRef<boolean> {
