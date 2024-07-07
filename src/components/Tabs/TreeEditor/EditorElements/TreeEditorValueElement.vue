@@ -30,11 +30,11 @@ const value = computed(() => (props.tree instanceof ValueElement ? props.tree.va
 			'--color': selected ? 'var(--theme-color-backgroundSecondary)' : 'none',
 		}"
 	>
-		<span v-if="tree instanceof ObjectElement" class="select-none" :style="{ fontFamily: 'Consolas' }">{{
+		<span v-if="tree instanceof ObjectElement" class="select-none flex" :style="{ fontFamily: 'Consolas' }">{{
 			Object.keys(tree.children).length === 0 ? '{}' : '{...}'
 		}}</span>
 
-		<span v-else-if="tree instanceof ArrayElement" class="select-none" :style="{ fontFamily: 'Consolas' }">{{
+		<span v-else-if="tree instanceof ArrayElement" class="select-none flex" :style="{ fontFamily: 'Consolas' }">{{
 			tree.children.length === 0 ? '[]' : '[...]'
 		}}</span>
 

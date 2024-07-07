@@ -57,7 +57,10 @@ function click() {
 			</span>
 
 			<TreeEditorValueElement v-if="!open" :editor="editor" :tree="tree" @click="click" />
-			<span v-else class="select-none">{</span>
+
+			<span v-else class="select-none px-1" :style="{ fontFamily: 'Consolas' }">{{
+				tree instanceof ObjectElement ? '{' : '['
+			}}</span>
 		</span>
 	</div>
 
@@ -66,6 +69,8 @@ function click() {
 			<TreeEditorObjectElement :editor="editor" :tree="tree" />
 		</div>
 
-		<span class="ml-2 select-none">}</span>
+		<span class="ml-2 select-none px-1" :style="{ fontFamily: 'Consolas' }">{{
+			tree instanceof ObjectElement ? '}' : ']'
+		}}</span>
 	</div>
 </template>
