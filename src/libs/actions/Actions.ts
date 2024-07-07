@@ -58,9 +58,8 @@ export function setupActions() {
 
 				if (focusedTab === null) return
 
-				if (!(focusedTab instanceof TextTab)) return
-
-				focusedTab.save()
+				if (focusedTab instanceof TextTab) focusedTab.save()
+				if (focusedTab instanceof TreeEditorTab) focusedTab.save()
 			},
 			keyBinding: 'Ctrl + S',
 			name: 'actions.saveFile.name',

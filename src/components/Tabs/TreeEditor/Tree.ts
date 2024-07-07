@@ -1,13 +1,13 @@
 import { v4 as uuid } from 'uuid'
 
-export class TreeElement {
+export abstract class TreeElement {
 	public id = uuid()
 
 	public constructor(public parent: TreeElement | null) {}
 
-	public clone(parent: TreeElement | null = null): TreeElement {
-		throw new Error('Not implemented!')
-	}
+	public abstract toJson(): any
+
+	public abstract clone(parent: TreeElement | null): TreeElement
 }
 
 export class ObjectElement extends TreeElement {
@@ -15,6 +15,10 @@ export class ObjectElement extends TreeElement {
 
 	public constructor(parent: TreeElement | null = null) {
 		super(parent)
+	}
+
+	public toJson(): any {
+		return Object.fromEntries(Object.entries(this.children).map(([key, child]) => [key, child.toJson()]))
 	}
 
 	public clone(parent: TreeElement | null = null): ObjectElement {
@@ -35,6 +39,10 @@ export class ArrayElement extends TreeElement {
 		super(parent)
 	}
 
+	public toJson(): any {
+		return this.children.map((child) => child.toJson())
+	}
+
 	public clone(parent: TreeElement | null = null): ArrayElement {
 		const clonedElement = new ArrayElement(parent)
 
@@ -49,6 +57,10 @@ export class ArrayElement extends TreeElement {
 export class ValueElement extends TreeElement {
 	public constructor(parent: TreeElement | null = null, public value: number | string | boolean | null) {
 		super(parent)
+	}
+
+	public toJson(): any {
+		return this.value
 	}
 
 	public clone(parent: TreeElement | null = null): ValueElement {
