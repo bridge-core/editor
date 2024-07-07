@@ -4,7 +4,7 @@ import TreeEditorValueElement from './TreeEditorValueElement.vue'
 import TreeEditorObjectElement from './TreeEditorContainerElement.vue'
 import HighlightedText from '../HighlightedText.vue'
 
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { TreeEditorTab } from '../TreeEditorTab'
 import { TreeElement, ObjectElement, ArrayElement } from '../Tree'
 
@@ -12,7 +12,12 @@ const props = defineProps<{ tree: TreeElement; elementKey: string | number; edit
 
 const open = ref(false)
 
-const selected = props.editor.useIsSelected(props.tree.parent!, props.elementKey)
+//Proxies don't equal eachother so we use an uuid
+const selected = computed(
+	() =>
+		props.editor.selectedTree.value?.tree.id === props.tree.parent?.id &&
+		props.editor.selectedTree.value?.key === props.elementKey
+)
 
 function click() {
 	props.editor.select(props.tree.parent!, props.elementKey)

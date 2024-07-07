@@ -81,10 +81,12 @@ export function buildTree(
 	}
 }
 
-export interface TreeEdit {
-	apply(): void
+export type TreeSelection = { tree: TreeElement; key?: string | number } | null
 
-	undo(): void
+export interface TreeEdit {
+	apply(): TreeSelection
+
+	undo(): TreeSelection
 }
 
 export class ModifyValueEdit implements TreeEdit {
@@ -94,12 +96,16 @@ export class ModifyValueEdit implements TreeEdit {
 		this.oldValue = element.value
 	}
 
-	public apply() {
+	public apply(): TreeSelection {
 		this.element.value = this.value
+
+		return { tree: this.element }
 	}
 
-	public undo() {
+	public undo(): TreeSelection {
 		this.element.value = this.oldValue
+
+		return { tree: this.element }
 	}
 }
 
@@ -113,7 +119,7 @@ export class ModifyPropertyKeyEdit implements TreeEdit {
 		this.propertyIndex = Object.keys(element.children).indexOf(key)
 	}
 
-	public apply() {
+	public apply(): TreeSelection {
 		const child = this.element.children[this.oldKey]
 
 		delete this.element.children[this.oldKey]
@@ -125,9 +131,11 @@ export class ModifyPropertyKeyEdit implements TreeEdit {
 		values.splice(this.propertyIndex, 0, child)
 
 		this.element.children = Object.fromEntries(keys.map((key, index) => [key, values[index]]))
+
+		return { tree: this.element, key: this.newKey }
 	}
 
-	public undo() {
+	public undo(): TreeSelection {
 		const child = this.element.children[this.newKey]
 
 		delete this.element.children[this.newKey]
@@ -139,5 +147,7 @@ export class ModifyPropertyKeyEdit implements TreeEdit {
 		values.splice(this.propertyIndex, 0, child)
 
 		this.element.children = Object.fromEntries(keys.map((key, index) => [key, values[index]]))
+
+		return { tree: this.element, key: this.oldKey }
 	}
 }

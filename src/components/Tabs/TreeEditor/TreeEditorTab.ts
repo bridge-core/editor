@@ -5,7 +5,7 @@ import { BedrockProject } from '@/libs/project/BedrockProject'
 import { ProjectManager } from '@/libs/project/ProjectManager'
 import { FileTab } from '@/components/TabSystem/FileTab'
 import { Disposable, disposeAll } from '@/libs/disposeable/Disposeable'
-import { buildTree, ObjectElement, TreeEdit, TreeElement } from './Tree'
+import { buildTree, ObjectElement, TreeEdit, TreeElement, TreeSelection } from './Tree'
 
 export class TreeEditorTab extends FileTab {
 	public component: Component | null = TreeEditorTabComponent
@@ -18,7 +18,7 @@ export class TreeEditorTab extends FileTab {
 	public history: TreeEdit[] = []
 	public currentEditIndex = -1
 
-	public selectedTree: Ref<{ tree: TreeElement; key?: string | number } | null> = ref(null)
+	public selectedTree: Ref<TreeSelection> = ref(null)
 
 	public knownWords: Record<string, string[]> = {
 		keywords: [],
@@ -132,13 +132,13 @@ export class TreeEditorTab extends FileTab {
 		this.history.push(edit)
 		this.currentEditIndex++
 
-		edit.apply()
+		this.selectedTree.value = edit.apply()
 	}
 
 	public undo() {
 		if (this.currentEditIndex < 0) return
 
-		this.history[this.currentEditIndex].undo()
+		this.selectedTree.value = this.history[this.currentEditIndex].undo()
 
 		this.currentEditIndex--
 	}
@@ -148,11 +148,6 @@ export class TreeEditorTab extends FileTab {
 
 		this.currentEditIndex++
 
-		this.history[this.currentEditIndex].apply()
-	}
-
-	public useIsSelected(tree: TreeElement, key?: string | number): ComputedRef<boolean> {
-		//Proxies don't equal eachother so we use an uuid
-		return computed(() => this.selectedTree.value?.tree.id === tree.id && this.selectedTree.value?.key === key)
+		this.selectedTree.value = this.history[this.currentEditIndex].apply()
 	}
 }

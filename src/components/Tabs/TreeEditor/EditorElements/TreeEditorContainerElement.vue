@@ -2,15 +2,18 @@
 import TreeEditorPropertyElement from './TreeEditorPropertyElement.vue'
 import { ArrayElement, ObjectElement, TreeElement } from '../Tree'
 import { TreeEditorTab } from '../TreeEditorTab'
+import { computed, onRenderTriggered } from 'vue'
 
-defineProps<{ tree: TreeElement; editor: TreeEditorTab }>()
+const props = defineProps<{ tree: TreeElement; editor: TreeEditorTab }>()
+
+const keys = computed(() => (props.tree instanceof ObjectElement ? Object.keys(props.tree.children) : []))
 </script>
 
 <template>
 	<div v-if="tree instanceof ObjectElement">
 		<TreeEditorPropertyElement
 			:editor="editor"
-			v-for="key in Object.keys(tree.children)"
+			v-for="key in keys"
 			:element-key="key"
 			:tree="tree.children[key]"
 			:key="tree.children[key].id"
