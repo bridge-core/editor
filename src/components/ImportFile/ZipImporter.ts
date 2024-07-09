@@ -14,6 +14,9 @@ export class ZipImporter extends FileImporter {
 	async onImport(fileHandle: AnyFileHandle) {
 		const app = await App.getApp()
 		const fs = app.fileSystem
+
+		if (await fs.directoryExists('import')) await fs.unlink('import')
+
 		const tmpHandle = await fs.getDirectoryHandle('import', {
 			create: true,
 		})
@@ -37,12 +40,23 @@ export class ZipImporter extends FileImporter {
 		) {
 			await importFromBrproject(fileHandle, false)
 		} else {
+			let foundPack = false
+
 			for await (const pack of tmpHandle.values()) {
 				if (await fs.fileExists(`import/${pack.name}/manifest.json`)) {
+					foundPack = true
+
 					await importFromMcaddon(fileHandle, false)
 					break
 				}
 			}
+
+			if (foundPack) return
+
+			app.folderImportManager.onImportFolder(
+				await fs.getDirectoryHandle('import')
+			)
+			// No addon packs were found, we'll try importing the folder
 		}
 	}
 }
