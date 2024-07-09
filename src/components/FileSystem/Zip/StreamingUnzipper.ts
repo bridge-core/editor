@@ -4,6 +4,7 @@ import { FileSystem } from '../FileSystem'
 import { wait } from '/@/utils/wait'
 import { invoke } from '@tauri-apps/api/tauri'
 import { basename, parse } from '/@/utils/path'
+import { chunk, last } from 'lodash-es'
 
 /**
  * Streaming variant of the Unzipper class. It is slightly faster and consumes less memory.
@@ -48,34 +49,58 @@ export class StreamingUnzipper extends GenericUnzipper<Uint8Array> {
 		}
 
 		this.task?.update(0, data.length)
-		let streamedBytes = 0
-		let totalFiles = 0
-		let currentFileCount = 0
 
 		const unzipStream = new Promise<void>(async (resolve, reject) => {
-			const unzip = new Unzip(async (stream) => {
-				totalFiles++
+			const streams: UnzipFile[] = []
 
-				// Skip directories
-				if (!stream.name.endsWith('/')) {
+			const unzip = new Unzip(async (stream) => {
+				streams.push(stream)
+			})
+
+			unzip.register(AsyncUnzipInflate)
+
+			const chunks = this.getChunks(data)
+			for (let chunkIndex = 0; chunkIndex < chunks.length; chunkIndex++) {
+				unzip.push(chunks[chunkIndex], chunkIndex == chunks.length - 1)
+			}
+
+			let streamedBytes = 0
+
+			let streamQueue: { resolved: true; task: Promise<void> }[] = []
+
+			for (const stream of streams) {
+				if (stream.name.endsWith('/')) continue
+
+				const queueItem: any = { resolved: false }
+
+				queueItem.task = new Promise<void>(async (res) => {
 					await this.streamFile(fs, stream).catch((err) =>
 						reject(err)
+					)
+
+					queueItem.resolved = true
+
+					res()
+				})
+
+				streamQueue.push(queueItem)
+
+				if (streamQueue.length >= 10) {
+					await Promise.any(
+						streamQueue.map((element) => element.task)
+					)
+
+					streamQueue = streamQueue.filter(
+						(element) => !element.resolved
 					)
 				}
 
 				streamedBytes += stream.size ?? 0
 				this.task?.update(streamedBytes)
+			}
 
-				currentFileCount++
-				// Is this safe to do? There seems to be no better way to detect that the stream is done processing
-				if (currentFileCount === totalFiles) {
-					this.task?.complete()
-					resolve()
-				}
-			})
-
-			unzip.register(AsyncUnzipInflate)
-			unzip.push(data, true)
+			this.task?.complete()
+			resolve()
 		})
 
 		await unzipStream
@@ -84,6 +109,27 @@ export class StreamingUnzipper extends GenericUnzipper<Uint8Array> {
 		// This means that some files are imported incorrectly if we don't wait a bit.
 		// (Data would still be within .crswap files)
 		await wait(100)
+	}
+
+	protected getChunks(data: Uint8Array): Uint8Array[] {
+		const chunks: Uint8Array[] = []
+
+		const chunkSize = 64 * 1000 // 64kb
+
+		for (
+			let startByte = 0;
+			startByte < data.length;
+			startByte += chunkSize
+		) {
+			chunks.push(
+				data.slice(
+					startByte,
+					Math.min(data.length, startByte + chunkSize)
+				)
+			)
+		}
+
+		return chunks
 	}
 
 	/**
