@@ -190,8 +190,6 @@ export class TypeLoader {
 				.filter((type) => type[0]) as [string, string?][]
 		}
 
-		console.log(libDefinitions)
-
 		const libs = await this.load(libDefinitions)
 
 		for (const [typePath, lib] of libs) {
