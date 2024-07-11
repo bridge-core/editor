@@ -1,4 +1,4 @@
-import { Runtime } from 'bridge-js-runtime'
+import { Runtime } from '@bridge-editor/js-runtime'
 import { App } from '/@/App'
 import { dirname } from '/@/utils/path'
 
