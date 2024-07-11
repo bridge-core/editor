@@ -1,4 +1,4 @@
-import { Console } from 'dash-compiler'
+import { Console } from '@bridge-editor/dash-compiler'
 
 export interface ILogData {
 	// Format: HH:MM:SS

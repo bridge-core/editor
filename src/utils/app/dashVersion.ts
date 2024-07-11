@@ -1,6 +1,6 @@
 import packageConfig from '../../../package.json'
 
-let version = packageConfig.dependencies['dash-compiler']
+let version = packageConfig.dependencies['@bridge-editor/dash-compiler']
 
 if (
 	version.startsWith('^') ||

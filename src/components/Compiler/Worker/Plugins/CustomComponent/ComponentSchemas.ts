@@ -1,5 +1,5 @@
 import { Remote } from 'comlink'
-import { Component, DefaultConsole } from 'dash-compiler'
+import { Component, DefaultConsole } from '@bridge-editor/dash-compiler'
 import { DashService } from '../../Service'
 import { App } from '/@/App'
 import { JsRuntime } from '/@/components/Extensions/Scripts/JsRuntime'

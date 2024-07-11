@@ -11,7 +11,7 @@ import cssWorker from 'monaco-editor/esm/vs/language/css/css.worker.js?worker'
 import htmlWorker from 'monaco-editor/esm/vs/language/html/html.worker.js?worker'
 import tsWorker from 'monaco-editor/esm/vs/language/typescript/ts.worker.js?worker'
 import { initRuntimes } from 'bridge-js-runtime'
-import wasmUrl from '@swc/wasm-web/wasm-web_bg.wasm?url'
+import wasmUrl from '@swc/wasm-web/wasm_bg.wasm?url'
 import './main.css'
 
 // @ts-ignore
