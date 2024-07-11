@@ -5,7 +5,7 @@ import { expose } from 'comlink'
 import { FileTypeLibrary, IFileType } from '/@/components/Data/FileType'
 import { DataLoader } from '/@/components/Data/DataLoader'
 import type { AnyDirectoryHandle } from '/@/components/FileSystem/Types'
-import { Dash, initRuntimes, FileSystem } from 'dash-compiler'
+import { Dash, initRuntimes, FileSystem } from '@bridge-editor/dash-compiler'
 import { PackTypeLibrary } from '/@/components/Data/PackType'
 import { DashFileSystem } from './FileSystem'
 import { Signal } from '/@/components/Common/Event/Signal'
@@ -13,7 +13,7 @@ import { dirname } from '/@/utils/path'
 import { EventDispatcher } from '/@/components/Common/Event/EventDispatcher'
 import { ForeignConsole } from './Console'
 import { Mutex } from '../../Common/Mutex'
-import wasmUrl from '@swc/wasm-web/wasm-web_bg.wasm?url'
+import wasmUrl from '@swc/wasm-web/wasm_bg.wasm?url'
 import { VirtualDirectoryHandle } from '../../FileSystem/Virtual/DirectoryHandle'
 import { TauriFsStore } from '../../FileSystem/Virtual/Stores/TauriFs'
 
@@ -77,8 +77,8 @@ export class DashService extends EventDispatcher<void> {
 			compilerConfig: options.compilerConfig,
 			console,
 			mode: options.mode,
-			fileType: this._fileType,
-			packType: new PackTypeLibrary(),
+			fileType: <any>this._fileType,
+			packType: <any>new PackTypeLibrary(),
 			verbose: true,
 			requestJsonData: (path) => dataLoader.readJSON(path),
 		})

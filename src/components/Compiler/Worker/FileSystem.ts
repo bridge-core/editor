@@ -1,5 +1,5 @@
-import { FileSystem } from 'dash-compiler'
-import { IDirEntry } from 'dash-compiler/dist/FileSystem/FileSystem'
+import { FileSystem } from '@bridge-editor/dash-compiler'
+import { IDirEntry } from '@bridge-editor/dash-compiler/dist/FileSystem/FileSystem'
 import { AnyDirectoryHandle } from '../../FileSystem/Types'
 import { FileSystem as BridgeFileSystem } from '/@/components/FileSystem/FileSystem'
 

@@ -1,4 +1,4 @@
-import { Command, DefaultConsole } from 'dash-compiler'
+import { Command, DefaultConsole } from '@bridge-editor/dash-compiler'
 import { App } from '/@/App'
 import { JsRuntime } from '/@/components/Extensions/Scripts/JsRuntime'
 import { AnyDirectoryHandle } from '/@/components/FileSystem/Types'
@@ -56,9 +56,13 @@ export async function generateCommandSchemas() {
 				v1CompatMode
 			)
 
-			await command.load(jsRuntime, filePath, 'client').catch((err) => {
-				console.error(`Failed to load command "${filePath}": ${err}`)
-			})
+			await command
+				.load(<any>jsRuntime, filePath, 'client')
+				.catch((err) => {
+					console.error(
+						`Failed to load command "${filePath}": ${err}`
+					)
+				})
 
 			schemas.push(...command.getSchema())
 		},
