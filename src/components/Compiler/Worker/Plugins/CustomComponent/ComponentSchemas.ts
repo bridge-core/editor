@@ -171,7 +171,7 @@ export class ComponentSchemas {
 		)
 
 		const loadedCorrectly = await component.load(
-			jsRuntime,
+			<any>jsRuntime,
 			filePath,
 			'client'
 		)

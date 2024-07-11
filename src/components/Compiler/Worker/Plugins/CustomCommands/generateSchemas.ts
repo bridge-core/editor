@@ -56,9 +56,13 @@ export async function generateCommandSchemas() {
 				v1CompatMode
 			)
 
-			await command.load(jsRuntime, filePath, 'client').catch((err) => {
-				console.error(`Failed to load command "${filePath}": ${err}`)
-			})
+			await command
+				.load(<any>jsRuntime, filePath, 'client')
+				.catch((err) => {
+					console.error(
+						`Failed to load command "${filePath}": ${err}`
+					)
+				})
 
 			schemas.push(...command.getSchema())
 		},

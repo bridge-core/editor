@@ -77,8 +77,8 @@ export class DashService extends EventDispatcher<void> {
 			compilerConfig: options.compilerConfig,
 			console,
 			mode: options.mode,
-			fileType: this._fileType,
-			packType: new PackTypeLibrary(),
+			fileType: <any>this._fileType,
+			packType: <any>new PackTypeLibrary(),
 			verbose: true,
 			requestJsonData: (path) => dataLoader.readJSON(path),
 		})
