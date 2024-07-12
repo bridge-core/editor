@@ -56,6 +56,8 @@ export class MemoryDb extends IDBWrapper {
 }
 
 export class MemoryStore extends IndexedDbStore {
+	//@ts-ignore
+	public readonly type = 'memoryStore'
 	protected idb: MemoryDb
 
 	constructor(storeName?: string, mapData?: [IDBValidKey, any][]) {
@@ -63,6 +65,7 @@ export class MemoryStore extends IndexedDbStore {
 		this.idb = new MemoryDb(storeName, mapData)
 	}
 
+	//@ts-ignore
 	serialize() {
 		return <const>{
 			type: this.type,

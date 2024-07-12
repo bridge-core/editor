@@ -48,7 +48,7 @@ export class IDBWrapper {
 		return clearRaw(this.store)
 	}
 	async has(key: IDBValidKey) {
-		return (await get(key)) !== undefined
+		return (await rawGet(key, this.store)) !== undefined
 	}
 	keys() {
 		return rawKeys(this.store)
