@@ -1,6 +1,6 @@
 {
 	"name": "bridge",
-	"version": "2.7.29",
+	"version": "2.7.30",
 	"private": true,
 	"scripts": {
 		"dev": "vite",
@@ -12,10 +12,10 @@
 		"build:nightly": "node ./scripts/build.mjs && node ./scripts/buildApp.mjs --nightly"
 	},
 	"dependencies": {
-		"@bridge-editor/dash-compiler": "^0.11.6",
-		"@bridge-editor/js-runtime": "^0.4.4",
+		"@bridge-editor/dash-compiler": "^0.11.7",
+		"@bridge-editor/js-runtime": "^0.4.5",
 		"@mdi/font": "^7.4.47",
-		"@swc/wasm-web": "^1.6.5",
+		"@swc/wasm-web": "1.6.5",
 		"@tauri-apps/api": "^1.2.0",
 		"@types/lz-string": "^1.3.34",
 		"bridge-common-utils": "^0.3.3",

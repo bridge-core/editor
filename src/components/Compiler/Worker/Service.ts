@@ -13,7 +13,7 @@ import { dirname } from '/@/utils/path'
 import { EventDispatcher } from '/@/components/Common/Event/EventDispatcher'
 import { ForeignConsole } from './Console'
 import { Mutex } from '../../Common/Mutex'
-import wasmUrl from '@swc/wasm-web/wasm_bg.wasm?url'
+import wasmUrl from '@swc/wasm-web/wasm-web_bg.wasm?url'
 import { VirtualDirectoryHandle } from '../../FileSystem/Virtual/DirectoryHandle'
 import { TauriFsStore } from '../../FileSystem/Virtual/Stores/TauriFs'
 
