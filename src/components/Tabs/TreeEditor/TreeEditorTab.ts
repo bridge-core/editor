@@ -19,6 +19,7 @@ export class TreeEditorTab extends FileTab {
 	public currentEditIndex = -1
 
 	public selectedTree: Ref<TreeSelection> = ref(null)
+	public draggedTree: Ref<TreeSelection> = ref(null)
 
 	public knownWords: Record<string, string[]> = {
 		keywords: [],
@@ -125,6 +126,14 @@ export class TreeEditorTab extends FileTab {
 
 	public select(tree: TreeElement, key?: string | number) {
 		this.selectedTree.value = { key, tree }
+	}
+
+	public drag(tree: TreeElement, key?: string | number) {
+		this.draggedTree.value = { key, tree }
+	}
+
+	public cancelDrag() {
+		this.draggedTree.value = null
 	}
 
 	public edit(edit: TreeEdit) {

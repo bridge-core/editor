@@ -4,11 +4,16 @@ import TreeEditorValueElement from './TreeEditorValueElement.vue'
 import TreeEditorObjectElement from './TreeEditorContainerElement.vue'
 import HighlightedText from '../HighlightedText.vue'
 
-import { computed, ref } from 'vue'
+import { computed, nextTick, Ref, ref } from 'vue'
 import { TreeEditorTab } from '../TreeEditorTab'
 import { TreeElement, ObjectElement, ArrayElement } from '../Tree'
 
-const props = defineProps<{ tree: TreeElement; elementKey: string | number; editor: TreeEditorTab }>()
+const props = defineProps<{
+	tree: TreeElement
+	elementKey: string | number
+	editor: TreeEditorTab
+	preview?: boolean
+}>()
 
 const open = ref(false)
 
@@ -19,6 +24,12 @@ const selected = computed(
 		props.editor.selectedTree.value?.key === props.elementKey
 )
 
+const dragging = computed(
+	() =>
+		props.editor.draggedTree.value?.tree.id === props.tree.parent?.id &&
+		props.editor.draggedTree.value?.key === props.elementKey
+)
+
 function click() {
 	props.editor.select(props.tree.parent!, props.elementKey)
 
@@ -26,13 +37,95 @@ function click() {
 
 	open.value = !open.value
 }
+
+const propertyElement: Ref<HTMLDivElement> = <any>ref(null)
+
+const draggingCount = ref(0)
+const draggingOver = computed(() => draggingCount.value > 0)
+const draggingAbove = ref(true)
+
+function dragStart(event: DragEvent) {
+	if (props.preview) return
+
+	if (event.target !== propertyElement.value) return
+
+	requestAnimationFrame(() => {
+		props.editor.drag(props.tree.parent!, props.elementKey)
+	})
+}
+
+function dragEnd(event: DragEvent) {
+	if (props.preview) return
+
+	if (event.target !== propertyElement.value) return
+
+	props.editor.cancelDrag()
+}
+
+function dragEnter(event: DragEvent) {
+	event.preventDefault()
+
+	if (props.preview) return
+
+	draggingCount.value++
+
+	event.stopPropagation()
+}
+
+function dragLeave(event: DragEvent) {
+	event.preventDefault()
+
+	if (props.preview) return
+
+	draggingCount.value--
+
+	event.stopPropagation()
+}
+
+function dragOver(event: DragEvent) {
+	event.preventDefault()
+
+	if (props.preview) return
+
+	draggingAbove.value =
+		event.clientY <
+		propertyElement.value.getBoundingClientRect().top + propertyElement.value.getBoundingClientRect().height / 2
+
+	event.stopPropagation()
+}
+
+function drop(event: DragEvent) {
+	draggingCount.value = 0
+	props.editor.cancelDrag()
+}
 </script>
 
 <template>
-	<div class="table">
+	<div
+		v-show="preview || !dragging"
+		class="table relative w-full"
+		draggable="true"
+		ref="propertyElement"
+		@drag=""
+		@dragstart="dragStart"
+		@dragend="dragEnd"
+		@dragenter="dragEnter"
+		@dragleave="dragLeave"
+		@dragover="dragOver"
+		@drop="drop"
+	>
+		<TreeEditorPropertyElement
+			v-if="!preview && draggingOver && draggingAbove && editor.draggedTree.value !== null"
+			:tree="editor.draggedTree.value.tree"
+			:elementKey="editor.draggedTree.value.key!"
+			:editor="editor"
+			:preview="true"
+		/>
+
 		<span class="flex items-end">
 			<span
-				class="flex items-center gap-1 bg-[var(--color)] hover:bg-background-secondary px-1 rounded transition-colors ease-out duration-100 cursor-pointer"
+				class="flex items-center gap-1 bg-[var(--color)] px-1 rounded transition-colors ease-out duration-100 cursor-pointer"
+				:class="{ 'hover:bg-background-secondary': !editor.draggedTree.value || dragging }"
 				@click="click"
 				:style="{
 					'--color': selected ? 'var(--theme-color-backgroundSecondary)' : 'none',
@@ -62,15 +155,23 @@ function click() {
 				tree instanceof ObjectElement ? '{' : '['
 			}}</span>
 		</span>
-	</div>
 
-	<div v-if="open">
-		<div class="ml-4">
-			<TreeEditorObjectElement :editor="editor" :tree="tree" />
+		<div v-if="open">
+			<div class="ml-4">
+				<TreeEditorObjectElement :editor="editor" :tree="tree" />
+			</div>
+
+			<span class="ml-2 select-none px-1" :style="{ fontFamily: 'Consolas' }">{{
+				tree instanceof ObjectElement ? '}' : ']'
+			}}</span>
 		</div>
 
-		<span class="ml-2 select-none px-1" :style="{ fontFamily: 'Consolas' }">{{
-			tree instanceof ObjectElement ? '}' : ']'
-		}}</span>
+		<TreeEditorPropertyElement
+			v-if="!preview && draggingOver && !draggingAbove && editor.draggedTree.value !== null"
+			:tree="editor.draggedTree.value.tree"
+			:elementKey="editor.draggedTree.value.key!"
+			:editor="editor"
+			:preview="true"
+		/>
 	</div>
 </template>
