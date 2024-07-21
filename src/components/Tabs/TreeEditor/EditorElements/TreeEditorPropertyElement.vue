@@ -6,7 +6,7 @@ import HighlightedText from '../HighlightedText.vue'
 
 import { computed, nextTick, Ref, ref } from 'vue'
 import { TreeEditorTab } from '../TreeEditorTab'
-import { TreeElement, ObjectElement, ArrayElement } from '../Tree'
+import { TreeElement, ObjectElement, ArrayElement, MovePropertyKeyEdit } from '../Tree'
 
 const props = defineProps<{
 	tree: TreeElement
@@ -95,7 +95,30 @@ function dragOver(event: DragEvent) {
 }
 
 function drop(event: DragEvent) {
+	if (props.preview) return
+
 	draggingCount.value = 0
+
+	const draggedTree = props.editor.draggedTree.value
+
+	event.stopPropagation()
+
+	if (!draggedTree) return
+	if (!(draggedTree.tree instanceof ObjectElement)) return
+	if (!(props.tree instanceof ObjectElement)) return
+	if (!(typeof draggedTree.key === 'string')) return
+	if (!(typeof props.elementKey === 'string')) return
+
+	props.editor.edit(
+		new MovePropertyKeyEdit(
+			draggedTree.tree,
+			draggedTree.key,
+			props.tree.parent as ObjectElement,
+			Object.keys((props.tree.parent as ObjectElement).children)
+				.filter((key) => key !== draggedTree.key)
+				.indexOf(props.elementKey) + (draggingAbove.value ? 0 : 1)
+		)
+	)
 	props.editor.cancelDrag()
 }
 </script>
