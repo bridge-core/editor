@@ -2,7 +2,7 @@
 import TreeEditorPropertyElement from './TreeEditorPropertyElement.vue'
 import { ArrayElement, ObjectElement, TreeElement } from '../Tree'
 import { TreeEditorTab } from '../TreeEditorTab'
-import { computed, onRenderTriggered } from 'vue'
+import { computed } from 'vue'
 
 const props = defineProps<{ tree: TreeElement; editor: TreeEditorTab }>()
 

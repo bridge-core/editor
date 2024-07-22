@@ -124,8 +124,8 @@ export class TreeEditorTab extends FileTab {
 		this.icon.value = this.fileTypeIcon
 	}
 
-	public select(tree: TreeElement, key?: string | number) {
-		this.selectedTree.value = { key, tree }
+	public select(tree: TreeElement) {
+		this.selectedTree.value = tree
 	}
 
 	public drag(tree: TreeElement, key?: string | number) {

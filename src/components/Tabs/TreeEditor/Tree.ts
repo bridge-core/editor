@@ -93,7 +93,7 @@ export function buildTree(
 	}
 }
 
-export type TreeSelection = { tree: TreeElement; key?: string | number } | null
+export type TreeSelection = TreeElement | null
 
 export interface TreeEdit {
 	apply(): TreeSelection

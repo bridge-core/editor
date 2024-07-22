@@ -17,7 +17,7 @@ function select(event: Event) {
 }
 
 //Proxies don't equal eachother so we use an uuid
-const selected = computed(() => props.editor.selectedTree.value?.tree.id === props.tree.id)
+const selected = computed(() => props.editor.selectedTree.value && props.editor.selectedTree.value.id === props.tree.id)
 
 const value = computed(() => (props.tree instanceof ValueElement ? props.tree.value : null))
 </script>

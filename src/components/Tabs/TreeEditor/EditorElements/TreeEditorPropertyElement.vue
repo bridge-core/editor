@@ -4,13 +4,13 @@ import TreeEditorValueElement from './TreeEditorValueElement.vue'
 import TreeEditorObjectElement from './TreeEditorContainerElement.vue'
 import HighlightedText from '../HighlightedText.vue'
 
-import { computed, nextTick, Ref, ref } from 'vue'
+import { computed, nextTick, onMounted, Ref, ref } from 'vue'
 import { TreeEditorTab } from '../TreeEditorTab'
 import { TreeElement, ObjectElement, ArrayElement, MovePropertyKeyEdit } from '../Tree'
 
 const props = defineProps<{
 	tree: TreeElement
-	elementKey: string | number
+	elementKey?: string | number
 	editor: TreeEditorTab
 	preview?: boolean
 }>()
@@ -18,20 +18,12 @@ const props = defineProps<{
 const open = ref(false)
 
 //Proxies don't equal eachother so we use an uuid
-const selected = computed(
-	() =>
-		props.editor.selectedTree.value?.tree.id === props.tree.parent?.id &&
-		props.editor.selectedTree.value?.key === props.elementKey
-)
+const selected = computed(() => props.editor.selectedTree.value && props.editor.selectedTree.value.id === props.tree.id)
 
-const dragging = computed(
-	() =>
-		props.editor.draggedTree.value?.tree.id === props.tree.parent?.id &&
-		props.editor.draggedTree.value?.key === props.elementKey
-)
+const dragging = computed(() => props.editor.draggedTree.value && props.editor.draggedTree.value.id === props.tree.id)
 
 function click() {
-	props.editor.select(props.tree.parent!, props.elementKey)
+	props.editor.select(props.tree)
 
 	if (!(props.tree instanceof ObjectElement || props.tree instanceof ArrayElement)) return
 
@@ -121,6 +113,8 @@ function drop(event: DragEvent) {
 	)
 	props.editor.cancelDrag()
 }
+
+onMounted(() => {})
 </script>
 
 <template>
