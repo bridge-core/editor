@@ -26,7 +26,7 @@ export class PWAFileSystem extends BaseFileSystem {
 	public setBaseHandle(handle: FileSystemDirectoryHandle) {
 		this.baseHandle = handle
 
-		this.reloaded.dispatch(undefined)
+		this.reloaded.dispatch()
 	}
 
 	protected async traverse(path: string): Promise<FileSystemDirectoryHandle> {

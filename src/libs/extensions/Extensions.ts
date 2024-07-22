@@ -116,7 +116,7 @@ export class Extensions {
 			this.presets = { ...this.presets, ...extension.presets }
 		}
 
-		this.updated.dispatch(undefined)
+		this.updated.dispatch()
 	}
 
 	private static async installExtension(extension: ExtensionManifest, path: string): Promise<Extension> {

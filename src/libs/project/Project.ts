@@ -58,7 +58,7 @@ export class Project implements AsyncDisposable {
 		this.disposables.push(Settings.updated.on(this.settingsChanged.bind(this)))
 
 		this.usingProjectOutputFolder = (await get(this.usingProjectOutputFolderKey)) ?? false
-		this.usingProjectOutputFolderChanged.dispatch(undefined)
+		this.usingProjectOutputFolderChanged.dispatch()
 
 		await this.setupOutputFileSystem()
 
@@ -97,7 +97,7 @@ export class Project implements AsyncDisposable {
 
 		await set(this.usingProjectOutputFolderKey, this.usingProjectOutputFolder)
 
-		this.usingProjectOutputFolderChanged.dispatch(undefined)
+		this.usingProjectOutputFolderChanged.dispatch()
 	}
 
 	public async clearLocalProjectFolder() {
@@ -105,7 +105,7 @@ export class Project implements AsyncDisposable {
 
 		this.usingProjectOutputFolder = false
 
-		this.usingProjectOutputFolderChanged.dispatch(undefined)
+		this.usingProjectOutputFolderChanged.dispatch()
 
 		await set(this.projectOutputFolderHandleKey, undefined)
 
@@ -168,7 +168,7 @@ export class Project implements AsyncDisposable {
 
 		await set(this.usingProjectOutputFolderKey, false)
 
-		this.usingProjectOutputFolderChanged.dispatch(undefined)
+		this.usingProjectOutputFolderChanged.dispatch()
 
 		NotificationSystem.addNotification(
 			'warning',

@@ -49,7 +49,7 @@ export class IndexerService implements Disposable {
 			)
 		).index
 
-		this.updated.dispatch(undefined)
+		this.updated.dispatch()
 	}
 
 	public getCachedData(fileType: string, filePath?: string, cacheKey?: string): null | any {
@@ -100,6 +100,6 @@ export class IndexerService implements Disposable {
 			)
 		).index
 
-		this.updated.dispatch(undefined)
+		this.updated.dispatch()
 	}
 }

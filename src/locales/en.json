@@ -137,6 +137,10 @@
 	},
 	"actions": {
 		"name": "Actions",
+		"unknown": {
+			"name": "Unkown Action",
+			"description": "This action is missing!"
+		},
 		"viewBridgeFolder": {
 			"name": "View bridge. Folder",
 			"description": "View the folder where bridge. stores your projects"

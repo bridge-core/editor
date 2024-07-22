@@ -1,6 +1,6 @@
 import { Disposable } from '@/libs/disposeable/Disposeable'
 
-type Listener<T> = (value: T) => void | Promise<void>
+type Listener<T> = (value?: T) => void | Promise<void>
 
 export class Event<T> {
 	private listeners: Listener<T>[] = []
@@ -17,7 +17,7 @@ export class Event<T> {
 		}
 	}
 
-	public dispatch(value: T) {
+	public dispatch(value?: T) {
 		for (const listener of this.listeners) {
 			listener(value)
 		}

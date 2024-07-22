@@ -19,9 +19,11 @@ import { setupLang } from '@/libs/monaco/languages/Lang'
 import { setupMcFunction } from '@/libs/monaco/languages/McFunction/Language'
 import { setupMolang } from '@/libs/monaco/languages/Molang'
 import { setupSnippetCompletions } from '@/libs/monaco/SnippetCompletions'
-import { LocalFileSystem } from './libs/fileSystem/LocalFileSystem'
+import { LocalFileSystem } from '@/libs/fileSystem/LocalFileSystem'
+import { NotificationSystem } from '@/components/Notifications/NotificationSystem'
 
 export function setupBeforeComponents() {
+	NotificationSystem.setup()
 	ProjectManager.setup()
 	ThemeManager.setup()
 	LocaleManager.setup()

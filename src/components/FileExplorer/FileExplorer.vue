@@ -159,21 +159,13 @@ function executeContextMenuAction(action: string, data: any) {
 					</template>
 
 					<template #menu="{ close }">
-						<div
-							class="w-56 bg-background-secondary rounded mt-2 shadow-window overflow-hidden relative z-10"
-						>
-							<ContextMenuItem
-								text="New File"
-								icon="add"
-								@click="() => contextMenuNewFile(close)"
-								class="pt-4"
-							/>
+						<div class="bg-background-secondary rounded mt-2 shadow-window overflow-hidden relative z-10">
+							<ContextMenuItem text="New File" icon="add" @click="() => contextMenuNewFile(close)" />
 							<ContextMenuItem text="Build" icon="manufacturing" @click="() => contextMenuBuild(close)" />
 							<ContextMenuItem
 								text="Open Project Config"
 								icon="settings"
 								@click="() => contextMenuOpenProjectConfig(close)"
-								class="pb-4"
 							/>
 						</div>
 					</template>

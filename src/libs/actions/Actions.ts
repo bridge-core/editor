@@ -10,6 +10,9 @@ import { fileSystem } from '@/libs/fileSystem/FileSystem'
 import { Windows } from '@/components/Windows/Windows'
 import { NotificationSystem } from '@/components/Notifications/NotificationSystem'
 import { TreeEditorTab } from '@/components/Tabs/TreeEditor/TreeEditorTab'
+import { SettingsWindow } from '@/components/Windows/Settings/SettingsWindow'
+import { ExtensionLibraryWindow } from '@/components/Windows/ExtensionLibrary/ExtensionLibrary'
+import { ProjectManager } from '../project/ProjectManager'
 
 export function setupActions() {
 	ActionManager.addAction(
@@ -414,6 +417,43 @@ export function setupActions() {
 			name: 'actions.clearNotifications.name',
 			description: 'actions.clearNotifications.description',
 			icon: 'delete_forever',
+		})
+	)
+
+	ActionManager.addAction(
+		new Action({
+			id: 'goHome',
+			trigger: () => {
+				ProjectManager.closeProject()
+			},
+			name: 'actions.goHome.name',
+			description: 'actions.goHome.description',
+			icon: 'home',
+		})
+	)
+
+	ActionManager.addAction(
+		new Action({
+			id: 'openSettings',
+			trigger: () => {
+				SettingsWindow.open()
+			},
+			keyBinding: 'Ctrl + +',
+			name: 'actions.settings.name',
+			description: 'actions.settings.description',
+			icon: 'settings',
+		})
+	)
+
+	ActionManager.addAction(
+		new Action({
+			id: 'openExtensions',
+			trigger: () => {
+				ExtensionLibraryWindow.open()
+			},
+			name: 'actions.extensions.name',
+			description: 'actions.extensions.description',
+			icon: 'extension',
 		})
 	)
 }
