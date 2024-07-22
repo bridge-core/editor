@@ -438,7 +438,7 @@ export function setupActions() {
 			trigger: () => {
 				SettingsWindow.open()
 			},
-			keyBinding: 'Ctrl + +',
+			keyBinding: 'Ctrl + ,',
 			name: 'actions.settings.name',
 			description: 'actions.settings.description',
 			icon: 'settings',
