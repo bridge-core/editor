@@ -9,7 +9,14 @@ import FreeContextMenu from '@/components/Common/FreeContextMenu.vue'
 import { ActionManager } from '@/libs/actions/ActionManager'
 import { useTranslate } from '@/libs/locales/Locales'
 import TextButton from '@/components/Common/TextButton.vue'
-import { AddPropertyEdit, ModifyPropertyKeyEdit, ModifyValueEdit, ObjectElement, ValueElement } from './Tree'
+import {
+	AddPropertyEdit,
+	ArrayElement,
+	ModifyPropertyKeyEdit,
+	ModifyValueEdit,
+	ObjectElement,
+	ValueElement,
+} from './Tree'
 
 const t = useTranslate()
 
@@ -29,15 +36,13 @@ function triggerActionAndCloseContextMenu(action: string) {
 
 const _addValue = ref('')
 
-watch(props.instance.selectedTree, () => {
-	_addValue.value = ''
-})
-
 const addValue = computed<string>({
 	get() {
 		return _addValue.value
 	},
 	async set(newValue) {
+		_addValue.value = newValue
+
 		if (!props.instance.selectedTree.value) return
 
 		const selectedTree = props.instance.selectedTree.value.tree
@@ -48,19 +53,16 @@ const addValue = computed<string>({
 
 		if (!key) return
 
-		if (selectedTree instanceof ObjectElement) {
-			const value = selectedTree.children[key]
+		//@ts-ignore
+		const child = selectedTree.children[key]
 
-			if (!(value instanceof ObjectElement)) return
+		if (!(child instanceof ObjectElement)) return
 
-			props.instance.edit(new AddPropertyEdit(value as ObjectElement, newValue, new ObjectElement(value)))
+		props.instance.edit(new AddPropertyEdit(child as ObjectElement, newValue, new ObjectElement(child)))
 
-			await nextTick()
+		await nextTick()
 
-			_addValue.value = ''
-
-			return
-		}
+		_addValue.value = ''
 	},
 })
 
@@ -98,10 +100,6 @@ const editValue = computed<string>({
 		}
 	},
 })
-
-watch(props.instance.selectedTree, (selectedTree) => {})
-
-watch(editValue, async (value) => {})
 </script>
 
 <template>
