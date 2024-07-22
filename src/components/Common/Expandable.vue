@@ -72,4 +72,12 @@ onMounted(() => {
 onUnmounted(() => {
 	observer.disconnect()
 })
+
+function open() {
+	expanded.value = true
+}
+
+defineExpose({
+	open,
+})
 </script>

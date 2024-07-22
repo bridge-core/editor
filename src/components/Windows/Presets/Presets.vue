@@ -70,6 +70,8 @@ async function create() {
 
 const search = ref('')
 
+const expandables: Ref<(typeof Expandable)[]> = ref([])
+
 const filteredCategories = computed(() => {
 	return Object.keys(categories.value).filter(
 		(category) =>
@@ -77,6 +79,12 @@ const filteredCategories = computed(() => {
 				availablePresets.value[presetPath].name.toLowerCase().includes(search.value.toLowerCase())
 			).length > 0
 	)
+})
+
+watch(filteredCategories, () => {
+	for (const expandable of expandables.value) {
+		expandable.open()
+	}
 })
 </script>
 
@@ -102,7 +110,12 @@ const filteredCategories = computed(() => {
 				</LabeledInput>
 
 				<div class="overflow-y-scroll max-h-[34rem]">
-					<Expandable v-for="category of filteredCategories" :key="category" :name="t(category)">
+					<Expandable
+						v-for="category of filteredCategories"
+						:key="category"
+						:name="t(category)"
+						ref="expandables"
+					>
 						<div class="flex flex-col">
 							<button
 								v-for="presetPath of categories[category].filter((presetPath) =>
