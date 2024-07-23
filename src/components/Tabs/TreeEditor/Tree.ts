@@ -219,7 +219,7 @@ export class DeleteElementEdit implements TreeEdit {
 		}
 
 		if (this.element.parent instanceof ArrayElement) {
-			this.element.parent.children.splice(this.element.key as number, 0)
+			this.element.parent.children.splice(this.element.key as number, 1)
 
 			for (let index = 0; index < this.element.parent.children.length; index++) {
 				this.element.parent.children[index].key = index
