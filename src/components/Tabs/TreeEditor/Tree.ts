@@ -205,50 +205,113 @@ export class AddElementEdit implements TreeEdit {
 	}
 }
 
-export class MovePropertyKeyEdit implements TreeEdit {
-	private oldParent: ObjectElement
+export class MoveEdit implements TreeEdit {
+	private oldParent: ObjectElement | ArrayElement
 	private oldPropertyIndex: number
+	private oldKey: string | number
+	private newKey: string | number
 
 	public constructor(
 		private element: TreeElements,
-		private newParent: ObjectElement,
+		private newParent: ObjectElement | ArrayElement,
 		private newPropertyIndex: number
 	) {
 		if (!element.parent) throw new Error('Element must have a parent')
+		if (element.key === null) throw new Error('Element must have a parent')
 
-		this.oldParent = element.parent as ObjectElement
-		this.oldPropertyIndex = Object.keys(this.oldParent.children).indexOf(element.key as string)
+		this.oldParent = element.parent
+		this.oldKey = element.key
+
+		if (this.oldParent instanceof ObjectElement) {
+			this.oldPropertyIndex = Object.keys(this.oldParent.children).indexOf(element.key as string)
+		} else {
+			this.oldPropertyIndex = element.key as number
+		}
+
+		if (this.newParent instanceof ObjectElement) {
+			this.newKey = typeof this.oldKey === 'string' ? this.oldKey : 'new_property'
+
+			console.log('new key', this.newKey)
+
+			while (Object.keys(this.newParent.children).includes(this.newKey)) {
+				this.newKey = 'new_' + this.newKey
+			}
+		} else {
+			this.newKey = this.newPropertyIndex
+		}
 	}
 
 	public apply(): TreeSelection {
-		delete this.oldParent.children[this.element.key as string]
+		if (this.oldParent instanceof ObjectElement) {
+			delete this.oldParent.children[this.element.key as string]
+		} else {
+			this.oldParent.children.splice(this.oldPropertyIndex, 1)
 
-		const keys = Object.keys(this.newParent.children)
-		const values = Object.values(this.newParent.children)
+			for (let index = 0; index < this.oldParent.children.length; index++) {
+				this.oldParent.children[index].key = index
+			}
+		}
 
-		keys.splice(this.newPropertyIndex, 0, this.element.key as string)
-		values.splice(this.newPropertyIndex, 0, this.element)
+		if (this.newParent instanceof ObjectElement) {
+			const keys = Object.keys(this.newParent.children)
+			const values = Object.values(this.newParent.children)
 
-		this.newParent.children = Object.fromEntries(keys.map((key, index) => [key, values[index]]))
+			keys.splice(this.newPropertyIndex, 0, this.newKey as string)
+			values.splice(this.newPropertyIndex, 0, this.element)
 
-		this.element.parent = this.newParent
+			this.newParent.children = Object.fromEntries(keys.map((key, index) => [key, values[index]]))
 
-		return { type: 'property', tree: this.element }
+			this.element.parent = this.newParent
+			this.element.key = this.newKey
+
+			return { type: 'property', tree: this.element }
+		} else {
+			this.newParent.children.splice(this.newPropertyIndex, 0, this.element)
+
+			this.element.parent = this.newParent
+
+			for (let index = 0; index < this.newParent.children.length; index++) {
+				this.newParent.children[index].key = index
+			}
+
+			return { type: 'value', tree: this.element }
+		}
 	}
 
 	public undo(): TreeSelection {
-		delete this.newParent.children[this.element.key as string]
+		if (this.newParent instanceof ObjectElement) {
+			delete this.newParent.children[this.element.key as string]
+		} else {
+			this.newParent.children.splice(this.newPropertyIndex, 1)
 
-		const keys = Object.keys(this.oldParent.children)
-		const values = Object.values(this.oldParent.children)
+			for (let index = 0; index < this.newParent.children.length; index++) {
+				this.newParent.children[index].key = index
+			}
+		}
 
-		keys.splice(this.oldPropertyIndex, 0, this.element.key as string)
-		values.splice(this.oldPropertyIndex, 0, this.element)
+		if (this.oldParent instanceof ObjectElement) {
+			const keys = Object.keys(this.oldParent.children)
+			const values = Object.values(this.oldParent.children)
 
-		this.oldParent.children = Object.fromEntries(keys.map((key, index) => [key, values[index]]))
+			keys.splice(this.oldPropertyIndex, 0, this.oldKey as string)
+			values.splice(this.oldPropertyIndex, 0, this.element)
 
-		this.element.parent = this.oldParent
+			this.oldParent.children = Object.fromEntries(keys.map((key, index) => [key, values[index]]))
 
-		return { type: 'property', tree: this.element }
+			this.element.parent = this.oldParent
+			this.element.key = this.oldKey
+
+			return { type: 'property', tree: this.element }
+		} else {
+			this.oldParent.children.splice(this.oldPropertyIndex, 0, this.element)
+
+			this.element.parent = this.oldParent
+
+			for (let index = 0; index < this.oldParent.children.length; index++) {
+				this.oldParent.children[index].key = index
+			}
+
+			return { type: 'value', tree: this.element }
+		}
 	}
 }

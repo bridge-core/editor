@@ -6,7 +6,7 @@ import HighlightedText from '../HighlightedText.vue'
 
 import { computed, onMounted, Ref, ref } from 'vue'
 import { TreeEditorTab } from '../TreeEditorTab'
-import { TreeElements, ObjectElement, ArrayElement, MovePropertyKeyEdit } from '../Tree'
+import { TreeElements, ObjectElement, ArrayElement, MoveEdit } from '../Tree'
 
 const props = defineProps<{
 	tree: TreeElements
@@ -138,22 +138,41 @@ function drop(event: DragEvent) {
 	event.stopPropagation()
 
 	if (!draggedTree) return
-	if (!(props.tree.parent instanceof ObjectElement)) return
-	if (!(typeof draggedTree.tree.key === 'string')) return
-	if (!(typeof props.elementKey === 'string')) return
 
 	if (draggingInside.value) {
-		props.editor.edit(new MovePropertyKeyEdit(draggedTree.tree, props.tree as ObjectElement, 0))
+		if (!(props.tree instanceof ObjectElement) && !(props.tree instanceof ArrayElement)) return
+
+		props.editor.edit(new MoveEdit(draggedTree.tree, props.tree, 0))
 	} else {
-		props.editor.edit(
-			new MovePropertyKeyEdit(
-				draggedTree.tree,
-				props.tree.parent as ObjectElement,
-				Object.keys((props.tree.parent as ObjectElement).children)
-					.filter((key) => key !== draggedTree.tree.key)
-					.indexOf(props.elementKey) + (draggingAbove.value ? 0 : 1)
+		if (props.tree.parent instanceof ObjectElement) {
+			let keys = Object.keys(props.tree.parent.children)
+
+			if (draggedTree.tree.parent!.id === props.tree.parent.id)
+				keys = keys.filter((key) => key !== draggedTree.tree.key)
+
+			props.editor.edit(
+				new MoveEdit(
+					draggedTree.tree,
+					props.tree.parent,
+					keys.indexOf(props.elementKey as string) + (draggingAbove.value ? 0 : 1)
+				)
 			)
-		)
+		} else if (props.tree.parent instanceof ArrayElement) {
+			let values = props.tree.parent.children
+
+			if (draggedTree.tree.parent === props.tree.parent)
+				values = values.filter((value) => value.id !== draggedTree.tree.id)
+
+			props.editor.edit(
+				new MoveEdit(
+					draggedTree.tree,
+					props.tree.parent,
+					values.findIndex((value) => value.id === props.tree.id) + (draggingAbove.value ? 0 : 1)
+				)
+			)
+		} else {
+			return
+		}
 	}
 
 	props.editor.cancelDrag()
