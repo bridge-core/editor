@@ -38,7 +38,7 @@ export class Action {
 			if (ctrlModifier !== event.ctrlKey) return
 			if (shiftModifier !== event.shiftKey) return
 
-			if (event.key.toUpperCase() !== key) return
+			if (event.key.toUpperCase() !== key && event.key !== key) return
 
 			event.preventDefault()
 
