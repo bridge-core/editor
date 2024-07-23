@@ -1,14 +1,15 @@
 <script setup lang="ts">
 import ContextMenuItem from '@/components/Common/ContextMenuItem.vue'
+import ActionContextMenuItem from '@/components/Common/ActionContextMenuItem.vue'
 import TreeEditorPropertyElement from './EditorElements/TreeEditorPropertyElement.vue'
 import LabeledTextInput from '@/components/Common/LabeledTextInput.vue'
+import FreeContextMenu from '@/components/Common/FreeContextMenu.vue'
+import TextButton from '@/components/Common/TextButton.vue'
 
 import { computed, nextTick, onMounted, Ref, ref, watch } from 'vue'
 import { type TreeEditorTab } from './TreeEditorTab'
-import FreeContextMenu from '@/components/Common/FreeContextMenu.vue'
 import { ActionManager } from '@/libs/actions/ActionManager'
 import { useTranslate } from '@/libs/locales/Locales'
-import TextButton from '@/components/Common/TextButton.vue'
 import {
 	AddElementEdit,
 	AddPropertyEdit,
@@ -32,8 +33,6 @@ function triggerActionAndCloseContextMenu(action: string) {
 
 	contextMenu.value?.close()
 }
-
-//@contextmenu.prevent="contextMenu?.open"
 
 const _addValue = ref('')
 
@@ -118,10 +117,29 @@ onMounted(() => {
 </script>
 
 <template>
-	<div class="w-full h-full" ref="tabElement">
+	<div
+		class="w-full h-full"
+		ref="tabElement"
+		@contextmenu.prevent="
+			(event) => {
+				instance.contextTree.value = null
+				contextMenu?.open(event)
+			}
+		"
+	>
 		<div class="h-full w-full flex flex-col" ref="editorContainer">
 			<div class="w-full flex-1 overflow-auto">
-				<TreeEditorPropertyElement :editor="instance" :tree="instance.tree.value" ref="rootElement" />
+				<TreeEditorPropertyElement
+					:editor="instance"
+					:tree="instance.tree.value"
+					ref="rootElement"
+					@opencontextmenu="
+						({ selection, event }) => {
+							instance.contextTree.value = selection
+							contextMenu?.open(event)
+						}
+					"
+				/>
 			</div>
 
 			<div class="border-background-secondary border-t-2 w-full h-56 p-2">
@@ -133,46 +151,86 @@ onMounted(() => {
 			</div>
 		</div>
 
-		<FreeContextMenu class="w-56" ref="contextMenu">
-			<ContextMenuItem
-				text="Copy"
-				icon="content_copy"
-				class="pt-4"
-				@click="triggerActionAndCloseContextMenu('copy')"
+		<FreeContextMenu class="w-56" ref="contextMenu" #default="{ close }">
+			<ActionContextMenuItem
+				v-if="instance.contextTree.value"
+				action="copy"
+				@click="
+					() => {
+						ActionManager.trigger('copy', undefined)
+						close()
+					}
+				"
 			/>
-			<ContextMenuItem text="Cut" icon="content_cut" @click="triggerActionAndCloseContextMenu('cut')" />
-			<ContextMenuItem text="Paste" icon="content_paste" @click="triggerActionAndCloseContextMenu('paste')" />
+
+			<ActionContextMenuItem
+				v-if="instance.contextTree.value"
+				action="cut"
+				@click="
+					() => {
+						ActionManager.trigger('cut', undefined)
+						close()
+					}
+				"
+			/>
+
+			<ActionContextMenuItem
+				v-if="instance.contextTree.value"
+				action="paste"
+				@click="
+					() => {
+						ActionManager.trigger('paste', undefined)
+						close()
+					}
+				"
+			/>
+
+			<div v-if="instance.contextTree.value" class="bg-background-tertiary h-px m-2 my-0" />
+
+			<ActionContextMenuItem
+				v-if="instance.contextTree.value"
+				action="delete"
+				@click="
+					() => {
+						ActionManager.trigger('delete', undefined)
+						close()
+					}
+				"
+			/>
+
+			<ActionContextMenuItem
+				v-if="instance.contextTree.value"
+				action="convert"
+				@click="
+					() => {
+						ActionManager.trigger('convert', undefined)
+						close()
+					}
+				"
+			/>
+
+			<div v-if="instance.contextTree.value" class="bg-background-tertiary h-px m-2 my-0" />
+
+			<ActionContextMenuItem
+				action="save"
+				@click="
+					() => {
+						ActionManager.trigger('save', undefined)
+						close()
+					}
+				"
+			/>
 
 			<div class="bg-background-tertiary h-px m-2 my-0" />
 
-			<ContextMenuItem text="Save" icon="save" @click="triggerActionAndCloseContextMenu('save')" />
-
-			<div class="bg-background-tertiary h-px m-2 my-0" />
-
-			<ContextMenuItem
-				v-if="instance.hasDocumentation.value"
-				text="View Documentation"
-				icon="menu_book"
-				@click="triggerActionAndCloseContextMenu('viewDocumentation')"
-			/>
-			<ContextMenuItem text="Format" icon="edit_note" @click="triggerActionAndCloseContextMenu('format')" />
-			<ContextMenuItem
-				v-if="instance.language.value !== 'json'"
-				text="Change All Occurences"
-				icon="edit"
-				@click="triggerActionAndCloseContextMenu('changeAllOccurrences')"
-			/>
-			<ContextMenuItem
-				v-if="instance.language.value !== 'json'"
-				text="Go to Definition"
-				icon="search"
-				@click="triggerActionAndCloseContextMenu('goToDefinition')"
-			/>
-			<ContextMenuItem
-				text="Go to Symbol"
-				icon="arrow_forward"
-				class="pb-4"
-				@click="triggerActionAndCloseContextMenu('goToSymbol')"
+			<ActionContextMenuItem
+				action="viewDocumentation"
+				@click="
+					() => {
+						ActionManager.trigger('viewDocumentation', undefined)
+						close()
+					}
+				"
 			/>
 		</FreeContextMenu>
 	</div>

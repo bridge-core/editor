@@ -13,6 +13,7 @@ import { TreeEditorTab } from '@/components/Tabs/TreeEditor/TreeEditorTab'
 import { SettingsWindow } from '@/components/Windows/Settings/SettingsWindow'
 import { ExtensionLibraryWindow } from '@/components/Windows/ExtensionLibrary/ExtensionLibrary'
 import { ProjectManager } from '../project/ProjectManager'
+import { DeleteElementEdit } from '@/components/Tabs/TreeEditor/Tree'
 
 export function setupActions() {
 	ActionManager.addAction(
@@ -125,6 +126,26 @@ export function setupActions() {
 			name: 'actions.cut.name',
 			description: 'actions.cut.description',
 			icon: 'content_cut',
+		})
+	)
+
+	ActionManager.addAction(
+		new Action({
+			id: 'delete',
+			trigger: () => {
+				const focusedTab = TabManager.getFocusedTab()
+
+				if (focusedTab === null) return
+
+				if (!(focusedTab instanceof TreeEditorTab)) return
+
+				if (!focusedTab.contextTree.value) return
+
+				focusedTab.edit(new DeleteElementEdit(focusedTab.contextTree.value.tree))
+			},
+			name: 'actions.delete.name',
+			description: 'actions.delete.description',
+			icon: 'delete',
 		})
 	)
 

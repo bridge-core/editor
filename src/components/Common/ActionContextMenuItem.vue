@@ -18,7 +18,7 @@ const t = useTranslate()
 			class="text-base text-primary transition-colors duration-100 ease-out"
 		/>
 		<span class="ml-2 font-inter select-none min-w-max mr-2">{{
-			t(ActionManager.actions[action]?.name ?? 'actions.unkown.name')
+			t(ActionManager.actions[action]?.name ?? 'actions.unknown.name')
 		}}</span>
 
 		<span v-if="ActionManager.actions[action]?.keyBinding" class="text-text-secondary ml-auto font-inter">

@@ -15,6 +15,8 @@ const props = defineProps<{
 	preview?: boolean
 }>()
 
+const emit = defineEmits(['opencontextmenu'])
+
 const isOpen = ref(false)
 
 //Proxies don't equal eachother so we use an uuid
@@ -213,10 +215,11 @@ defineExpose({ open })
 			<span
 				class="flex items-center gap-1 bg-[var(--color)] px-1 rounded transition-colors ease-out duration-100 cursor-pointer"
 				:class="{ 'hover:bg-background-secondary': !editor.draggedTree.value || dragging }"
-				@click="clickProperty"
 				:style="{
 					'--color': propertySelected ? 'var(--theme-color-backgroundSecondary)' : 'none',
 				}"
+				@click="clickProperty"
+				@contextmenu.stop.prevent="(event: PointerEvent) => emit('opencontextmenu', {selection: { type: 'property', tree }, event})"
 			>
 				<Icon
 					icon="chevron_right"
@@ -237,7 +240,13 @@ defineExpose({ open })
 				</span>
 			</span>
 
-			<TreeEditorValueElement v-if="!isOpen" :editor="editor" :tree="tree" @click="clickValue" />
+			<TreeEditorValueElement
+				v-if="!isOpen"
+				:editor="editor"
+				:tree="tree"
+				@click="clickValue"
+				@opencontextmenu="(event) => emit('opencontextmenu', event)"
+			/>
 
 			<span
 				v-else
@@ -247,6 +256,7 @@ defineExpose({ open })
 					'--color': valueSelected ? 'var(--theme-color-backgroundSecondary)' : 'none',
 				}"
 				@click="editor.select(tree)"
+				@contextmenu.stop.prevent="(event: PointerEvent) => emit('opencontextmenu', {selection: { type: 'value', tree }, event})"
 				>{{ tree instanceof ObjectElement ? '{' : '[' }}</span
 			>
 		</span>
@@ -262,7 +272,11 @@ defineExpose({ open })
 					:preview="true"
 				/>
 
-				<TreeEditorObjectElement :editor="editor" :tree="tree" />
+				<TreeEditorObjectElement
+					:editor="editor"
+					:tree="tree"
+					@opencontextmenu="(event) => emit('opencontextmenu', event)"
+				/>
 			</div>
 
 			<span
@@ -272,6 +286,7 @@ defineExpose({ open })
 					'--color': valueSelected ? 'var(--theme-color-backgroundSecondary)' : 'none',
 				}"
 				@click="editor.select(tree)"
+				@contextmenu.stop.prevent="(event: PointerEvent) => emit('opencontextmenu', {selection: { type: 'value', tree }, event})"
 				>{{ tree instanceof ObjectElement ? '}' : ']' }}</span
 			>
 		</div>

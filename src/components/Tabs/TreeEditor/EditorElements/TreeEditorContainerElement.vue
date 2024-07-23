@@ -6,6 +6,8 @@ import { computed } from 'vue'
 
 const props = defineProps<{ tree: TreeElements; editor: TreeEditorTab }>()
 
+const emit = defineEmits(['opencontextmenu'])
+
 const keys = computed(() => (props.tree instanceof ObjectElement ? Object.keys(props.tree.children) : []))
 </script>
 
@@ -17,6 +19,7 @@ const keys = computed(() => (props.tree instanceof ObjectElement ? Object.keys(p
 			:element-key="key"
 			:tree="tree.children[key]"
 			:key="tree.children[key].id"
+			@opencontextmenu="(event) => emit('opencontextmenu', event)"
 		/>
 	</div>
 
@@ -27,6 +30,7 @@ const keys = computed(() => (props.tree instanceof ObjectElement ? Object.keys(p
 			:element-key="index"
 			:tree="tree.children[index]"
 			:key="tree.children[index].id"
+			@opencontextmenu="(event) => emit('opencontextmenu', event)"
 		/>
 	</div>
 </template>

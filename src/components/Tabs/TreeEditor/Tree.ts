@@ -205,6 +205,55 @@ export class AddElementEdit implements TreeEdit {
 	}
 }
 
+export class DeleteElementEdit implements TreeEdit {
+	public oldPropertyIndex: number = -1
+
+	public constructor(public element: TreeElements) {
+		if (element.parent instanceof ObjectElement)
+			this.oldPropertyIndex = Object.keys(element.parent.children).indexOf(element.key as string)
+	}
+
+	public apply(): TreeSelection {
+		if (this.element.parent instanceof ObjectElement) {
+			delete this.element.parent.children[this.element.key as string]
+		}
+
+		if (this.element.parent instanceof ArrayElement) {
+			this.element.parent.children.splice(this.element.key as number, 0)
+
+			for (let index = 0; index < this.element.parent.children.length; index++) {
+				this.element.parent.children[index].key = index
+			}
+		}
+
+		return null
+	}
+
+	public undo(): TreeSelection {
+		if (this.element.parent instanceof ObjectElement) {
+			this.element.parent.children[this.element.key as string] = this.element
+
+			const keys = Object.keys(this.element.parent.children)
+			const values = Object.values(this.element.parent.children)
+
+			keys.splice(this.oldPropertyIndex, 0, this.element.key as string)
+			values.splice(this.oldPropertyIndex, 0, this.element)
+
+			this.element.parent.children = Object.fromEntries(keys.map((key, index) => [key, values[index]]))
+		}
+
+		if (this.element.parent instanceof ArrayElement) {
+			this.element.parent.children.splice(this.element.key as number, 0, this.element)
+
+			for (let index = 0; index < this.element.parent.children.length; index++) {
+				this.element.parent.children[index].key = index
+			}
+		}
+
+		return { type: 'value', tree: this.element }
+	}
+}
+
 export class MoveEdit implements TreeEdit {
 	private oldParent: ObjectElement | ArrayElement
 	private oldPropertyIndex: number

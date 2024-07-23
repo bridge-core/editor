@@ -79,7 +79,7 @@ defineExpose({ open, close })
 			}"
 			@contextmenu.stop.prevent=""
 		>
-			<slot />
+			<slot :close="close" />
 		</div>
 	</Transition>
 </template>

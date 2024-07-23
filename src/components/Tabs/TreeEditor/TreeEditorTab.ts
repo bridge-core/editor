@@ -20,6 +20,7 @@ export class TreeEditorTab extends FileTab {
 
 	public selectedTree: Ref<TreeSelection> = ref(null)
 	public draggedTree: Ref<TreeSelection> = ref(null)
+	public contextTree: Ref<TreeSelection> = ref(null)
 
 	public knownWords: Record<string, string[]> = {
 		keywords: [],
