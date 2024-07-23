@@ -1,27 +1,30 @@
 import { v4 as uuid } from 'uuid'
 
-export abstract class TreeElement {
+export type TreeElements = ObjectElement | ArrayElement | ValueElement
+export type ParentElements = ObjectElement | ArrayElement | null
+
+abstract class TreeElement {
 	public id = uuid()
 
-	public constructor(public parent: TreeElement | null) {}
+	public constructor(public parent: ParentElements, public key: string | number | null) {}
 
 	public abstract toJson(): any
 
-	public abstract clone(parent: TreeElement | null): TreeElement
+	public abstract clone(parent: ParentElements): TreeElements
 }
 
 export class ObjectElement extends TreeElement {
-	public children: Record<string, TreeElement> = {}
+	public children: Record<string, TreeElements> = {}
 
-	public constructor(parent: TreeElement | null = null) {
-		super(parent)
+	public constructor(parent: ParentElements = null, public key: string | number | null = null) {
+		super(parent, key)
 	}
 
 	public toJson(): any {
 		return Object.fromEntries(Object.entries(this.children).map(([key, child]) => [key, child.toJson()]))
 	}
 
-	public clone(parent: TreeElement | null = null): ObjectElement {
+	public clone(parent: ParentElements = null): ObjectElement {
 		const clonedElement = new ObjectElement(parent)
 
 		for (const key of Object.keys(this.children)) {
@@ -33,17 +36,17 @@ export class ObjectElement extends TreeElement {
 }
 
 export class ArrayElement extends TreeElement {
-	public children: TreeElement[] = []
+	public children: TreeElements[] = []
 
-	public constructor(parent: TreeElement | null = null) {
-		super(parent)
+	public constructor(parent: ParentElements = null, public key: string | number | null = null) {
+		super(parent, key)
 	}
 
 	public toJson(): any {
 		return this.children.map((child) => child.toJson())
 	}
 
-	public clone(parent: TreeElement | null = null): ArrayElement {
+	public clone(parent: ParentElements = null): ArrayElement {
 		const clonedElement = new ArrayElement(parent)
 
 		for (let index = 0; index < this.children.length; index++) {
@@ -55,23 +58,28 @@ export class ArrayElement extends TreeElement {
 }
 
 export class ValueElement extends TreeElement {
-	public constructor(parent: TreeElement | null = null, public value: number | string | boolean | null) {
-		super(parent)
+	public constructor(
+		parent: ParentElements = null,
+		public key: string | number | null = null,
+		public value: number | string | boolean | null
+	) {
+		super(parent, key)
 	}
 
 	public toJson(): any {
 		return this.value
 	}
 
-	public clone(parent: TreeElement | null = null): ValueElement {
-		return new ValueElement(parent, JSON.parse(JSON.stringify(this.value)))
+	public clone(parent: ParentElements = null): ValueElement {
+		return new ValueElement(parent, this.key, JSON.parse(JSON.stringify(this.value)))
 	}
 }
 
 export function buildTree(
 	json: Object | number | string | boolean | null,
-	parent: TreeElement | null = null
-): TreeElement {
+	parent: ParentElements = null,
+	key: string | number | null = null
+): TreeElements {
 	if (Array.isArray(json)) {
 		const element = new ArrayElement(parent)
 
@@ -79,7 +87,7 @@ export function buildTree(
 
 		return element
 	} else if (json === null) {
-		return new ValueElement(parent, null)
+		return new ValueElement(parent, key, null)
 	} else if (typeof json === 'object') {
 		const element = new ObjectElement(parent)
 
@@ -89,11 +97,11 @@ export function buildTree(
 
 		return element
 	} else {
-		return new ValueElement(parent, json)
+		return new ValueElement(parent, key, json)
 	}
 }
 
-export type TreeSelection = TreeElement | null
+export type TreeSelection = { type: 'value' | 'property'; tree: TreeElements } | null
 
 export interface TreeEdit {
 	apply(): TreeSelection
@@ -111,13 +119,13 @@ export class ModifyValueEdit implements TreeEdit {
 	public apply(): TreeSelection {
 		this.element.value = this.value
 
-		return { tree: this.element }
+		return { type: 'value', tree: this.element }
 	}
 
 	public undo(): TreeSelection {
 		this.element.value = this.oldValue
 
-		return { tree: this.element }
+		return { type: 'value', tree: this.element }
 	}
 }
 
@@ -144,7 +152,7 @@ export class ModifyPropertyKeyEdit implements TreeEdit {
 
 		this.element.children = Object.fromEntries(keys.map((key, index) => [key, values[index]]))
 
-		return { tree: this.element, key: this.newKey }
+		return { type: 'value', tree: this.element }
 	}
 
 	public undo(): TreeSelection {
@@ -160,17 +168,17 @@ export class ModifyPropertyKeyEdit implements TreeEdit {
 
 		this.element.children = Object.fromEntries(keys.map((key, index) => [key, values[index]]))
 
-		return { tree: this.element, key: this.oldKey }
+		return { type: 'value', tree: this.element }
 	}
 }
 
 export class AddPropertyEdit implements TreeEdit {
-	public constructor(public element: ObjectElement, public key: string, public value: TreeElement) {}
+	public constructor(public element: ObjectElement, public key: string, public value: TreeElements) {}
 
 	public apply(): TreeSelection {
 		this.element.children[this.key] = this.value
 
-		return { tree: this.element, key: this.key }
+		return { type: 'value', tree: this.element }
 	}
 
 	public undo(): TreeSelection {
@@ -207,7 +215,7 @@ export class MovePropertyKeyEdit implements TreeEdit {
 
 		child.parent = this.newParent
 
-		return { tree: this.newParent, key: this.key }
+		return { type: 'value', tree: child }
 	}
 
 	public undo(): TreeSelection {
@@ -225,6 +233,6 @@ export class MovePropertyKeyEdit implements TreeEdit {
 
 		child.parent = this.oldParent
 
-		return { tree: this.oldParent, key: this.key }
+		return { type: 'value', tree: child }
 	}
 }

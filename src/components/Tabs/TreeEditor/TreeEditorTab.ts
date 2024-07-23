@@ -5,7 +5,7 @@ import { BedrockProject } from '@/libs/project/BedrockProject'
 import { ProjectManager } from '@/libs/project/ProjectManager'
 import { FileTab } from '@/components/TabSystem/FileTab'
 import { Disposable, disposeAll } from '@/libs/disposeable/Disposeable'
-import { buildTree, ObjectElement, TreeEdit, TreeElement, TreeSelection } from './Tree'
+import { buildTree, ObjectElement, TreeEdit, TreeElements, TreeSelection } from './Tree'
 
 export class TreeEditorTab extends FileTab {
 	public component: Component | null = TreeEditorTabComponent
@@ -13,7 +13,7 @@ export class TreeEditorTab extends FileTab {
 	public language = ref('plaintext')
 	public hasDocumentation = ref(false)
 
-	public tree: Ref<TreeElement> = ref(new ObjectElement(null))
+	public tree: Ref<TreeElements> = ref(new ObjectElement(null))
 
 	public history: TreeEdit[] = []
 	public currentEditIndex = -1
@@ -124,12 +124,20 @@ export class TreeEditorTab extends FileTab {
 		this.icon.value = this.fileTypeIcon
 	}
 
-	public select(tree: TreeElement) {
-		this.selectedTree.value = tree
+	public select(tree: TreeElements) {
+		this.selectedTree.value = { type: 'value', tree }
 	}
 
-	public drag(tree: TreeElement, key?: string | number) {
-		this.draggedTree.value = { key, tree }
+	public selectProperty(tree: TreeElements) {
+		this.selectedTree.value = { type: 'property', tree }
+	}
+
+	public drag(tree: TreeElements) {
+		this.draggedTree.value = { type: 'value', tree }
+	}
+
+	public dragProperty(tree: TreeElements) {
+		this.draggedTree.value = { type: 'property', tree }
 	}
 
 	public cancelDrag() {

@@ -1,10 +1,10 @@
 <script lang="ts" setup>
 import TreeEditorPropertyElement from './TreeEditorPropertyElement.vue'
-import { ArrayElement, ObjectElement, TreeElement } from '../Tree'
+import { ArrayElement, ObjectElement, TreeElements } from '../Tree'
 import { TreeEditorTab } from '../TreeEditorTab'
 import { computed } from 'vue'
 
-const props = defineProps<{ tree: TreeElement; editor: TreeEditorTab }>()
+const props = defineProps<{ tree: TreeElements; editor: TreeEditorTab }>()
 
 const keys = computed(() => (props.tree instanceof ObjectElement ? Object.keys(props.tree.children) : []))
 </script>

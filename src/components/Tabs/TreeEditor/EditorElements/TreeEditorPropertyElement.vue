@@ -4,12 +4,12 @@ import TreeEditorValueElement from './TreeEditorValueElement.vue'
 import TreeEditorObjectElement from './TreeEditorContainerElement.vue'
 import HighlightedText from '../HighlightedText.vue'
 
-import { computed, nextTick, onMounted, Ref, ref } from 'vue'
+import { computed, onMounted, Ref, ref } from 'vue'
 import { TreeEditorTab } from '../TreeEditorTab'
-import { TreeElement, ObjectElement, ArrayElement, MovePropertyKeyEdit } from '../Tree'
+import { TreeElements, ObjectElement, ArrayElement, MovePropertyKeyEdit } from '../Tree'
 
 const props = defineProps<{
-	tree: TreeElement
+	tree: TreeElements
 	elementKey?: string | number
 	editor: TreeEditorTab
 	preview?: boolean
@@ -18,9 +18,13 @@ const props = defineProps<{
 const open = ref(false)
 
 //Proxies don't equal eachother so we use an uuid
-const selected = computed(() => props.editor.selectedTree.value && props.editor.selectedTree.value.id === props.tree.id)
+const selected = computed(
+	() => props.editor.selectedTree.value && props.editor.selectedTree.value.tree.id === props.tree.id
+)
 
-const dragging = computed(() => props.editor.draggedTree.value && props.editor.draggedTree.value.id === props.tree.id)
+const dragging = computed(
+	() => props.editor.draggedTree.value && props.editor.draggedTree.value.tree.id === props.tree.id
+)
 
 function click() {
 	props.editor.select(props.tree)
@@ -42,7 +46,7 @@ function dragStart(event: DragEvent) {
 	if (event.target !== propertyElement.value) return
 
 	requestAnimationFrame(() => {
-		props.editor.drag(props.tree.parent!, props.elementKey)
+		props.editor.drag(props.tree)
 	})
 }
 
@@ -96,14 +100,14 @@ function drop(event: DragEvent) {
 	event.stopPropagation()
 
 	if (!draggedTree) return
-	if (!(draggedTree.tree instanceof ObjectElement)) return
+	if (!(draggedTree instanceof ObjectElement)) return
 	if (!(props.tree instanceof ObjectElement)) return
 	if (!(typeof draggedTree.key === 'string')) return
 	if (!(typeof props.elementKey === 'string')) return
 
 	props.editor.edit(
 		new MovePropertyKeyEdit(
-			draggedTree.tree,
+			draggedTree,
 			draggedTree.key,
 			props.tree.parent as ObjectElement,
 			Object.keys((props.tree.parent as ObjectElement).children)
@@ -134,7 +138,7 @@ onMounted(() => {})
 		<TreeEditorPropertyElement
 			v-if="!preview && draggingOver && draggingAbove && editor.draggedTree.value !== null"
 			:tree="editor.draggedTree.value.tree"
-			:elementKey="editor.draggedTree.value.key!"
+			:elementKey="editor.draggedTree.value.tree.key!"
 			:editor="editor"
 			:preview="true"
 		/>
@@ -186,7 +190,7 @@ onMounted(() => {})
 		<TreeEditorPropertyElement
 			v-if="!preview && draggingOver && !draggingAbove && editor.draggedTree.value !== null"
 			:tree="editor.draggedTree.value.tree"
-			:elementKey="editor.draggedTree.value.key!"
+			:elementKey="editor.draggedTree.value.tree.key!"
 			:editor="editor"
 			:preview="true"
 		/>

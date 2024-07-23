@@ -38,20 +38,13 @@ const addValue = computed<string>({
 
 		if (!props.instance.selectedTree.value) return
 
-		const selectedTree = props.instance.selectedTree.value.tree
+		const selectedTree = props.instance.selectedTree.value
 
-		if (selectedTree instanceof ValueElement) return
+		if (!(selectedTree instanceof ObjectElement)) return
 
-		const key = props.instance.selectedTree.value.key
-
-		if (!key) return
-
-		//@ts-ignore
-		const child = selectedTree.children[key]
-
-		if (!(child instanceof ObjectElement)) return
-
-		props.instance.edit(new AddPropertyEdit(child as ObjectElement, newValue, new ObjectElement(child)))
+		props.instance.edit(
+			new AddPropertyEdit(selectedTree as ObjectElement, newValue, new ObjectElement(selectedTree))
+		)
 
 		await nextTick()
 
@@ -65,29 +58,27 @@ const editValue = computed<string>({
 
 		if (!selectedTree) return ''
 
-		if (selectedTree.tree instanceof ValueElement) return selectedTree.tree.value?.toString() ?? 'null'
+		if (selectedTree instanceof ValueElement) return selectedTree.value?.toString() ?? 'null'
 
-		if (selectedTree.tree instanceof ObjectElement) return selectedTree.key?.toString() ?? ''
+		if (selectedTree instanceof ObjectElement) return selectedTree.key?.toString() ?? ''
 
 		return ''
 	},
 	set(newValue) {
 		if (!props.instance.selectedTree.value) return
 
-		if (props.instance.selectedTree.value.tree instanceof ValueElement) {
-			props.instance.edit(new ModifyValueEdit(props.instance.selectedTree.value.tree, newValue))
+		if (props.instance.selectedTree.value instanceof ValueElement) {
+			props.instance.edit(new ModifyValueEdit(props.instance.selectedTree.value, newValue))
 
 			return
 		}
 
-		const key = props.instance.selectedTree.value.key
+		const key = props.instance.selectedTree.value.tree.key
 
 		if (!key) return
 
-		if (props.instance.selectedTree.value.tree instanceof ObjectElement) {
-			props.instance.edit(
-				new ModifyPropertyKeyEdit(props.instance.selectedTree.value.tree, <string>key, newValue)
-			)
+		if (props.instance.selectedTree.value instanceof ObjectElement) {
+			props.instance.edit(new ModifyPropertyKeyEdit(props.instance.selectedTree.value, <string>key, newValue))
 
 			return
 		}

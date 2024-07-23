@@ -1,10 +1,10 @@
 <script lang="ts" setup>
 import { computed } from 'vue'
 import HighlightedText from '../HighlightedText.vue'
-import { ArrayElement, ObjectElement, TreeElement, ValueElement } from '../Tree'
+import { ArrayElement, ObjectElement, TreeElements, ValueElement } from '../Tree'
 import { TreeEditorTab } from '../TreeEditorTab'
 
-const props = defineProps<{ tree: TreeElement; editor: TreeEditorTab }>()
+const props = defineProps<{ tree: TreeElements; editor: TreeEditorTab }>()
 
 const emit = defineEmits(['click'])
 
@@ -17,7 +17,9 @@ function select(event: Event) {
 }
 
 //Proxies don't equal eachother so we use an uuid
-const selected = computed(() => props.editor.selectedTree.value && props.editor.selectedTree.value.id === props.tree.id)
+const selected = computed(
+	() => props.editor.selectedTree.value && props.editor.selectedTree.value.tree.id === props.tree.id
+)
 
 const value = computed(() => (props.tree instanceof ValueElement ? props.tree.value : null))
 </script>
