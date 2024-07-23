@@ -115,18 +115,16 @@ function drop(event: DragEvent) {
 	event.stopPropagation()
 
 	if (!draggedTree) return
-	if (!(draggedTree instanceof ObjectElement)) return
-	if (!(props.tree instanceof ObjectElement)) return
-	if (!(typeof draggedTree.key === 'string')) return
+	if (!(props.tree.parent instanceof ObjectElement)) return
+	if (!(typeof draggedTree.tree.key === 'string')) return
 	if (!(typeof props.elementKey === 'string')) return
 
 	props.editor.edit(
 		new MovePropertyKeyEdit(
-			draggedTree,
-			draggedTree.key,
+			draggedTree.tree,
 			props.tree.parent as ObjectElement,
 			Object.keys((props.tree.parent as ObjectElement).children)
-				.filter((key) => key !== draggedTree.key)
+				.filter((key) => key !== draggedTree.tree.key)
 				.indexOf(props.elementKey) + (draggingAbove.value ? 0 : 1)
 		)
 	)

@@ -189,50 +189,49 @@ export class AddPropertyEdit implements TreeEdit {
 }
 
 export class MovePropertyKeyEdit implements TreeEdit {
+	private oldParent: ObjectElement
 	private oldPropertyIndex: number
 
 	public constructor(
-		private oldParent: ObjectElement,
-		private key: string,
+		private element: TreeElements,
 		private newParent: ObjectElement,
 		private newPropertyIndex: number
 	) {
-		this.oldPropertyIndex = Object.keys(oldParent.children).indexOf(key)
+		if (!element.parent) throw new Error('Element must have a parent')
+
+		this.oldParent = element.parent as ObjectElement
+		this.oldPropertyIndex = Object.keys(this.oldParent.children).indexOf(element.key as string)
 	}
 
 	public apply(): TreeSelection {
-		const child = this.oldParent.children[this.key]
-
-		delete this.oldParent.children[this.key]
+		delete this.oldParent.children[this.element.key as string]
 
 		const keys = Object.keys(this.newParent.children)
 		const values = Object.values(this.newParent.children)
 
-		keys.splice(this.newPropertyIndex, 0, this.key)
-		values.splice(this.newPropertyIndex, 0, child)
+		keys.splice(this.newPropertyIndex, 0, this.element.key as string)
+		values.splice(this.newPropertyIndex, 0, this.element)
 
 		this.newParent.children = Object.fromEntries(keys.map((key, index) => [key, values[index]]))
 
-		child.parent = this.newParent
+		this.element.parent = this.newParent
 
-		return { type: 'value', tree: child }
+		return { type: 'property', tree: this.element }
 	}
 
 	public undo(): TreeSelection {
-		const child = this.newParent.children[this.key]
-
-		delete this.newParent.children[this.key]
+		delete this.newParent.children[this.element.key as string]
 
 		const keys = Object.keys(this.oldParent.children)
 		const values = Object.values(this.oldParent.children)
 
-		keys.splice(this.oldPropertyIndex, 0, this.key)
-		values.splice(this.oldPropertyIndex, 0, child)
+		keys.splice(this.oldPropertyIndex, 0, this.element.key as string)
+		values.splice(this.oldPropertyIndex, 0, this.element)
 
 		this.oldParent.children = Object.fromEntries(keys.map((key, index) => [key, values[index]]))
 
-		child.parent = this.oldParent
+		this.element.parent = this.oldParent
 
-		return { type: 'value', tree: child }
+		return { type: 'property', tree: this.element }
 	}
 }
