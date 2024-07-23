@@ -1,10 +1,8 @@
 <script setup lang="ts">
-import ContextMenuItem from '@/components/Common/ContextMenuItem.vue'
 import ActionContextMenuItem from '@/components/Common/ActionContextMenuItem.vue'
 import TreeEditorPropertyElement from './EditorElements/TreeEditorPropertyElement.vue'
 import LabeledTextInput from '@/components/Common/LabeledTextInput.vue'
 import FreeContextMenu from '@/components/Common/FreeContextMenu.vue'
-import TextButton from '@/components/Common/TextButton.vue'
 
 import { computed, nextTick, onMounted, Ref, ref, watch } from 'vue'
 import { type TreeEditorTab } from './TreeEditorTab'
@@ -137,6 +135,7 @@ onMounted(() => {
 						({ selection, event }) => {
 							instance.contextTree.value = selection
 							contextMenu?.open(event)
+							instance.contextTree.value = null
 						}
 					"
 				/>

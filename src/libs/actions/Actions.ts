@@ -139,10 +139,13 @@ export function setupActions() {
 
 				if (!(focusedTab instanceof TreeEditorTab)) return
 
-				if (!focusedTab.contextTree.value) return
-
-				focusedTab.edit(new DeleteElementEdit(focusedTab.contextTree.value.tree))
+				if (focusedTab.contextTree.value) {
+					focusedTab.edit(new DeleteElementEdit(focusedTab.contextTree.value.tree))
+				} else if (focusedTab.selectedTree.value) {
+					focusedTab.edit(new DeleteElementEdit(focusedTab.selectedTree.value.tree))
+				}
 			},
+			keyBinding: 'Delete',
 			name: 'actions.delete.name',
 			description: 'actions.delete.description',
 			icon: 'delete',
