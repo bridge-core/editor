@@ -6,13 +6,11 @@ import { TreeEditorTab } from '../TreeEditorTab'
 
 const props = defineProps<{ tree: TreeElements; editor: TreeEditorTab }>()
 
-const emit = defineEmits(['click'])
+const emit = defineEmits(['expand'])
 
-function click(event: Event) {
-	if (props.tree instanceof ObjectElement || props.tree instanceof ArrayElement) emit('click')
-}
+function click() {
+	if (props.tree instanceof ObjectElement || props.tree instanceof ArrayElement) emit('expand')
 
-function select(event: Event) {
 	props.editor.select(props.tree)
 }
 
@@ -47,17 +45,11 @@ const value = computed(() => (props.tree instanceof ValueElement ? props.tree.va
 			v-else-if="tree instanceof ValueElement && typeof value === 'string'"
 			class="select-none"
 			:style="{ fontFamily: 'Consolas' }"
-			@click.stop="select"
 		>
 			"<HighlightedText :known-words="editor.knownWords" :value="value" type="string" />"
 		</span>
 
-		<span
-			v-else-if="tree instanceof ValueElement"
-			class="select-none"
-			:style="{ fontFamily: 'Consolas' }"
-			@click.stop="select"
-		>
+		<span v-else-if="tree instanceof ValueElement" class="select-none" :style="{ fontFamily: 'Consolas' }">
 			<HighlightedText
 				:known-words="editor.knownWords"
 				:value="value === null ? 'null' : value.toString()"

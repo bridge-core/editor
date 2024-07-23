@@ -25,6 +25,13 @@ const propertySelected = computed(
 		props.editor.selectedTree.value.tree.id === props.tree.id
 )
 
+const valueSelected = computed(
+	() =>
+		props.editor.selectedTree.value &&
+		props.editor.selectedTree.value.type === 'value' &&
+		props.editor.selectedTree.value.tree.id === props.tree.id
+)
+
 const dragging = computed(
 	() => props.editor.draggedTree.value && props.editor.draggedTree.value.tree.id === props.tree.id
 )
@@ -194,10 +201,12 @@ defineExpose({ open })
 
 			<span
 				v-else
-				class="select-none px-1"
+				class="select-none px-1 bg-[var(--color)] hover:bg-background-secondary rounded transition-colors ease-out duration-100 cursor-pointer"
 				:style="{
 					fontFamily: 'Consolas',
+					'--color': valueSelected ? 'var(--theme-color-backgroundSecondary)' : 'none',
 				}"
+				@click="editor.select(tree)"
 				>{{ tree instanceof ObjectElement ? '{' : '[' }}</span
 			>
 		</span>
@@ -208,10 +217,12 @@ defineExpose({ open })
 			</div>
 
 			<span
-				class="ml-2 select-none px-1"
+				class="select-none px-1 bg-[var(--color)] hover:bg-background-secondary rounded transition-colors ease-out duration-100 cursor-pointer"
 				:style="{
 					fontFamily: 'Consolas',
+					'--color': valueSelected ? 'var(--theme-color-backgroundSecondary)' : 'none',
 				}"
+				@click="editor.select(tree)"
 				>{{ tree instanceof ObjectElement ? '}' : ']' }}</span
 			>
 		</div>

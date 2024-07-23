@@ -89,6 +89,8 @@ const rootElement: Ref<typeof TreeEditorPropertyElement> = <any>ref(null)
 
 onMounted(() => {
 	rootElement.value.open()
+
+	props.instance.select(props.instance.tree.value)
 })
 </script>
 
