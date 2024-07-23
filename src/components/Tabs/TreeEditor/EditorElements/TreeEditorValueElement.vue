@@ -18,7 +18,10 @@ function select(event: Event) {
 
 //Proxies don't equal eachother so we use an uuid
 const selected = computed(
-	() => props.editor.selectedTree.value && props.editor.selectedTree.value.tree.id === props.tree.id
+	() =>
+		props.editor.selectedTree.value &&
+		props.editor.selectedTree.value.type === 'value' &&
+		props.editor.selectedTree.value.tree.id === props.tree.id
 )
 
 const value = computed(() => (props.tree instanceof ValueElement ? props.tree.value : null))
@@ -27,10 +30,10 @@ const value = computed(() => (props.tree instanceof ValueElement ? props.tree.va
 <template>
 	<span
 		class="bg-[var(--color)] hover:bg-background-secondary px-1 rounded transition-colors ease-out duration-100 cursor-pointer"
-		@click.stop="click"
 		:style="{
 			'--color': selected ? 'var(--theme-color-backgroundSecondary)' : 'none',
 		}"
+		@click.stop="click"
 	>
 		<span v-if="tree instanceof ObjectElement" class="select-none flex" :style="{ fontFamily: 'Consolas' }">{{
 			Object.keys(tree.children).length === 0 ? '{}' : '{...}'

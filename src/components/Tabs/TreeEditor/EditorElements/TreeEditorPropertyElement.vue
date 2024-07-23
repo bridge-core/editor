@@ -18,15 +18,33 @@ const props = defineProps<{
 const isOpen = ref(false)
 
 //Proxies don't equal eachother so we use an uuid
-const selected = computed(
-	() => props.editor.selectedTree.value && props.editor.selectedTree.value.tree.id === props.tree.id
+const propertySelected = computed(
+	() =>
+		props.editor.selectedTree.value &&
+		props.editor.selectedTree.value.type === 'property' &&
+		props.editor.selectedTree.value.tree.id === props.tree.id
+)
+
+const valueSelected = computed(
+	() =>
+		props.editor.selectedTree.value &&
+		props.editor.selectedTree.value.type === 'value' &&
+		props.editor.selectedTree.value.tree.id === props.tree.id
 )
 
 const dragging = computed(
 	() => props.editor.draggedTree.value && props.editor.draggedTree.value.tree.id === props.tree.id
 )
 
-function click() {
+function clickProperty() {
+	props.editor.selectProperty(props.tree)
+
+	if (!(props.tree instanceof ObjectElement || props.tree instanceof ArrayElement)) return
+
+	isOpen.value = true
+}
+
+function clickValue() {
 	props.editor.select(props.tree)
 
 	if (!(props.tree instanceof ObjectElement || props.tree instanceof ArrayElement)) return
@@ -34,7 +52,7 @@ function click() {
 	isOpen.value = true
 }
 
-function toggle() {
+function toggleOpen() {
 	if (!(props.tree instanceof ObjectElement || props.tree instanceof ArrayElement)) return
 
 	isOpen.value = !isOpen.value
@@ -148,7 +166,8 @@ defineExpose({ open })
 		@drop="drop"
 	>
 		<TreeEditorPropertyElement
-			v-if="!preview && draggingOver && draggingAbove && editor.draggedTree.value !== null"
+			v-if="!preview && draggingOver && editor.draggedTree.value !== null"
+			v-show="draggingAbove"
 			:tree="editor.draggedTree.value.tree"
 			:elementKey="editor.draggedTree.value.tree.key!"
 			:editor="editor"
@@ -159,9 +178,9 @@ defineExpose({ open })
 			<span
 				class="flex items-center gap-1 bg-[var(--color)] px-1 rounded transition-colors ease-out duration-100 cursor-pointer"
 				:class="{ 'hover:bg-background-secondary': !editor.draggedTree.value || dragging }"
-				@click="click"
+				@click="clickProperty"
 				:style="{
-					'--color': selected ? 'var(--theme-color-backgroundSecondary)' : 'none',
+					'--color': propertySelected ? 'var(--theme-color-backgroundSecondary)' : 'none',
 				}"
 			>
 				<Icon
@@ -171,7 +190,7 @@ defineExpose({ open })
 						rotate: isOpen ? '90deg' : 'none',
 					}"
 					:color="tree instanceof ObjectElement || tree instanceof ArrayElement ? 'text' : 'textSecondary'"
-					@click.stop="toggle"
+					@click.stop="toggleOpen"
 				/>
 
 				<span v-if="typeof elementKey === 'string'" class="select-none" :style="{ fontFamily: 'Consolas' }">
@@ -183,11 +202,17 @@ defineExpose({ open })
 				</span>
 			</span>
 
-			<TreeEditorValueElement v-if="!isOpen" :editor="editor" :tree="tree" @click="click" />
+			<TreeEditorValueElement v-if="!isOpen" :editor="editor" :tree="tree" @click="clickValue" />
 
-			<span v-else class="select-none px-1" :style="{ fontFamily: 'Consolas' }">{{
-				tree instanceof ObjectElement ? '{' : '['
-			}}</span>
+			<span
+				v-else
+				class="select-none px-1 bg-[var(--color)] rounded transition-colors ease-out duration-100 cursor-pointer"
+				:style="{
+					fontFamily: 'Consolas',
+					'--color': valueSelected ? 'var(--theme-color-backgroundSecondary)' : 'none',
+				}"
+				>{{ tree instanceof ObjectElement ? '{' : '[' }}</span
+			>
 		</span>
 
 		<div v-if="isOpen">
@@ -195,13 +220,19 @@ defineExpose({ open })
 				<TreeEditorObjectElement :editor="editor" :tree="tree" />
 			</div>
 
-			<span class="ml-2 select-none px-1" :style="{ fontFamily: 'Consolas' }">{{
-				tree instanceof ObjectElement ? '}' : ']'
-			}}</span>
+			<span
+				class="ml-2 select-none px-1 bg-[var(--color)] rounded transition-colors ease-out duration-100 cursor-pointer"
+				:style="{
+					fontFamily: 'Consolas',
+					'--color': valueSelected ? 'var(--theme-color-backgroundSecondary)' : 'none',
+				}"
+				>{{ tree instanceof ObjectElement ? '}' : ']' }}</span
+			>
 		</div>
 
 		<TreeEditorPropertyElement
-			v-if="!preview && draggingOver && !draggingAbove && editor.draggedTree.value !== null"
+			v-if="!preview && draggingOver && editor.draggedTree.value !== null"
+			v-show="!draggingAbove"
 			:tree="editor.draggedTree.value.tree"
 			:elementKey="editor.draggedTree.value.tree.key!"
 			:editor="editor"
