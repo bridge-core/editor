@@ -118,6 +118,7 @@ export class TreeEditorTab extends FileTab {
 	}
 
 	public async save() {
+		this.modified.value = false
 		this.icon.value = 'loading'
 
 		await fileSystem.writeFile(this.path, JSON.stringify(this.tree.value.toJson(), null, 2))
@@ -142,6 +143,8 @@ export class TreeEditorTab extends FileTab {
 	}
 
 	public edit(edit: TreeEdit) {
+		this.modified.value = true
+
 		if (this.currentEditIndex !== this.history.length - 1)
 			this.history = this.history.slice(0, this.currentEditIndex + 1)
 
@@ -154,6 +157,8 @@ export class TreeEditorTab extends FileTab {
 	public undo() {
 		if (this.currentEditIndex < 0) return
 
+		this.modified.value = true
+
 		this.selectedTree.value = this.history[this.currentEditIndex].undo()
 
 		this.currentEditIndex--
@@ -161,6 +166,8 @@ export class TreeEditorTab extends FileTab {
 
 	public redo() {
 		if (this.currentEditIndex >= this.history.length - 1) return
+
+		this.modified.value = true
 
 		this.currentEditIndex++
 

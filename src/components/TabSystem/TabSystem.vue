@@ -10,7 +10,20 @@
 				}"
 				@click="() => instance.selectTab(tab)"
 			>
-				<Icon v-if="tab.icon" :icon="tab.icon.value ?? 'help'" class="text-base text-behaviorPack" />
+				<span class="relative">
+					<div
+						v-if="tab instanceof FileTab && tab.modified.value"
+						class="bg-behaviorPack border border-[2px] border-[var(--border-color)] w-3 h-3 rounded-full absolute right-[-0.25rem] top-1"
+						:style="{
+							'--border-color':
+								instance.selectedTab.value == tab
+									? 'var(--theme-color-backgroundSecondary)'
+									: 'transparent',
+						}"
+					></div>
+
+					<Icon v-if="tab.icon" :icon="tab.icon.value ?? 'help'" class="text-base text-behaviorPack" />
+				</span>
 
 				<span class="font-inter select-none">{{ tab.name.value ?? 'Tab' }}</span>
 
@@ -34,6 +47,7 @@ import Icon from '@/components/Common/Icon.vue'
 import IconButton from '@/components/Common/IconButton.vue'
 
 import { TabSystem } from './TabSystem'
+import { FileTab } from './FileTab'
 
 defineProps({
 	instance: {

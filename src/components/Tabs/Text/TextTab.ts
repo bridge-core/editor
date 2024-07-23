@@ -47,6 +47,7 @@ export class TextTab extends FileTab {
 	private disposables: Disposable[] = []
 
 	private savedViewState: editor.ICodeEditorViewState | undefined = undefined
+	private initialVersionId: number = 0
 
 	public static canEdit(path: string): boolean {
 		return true
@@ -131,6 +132,8 @@ export class TextTab extends FileTab {
 		if (this.model === null)
 			this.model = monaco.createModel(fileContent, this.fileType?.meta?.language, Uri.file(this.path))
 
+		this.initialVersionId = this.model.getAlternativeVersionId()
+
 		this.language.value = this.model.getLanguageId()
 
 		this.disposables.push(
@@ -138,6 +141,12 @@ export class TextTab extends FileTab {
 				if (this.editor === undefined) return
 
 				this.updateEditorTheme()
+			})
+		)
+
+		this.disposables.push(
+			this.model.onDidChangeContent(() => {
+				this.modified.value = this.initialVersionId !== this.model?.getVersionId()
 			})
 		)
 
@@ -210,7 +219,10 @@ export class TextTab extends FileTab {
 
 		this.icon.value = 'loading'
 
-		this.format()
+		await this.format()
+
+		this.initialVersionId = this.model.getVersionId()
+		this.modified.value = false
 
 		await fileSystem.writeFile(this.path, this.model.getValue())
 
@@ -241,10 +253,12 @@ export class TextTab extends FileTab {
 		this.editor.trigger('action', 'editor.action.clipboardPasteAction', undefined)
 	}
 
-	public format() {
+	public async format() {
 		if (!this.editor) return
 
-		this.editor.trigger('action', 'editor.action.formatDocument', undefined)
+		const action = this.editor.getAction('editor.action.formatDocument')
+
+		await action?.run()
 	}
 
 	public goToDefinition() {
