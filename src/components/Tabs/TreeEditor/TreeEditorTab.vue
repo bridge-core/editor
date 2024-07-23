@@ -126,9 +126,9 @@ onMounted(() => {
 
 			<div class="border-background-secondary border-t-2 w-full h-56 p-2">
 				<div class="flex items-center gap-4 mt-3">
-					<LabeledTextInput label="Add" v-model.lazy="addValue" class="flex-1 !mt-0" />
+					<LabeledTextInput label="editors.treeEditor.add" v-model.lazy="addValue" class="flex-1 !mt-0" />
 
-					<LabeledTextInput label="Edit" v-model.lazy="editValue" class="flex-1 !mt-0" />
+					<LabeledTextInput label="editors.treeEditor.edit" v-model.lazy="editValue" class="flex-1 !mt-0" />
 				</div>
 			</div>
 		</div>
