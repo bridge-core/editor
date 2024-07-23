@@ -61,6 +61,7 @@ const propertyElement: Ref<HTMLDivElement> = <any>ref(null)
 const draggingCount = ref(0)
 const draggingOver = computed(() => draggingCount.value > 0)
 const draggingAbove = ref(true)
+const draggingInside = ref(false)
 
 function dragStart(event: DragEvent) {
 	if (props.preview) return
@@ -105,11 +106,26 @@ function dragOver(event: DragEvent) {
 
 	if (props.preview) return
 
-	draggingAbove.value =
-		event.clientY <
-		propertyElement.value.getBoundingClientRect().top + propertyElement.value.getBoundingClientRect().height / 2
+	const y = event.clientY
+	const boundingRect = propertyElement.value.getBoundingClientRect()
+	const minY = boundingRect.top
+	const height = boundingRect.height
 
-	event.stopPropagation()
+	draggingInside.value = false
+
+	const empty =
+		(props.tree instanceof ObjectElement && Object.keys(props.tree.children).length === 0) ||
+		(props.tree instanceof ArrayElement && props.tree.children.length === 0)
+
+	if (isOpen.value && empty) {
+		if (y < minY + 16 || y > minY + height - 16) {
+			draggingAbove.value = y < minY + height / 2
+		} else {
+			draggingInside.value = true
+		}
+	} else {
+		draggingAbove.value = y < minY + height / 2
+	}
 }
 
 function drop(event: DragEvent) {
@@ -126,15 +142,20 @@ function drop(event: DragEvent) {
 	if (!(typeof draggedTree.tree.key === 'string')) return
 	if (!(typeof props.elementKey === 'string')) return
 
-	props.editor.edit(
-		new MovePropertyKeyEdit(
-			draggedTree.tree,
-			props.tree.parent as ObjectElement,
-			Object.keys((props.tree.parent as ObjectElement).children)
-				.filter((key) => key !== draggedTree.tree.key)
-				.indexOf(props.elementKey) + (draggingAbove.value ? 0 : 1)
+	if (draggingInside.value) {
+		props.editor.edit(new MovePropertyKeyEdit(draggedTree.tree, props.tree as ObjectElement, 0))
+	} else {
+		props.editor.edit(
+			new MovePropertyKeyEdit(
+				draggedTree.tree,
+				props.tree.parent as ObjectElement,
+				Object.keys((props.tree.parent as ObjectElement).children)
+					.filter((key) => key !== draggedTree.tree.key)
+					.indexOf(props.elementKey) + (draggingAbove.value ? 0 : 1)
+			)
 		)
-	)
+	}
+
 	props.editor.cancelDrag()
 }
 
@@ -162,7 +183,7 @@ defineExpose({ open })
 	>
 		<TreeEditorPropertyElement
 			v-if="!preview && draggingOver && editor.draggedTree.value !== null"
-			v-show="draggingAbove"
+			v-show="draggingAbove && !draggingInside"
 			:tree="editor.draggedTree.value.tree"
 			:elementKey="typeof elementKey === 'string' ? editor.draggedTree.value.tree.key : -1"
 			:editor="editor"
@@ -213,6 +234,15 @@ defineExpose({ open })
 
 		<div v-if="isOpen">
 			<div class="ml-4">
+				<TreeEditorPropertyElement
+					v-if="!preview && draggingOver && editor.draggedTree.value !== null"
+					v-show="draggingInside"
+					:tree="editor.draggedTree.value.tree"
+					:elementKey="typeof elementKey === 'string' ? editor.draggedTree.value.tree.key : -1"
+					:editor="editor"
+					:preview="true"
+				/>
+
 				<TreeEditorObjectElement :editor="editor" :tree="tree" />
 			</div>
 
@@ -229,7 +259,7 @@ defineExpose({ open })
 
 		<TreeEditorPropertyElement
 			v-if="!preview && draggingOver && editor.draggedTree.value !== null"
-			v-show="!draggingAbove"
+			v-show="!draggingAbove && !draggingInside"
 			:tree="editor.draggedTree.value.tree"
 			:elementKey="typeof elementKey === 'string' ? editor.draggedTree.value.tree.key : -1"
 			:editor="editor"
