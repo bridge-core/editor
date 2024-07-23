@@ -133,10 +133,6 @@ export class TreeEditorTab extends FileTab {
 	}
 
 	public drag(tree: TreeElements) {
-		this.draggedTree.value = { type: 'value', tree }
-	}
-
-	public dragProperty(tree: TreeElements) {
 		this.draggedTree.value = { type: 'property', tree }
 	}
 

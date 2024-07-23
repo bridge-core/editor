@@ -81,18 +81,18 @@ export function buildTree(
 	key: string | number | null = null
 ): TreeElements {
 	if (Array.isArray(json)) {
-		const element = new ArrayElement(parent)
+		const element = new ArrayElement(parent, key)
 
-		element.children = json.map((child, index) => buildTree(child, element))
+		element.children = json.map((child, index) => buildTree(child, element, index))
 
 		return element
 	} else if (json === null) {
 		return new ValueElement(parent, key, null)
 	} else if (typeof json === 'object') {
-		const element = new ObjectElement(parent)
+		const element = new ObjectElement(parent, key)
 
 		element.children = Object.fromEntries(
-			Object.entries(json).map(([key, value]) => [key, buildTree(value, element)])
+			Object.entries(json).map(([key, value]) => [key, buildTree(value, element, key)])
 		)
 
 		return element

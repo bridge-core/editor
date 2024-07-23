@@ -10,7 +10,7 @@ import { TreeElements, ObjectElement, ArrayElement, MovePropertyKeyEdit } from '
 
 const props = defineProps<{
 	tree: TreeElements
-	elementKey?: string | number
+	elementKey?: string | number | null
 	editor: TreeEditorTab
 	preview?: boolean
 }>()
@@ -22,13 +22,6 @@ const propertySelected = computed(
 	() =>
 		props.editor.selectedTree.value &&
 		props.editor.selectedTree.value.type === 'property' &&
-		props.editor.selectedTree.value.tree.id === props.tree.id
-)
-
-const valueSelected = computed(
-	() =>
-		props.editor.selectedTree.value &&
-		props.editor.selectedTree.value.type === 'value' &&
 		props.editor.selectedTree.value.tree.id === props.tree.id
 )
 
@@ -45,8 +38,6 @@ function clickProperty() {
 }
 
 function clickValue() {
-	props.editor.select(props.tree)
-
 	if (!(props.tree instanceof ObjectElement || props.tree instanceof ArrayElement)) return
 
 	isOpen.value = true
@@ -147,7 +138,6 @@ function open() {
 
 	isOpen.value = true
 }
-
 defineExpose({ open })
 </script>
 
@@ -169,7 +159,7 @@ defineExpose({ open })
 			v-if="!preview && draggingOver && editor.draggedTree.value !== null"
 			v-show="draggingAbove"
 			:tree="editor.draggedTree.value.tree"
-			:elementKey="editor.draggedTree.value.tree.key!"
+			:elementKey="typeof elementKey === 'string' ? editor.draggedTree.value.tree.key : -1"
 			:editor="editor"
 			:preview="true"
 		/>
@@ -206,10 +196,9 @@ defineExpose({ open })
 
 			<span
 				v-else
-				class="select-none px-1 bg-[var(--color)] rounded transition-colors ease-out duration-100 cursor-pointer"
+				class="select-none px-1"
 				:style="{
 					fontFamily: 'Consolas',
-					'--color': valueSelected ? 'var(--theme-color-backgroundSecondary)' : 'none',
 				}"
 				>{{ tree instanceof ObjectElement ? '{' : '[' }}</span
 			>
@@ -221,10 +210,9 @@ defineExpose({ open })
 			</div>
 
 			<span
-				class="ml-2 select-none px-1 bg-[var(--color)] rounded transition-colors ease-out duration-100 cursor-pointer"
+				class="ml-2 select-none px-1"
 				:style="{
 					fontFamily: 'Consolas',
-					'--color': valueSelected ? 'var(--theme-color-backgroundSecondary)' : 'none',
 				}"
 				>{{ tree instanceof ObjectElement ? '}' : ']' }}</span
 			>
@@ -234,7 +222,7 @@ defineExpose({ open })
 			v-if="!preview && draggingOver && editor.draggedTree.value !== null"
 			v-show="!draggingAbove"
 			:tree="editor.draggedTree.value.tree"
-			:elementKey="editor.draggedTree.value.tree.key!"
+			:elementKey="typeof elementKey === 'string' ? editor.draggedTree.value.tree.key : -1"
 			:editor="editor"
 			:preview="true"
 		/>
