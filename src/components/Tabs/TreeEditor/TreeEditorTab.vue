@@ -75,29 +75,35 @@ const editValue = computed<string>({
 
 		if (!selectedTree) return ''
 
-		if (selectedTree instanceof ValueElement) return selectedTree.value?.toString() ?? 'null'
-
-		if (selectedTree instanceof ObjectElement) return selectedTree.key?.toString() ?? ''
+		if (selectedTree.type === 'property') {
+			return selectedTree.tree.key as string
+		} else {
+			if (selectedTree.tree instanceof ValueElement) return selectedTree.tree.value?.toString() ?? 'null'
+		}
 
 		return ''
 	},
 	set(newValue) {
-		if (!props.instance.selectedTree.value) return
+		const selectedTree = props.instance.selectedTree.value
 
-		if (props.instance.selectedTree.value instanceof ValueElement) {
-			props.instance.edit(new ModifyValueEdit(props.instance.selectedTree.value, newValue))
+		if (!selectedTree) return
 
-			return
-		}
-
-		const key = props.instance.selectedTree.value.tree.key
-
-		if (!key) return
-
-		if (props.instance.selectedTree.value instanceof ObjectElement) {
-			props.instance.edit(new ModifyPropertyKeyEdit(props.instance.selectedTree.value, <string>key, newValue))
+		if (selectedTree.type === 'property') {
+			props.instance.edit(
+				new ModifyPropertyKeyEdit(
+					selectedTree.tree.parent as ObjectElement,
+					selectedTree.tree.key as string,
+					newValue
+				)
+			)
 
 			return
+		} else {
+			if (selectedTree.tree instanceof ValueElement) {
+				props.instance.edit(new ModifyValueEdit(selectedTree.tree, newValue))
+
+				return
+			}
 		}
 	},
 })
