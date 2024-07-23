@@ -178,11 +178,27 @@ export class AddPropertyEdit implements TreeEdit {
 	public apply(): TreeSelection {
 		this.element.children[this.key] = this.value
 
-		return { type: 'value', tree: this.element }
+		return { type: 'property', tree: this.element }
 	}
 
 	public undo(): TreeSelection {
 		delete this.element.children[this.key]
+
+		return null
+	}
+}
+
+export class AddElementEdit implements TreeEdit {
+	public constructor(public element: ArrayElement, public value: TreeElements) {}
+
+	public apply(): TreeSelection {
+		this.element.children.push(this.value)
+
+		return { type: 'value', tree: this.element }
+	}
+
+	public undo(): TreeSelection {
+		this.element.children.pop()
 
 		return null
 	}

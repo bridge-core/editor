@@ -9,7 +9,15 @@ import FreeContextMenu from '@/components/Common/FreeContextMenu.vue'
 import { ActionManager } from '@/libs/actions/ActionManager'
 import { useTranslate } from '@/libs/locales/Locales'
 import TextButton from '@/components/Common/TextButton.vue'
-import { AddPropertyEdit, ModifyPropertyKeyEdit, ModifyValueEdit, ObjectElement, ValueElement } from './Tree'
+import {
+	AddElementEdit,
+	AddPropertyEdit,
+	ArrayElement,
+	ModifyPropertyKeyEdit,
+	ModifyValueEdit,
+	ObjectElement,
+	ValueElement,
+} from './Tree'
 
 const t = useTranslate()
 
@@ -40,11 +48,20 @@ const addValue = computed<string>({
 
 		const selectedTree = props.instance.selectedTree.value
 
-		if (!(selectedTree instanceof ObjectElement)) return
+		if (selectedTree.tree instanceof ObjectElement) {
+			props.instance.edit(
+				new AddPropertyEdit(selectedTree.tree, newValue, new ObjectElement(selectedTree.tree, newValue))
+			)
+		}
 
-		props.instance.edit(
-			new AddPropertyEdit(selectedTree as ObjectElement, newValue, new ObjectElement(selectedTree))
-		)
+		if (selectedTree.tree instanceof ArrayElement) {
+			props.instance.edit(
+				new AddElementEdit(
+					selectedTree.tree,
+					new ValueElement(selectedTree.tree, selectedTree.tree.children.length, newValue)
+				)
+			)
+		}
 
 		await nextTick()
 
@@ -104,8 +121,6 @@ onMounted(() => {
 			<div class="border-background-secondary border-t-2 w-full h-56 p-2">
 				<div class="flex items-center gap-4 mt-3">
 					<LabeledTextInput label="Add" v-model.lazy="addValue" class="flex-1 !mt-0" />
-
-					<TextButton text="abc" />
 
 					<LabeledTextInput label="Edit" v-model.lazy="editValue" class="flex-1 !mt-0" />
 				</div>
