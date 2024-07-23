@@ -3,7 +3,7 @@ import ContextMenuItem from '@/components/Common/ContextMenuItem.vue'
 import TreeEditorPropertyElement from './EditorElements/TreeEditorPropertyElement.vue'
 import LabeledTextInput from '@/components/Common/LabeledTextInput.vue'
 
-import { computed, nextTick, Ref, ref, watch } from 'vue'
+import { computed, nextTick, onMounted, Ref, ref, watch } from 'vue'
 import { type TreeEditorTab } from './TreeEditorTab'
 import FreeContextMenu from '@/components/Common/FreeContextMenu.vue'
 import { ActionManager } from '@/libs/actions/ActionManager'
@@ -84,13 +84,19 @@ const editValue = computed<string>({
 		}
 	},
 })
+
+const rootElement: Ref<typeof TreeEditorPropertyElement> = <any>ref(null)
+
+onMounted(() => {
+	rootElement.value.open()
+})
 </script>
 
 <template>
 	<div class="w-full h-full" ref="tabElement">
 		<div class="h-full w-full flex flex-col" ref="editorContainer">
 			<div class="w-full flex-1 overflow-auto">
-				<TreeEditorPropertyElement :editor="instance" :tree="instance.tree.value" />
+				<TreeEditorPropertyElement :editor="instance" :tree="instance.tree.value" ref="rootElement" />
 			</div>
 
 			<div class="border-background-secondary border-t-2 w-full h-56 p-2">

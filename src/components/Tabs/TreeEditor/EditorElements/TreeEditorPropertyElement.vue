@@ -15,7 +15,7 @@ const props = defineProps<{
 	preview?: boolean
 }>()
 
-const open = ref(false)
+const isOpen = ref(false)
 
 //Proxies don't equal eachother so we use an uuid
 const selected = computed(
@@ -31,7 +31,13 @@ function click() {
 
 	if (!(props.tree instanceof ObjectElement || props.tree instanceof ArrayElement)) return
 
-	open.value = !open.value
+	isOpen.value = true
+}
+
+function toggle() {
+	if (!(props.tree instanceof ObjectElement || props.tree instanceof ArrayElement)) return
+
+	isOpen.value = !isOpen.value
 }
 
 const propertyElement: Ref<HTMLDivElement> = <any>ref(null)
@@ -118,7 +124,13 @@ function drop(event: DragEvent) {
 	props.editor.cancelDrag()
 }
 
-onMounted(() => {})
+function open() {
+	if (!(props.tree instanceof ObjectElement || props.tree instanceof ArrayElement)) return
+
+	isOpen.value = true
+}
+
+defineExpose({ open })
 </script>
 
 <template>
@@ -156,9 +168,10 @@ onMounted(() => {})
 					icon="chevron_right"
 					class="text-base transition-rotate ease-out duration-100"
 					:style="{
-						rotate: open ? '90deg' : 'none',
+						rotate: isOpen ? '90deg' : 'none',
 					}"
 					:color="tree instanceof ObjectElement || tree instanceof ArrayElement ? 'text' : 'textSecondary'"
+					@click.stop="toggle"
 				/>
 
 				<span v-if="typeof elementKey === 'string'" class="select-none" :style="{ fontFamily: 'Consolas' }">
@@ -170,14 +183,14 @@ onMounted(() => {})
 				</span>
 			</span>
 
-			<TreeEditorValueElement v-if="!open" :editor="editor" :tree="tree" @click="click" />
+			<TreeEditorValueElement v-if="!isOpen" :editor="editor" :tree="tree" @click="click" />
 
 			<span v-else class="select-none px-1" :style="{ fontFamily: 'Consolas' }">{{
 				tree instanceof ObjectElement ? '{' : '['
 			}}</span>
 		</span>
 
-		<div v-if="open">
+		<div v-if="isOpen">
 			<div class="ml-4">
 				<TreeEditorObjectElement :editor="editor" :tree="tree" />
 			</div>
