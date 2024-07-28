@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import ActionContextMenuItem from '@/components/Common/ActionContextMenuItem.vue'
+import ContextMenuItem from '@/components/Common/ContextMenuItem.vue'
 import TreeEditorPropertyElement from './EditorElements/TreeEditorPropertyElement.vue'
 import LabeledTextInput from '@/components/Common/LabeledTextInput.vue'
 import FreeContextMenu from '@/components/Common/FreeContextMenu.vue'
+import SubMenu from '@/components/Common/SubMenu.vue'
 
 import { computed, nextTick, onMounted, Ref, ref, watch } from 'vue'
 import { type TreeEditorTab } from './TreeEditorTab'
@@ -207,6 +209,29 @@ onMounted(() => {
 					}
 				"
 			/>
+
+			<SubMenu>
+				<template #main="slotProps">
+					<ContextMenuItem
+						icon="help"
+						text="Convert"
+						@mouseenter="slotProps.show"
+						@mouseleave="slotProps.hide"
+					/>
+				</template>
+
+				<template #menu="">
+					<ActionContextMenuItem
+						action="convert"
+						@click="
+							() => {
+								ActionManager.trigger('convert', undefined)
+								close()
+							}
+						"
+					/>
+				</template>
+			</SubMenu>
 
 			<div v-if="instance.contextTree.value" class="bg-background-tertiary h-px m-2 my-0" />
 

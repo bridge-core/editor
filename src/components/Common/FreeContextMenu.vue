@@ -72,7 +72,7 @@ defineExpose({ open, close })
 		<div
 			v-if="isOpen"
 			ref="contextMenuElement"
-			class="bg-background-secondary rounded shadow-window overflow-hidden z-10 absolute"
+			class="bg-background-secondary rounded shadow-window z-10 absolute"
 			:style="{
 				left: x + 'px',
 				top: y + 'px',
