@@ -28,12 +28,6 @@ const tabElement: Ref<HTMLDivElement | null> = ref(null)
 
 const contextMenu: Ref<typeof FreeContextMenu | null> = ref(null)
 
-function triggerActionAndCloseContextMenu(action: string) {
-	ActionManager.trigger(action)
-
-	contextMenu.value?.close()
-}
-
 const _addValue = ref('')
 
 const addValue = computed<string>({
@@ -137,7 +131,6 @@ onMounted(() => {
 						({ selection, event }) => {
 							instance.contextTree.value = selection
 							contextMenu?.open(event)
-							instance.contextTree.value = null
 						}
 					"
 				/>
@@ -152,7 +145,7 @@ onMounted(() => {
 			</div>
 		</div>
 
-		<FreeContextMenu class="w-56" ref="contextMenu" #default="{ close }">
+		<FreeContextMenu class="w-56" ref="contextMenu" #default="{ close }" @close="instance.contextTree.value = null">
 			<ActionContextMenuItem
 				v-if="instance.contextTree.value"
 				action="copy"
@@ -213,7 +206,7 @@ onMounted(() => {
 			<SubMenu>
 				<template #main="slotProps">
 					<ContextMenuItem
-						icon="help"
+						icon="swap_horiz"
 						text="Convert"
 						@mouseenter="slotProps.show"
 						@mouseleave="slotProps.hide"
@@ -222,10 +215,50 @@ onMounted(() => {
 
 				<template #menu="">
 					<ActionContextMenuItem
-						action="convert"
+						action="convertToObject"
 						@click="
 							() => {
-								ActionManager.trigger('convert', undefined)
+								ActionManager.trigger('convertToObject')
+								close()
+							}
+						"
+					/>
+
+					<ActionContextMenuItem
+						action="convertToArray"
+						@click="
+							() => {
+								ActionManager.trigger('convertToArray')
+								close()
+							}
+						"
+					/>
+
+					<ActionContextMenuItem
+						action="convertToNull"
+						@click="
+							() => {
+								ActionManager.trigger('convertToNull')
+								close()
+							}
+						"
+					/>
+
+					<ActionContextMenuItem
+						action="convertToNumber"
+						@click="
+							() => {
+								ActionManager.trigger('convertToNumber')
+								close()
+							}
+						"
+					/>
+
+					<ActionContextMenuItem
+						action="convertToString"
+						@click="
+							() => {
+								ActionManager.trigger('convertToString')
 								close()
 							}
 						"

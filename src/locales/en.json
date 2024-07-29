@@ -431,6 +431,26 @@
 		"clearNotifications": {
 			"name": "Clear Notifications",
 			"description": "Clears all notifications"
+		},
+		"convertToObject": {
+			"name": "Convert To Object",
+			"description": "Convert the selected value to an object"
+		},
+		"convertToArray": {
+			"name": "Convert To Array",
+			"description": "Convert the selected value to an array"
+		},
+		"convertToNull": {
+			"name": "Convert To Null",
+			"description": "Convert the selected value to null"
+		},
+		"convertToNumber": {
+			"name": "Convert To Number",
+			"description": "Convert the selected value to a number"
+		},
+		"convertToString": {
+			"name": "Convert To String",
+			"description": "Convert the selected value to a string"
 		}
 	},
 	"toolbar": {

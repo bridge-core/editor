@@ -1,4 +1,5 @@
 import { v4 as uuid } from 'uuid'
+import { isReactive } from 'vue'
 
 export type TreeElements = ObjectElement | ArrayElement | ValueElement
 export type ParentElements = ObjectElement | ArrayElement | null
@@ -280,8 +281,6 @@ export class MoveEdit implements TreeEdit {
 		if (this.newParent instanceof ObjectElement) {
 			this.newKey = typeof this.oldKey === 'string' ? this.oldKey : 'new_property'
 
-			console.log('new key', this.newKey)
-
 			while (Object.keys(this.newParent.children).includes(this.newKey)) {
 				this.newKey = 'new_' + this.newKey
 			}
@@ -362,5 +361,49 @@ export class MoveEdit implements TreeEdit {
 
 			return { type: 'value', tree: this.element }
 		}
+	}
+}
+
+export class ReplaceEdit implements TreeEdit {
+	constructor(
+		public element: TreeElements,
+		public newElement: TreeElements,
+		public setRoot: (element: TreeElements) => void
+	) {}
+
+	apply(): TreeSelection {
+		const parent = this.element.parent
+
+		if (parent === null) {
+			this.setRoot(this.newElement)
+		} else if (parent instanceof ObjectElement) {
+			this.newElement.key = this.element.key
+			this.newElement.parent = parent
+
+			parent.children[this.element.key!] = this.newElement
+		} else if (parent instanceof ArrayElement) {
+			this.newElement.key = this.element.key
+			this.newElement.parent = parent
+
+			parent.children[this.element.key as number] = this.newElement
+		}
+
+		return { tree: this.newElement, type: 'value' }
+	}
+
+	undo(): TreeSelection {
+		console.log('undoing')
+
+		const parent = this.newElement.parent
+
+		if (parent === null) {
+			this.setRoot(this.element)
+		} else if (parent instanceof ObjectElement) {
+			parent.children[this.element.key!] = this.element
+		} else if (parent instanceof ArrayElement) {
+			parent.children[this.newElement.key as number] = this.element
+		}
+
+		return { tree: this.element, type: 'value' }
 	}
 }

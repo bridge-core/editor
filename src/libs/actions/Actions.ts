@@ -13,7 +13,14 @@ import { TreeEditorTab } from '@/components/Tabs/TreeEditor/TreeEditorTab'
 import { SettingsWindow } from '@/components/Windows/Settings/SettingsWindow'
 import { ExtensionLibraryWindow } from '@/components/Windows/ExtensionLibrary/ExtensionLibrary'
 import { ProjectManager } from '../project/ProjectManager'
-import { DeleteElementEdit } from '@/components/Tabs/TreeEditor/Tree'
+import {
+	ArrayElement,
+	DeleteElementEdit,
+	ObjectElement,
+	ReplaceEdit,
+	TreeElements,
+	ValueElement,
+} from '@/components/Tabs/TreeEditor/Tree'
 
 export function setupActions() {
 	ActionManager.addAction(
@@ -478,6 +485,205 @@ export function setupActions() {
 			name: 'actions.extensions.name',
 			description: 'actions.extensions.description',
 			icon: 'extension',
+		})
+	)
+
+	setupConvertActions()
+}
+
+function setupConvertActions() {
+	ActionManager.addAction(
+		new Action({
+			id: 'convertToObject',
+			trigger: () => {
+				const focusedTab = TabManager.getFocusedTab()
+
+				if (focusedTab === null) return
+
+				if (!(focusedTab instanceof TreeEditorTab)) return
+
+				let element: TreeElements = <any>null
+
+				if (focusedTab.contextTree.value) {
+					element = focusedTab.contextTree.value.tree
+				} else if (focusedTab.selectedTree.value) {
+					element = focusedTab.selectedTree.value.tree
+				}
+
+				let newElement = new ObjectElement()
+
+				if (element instanceof ArrayElement) {
+					for (const child of element.children) {
+						const newChild = child.clone()
+						newChild.key = child.key!.toString()
+						newChild.parent = newElement
+
+						newElement.children[child.key!.toString()] = newChild
+					}
+				}
+
+				focusedTab.edit(
+					new ReplaceEdit(element, newElement, (element) => {
+						focusedTab.tree.value = element
+					})
+				)
+			},
+			name: 'actions.convertToObject.name',
+			description: 'actions.convertToObject.description',
+			icon: 'swap_horiz',
+		})
+	)
+
+	ActionManager.addAction(
+		new Action({
+			id: 'convertToArray',
+			trigger: () => {
+				const focusedTab = TabManager.getFocusedTab()
+
+				if (focusedTab === null) return
+
+				if (!(focusedTab instanceof TreeEditorTab)) return
+
+				let element: TreeElements = <any>null
+
+				if (focusedTab.contextTree.value) {
+					element = focusedTab.contextTree.value.tree
+				} else if (focusedTab.selectedTree.value) {
+					element = focusedTab.selectedTree.value.tree
+				}
+
+				let newElement = new ArrayElement()
+
+				if (element instanceof ObjectElement) {
+					let index = 0
+					for (const child of Object.values(element.children)) {
+						const newChild = child.clone()
+						newChild.key = index
+						newChild.parent = newElement
+
+						newElement.children[index] = newChild
+
+						index++
+					}
+				}
+
+				focusedTab.edit(
+					new ReplaceEdit(element, newElement, (element) => {
+						focusedTab.tree.value = element
+					})
+				)
+			},
+			name: 'actions.convertToArray.name',
+			description: 'actions.convertToArray.description',
+			icon: 'swap_horiz',
+		})
+	)
+
+	ActionManager.addAction(
+		new Action({
+			id: 'convertToNull',
+			trigger: () => {
+				const focusedTab = TabManager.getFocusedTab()
+
+				if (focusedTab === null) return
+
+				if (!(focusedTab instanceof TreeEditorTab)) return
+
+				let element: TreeElements = <any>null
+
+				if (focusedTab.contextTree.value) {
+					element = focusedTab.contextTree.value.tree
+				} else if (focusedTab.selectedTree.value) {
+					element = focusedTab.selectedTree.value.tree
+				}
+
+				let newElement = new ValueElement(element.parent, element.key, null)
+
+				focusedTab.edit(
+					new ReplaceEdit(element, newElement, (element) => {
+						focusedTab.tree.value = element
+					})
+				)
+			},
+			name: 'actions.convertToNull.name',
+			description: 'actions.convertToNull.description',
+			icon: 'swap_horiz',
+		})
+	)
+
+	ActionManager.addAction(
+		new Action({
+			id: 'convertToNumber',
+			trigger: () => {
+				const focusedTab = TabManager.getFocusedTab()
+
+				if (focusedTab === null) return
+
+				if (!(focusedTab instanceof TreeEditorTab)) return
+
+				let element: TreeElements = <any>null
+
+				if (focusedTab.contextTree.value) {
+					element = focusedTab.contextTree.value.tree
+				} else if (focusedTab.selectedTree.value) {
+					element = focusedTab.selectedTree.value.tree
+				}
+
+				let newElement = new ValueElement(element.parent, element.key, 0)
+
+				if (element instanceof ValueElement && typeof element.value === 'string') {
+					try {
+						newElement.value = parseFloat(element.value)
+
+						if (isNaN(newElement.value)) newElement.value = 0
+					} catch {}
+				}
+
+				focusedTab.edit(
+					new ReplaceEdit(element, newElement, (element) => {
+						focusedTab.tree.value = element
+					})
+				)
+			},
+			name: 'actions.convertToNumber.name',
+			description: 'actions.convertToNumber.description',
+			icon: 'swap_horiz',
+		})
+	)
+
+	ActionManager.addAction(
+		new Action({
+			id: 'convertToString',
+			trigger: () => {
+				const focusedTab = TabManager.getFocusedTab()
+
+				if (focusedTab === null) return
+
+				if (!(focusedTab instanceof TreeEditorTab)) return
+
+				let element: TreeElements = <any>null
+
+				if (focusedTab.contextTree.value) {
+					element = focusedTab.contextTree.value.tree
+				} else if (focusedTab.selectedTree.value) {
+					element = focusedTab.selectedTree.value.tree
+				}
+
+				let newElement = new ValueElement(element.parent, element.key, '')
+
+				if (element instanceof ValueElement) {
+					newElement.value = element.value?.toString() ?? 'null'
+				}
+
+				focusedTab.edit(
+					new ReplaceEdit(element, newElement, (element) => {
+						focusedTab.tree.value = element
+					})
+				)
+			},
+			name: 'actions.convertToString.name',
+			description: 'actions.convertToString.description',
+			icon: 'swap_horiz',
 		})
 	)
 }

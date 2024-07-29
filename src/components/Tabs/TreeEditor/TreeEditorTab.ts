@@ -1,4 +1,4 @@
-import { Component, computed, ComputedRef, Ref, ref } from 'vue'
+import { Component, isReactive, Ref, ref, watch } from 'vue'
 import TreeEditorTabComponent from './TreeEditorTab.vue'
 import { fileSystem } from '@/libs/fileSystem/FileSystem'
 import { BedrockProject } from '@/libs/project/BedrockProject'
@@ -91,6 +91,16 @@ export class TreeEditorTab extends FileTab {
 			variables,
 			definitions,
 		}
+
+		watch(
+			this.tree,
+			() => {
+				console.log('tree update!')
+			},
+			{ deep: true }
+		)
+
+		console.log(this.tree.value)
 	}
 
 	public async destroy() {
