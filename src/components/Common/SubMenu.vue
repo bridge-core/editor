@@ -66,7 +66,7 @@ onUnmounted(() => {
 	</span>
 
 	<div v-show="open" ref="menu" class="z-10 absolute top-0 flex" @mouseenter="show" @mouseleave="hide">
-		<div class="w-3" />
+		<div class="w-3 self-stretch" />
 
 		<div class="bg-background-secondary rounded shadow-window">
 			<slot name="menu" />
