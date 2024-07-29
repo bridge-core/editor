@@ -1,12 +1,16 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted, Ref, ref } from 'vue'
+import { nextTick, onMounted, onUnmounted, Ref, ref } from 'vue'
 
 const open = ref(false)
 const element: Ref<HTMLElement> = <any>ref(null)
 const menu: Ref<HTMLDivElement> = <any>ref(null)
 
+let menuTop = 0
+
 function show() {
 	open.value = true
+
+	updatePosition()
 }
 
 function hide() {
@@ -19,13 +23,23 @@ const observer = new MutationObserver(
 	}.bind(this)
 )
 
-function updatePosition() {
+async function updatePosition() {
 	if (!element.value) return
 	if (!menu.value) return
 
-	const rect = element.value.getBoundingClientRect()
+	const elementRect = element.value.getBoundingClientRect()
 
-	menu.value.style.left = `calc(${rect.width}px)`
+	menu.value.style.left = `${elementRect.width}px`
+
+	if (!open.value) return
+
+	await nextTick()
+
+	const menuRect = menu.value.getBoundingClientRect()
+
+	menuTop = elementRect.top - (menuRect.top - menuTop)
+
+	menu.value.style.top = `calc(${menuTop}px)`
 }
 
 onMounted(() => {
@@ -52,7 +66,7 @@ onUnmounted(() => {
 	</span>
 
 	<div v-show="open" ref="menu" class="z-10 absolute top-0 flex" @mouseenter="show" @mouseleave="hide">
-		<div class="w-5" />
+		<div class="w-3" />
 
 		<div class="bg-background-secondary rounded shadow-window">
 			<slot name="menu" />
