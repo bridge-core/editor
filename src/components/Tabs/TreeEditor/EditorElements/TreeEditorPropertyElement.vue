@@ -13,6 +13,7 @@ const props = defineProps<{
 	elementKey?: string | number | null
 	editor: TreeEditorTab
 	preview?: boolean
+	path: string
 }>()
 
 const emit = defineEmits(['opencontextmenu'])
@@ -180,6 +181,8 @@ function drop(event: DragEvent) {
 	props.editor.cancelDrag()
 }
 
+const diagnostic = computed(() => props.editor.diagnostics.value.find((diagnostic) => diagnostic.path === props.path))
+
 function open() {
 	if (!(props.tree instanceof ObjectElement || props.tree instanceof ArrayElement)) return
 
@@ -209,7 +212,12 @@ defineExpose({ open })
 			:elementKey="typeof elementKey === 'string' ? editor.draggedTree.value.tree.key : -1"
 			:editor="editor"
 			:preview="true"
+			:path
 		/>
+
+		<p v-if="diagnostic" class="ml-6 text-xs text-warning font-inter opacity-60">
+			<Icon icon="arrow_downward" color="warning" class="text-xs" /> {{ diagnostic.message }}
+		</p>
 
 		<span class="flex items-end">
 			<span
@@ -246,6 +254,7 @@ defineExpose({ open })
 				:tree="tree"
 				@click="clickValue"
 				@opencontextmenu="(event) => emit('opencontextmenu', event)"
+				:path
 			/>
 
 			<span
@@ -270,12 +279,14 @@ defineExpose({ open })
 					:elementKey="typeof elementKey === 'string' ? editor.draggedTree.value.tree.key : -1"
 					:editor="editor"
 					:preview="true"
+					:path
 				/>
 
 				<TreeEditorObjectElement
 					:editor="editor"
 					:tree="tree"
 					@opencontextmenu="(event) => emit('opencontextmenu', event)"
+					:path
 				/>
 			</div>
 
@@ -298,6 +309,7 @@ defineExpose({ open })
 			:elementKey="typeof elementKey === 'string' ? editor.draggedTree.value.tree.key : -1"
 			:editor="editor"
 			:preview="true"
+			:path
 		/>
 	</div>
 </template>

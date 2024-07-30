@@ -133,6 +133,7 @@ onMounted(() => {
 							contextMenu?.open(event)
 						}
 					"
+					path=""
 				/>
 			</div>
 

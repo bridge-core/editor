@@ -4,7 +4,7 @@ import HighlightedText from '../HighlightedText.vue'
 import { ArrayElement, ObjectElement, TreeElements, ValueElement } from '../Tree'
 import { TreeEditorTab } from '../TreeEditorTab'
 
-const props = defineProps<{ tree: TreeElements; editor: TreeEditorTab }>()
+const props = defineProps<{ tree: TreeElements; editor: TreeEditorTab; path: string }>()
 
 const emit = defineEmits(['expand', 'opencontextmenu'])
 

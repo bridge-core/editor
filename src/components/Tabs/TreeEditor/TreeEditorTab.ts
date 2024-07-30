@@ -1,4 +1,4 @@
-import { Component, isReactive, Ref, ref, watch } from 'vue'
+import { Component, Ref, ref } from 'vue'
 import TreeEditorTabComponent from './TreeEditorTab.vue'
 import { fileSystem } from '@/libs/fileSystem/FileSystem'
 import { BedrockProject } from '@/libs/project/BedrockProject'
@@ -6,6 +6,7 @@ import { ProjectManager } from '@/libs/project/ProjectManager'
 import { FileTab } from '@/components/TabSystem/FileTab'
 import { Disposable, disposeAll } from '@/libs/disposeable/Disposeable'
 import { buildTree, ObjectElement, TreeEdit, TreeElements, TreeSelection } from './Tree'
+import { Diagnostic, ValueSchema } from '@/libs/jsonSchema/Schema'
 
 export class TreeEditorTab extends FileTab {
 	public component: Component | null = TreeEditorTabComponent
@@ -28,6 +29,8 @@ export class TreeEditorTab extends FileTab {
 		variables: [],
 		definitions: [],
 	}
+
+	public diagnostics: Ref<Diagnostic[]> = ref([])
 
 	private fileTypeIcon: string = 'data_object'
 
@@ -92,15 +95,7 @@ export class TreeEditorTab extends FileTab {
 			definitions,
 		}
 
-		watch(
-			this.tree,
-			() => {
-				console.log('tree update!')
-			},
-			{ deep: true }
-		)
-
-		console.log(this.tree.value)
+		this.validate()
 	}
 
 	public async destroy() {
@@ -162,6 +157,8 @@ export class TreeEditorTab extends FileTab {
 		this.currentEditIndex++
 
 		this.selectedTree.value = edit.apply()
+
+		this.validate()
 	}
 
 	public undo() {
@@ -172,6 +169,8 @@ export class TreeEditorTab extends FileTab {
 		this.selectedTree.value = this.history[this.currentEditIndex].undo()
 
 		this.currentEditIndex--
+
+		this.validate()
 	}
 
 	public redo() {
@@ -182,5 +181,24 @@ export class TreeEditorTab extends FileTab {
 		this.currentEditIndex++
 
 		this.selectedTree.value = this.history[this.currentEditIndex].apply()
+
+		this.validate()
+	}
+
+	private validate() {
+		if (!ProjectManager.currentProject) return
+		if (!(ProjectManager.currentProject instanceof BedrockProject)) return
+
+		const schemaData = ProjectManager.currentProject.schemaData
+
+		const schemas = schemaData.getSchemasForFile(this.path)
+		const schema = schemas.localSchemas[schemas.main]
+		console.log(schema)
+
+		const valueSchema = new ValueSchema(schema)
+
+		this.diagnostics.value = valueSchema.validate(this.tree.value.toJson())
+
+		console.log(this.diagnostics.value)
 	}
 }

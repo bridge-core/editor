@@ -1,6 +1,9 @@
+type JsonObject = Record<string, unknown>
+
 export interface Diagnostic {
 	severity: 'error' | 'warning' | 'info'
 	message: string
+	path: string
 }
 
 export interface CompletionItem {
@@ -19,10 +22,16 @@ export abstract class Schema {
 	}
 }
 
+function getType(value: unknown) {
+	if (Array.isArray(value)) return 'array'
+
+	return typeof value
+}
+
 // TODO: Investigate translating errors
 
 export class ValueSchema extends Schema {
-	public constructor(public part: Record<string, unknown>) {
+	public constructor(public part: JsonObject, public path: string = '') {
 		super()
 	}
 
@@ -33,12 +42,13 @@ export class ValueSchema extends Schema {
 		let diagnostics: Diagnostic[] = []
 
 		if (types !== undefined) {
-			const valueType = typeof value
+			const valueType = getType(value)
 
 			if (!types.includes(valueType)) {
 				diagnostics.push({
 					severity: 'error',
-					message: `Incorrect type. Expected ${types.toString()}`,
+					message: `Incorrect type. Expected ${types.toString()} vs ${valueType}`,
+					path: this.path,
 				})
 
 				return diagnostics
@@ -56,7 +66,8 @@ export class ValueSchema extends Schema {
 						// TODO: Proper message
 						diagnostics.push({
 							severity: 'error',
-							message: `TEMP MESSAGE: Missing required property. Expected ${property}`,
+							message: `Missing required property. Expected ${property}`,
+							path: this.path,
 						})
 
 						return diagnostics
@@ -66,7 +77,7 @@ export class ValueSchema extends Schema {
 
 			// TODO: Support Pattern Properties
 			if (this.part.properties) {
-				const propertyDefinitions: Record<string, unknown> = <Record<string, unknown>>this.part.properties
+				const propertyDefinitions: JsonObject = <JsonObject>this.part.properties
 				const definedProperties = Object.keys(propertyDefinitions)
 
 				// TODO: Support schema
@@ -80,12 +91,18 @@ export class ValueSchema extends Schema {
 							// TODO: Proper message
 							diagnostics.push({
 								severity: 'error',
-								message: `TEMP MESSAGE: Invalid additional property ${property}.`,
+								message: `Property ${property} is not allowed.`,
+								path: this.path + '/' + property,
 							})
 
 							return diagnostics
 						}
 					} else {
+						const schema = new ValueSchema(
+							(this.part.properties as JsonObject)[property] as JsonObject,
+							this.path + '/' + property
+						)
+						diagnostics = diagnostics.concat(schema.validate((value as JsonObject)[property]))
 					}
 				}
 			}

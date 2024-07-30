@@ -371,6 +371,10 @@ export class SchemaData implements Disposable {
 		return completions
 	}
 
+	public getSchemasForFile(path: string): { main: string; localSchemas: Record<string, any> } {
+		return this.fileSchemas[path]
+	}
+
 	private resolveSchemaPath(source: string, path: string): string {
 		if (path.startsWith('#')) return source + path
 

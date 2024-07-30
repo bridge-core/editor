@@ -12,6 +12,7 @@ import { Data } from '@/libs/data/Data'
 import { LangData } from '@/libs/data/bedrock/LangData'
 import { CommandData } from '@/libs/data/bedrock/CommandData'
 import { SnippetManager } from '@/libs/snippets/SnippetManager'
+import { ValueSchema } from '@/libs/jsonSchema/Schema'
 
 export class BedrockProject extends Project {
 	public packDefinitions: IPackType[] = []
@@ -46,6 +47,23 @@ export class BedrockProject extends Project {
 		await this.requirementsMatcher.setup()
 
 		this.dashService.build()
+
+		// const schema = this.schemaData.getAndResolve('/data/packages/minecraftBedrock/schema/tick/main.json')
+		// console.log('Schema', schema)
+
+		// const jsonSchema = new ValueSchema(schema)
+
+		// console.log(
+		// 	jsonSchema.validate({
+		// 		values: [],
+		// 	})
+		// )
+
+		// console.log(
+		// 	jsonSchema.validate({
+		// 		values: [],
+		// 	})
+		// )
 	}
 
 	public async dispose() {
