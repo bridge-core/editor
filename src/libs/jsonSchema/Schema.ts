@@ -361,12 +361,14 @@ export class ValueSchema extends Schema {
 				}
 			}
 		} else if (Array.isArray(value)) {
-			const itemsDefinition: JsonObject = this.part.items as any
+			if ('items' in this.part) {
+				const itemsDefinition: JsonObject = this.part.items as any
 
-			for (let index = 0; index < value.length; index++) {
-				const schema = createSchema(itemsDefinition, this.requestSchema, this.path + '/' + index.toString())
+				for (let index = 0; index < value.length; index++) {
+					const schema = createSchema(itemsDefinition, this.requestSchema, this.path + '/' + index.toString())
 
-				diagnostics = diagnostics.concat(schema.validate(value[index]))
+					diagnostics = diagnostics.concat(schema.validate(value[index]))
+				}
 			}
 		} else {
 			if (this.part.enum) {
