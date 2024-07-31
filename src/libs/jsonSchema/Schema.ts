@@ -417,14 +417,26 @@ export class ValueSchema extends Schema {
 				const propertyDefinitions: JsonObject = this.part.properties as any
 				const definedProperties = Object.keys(propertyDefinitions)
 
-				for (const property of definedProperties) {
-					const schema = createSchema(
-						(this.part.properties as JsonObject)[property] as JsonObject,
-						this.requestSchema,
-						this.path + '/' + property
+				if (this.path === path) {
+					completions = completions.concat(
+						definedProperties.map((property) => ({
+							label: property,
+							type: 'value',
+							value: property,
+						}))
 					)
+				} else {
+					for (const property of definedProperties) {
+						const schema = createSchema(
+							(this.part.properties as JsonObject)[property] as JsonObject,
+							this.requestSchema,
+							this.path + '/' + property
+						)
 
-					completions = completions.concat(schema.getCompletionItems((value as JsonObject)[property], path))
+						completions = completions.concat(
+							schema.getCompletionItems((value as JsonObject)[property], path)
+						)
+					}
 				}
 			}
 		} else if (Array.isArray(value)) {

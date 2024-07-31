@@ -102,9 +102,7 @@ export class TreeEditorTab extends FileTab {
 
 		const valueSchema = createSchema(schema, (path: string) => schemaData.getSchemaForFile(filePath, path))
 
-		console.log(valueSchema.getCompletionItems(this.tree.value.toJson(), '/values'))
-
-		this.validate()
+		console.log(valueSchema.getCompletionItems(this.tree.value.toJson(), ''))
 
 		this.disposables.push(
 			schemaData.updated.on((path) => {
@@ -211,8 +209,12 @@ export class TreeEditorTab extends FileTab {
 
 		const filePath = this.path
 
+		console.time('Validate')
+
 		const valueSchema = createSchema(schema, (path: string) => schemaData.getSchemaForFile(filePath, path))
 
 		this.diagnostics.value = valueSchema.validate(this.tree.value.toJson())
+
+		console.timeEnd('Validate')
 	}
 }
