@@ -6,7 +6,7 @@ import { ProjectManager } from '@/libs/project/ProjectManager'
 import { FileTab } from '@/components/TabSystem/FileTab'
 import { Disposable, disposeAll } from '@/libs/disposeable/Disposeable'
 import { buildTree, ObjectElement, TreeEdit, TreeElements, TreeSelection } from './Tree'
-import { Diagnostic, ValueSchema } from '@/libs/jsonSchema/Schema'
+import { createSchema, Diagnostic } from '@/libs/jsonSchema/Schema'
 
 export class TreeEditorTab extends FileTab {
 	public component: Component | null = TreeEditorTabComponent
@@ -202,7 +202,7 @@ export class TreeEditorTab extends FileTab {
 
 		const filePath = this.path
 
-		const valueSchema = new ValueSchema(schema, (path: string) => schemaData.getSchemaForFile(filePath, path))
+		const valueSchema = createSchema(schema, (path: string) => schemaData.getSchemaForFile(filePath, path))
 
 		this.diagnostics.value = valueSchema.validate(this.tree.value.toJson())
 

@@ -14,7 +14,7 @@ function click() {
 	props.editor.select(props.tree)
 }
 
-//Proxies don't equal eachother so we use an uuid
+// Proxies don't equal eachother so we use an uuid
 const selected = computed(
 	() =>
 		props.editor.selectedTree.value &&

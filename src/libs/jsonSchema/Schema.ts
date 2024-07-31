@@ -13,7 +13,7 @@ export interface CompletionItem {
 }
 
 export abstract class Schema {
-	public constructor(public requestSchema: (path: string) => JsonObject | undefined) {}
+	public constructor(public requestSchema: (path: string) => JsonObject | undefined, public path: string) {}
 
 	public abstract validate(value: unknown): Diagnostic[]
 
@@ -38,29 +38,93 @@ function getType(value: unknown) {
 
 // TODO: Use correct pathing (do a/ instead of /a )
 
+const validPartProperties = [
+	'properties',
+	'type',
+	'required',
+	'additionalProperties',
+	'items',
+	'title',
+	'description',
+	'enum',
+]
+
+export function createSchema(
+	part: JsonObject,
+	requestSchema: (path: string) => JsonObject | undefined,
+	path: string = ''
+) {
+	if ('$ref' in part) return new RefSchema(part, requestSchema, path)
+
+	// if ('if' in part) return new IfSchema(part, requestSchema, path)
+
+	return new ValueSchema(part, requestSchema, path)
+}
+
+export class RefSchema extends Schema {
+	public constructor(
+		public part: JsonObject,
+		public requestSchema: (path: string) => JsonObject | undefined,
+		public path: string = ''
+	) {
+		super(requestSchema, path)
+	}
+
+	public validate(value: unknown): Diagnostic[] {
+		console.log('Validating Ref schema', this.path, this.part, value)
+
+		let processedPart = { ...this.part }
+
+		delete processedPart.$ref
+
+		processedPart = { ...processedPart, ...this.requestSchema(this.part.$ref as string) }
+
+		return createSchema(processedPart, this.requestSchema, this.path).validate(value)
+	}
+
+	public getCompletionItems(value: unknown): CompletionItem[] {
+		throw new Error('Method not implemented.')
+	}
+}
+
+export class IfSchema extends Schema {
+	public constructor(
+		public part: JsonObject,
+		public requestSchema: (path: string) => JsonObject | undefined,
+		public path: string = ''
+	) {
+		super(requestSchema, path)
+	}
+
+	public validate(value: unknown): Diagnostic[] {
+		throw new Error('Method not implemented.')
+	}
+
+	public getCompletionItems(value: unknown): CompletionItem[] {
+		throw new Error('Method not implemented.')
+	}
+}
+
 export class ValueSchema extends Schema {
 	public constructor(
 		public part: JsonObject,
 		public requestSchema: (path: string) => JsonObject | undefined,
 		public path: string = ''
 	) {
-		super(requestSchema)
+		super(requestSchema, path)
+
+		// To help identify unhandled cases
+		const partProperties = Object.keys(this.part)
+
+		for (const property of partProperties) {
+			if (!validPartProperties.includes(property)) throw new Error(`Unkown schema part property "${property}"`)
+		}
 	}
 
 	public validate(value: unknown): Diagnostic[] {
 		console.log('Validating schema', this.path, this.part, value)
 
-		let shallowDereffedPart = { ...this.part }
-
-		if (typeof this.part.$ref === 'string') {
-			delete shallowDereffedPart.$ref
-
-			shallowDereffedPart = { ...shallowDereffedPart, ...this.requestSchema(this.part.$ref) }
-
-			console.log('Dereffed to', shallowDereffedPart)
-		}
-
-		let types: undefined | string | string[] = <undefined | string | string[]>shallowDereffedPart.type
+		let types: undefined | string | string[] = <undefined | string | string[]>this.part.type
 		if (types !== undefined && !Array.isArray(types)) types = [types]
 
 		let diagnostics: Diagnostic[] = []
@@ -82,7 +146,7 @@ export class ValueSchema extends Schema {
 		if (valueType === 'object') {
 			const properties = Object.keys(value as JsonObject)
 
-			const requiredProperties: undefined | string[] = <undefined | string[]>shallowDereffedPart.required
+			const requiredProperties: undefined | string[] = <undefined | string[]>this.part.required
 
 			if (requiredProperties !== undefined) {
 				for (const property of requiredProperties) {
@@ -100,13 +164,13 @@ export class ValueSchema extends Schema {
 			}
 
 			// TODO: Support Pattern Properties
-			if (shallowDereffedPart.properties) {
-				const propertyDefinitions: JsonObject = <JsonObject>shallowDereffedPart.properties
+			if (this.part.properties) {
+				const propertyDefinitions: JsonObject = <JsonObject>this.part.properties
 				const definedProperties = Object.keys(propertyDefinitions)
 
 				// TODO: Support schema
 				const additionalProperties: undefined | boolean | unknown = <undefined | boolean | unknown>(
-					shallowDereffedPart.additionalProperties
+					this.part.additionalProperties
 				)
 
 				for (const property of properties) {
@@ -122,8 +186,8 @@ export class ValueSchema extends Schema {
 							return diagnostics
 						}
 					} else {
-						const schema = new ValueSchema(
-							(shallowDereffedPart.properties as JsonObject)[property] as JsonObject,
+						const schema = createSchema(
+							(this.part.properties as JsonObject)[property] as JsonObject,
 							this.requestSchema,
 							this.path + '/' + property
 						)
@@ -133,16 +197,16 @@ export class ValueSchema extends Schema {
 				}
 			}
 		} else if (Array.isArray(value)) {
-			const itemsDefinition: JsonObject = <JsonObject>shallowDereffedPart.items
+			const itemsDefinition: JsonObject = <JsonObject>this.part.items
 
 			for (let index = 0; index < value.length; index++) {
-				const schema = new ValueSchema(itemsDefinition, this.requestSchema, this.path + '/' + index.toString())
+				const schema = createSchema(itemsDefinition, this.requestSchema, this.path + '/' + index.toString())
 
 				diagnostics = diagnostics.concat(schema.validate(value[index]))
 			}
 		} else {
-			if (shallowDereffedPart.enum) {
-				const allowedValues: (string | number | null)[] = <(string | number | null)[]>shallowDereffedPart.enum
+			if (this.part.enum) {
+				const allowedValues: (string | number | null)[] = <(string | number | null)[]>this.part.enum
 
 				if (allowedValues.length === 0) {
 					diagnostics.push({
