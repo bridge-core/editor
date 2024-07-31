@@ -32,6 +32,14 @@ function getType(value: unknown) {
 	return typeof value
 }
 
+function matchesType(value: unknown, type: string): boolean {
+	const detectedType = getType(value)
+
+	if (type === 'integer' && detectedType === 'number') return Number.isInteger(value)
+
+	return detectedType === type
+}
+
 // TODO: Investigate translating errors
 
 // TODO: Handle other types of schemas
@@ -44,9 +52,30 @@ const validPartProperties = [
 	'required',
 	'additionalProperties',
 	'items',
+	'enum',
+	'const',
+	'pattern',
+	'default',
+]
+
+const ignoredProperties = [
 	'title',
 	'description',
-	'enum',
+	'$schema',
+	'$id',
+	// TODO: Proper implementation of these fields
+	'definitions',
+	'min',
+	'max',
+	'maxItems',
+	'minItems',
+	'examples',
+	'minimum',
+	'maximum',
+	'format',
+	'maxLength',
+	'multipleOf',
+	'markdownDescription',
 ]
 
 export function createSchema(
@@ -56,9 +85,77 @@ export function createSchema(
 ) {
 	if ('$ref' in part) return new RefSchema(part, requestSchema, path)
 
-	// if ('if' in part) return new IfSchema(part, requestSchema, path)
+	if ('if' in part) return new IfSchema(part, requestSchema, path)
+
+	if ('allOf' in part) return new AllOfSchema(part, requestSchema, path)
+
+	if ('anyOf' in part) return new AnyOfSchema(part, requestSchema, path)
 
 	return new ValueSchema(part, requestSchema, path)
+}
+
+export class AllOfSchema extends Schema {
+	public constructor(
+		public part: JsonObject,
+		public requestSchema: (path: string) => JsonObject | undefined,
+		public path: string = ''
+	) {
+		super(requestSchema, path)
+	}
+
+	public validate(value: unknown): Diagnostic[] {
+		console.log('Validating AllOf schema', this.path, this.part, value)
+
+		let parts: JsonObject[] = this.part.allOf as any
+
+		let diagnostics: Diagnostic[] = []
+
+		for (const part of parts) {
+			const schema = createSchema(part, this.requestSchema, this.path)
+
+			diagnostics = diagnostics.concat(schema.validate(value))
+		}
+
+		return diagnostics
+	}
+
+	public getCompletionItems(value: unknown): CompletionItem[] {
+		throw new Error('Method not implemented.')
+	}
+}
+
+export class AnyOfSchema extends Schema {
+	public constructor(
+		public part: JsonObject,
+		public requestSchema: (path: string) => JsonObject | undefined,
+		public path: string = ''
+	) {
+		super(requestSchema, path)
+	}
+
+	public validate(value: unknown): Diagnostic[] {
+		console.log('Validating AnyOf schema', this.path, this.part, value)
+
+		let parts: JsonObject[] = this.part.anyOf as any
+
+		let diagnostics: Diagnostic[] = []
+
+		for (const part of parts) {
+			const schema = createSchema(part, this.requestSchema, this.path)
+
+			const result = schema.validate(value)
+
+			if (result.length === 0) return []
+
+			if (diagnostics.length === 0) diagnostics = result
+		}
+
+		return diagnostics
+	}
+
+	public getCompletionItems(value: unknown): CompletionItem[] {
+		throw new Error('Method not implemented.')
+	}
 }
 
 export class RefSchema extends Schema {
@@ -97,7 +194,36 @@ export class IfSchema extends Schema {
 	}
 
 	public validate(value: unknown): Diagnostic[] {
-		throw new Error('Method not implemented.')
+		console.log('Validating If schema', this.path, this.part, value)
+
+		const condition: JsonObject | boolean = this.part.if as any
+		const passResult: JsonObject = this.part.then as any
+		const failResult: JsonObject | undefined = this.part.else as any
+
+		let processedPart = { ...this.part }
+
+		delete processedPart.if
+		delete processedPart.then
+
+		if ('else' in processedPart) delete processedPart.else
+
+		let passed = false
+
+		if (getType(condition) === 'boolean') {
+			passed = condition as boolean
+		} else {
+			const conditionSchema = createSchema(condition as JsonObject, this.requestSchema, this.path)
+
+			passed = conditionSchema.isValid(value)
+		}
+
+		if (passed) {
+			processedPart = { ...processedPart, ...passResult }
+		} else if (failResult) {
+			processedPart = { ...processedPart, ...failResult }
+		}
+
+		return createSchema(processedPart, this.requestSchema, this.path).validate(value)
 	}
 
 	public getCompletionItems(value: unknown): CompletionItem[] {
@@ -117,22 +243,31 @@ export class ValueSchema extends Schema {
 		const partProperties = Object.keys(this.part)
 
 		for (const property of partProperties) {
-			if (!validPartProperties.includes(property)) throw new Error(`Unkown schema part property "${property}"`)
+			if (!validPartProperties.includes(property) && !ignoredProperties.includes(property))
+				throw new Error(`Unkown schema part property "${property}"`)
 		}
 	}
 
 	public validate(value: unknown): Diagnostic[] {
 		console.log('Validating schema', this.path, this.part, value)
 
-		let types: undefined | string | string[] = <undefined | string | string[]>this.part.type
+		let types: undefined | string | string[] = this.part.type as any
 		if (types !== undefined && !Array.isArray(types)) types = [types]
 
 		let diagnostics: Diagnostic[] = []
 
-		const valueType = getType(value)
-
 		if (types !== undefined) {
-			if (!types.includes(valueType)) {
+			let foundMatch = false
+
+			for (const type of types) {
+				if (matchesType(value, type)) {
+					foundMatch = true
+
+					break
+				}
+			}
+
+			if (!foundMatch) {
 				diagnostics.push({
 					severity: 'warning',
 					message: `Incorrect type. Expected ${types.toString()}.`,
@@ -143,10 +278,38 @@ export class ValueSchema extends Schema {
 			}
 		}
 
+		// TODO: Object equality
+		// TODO: Move const to own schema type
+		if ('const' in this.part) {
+			if (value !== this.part.const) {
+				diagnostics.push({
+					severity: 'warning',
+					message: `Found "${value}" here; expected "${this.part.const}"`,
+					path: this.path,
+				})
+
+				return diagnostics
+			}
+		}
+
+		if ('pattern' in this.part) {
+			if (!new RegExp(this.part.pattern as string).test(value as string)) {
+				diagnostics.push({
+					severity: 'warning',
+					message: `"${value}" is not valid here.`,
+					path: this.path,
+				})
+
+				return diagnostics
+			}
+		}
+
+		const valueType = getType(value)
+
 		if (valueType === 'object') {
 			const properties = Object.keys(value as JsonObject)
 
-			const requiredProperties: undefined | string[] = <undefined | string[]>this.part.required
+			const requiredProperties: undefined | string[] = this.part.required as any
 
 			if (requiredProperties !== undefined) {
 				for (const property of requiredProperties) {
@@ -165,13 +328,12 @@ export class ValueSchema extends Schema {
 
 			// TODO: Support Pattern Properties
 			if (this.part.properties) {
-				const propertyDefinitions: JsonObject = <JsonObject>this.part.properties
+				const propertyDefinitions: JsonObject = this.part.properties as any
 				const definedProperties = Object.keys(propertyDefinitions)
 
 				// TODO: Support schema
-				const additionalProperties: undefined | boolean | unknown = <undefined | boolean | unknown>(
-					this.part.additionalProperties
-				)
+				let additionalProperties: undefined | boolean | unknown = this.part.additionalProperties as any
+				if (!('additionalProperties' in this.part)) additionalProperties = true
 
 				for (const property of properties) {
 					if (!definedProperties.includes(property)) {
@@ -182,6 +344,8 @@ export class ValueSchema extends Schema {
 								message: `Property ${property} is not allowed.`,
 								path: this.path + '/' + property,
 							})
+
+							console.warn(additionalProperties, definedProperties, propertyDefinitions, property)
 
 							return diagnostics
 						}
@@ -197,7 +361,7 @@ export class ValueSchema extends Schema {
 				}
 			}
 		} else if (Array.isArray(value)) {
-			const itemsDefinition: JsonObject = <JsonObject>this.part.items
+			const itemsDefinition: JsonObject = this.part.items as any
 
 			for (let index = 0; index < value.length; index++) {
 				const schema = createSchema(itemsDefinition, this.requestSchema, this.path + '/' + index.toString())
@@ -206,7 +370,7 @@ export class ValueSchema extends Schema {
 			}
 		} else {
 			if (this.part.enum) {
-				const allowedValues: (string | number | null)[] = <(string | number | null)[]>this.part.enum
+				const allowedValues: (string | number | null)[] = this.part.enum as any
 
 				if (allowedValues.length === 0) {
 					diagnostics.push({
