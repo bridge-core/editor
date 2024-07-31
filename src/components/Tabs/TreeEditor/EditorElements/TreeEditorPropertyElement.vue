@@ -183,6 +183,12 @@ function drop(event: DragEvent) {
 
 const diagnostic = computed(() => props.editor.diagnostics.value.find((diagnostic) => diagnostic.path === props.path))
 
+const hasChildDiagnostic = computed(() =>
+	props.editor.diagnostics.value.find(
+		(diagnostic) => diagnostic.path.startsWith(props.path) && diagnostic.path !== props.path
+	)
+)
+
 function open() {
 	if (!(props.tree instanceof ObjectElement || props.tree instanceof ArrayElement)) return
 
@@ -268,6 +274,8 @@ defineExpose({ open })
 				@contextmenu.stop.prevent="(event: PointerEvent) => emit('opencontextmenu', {selection: { type: 'value', tree }, event})"
 				>{{ tree instanceof ObjectElement ? '{' : '[' }}</span
 			>
+
+			<Icon v-if="!isOpen && hasChildDiagnostic" icon="error" color="warning" class="text-base" />
 		</span>
 
 		<div v-if="isOpen">
