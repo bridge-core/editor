@@ -95,6 +95,15 @@ export class TreeEditorTab extends FileTab {
 			definitions,
 		}
 
+		const schemas = schemaData.getSchemasForFile(this.path)
+		const schema = schemas.localSchemas[schemas.main]
+
+		const filePath = this.path
+
+		const valueSchema = createSchema(schema, (path: string) => schemaData.getSchemaForFile(filePath, path))
+
+		console.log(valueSchema.getCompletionItems(this.tree.value.toJson(), '/values'))
+
 		this.validate()
 
 		this.disposables.push(

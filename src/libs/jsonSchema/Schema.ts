@@ -17,7 +17,7 @@ export abstract class Schema {
 
 	public abstract validate(value: unknown): Diagnostic[]
 
-	public abstract getCompletionItems(value: unknown): CompletionItem[]
+	public abstract getCompletionItems(value: unknown, path: string): CompletionItem[]
 
 	public isValid(value: unknown) {
 		return this.validate(value).length === 0
@@ -119,7 +119,7 @@ export class AllOfSchema extends Schema {
 		return diagnostics
 	}
 
-	public getCompletionItems(value: unknown): CompletionItem[] {
+	public getCompletionItems(value: unknown, path: string): CompletionItem[] {
 		throw new Error('Method not implemented.')
 	}
 }
@@ -151,7 +151,7 @@ export class AnyOfSchema extends Schema {
 		return diagnostics
 	}
 
-	public getCompletionItems(value: unknown): CompletionItem[] {
+	public getCompletionItems(value: unknown, path: string): CompletionItem[] {
 		throw new Error('Method not implemented.')
 	}
 }
@@ -175,8 +175,14 @@ export class RefSchema extends Schema {
 		return createSchema(processedPart, this.requestSchema, this.path).validate(value)
 	}
 
-	public getCompletionItems(value: unknown): CompletionItem[] {
-		throw new Error('Method not implemented.')
+	public getCompletionItems(value: unknown, path: string): CompletionItem[] {
+		let processedPart = { ...this.part }
+
+		delete processedPart.$ref
+
+		processedPart = { ...processedPart, ...this.requestSchema(this.part.$ref as string) }
+
+		return createSchema(processedPart, this.requestSchema, this.path).getCompletionItems(value, path)
 	}
 }
 
@@ -220,7 +226,7 @@ export class IfSchema extends Schema {
 		return createSchema(processedPart, this.requestSchema, this.path).validate(value)
 	}
 
-	public getCompletionItems(value: unknown): CompletionItem[] {
+	public getCompletionItems(value: unknown, path: string): CompletionItem[] {
 		throw new Error('Method not implemented.')
 	}
 }
@@ -391,7 +397,60 @@ export class ValueSchema extends Schema {
 		return diagnostics
 	}
 
-	public getCompletionItems(value: unknown): CompletionItem[] {
-		throw new Error('Method not implemented.')
+	public getCompletionItems(value: unknown, path: string): CompletionItem[] {
+		if ('const' in this.part) {
+			return [
+				{
+					type: 'value',
+					label: this.part.const as string,
+					value: this.part.const,
+				},
+			]
+		}
+
+		let completions: CompletionItem[] = []
+
+		const valueType = getType(value)
+
+		if (valueType === 'object') {
+			if ('properties' in this.part) {
+				const propertyDefinitions: JsonObject = this.part.properties as any
+				const definedProperties = Object.keys(propertyDefinitions)
+
+				for (const property of definedProperties) {
+					const schema = createSchema(
+						(this.part.properties as JsonObject)[property] as JsonObject,
+						this.requestSchema,
+						this.path + '/' + property
+					)
+
+					completions = completions.concat(schema.getCompletionItems((value as JsonObject)[property], path))
+				}
+			}
+		} else if (Array.isArray(value)) {
+			if ('items' in this.part) {
+				const itemsDefinition: JsonObject = this.part.items as any
+
+				for (let index = 0; index < value.length; index++) {
+					const schema = createSchema(itemsDefinition, this.requestSchema, this.path + '/' + index.toString())
+
+					completions = completions.concat(schema.getCompletionItems(value[index], path))
+				}
+			}
+		} else {
+			if (this.part.enum) {
+				const allowedValues: (string | number | null)[] = this.part.enum as any
+
+				completions = completions.concat(
+					allowedValues.map((value) => ({
+						type: 'value',
+						label: value?.toString() ?? 'undefined',
+						value: value,
+					}))
+				)
+			}
+		}
+
+		return completions
 	}
 }
