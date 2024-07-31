@@ -205,7 +205,5 @@ export class TreeEditorTab extends FileTab {
 		const valueSchema = createSchema(schema, (path: string) => schemaData.getSchemaForFile(filePath, path))
 
 		this.diagnostics.value = valueSchema.validate(this.tree.value.toJson())
-
-		console.log(this.diagnostics.value)
 	}
 }

@@ -294,12 +294,6 @@ export class SchemaData implements Disposable {
 		this.updated.dispatch(path)
 	}
 
-	public getSchemaForFile(filePath: string, schemaPath: string): any {
-		console.log('Getting schema', schemaPath, 'for file', filePath)
-
-		return this.fileSchemas[filePath].localSchemas[schemaPath]
-	}
-
 	public addFileForUpdate(path: string, fileType?: string, schemaUri?: string) {
 		this.filesToUpdate.push({ path, fileType, schemaUri })
 	}
@@ -386,6 +380,10 @@ export class SchemaData implements Disposable {
 
 	public getSchemasForFile(path: string): { main: string; localSchemas: Record<string, any> } {
 		return this.fileSchemas[path]
+	}
+
+	public getSchemaForFile(filePath: string, schemaPath: string): any {
+		return this.fileSchemas[filePath].localSchemas[schemaPath]
 	}
 
 	private resolveSchemaPath(source: string, path: string): string {

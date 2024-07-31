@@ -40,6 +40,8 @@ function matchesType(value: unknown, type: string): boolean {
 	return detectedType === type
 }
 
+// TODO: Investigate optimizatations!
+
 // TODO: Investigate translating errors
 
 // TODO: Handle other types of schemas
@@ -104,8 +106,6 @@ export class AllOfSchema extends Schema {
 	}
 
 	public validate(value: unknown): Diagnostic[] {
-		console.log('Validating AllOf schema', this.path, this.part, value)
-
 		let parts: JsonObject[] = this.part.allOf as any
 
 		let diagnostics: Diagnostic[] = []
@@ -134,8 +134,6 @@ export class AnyOfSchema extends Schema {
 	}
 
 	public validate(value: unknown): Diagnostic[] {
-		console.log('Validating AnyOf schema', this.path, this.part, value)
-
 		let parts: JsonObject[] = this.part.anyOf as any
 
 		let diagnostics: Diagnostic[] = []
@@ -168,8 +166,6 @@ export class RefSchema extends Schema {
 	}
 
 	public validate(value: unknown): Diagnostic[] {
-		console.log('Validating Ref schema', this.path, this.part, value)
-
 		let processedPart = { ...this.part }
 
 		delete processedPart.$ref
@@ -194,8 +190,6 @@ export class IfSchema extends Schema {
 	}
 
 	public validate(value: unknown): Diagnostic[] {
-		console.log('Validating If schema', this.path, this.part, value)
-
 		const condition: JsonObject | boolean = this.part.if as any
 		const passResult: JsonObject = this.part.then as any
 		const failResult: JsonObject | undefined = this.part.else as any
@@ -249,8 +243,6 @@ export class ValueSchema extends Schema {
 	}
 
 	public validate(value: unknown): Diagnostic[] {
-		console.log('Validating schema', this.path, this.part, value)
-
 		let types: undefined | string | string[] = this.part.type as any
 		if (types !== undefined && !Array.isArray(types)) types = [types]
 
