@@ -13,6 +13,8 @@ export interface CompletionItem {
 }
 
 export abstract class Schema {
+	public constructor(public requestSchema: (path: string) => JsonObject | undefined) {}
+
 	public abstract validate(value: unknown): Diagnostic[]
 
 	public abstract getCompletionItems(value: unknown): CompletionItem[]
@@ -25,29 +27,51 @@ export abstract class Schema {
 function getType(value: unknown) {
 	if (Array.isArray(value)) return 'array'
 
+	if (value === null) return 'null'
+
 	return typeof value
 }
 
 // TODO: Investigate translating errors
 
+// TODO: Handle other types of schemas
+
+// TODO: Use correct pathing (do a/ instead of /a )
+
 export class ValueSchema extends Schema {
-	public constructor(public part: JsonObject, public path: string = '') {
-		super()
+	public constructor(
+		public part: JsonObject,
+		public requestSchema: (path: string) => JsonObject | undefined,
+		public path: string = ''
+	) {
+		super(requestSchema)
 	}
 
 	public validate(value: unknown): Diagnostic[] {
-		let types: undefined | string | string[] = <undefined | string | string[]>this.part.type
+		console.log('Validating schema', this.path, this.part, value)
+
+		let shallowDereffedPart = { ...this.part }
+
+		if (typeof this.part.$ref === 'string') {
+			delete shallowDereffedPart.$ref
+
+			shallowDereffedPart = { ...shallowDereffedPart, ...this.requestSchema(this.part.$ref) }
+
+			console.log('Dereffed to', shallowDereffedPart)
+		}
+
+		let types: undefined | string | string[] = <undefined | string | string[]>shallowDereffedPart.type
 		if (types !== undefined && !Array.isArray(types)) types = [types]
 
 		let diagnostics: Diagnostic[] = []
 
-		if (types !== undefined) {
-			const valueType = getType(value)
+		const valueType = getType(value)
 
+		if (types !== undefined) {
 			if (!types.includes(valueType)) {
 				diagnostics.push({
-					severity: 'error',
-					message: `Incorrect type. Expected ${types.toString()} vs ${valueType}`,
+					severity: 'warning',
+					message: `Incorrect type. Expected ${types.toString()}.`,
 					path: this.path,
 				})
 
@@ -55,18 +79,18 @@ export class ValueSchema extends Schema {
 			}
 		}
 
-		if (typeof value === 'object' && value !== null) {
-			const properties = Object.keys(value)
+		if (valueType === 'object') {
+			const properties = Object.keys(value as JsonObject)
 
-			const requiredProperties: undefined | string[] = <undefined | string[]>this.part.required
+			const requiredProperties: undefined | string[] = <undefined | string[]>shallowDereffedPart.required
 
 			if (requiredProperties !== undefined) {
 				for (const property of requiredProperties) {
 					if (!properties.includes(property)) {
 						// TODO: Proper message
 						diagnostics.push({
-							severity: 'error',
-							message: `Missing required property. Expected ${property}`,
+							severity: 'warning',
+							message: `Missing required property. Expected ${property}.`,
 							path: this.path,
 						})
 
@@ -76,13 +100,13 @@ export class ValueSchema extends Schema {
 			}
 
 			// TODO: Support Pattern Properties
-			if (this.part.properties) {
-				const propertyDefinitions: JsonObject = <JsonObject>this.part.properties
+			if (shallowDereffedPart.properties) {
+				const propertyDefinitions: JsonObject = <JsonObject>shallowDereffedPart.properties
 				const definedProperties = Object.keys(propertyDefinitions)
 
 				// TODO: Support schema
 				const additionalProperties: undefined | boolean | unknown = <undefined | boolean | unknown>(
-					this.part.additionalProperties
+					shallowDereffedPart.additionalProperties
 				)
 
 				for (const property of properties) {
@@ -90,7 +114,7 @@ export class ValueSchema extends Schema {
 						if (!additionalProperties) {
 							// TODO: Proper message
 							diagnostics.push({
-								severity: 'error',
+								severity: 'warning',
 								message: `Property ${property} is not allowed.`,
 								path: this.path + '/' + property,
 							})
@@ -99,11 +123,45 @@ export class ValueSchema extends Schema {
 						}
 					} else {
 						const schema = new ValueSchema(
-							(this.part.properties as JsonObject)[property] as JsonObject,
+							(shallowDereffedPart.properties as JsonObject)[property] as JsonObject,
+							this.requestSchema,
 							this.path + '/' + property
 						)
+
 						diagnostics = diagnostics.concat(schema.validate((value as JsonObject)[property]))
 					}
+				}
+			}
+		} else if (Array.isArray(value)) {
+			const itemsDefinition: JsonObject = <JsonObject>shallowDereffedPart.items
+
+			for (let index = 0; index < value.length; index++) {
+				const schema = new ValueSchema(itemsDefinition, this.requestSchema, this.path + '/' + index.toString())
+
+				diagnostics = diagnostics.concat(schema.validate(value[index]))
+			}
+		} else {
+			if (shallowDereffedPart.enum) {
+				const allowedValues: (string | number | null)[] = <(string | number | null)[]>shallowDereffedPart.enum
+
+				if (allowedValues.length === 0) {
+					diagnostics.push({
+						severity: 'warning',
+						message: `Found "${value}"; but no values are valid.`,
+						path: this.path,
+					})
+
+					return diagnostics
+				}
+
+				if (!allowedValues.includes(<any>value)) {
+					diagnostics.push({
+						severity: 'warning',
+						message: `"${value}" is not valid here.`,
+						path: this.path,
+					})
+
+					return diagnostics
 				}
 			}
 		}

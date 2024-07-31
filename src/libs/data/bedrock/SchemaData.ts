@@ -10,6 +10,7 @@ import { Data } from '@/libs/data/Data'
 import { Disposable, disposeAll } from '@/libs/disposeable/Disposeable'
 import { join, basename, dirname, resolve } from 'pathe'
 import { DashData } from './DashData'
+import { Event } from '@/libs/event/Event'
 
 /*
 Building the schema for a file is a little complicated.
@@ -30,6 +31,8 @@ interface SchemaScriptResult {
 }
 
 export class SchemaData implements Disposable {
+	public updated: Event<string> = new Event()
+
 	private schemas: any = {}
 
 	private schemaScripts: any = {}
@@ -204,6 +207,8 @@ export class SchemaData implements Disposable {
 
 			this.updateDefaults()
 
+			this.updated.dispatch(path)
+
 			return
 		}
 
@@ -285,6 +290,14 @@ export class SchemaData implements Disposable {
 		}
 
 		this.updateDefaults()
+
+		this.updated.dispatch(path)
+	}
+
+	public getSchemaForFile(filePath: string, schemaPath: string): any {
+		console.log('Getting schema', schemaPath, 'for file', filePath)
+
+		return this.fileSchemas[filePath].localSchemas[schemaPath]
 	}
 
 	public addFileForUpdate(path: string, fileType?: string, schemaUri?: string) {

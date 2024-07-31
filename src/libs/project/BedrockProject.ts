@@ -47,23 +47,6 @@ export class BedrockProject extends Project {
 		await this.requirementsMatcher.setup()
 
 		this.dashService.build()
-
-		// const schema = this.schemaData.getAndResolve('/data/packages/minecraftBedrock/schema/tick/main.json')
-		// console.log('Schema', schema)
-
-		// const jsonSchema = new ValueSchema(schema)
-
-		// console.log(
-		// 	jsonSchema.validate({
-		// 		values: [],
-		// 	})
-		// )
-
-		// console.log(
-		// 	jsonSchema.validate({
-		// 		values: [],
-		// 	})
-		// )
 	}
 
 	public async dispose() {

@@ -96,6 +96,12 @@ export class TreeEditorTab extends FileTab {
 		}
 
 		this.validate()
+
+		this.disposables.push(
+			schemaData.updated.on((path) => {
+				if (path === this.path) this.validate()
+			})
+		)
 	}
 
 	public async destroy() {
@@ -193,9 +199,10 @@ export class TreeEditorTab extends FileTab {
 
 		const schemas = schemaData.getSchemasForFile(this.path)
 		const schema = schemas.localSchemas[schemas.main]
-		console.log(schema)
 
-		const valueSchema = new ValueSchema(schema)
+		const filePath = this.path
+
+		const valueSchema = new ValueSchema(schema, (path: string) => schemaData.getSchemaForFile(filePath, path))
 
 		this.diagnostics.value = valueSchema.validate(this.tree.value.toJson())
 
