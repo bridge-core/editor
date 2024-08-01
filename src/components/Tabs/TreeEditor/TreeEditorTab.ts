@@ -1,12 +1,12 @@
-import { Component, Ref, ref } from 'vue'
+import { Component, Ref, ref, watch } from 'vue'
 import TreeEditorTabComponent from './TreeEditorTab.vue'
 import { fileSystem } from '@/libs/fileSystem/FileSystem'
 import { BedrockProject } from '@/libs/project/BedrockProject'
 import { ProjectManager } from '@/libs/project/ProjectManager'
 import { FileTab } from '@/components/TabSystem/FileTab'
 import { Disposable, disposeAll } from '@/libs/disposeable/Disposeable'
-import { buildTree, ObjectElement, TreeEdit, TreeElements, TreeSelection } from './Tree'
-import { createSchema, Diagnostic } from '@/libs/jsonSchema/Schema'
+import { buildTree, ObjectElement, ParentElements, TreeEdit, TreeElements, TreeSelection } from './Tree'
+import { CompletionItem, createSchema, Diagnostic } from '@/libs/jsonSchema/Schema'
 
 export class TreeEditorTab extends FileTab {
 	public component: Component | null = TreeEditorTabComponent
@@ -31,6 +31,8 @@ export class TreeEditorTab extends FileTab {
 	}
 
 	public diagnostics: Ref<Diagnostic[]> = ref([])
+	public completions: Ref<CompletionItem[]> = ref([])
+	public parentCompletions: Ref<CompletionItem[]> = ref([])
 
 	private fileTypeIcon: string = 'data_object'
 
@@ -95,20 +97,18 @@ export class TreeEditorTab extends FileTab {
 			definitions,
 		}
 
-		const schemas = schemaData.getSchemasForFile(this.path)
-		const schema = schemas.localSchemas[schemas.main]
-
-		const filePath = this.path
-
-		const valueSchema = createSchema(schema, (path: string) => schemaData.getSchemaForFile(filePath, path))
-
-		console.log(valueSchema.getCompletionItems(this.tree.value.toJson(), ''))
-
 		this.disposables.push(
 			schemaData.updated.on((path) => {
-				if (path === this.path) this.validate()
+				if (path !== this.path) return
+
+				this.validate()
+				this.updateCompletions()
 			})
 		)
+
+		watch(this.selectedTree, () => {
+			this.updateCompletions()
+		})
 	}
 
 	public async destroy() {
@@ -172,6 +172,7 @@ export class TreeEditorTab extends FileTab {
 		this.selectedTree.value = edit.apply()
 
 		this.validate()
+		this.updateCompletions()
 	}
 
 	public undo() {
@@ -184,6 +185,7 @@ export class TreeEditorTab extends FileTab {
 		this.currentEditIndex--
 
 		this.validate()
+		this.updateCompletions()
 	}
 
 	public redo() {
@@ -196,6 +198,7 @@ export class TreeEditorTab extends FileTab {
 		this.selectedTree.value = this.history[this.currentEditIndex].apply()
 
 		this.validate()
+		this.updateCompletions()
 	}
 
 	private validate() {
@@ -216,5 +219,56 @@ export class TreeEditorTab extends FileTab {
 		this.diagnostics.value = valueSchema.validate(this.tree.value.toJson())
 
 		console.timeEnd('Validate')
+	}
+
+	private updateCompletions() {
+		console.trace()
+
+		if (!ProjectManager.currentProject) return
+		if (!(ProjectManager.currentProject instanceof BedrockProject)) return
+
+		if (!this.selectedTree.value) {
+			this.completions.value = []
+
+			return
+		}
+
+		const schemaData = ProjectManager.currentProject.schemaData
+
+		const schemas = schemaData.getSchemasForFile(this.path)
+		const schema = schemas.localSchemas[schemas.main]
+
+		const filePath = this.path
+
+		console.time('Completions')
+
+		const valueSchema = createSchema(schema, (path: string) => schemaData.getSchemaForFile(filePath, path))
+
+		let path = ''
+		let parentPath = ''
+
+		let parents = []
+		let currentElement: ParentElements | TreeElements = this.selectedTree.value.tree
+
+		while (currentElement?.parent) {
+			parents.push(currentElement)
+
+			currentElement = currentElement.parent
+		}
+
+		parents.reverse()
+
+		for (const element of parents) {
+			path += '/' + element.key?.toString()
+		}
+
+		for (const element of parents.slice(0, -1)) {
+			parentPath += '/' + element.key?.toString()
+		}
+
+		this.completions.value = valueSchema.getCompletionItems(this.tree.value.toJson(), path)
+		this.parentCompletions.value = valueSchema.getCompletionItems(this.tree.value.toJson(), parentPath)
+
+		console.timeEnd('Completions')
 	}
 }
