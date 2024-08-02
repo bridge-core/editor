@@ -10,7 +10,7 @@
 		}"
 	>
 		<span class="absolute -top-1/3 left-2 text-xs bg-inherit p-1 text-text-secondary font-inter">{{ label }}</span>
-		<slot :focus="() => (_focused = true)" :blur="() => (_focused = false)" :focused="_focused || focused" />
+		<slot :focus :blur :focused="_focused || focused" />
 	</div>
 </template>
 
@@ -32,4 +32,14 @@ defineProps({
 		default: 'backgroundSecondary',
 	},
 })
+
+function focus() {
+	_focused.value = true
+}
+
+function blur() {
+	_focused.value = false
+}
+
+defineExpose({ focus, blur })
 </script>

@@ -2,7 +2,7 @@
 import SidebarWindow from '@/components/Windows/SidebarWindow.vue'
 import LabeledInput from '@/components/Common/LabeledInput.vue'
 import Icon from '@/components/Common/Icon.vue'
-import Dropdown from '@/components/Common/Dropdown.vue'
+import Dropdown from '@/components/Common/LegacyDropdown.vue'
 import Switch from '@/components/Common/Switch.vue'
 import Button from '@/components/Common/Button.vue'
 
