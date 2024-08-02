@@ -18,6 +18,7 @@ const props = defineProps<{
 
 const emit = defineEmits<{
 	complete: [completion: CompletionItem]
+	submit: [value: string]
 }>()
 
 const [model, modifiers] = defineModel<string>()
@@ -37,9 +38,7 @@ function click(event: Event) {
 
 	expanded.value = false
 
-	const inputValue = inputElement.value.value
-
-	model.value = inputValue
+	model.value = inputElement.value.value
 
 	labeledInput.value?.blur()
 }
@@ -60,6 +59,21 @@ function completion(item: { id: any; label: string }) {
 	emit('complete', props.completions[item.id])
 
 	model.value = item.label
+
+	window.removeEventListener('mousedown', click)
+}
+
+function enter(event: KeyboardEvent) {
+	if (!inputElement.value) return
+	if (event.key !== 'Enter') return
+
+	labeledInput.value?.blur()
+
+	const inputValue = inputElement.value.value
+
+	emit('submit', inputValue)
+
+	model.value = inputValue
 
 	window.removeEventListener('mousedown', click)
 }
@@ -86,6 +100,7 @@ onUnmounted(() => {
 					@focus="interact(focus)"
 					class="outline-none border-none bg-transparent font-inter flex-1"
 					:value="model"
+					@keyup="enter"
 				/>
 
 				<IconButton
