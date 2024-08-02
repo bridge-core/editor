@@ -42,8 +42,6 @@ function click(event: Event) {
 	model.value = inputValue
 
 	labeledInput.value?.blur()
-
-	console.log('blur')
 }
 
 function interact(focus: () => void) {
@@ -64,8 +62,6 @@ function completion(item: { id: any; label: string }) {
 	model.value = item.label
 
 	window.removeEventListener('mousedown', click)
-
-	console.log(item)
 }
 
 onUnmounted(() => {
