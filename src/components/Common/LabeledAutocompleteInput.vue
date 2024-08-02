@@ -38,6 +38,8 @@ function click(event: Event) {
 
 	expanded.value = false
 
+	window.removeEventListener('mousedown', click)
+
 	model.value = inputElement.value.value
 
 	labeledInput.value?.blur()
@@ -74,6 +76,8 @@ function enter(event: KeyboardEvent) {
 	emit('submit', inputValue)
 
 	model.value = inputValue
+
+	expanded.value = false
 
 	window.removeEventListener('mousedown', click)
 }
