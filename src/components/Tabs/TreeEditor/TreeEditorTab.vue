@@ -2,11 +2,11 @@
 import ActionContextMenuItem from '@/components/Common/ActionContextMenuItem.vue'
 import ContextMenuItem from '@/components/Common/ContextMenuItem.vue'
 import TreeEditorPropertyElement from './EditorElements/TreeEditorPropertyElement.vue'
-import LabeledTextInput from '@/components/Common/LabeledTextInput.vue'
+import LabeledAutocompleteInput from '@/components/Common/LabeledAutocompleteInput.vue'
 import FreeContextMenu from '@/components/Common/FreeContextMenu.vue'
 import SubMenu from '@/components/Common/SubMenu.vue'
 
-import { computed, nextTick, onMounted, Ref, ref, watch } from 'vue'
+import { computed, nextTick, onMounted, Ref, ref } from 'vue'
 import { type TreeEditorTab } from './TreeEditorTab'
 import { ActionManager } from '@/libs/actions/ActionManager'
 import { useTranslate } from '@/libs/locales/Locales'
@@ -19,6 +19,7 @@ import {
 	ObjectElement,
 	ValueElement,
 } from './Tree'
+import { CompletionItem } from '@/libs/jsonSchema/Schema'
 
 const t = useTranslate()
 
@@ -28,39 +29,67 @@ const tabElement: Ref<HTMLDivElement | null> = ref(null)
 
 const contextMenu: Ref<typeof FreeContextMenu | null> = ref(null)
 
-const _addValue = ref('')
+const addValue = ref('')
 
-const addValue = computed<string>({
-	get() {
-		return _addValue.value
-	},
-	async set(newValue) {
-		_addValue.value = newValue
+async function addCompletion(completion: CompletionItem) {
+	console.log('Adding completion!', completion)
 
-		if (!props.instance.selectedTree.value) return
+	addValue.value = completion.value as string
 
-		const selectedTree = props.instance.selectedTree.value
+	if (!props.instance.selectedTree.value) return
 
-		if (selectedTree.tree instanceof ObjectElement) {
-			props.instance.edit(
-				new AddPropertyEdit(selectedTree.tree, newValue, new ObjectElement(selectedTree.tree, newValue))
+	const selectedTree = props.instance.selectedTree.value
+
+	if (selectedTree.tree instanceof ObjectElement) {
+		props.instance.edit(
+			new AddPropertyEdit(
+				selectedTree.tree,
+				completion.value as string,
+				new ObjectElement(selectedTree.tree, completion.value as string)
 			)
-		}
+		)
+	}
 
-		if (selectedTree.tree instanceof ArrayElement) {
-			props.instance.edit(
-				new AddElementEdit(
-					selectedTree.tree,
-					new ValueElement(selectedTree.tree, selectedTree.tree.children.length, newValue)
-				)
+	if (selectedTree.tree instanceof ArrayElement) {
+		props.instance.edit(
+			new AddElementEdit(
+				selectedTree.tree,
+				new ValueElement(selectedTree.tree, selectedTree.tree.children.length, completion.value as string)
 			)
-		}
+		)
+	}
 
-		await nextTick()
+	await nextTick()
 
-		_addValue.value = ''
-	},
-})
+	addValue.value = ''
+}
+
+async function addSubmit(value: string) {
+	console.log('Submit add!', value)
+
+	addValue.value = value
+
+	if (!props.instance.selectedTree.value) return
+
+	const selectedTree = props.instance.selectedTree.value
+
+	if (selectedTree.tree instanceof ObjectElement) {
+		props.instance.edit(new AddPropertyEdit(selectedTree.tree, value, new ObjectElement(selectedTree.tree, value)))
+	}
+
+	if (selectedTree.tree instanceof ArrayElement) {
+		props.instance.edit(
+			new AddElementEdit(
+				selectedTree.tree,
+				new ValueElement(selectedTree.tree, selectedTree.tree.children.length, value)
+			)
+		)
+	}
+
+	await nextTick()
+
+	addValue.value = ''
+}
 
 const editValue = computed<string>({
 	get() {
@@ -139,9 +168,21 @@ onMounted(() => {
 
 			<div class="border-background-secondary border-t-2 w-full h-56 p-2">
 				<div class="flex items-center gap-4 mt-3">
-					<LabeledTextInput label="editors.treeEditor.add" v-model.lazy="addValue" class="flex-1 !mt-0" />
+					<LabeledAutocompleteInput
+						label="editors.treeEditor.add"
+						:completions="instance.parentCompletions.value"
+						v-model="addValue"
+						class="flex-1 !mt-0"
+						@complete="addCompletion"
+						@submit="addSubmit"
+					/>
 
-					<LabeledTextInput label="editors.treeEditor.edit" v-model.lazy="editValue" class="flex-1 !mt-0" />
+					<LabeledAutocompleteInput
+						label="editors.treeEditor.edit"
+						:completions="instance.completions.value"
+						v-model="editValue"
+						class="flex-1 !mt-0"
+					/>
 				</div>
 			</div>
 		</div>

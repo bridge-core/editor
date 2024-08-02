@@ -222,8 +222,6 @@ export class TreeEditorTab extends FileTab {
 	}
 
 	private updateCompletions() {
-		console.trace()
-
 		if (!ProjectManager.currentProject) return
 		if (!(ProjectManager.currentProject instanceof BedrockProject)) return
 
