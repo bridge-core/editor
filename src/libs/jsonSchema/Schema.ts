@@ -343,8 +343,6 @@ export class ValueSchema extends Schema {
 								path: this.path + '/' + property,
 							})
 
-							console.warn(additionalProperties, definedProperties, propertyDefinitions, property)
-
 							return diagnostics
 						}
 					} else {
