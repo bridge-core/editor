@@ -169,6 +169,9 @@ onMounted(() => {
 			<div class="border-background-secondary border-t-2 w-full h-56 p-2">
 				<div class="flex items-center gap-4 mt-3">
 					<LabeledAutocompleteInput
+						v-if="
+							instance.selectedTree.value && !(instance.selectedTree.value.tree instanceof ValueElement)
+						"
 						label="editors.treeEditor.add"
 						:completions="instance.completions.value"
 						v-model="addValue"
@@ -178,8 +181,17 @@ onMounted(() => {
 					/>
 
 					<LabeledAutocompleteInput
+						v-if="
+							instance.selectedTree.value &&
+							(instance.selectedTree.value.type === 'property' ||
+								instance.selectedTree.value.tree instanceof ValueElement)
+						"
 						label="editors.treeEditor.edit"
-						:completions="instance.completions.value"
+						:completions="
+							instance.selectedTree.value?.type === 'property'
+								? instance.parentCompletions.value
+								: instance.completions.value
+						"
 						v-model="editValue"
 						class="flex-1 !mt-0"
 					/>
