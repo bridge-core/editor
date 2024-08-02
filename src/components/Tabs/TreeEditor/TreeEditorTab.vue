@@ -170,7 +170,7 @@ onMounted(() => {
 				<div class="flex items-center gap-4 mt-3">
 					<LabeledAutocompleteInput
 						label="editors.treeEditor.add"
-						:completions="instance.parentCompletions.value"
+						:completions="instance.completions.value"
 						v-model="addValue"
 						class="flex-1 !mt-0"
 						@complete="addCompletion"
