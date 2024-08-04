@@ -1,5 +1,4 @@
 import { v4 as uuid } from 'uuid'
-import { isReactive } from 'vue'
 
 export type TreeElements = ObjectElement | ArrayElement | ValueElement
 export type ParentElements = ObjectElement | ArrayElement | null
