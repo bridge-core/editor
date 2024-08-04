@@ -242,8 +242,8 @@ export class TreeEditorTab extends FileTab {
 
 		const valueSchema = createSchema(schema, (path: string) => schemaData.getSchemaForFile(filePath, path))
 
-		let path = ''
-		let parentPath = ''
+		let path = '/'
+		let parentPath = '/'
 
 		let parents = []
 		let currentElement: ParentElements | TreeElements = this.selectedTree.value.tree
@@ -257,11 +257,11 @@ export class TreeEditorTab extends FileTab {
 		parents.reverse()
 
 		for (const element of parents) {
-			path += '/' + element.key?.toString()
+			path += element.key?.toString() + '/'
 		}
 
 		for (const element of parents.slice(0, -1)) {
-			parentPath += '/' + element.key?.toString()
+			parentPath += element.key?.toString() + '/'
 		}
 
 		this.completions.value = valueSchema.getCompletionItems(this.tree.value.toJson(), path)

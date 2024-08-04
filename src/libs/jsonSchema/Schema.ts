@@ -55,6 +55,7 @@ const validPartProperties = [
 	'const',
 	'pattern',
 	'default',
+	'doNotSuggest',
 ]
 
 const ignoredProperties = [
@@ -75,6 +76,7 @@ const ignoredProperties = [
 	'maxLength',
 	'multipleOf',
 	'markdownDescription',
+	'deprecationMessage',
 ]
 
 export function createSchema(
@@ -97,7 +99,7 @@ export class AllOfSchema extends Schema {
 	public constructor(
 		public part: JsonObject,
 		public requestSchema: (path: string) => JsonObject | undefined,
-		public path: string = ''
+		public path: string = '/'
 	) {
 		super(requestSchema, path)
 	}
@@ -135,7 +137,7 @@ export class AnyOfSchema extends Schema {
 	public constructor(
 		public part: JsonObject,
 		public requestSchema: (path: string) => JsonObject | undefined,
-		public path: string = ''
+		public path: string = '/'
 	) {
 		super(requestSchema, path)
 	}
@@ -177,7 +179,7 @@ export class RefSchema extends Schema {
 	public constructor(
 		public part: JsonObject,
 		public requestSchema: (path: string) => JsonObject | undefined,
-		public path: string = ''
+		public path: string = '/'
 	) {
 		super(requestSchema, path)
 	}
@@ -207,7 +209,7 @@ export class IfSchema extends Schema {
 	public constructor(
 		public part: JsonObject,
 		public requestSchema: (path: string) => JsonObject | undefined,
-		public path: string = ''
+		public path: string = '/'
 	) {
 		super(requestSchema, path)
 	}
@@ -279,7 +281,7 @@ export class ValueSchema extends Schema {
 	public constructor(
 		public part: JsonObject,
 		public requestSchema: (path: string) => JsonObject | undefined,
-		public path: string = ''
+		public path: string = '/'
 	) {
 		super(requestSchema, path)
 
@@ -390,7 +392,7 @@ export class ValueSchema extends Schema {
 							diagnostics.push({
 								severity: 'warning',
 								message: `Property ${property} is not allowed.`,
-								path: this.path + '/' + property,
+								path: this.path + property + '/',
 							})
 
 							return diagnostics
@@ -402,7 +404,7 @@ export class ValueSchema extends Schema {
 									definedPatterns.find((pattern) => new RegExp(pattern).test(property))!
 								],
 							this.requestSchema,
-							this.path + '/' + property
+							this.path + property + '/'
 						)
 
 						diagnostics = diagnostics.concat(schema.validate((value as JsonObject)[property]))
@@ -414,7 +416,7 @@ export class ValueSchema extends Schema {
 				const itemsDefinition: JsonObject = this.part.items as any
 
 				for (let index = 0; index < value.length; index++) {
-					const schema = createSchema(itemsDefinition, this.requestSchema, this.path + '/' + index.toString())
+					const schema = createSchema(itemsDefinition, this.requestSchema, this.path + index.toString() + '/')
 
 					diagnostics = diagnostics.concat(schema.validate(value[index]))
 				}
@@ -449,6 +451,8 @@ export class ValueSchema extends Schema {
 	}
 
 	public getCompletionItems(value: unknown, path: string): CompletionItem[] {
+		if ('doNotSuggest' in this.part) return []
+
 		if ('const' in this.part) {
 			return [
 				{
@@ -481,7 +485,7 @@ export class ValueSchema extends Schema {
 						const schema = createSchema(
 							(this.part.properties as JsonObject)[property] as JsonObject,
 							this.requestSchema,
-							this.path + '/' + property
+							this.path + property + '/'
 						)
 
 						completions = completions.concat(
@@ -495,7 +499,7 @@ export class ValueSchema extends Schema {
 				const itemsDefinition: JsonObject = this.part.items as any
 
 				for (let index = 0; index < value.length; index++) {
-					const schema = createSchema(itemsDefinition, this.requestSchema, this.path + '/' + index.toString())
+					const schema = createSchema(itemsDefinition, this.requestSchema, this.path + index.toString() + '/')
 
 					completions = completions.concat(schema.getCompletionItems(value[index], path))
 				}
