@@ -44,6 +44,8 @@ function matchesType(value: unknown, type: string): boolean {
 
 // TODO: Use correct pathing (do a/ instead of /a )
 
+// TODO: Optimize get completions
+
 const validPartProperties = [
 	'properties',
 	'patternProperties',
@@ -82,7 +84,7 @@ const ignoredProperties = [
 export function createSchema(
 	part: JsonObject,
 	requestSchema: (path: string) => JsonObject | undefined,
-	path: string = ''
+	path: string = '/'
 ) {
 	if ('$ref' in part) return new RefSchema(part, requestSchema, path)
 
@@ -508,13 +510,15 @@ export class ValueSchema extends Schema {
 			if (this.part.enum) {
 				const allowedValues: (string | number | null)[] = this.part.enum as any
 
-				completions = completions.concat(
-					allowedValues.map((value) => ({
-						type: 'value',
-						label: value?.toString() ?? 'undefined',
-						value: value,
-					}))
-				)
+				if (this.path === path) {
+					completions = completions.concat(
+						allowedValues.map((value) => ({
+							type: 'value',
+							label: value?.toString() ?? 'undefined',
+							value: value,
+						}))
+					)
+				}
 			}
 		}
 
