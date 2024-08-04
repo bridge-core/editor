@@ -41,9 +41,6 @@ function matchesType(value: unknown, type: string): boolean {
 }
 
 // TODO: Investigate translating errors
-
-// TODO: Use correct pathing (do a/ instead of /a )
-
 // TODO: Optimize get completions
 
 const validPartProperties = [
@@ -372,7 +369,6 @@ export class ValueSchema extends Schema {
 				}
 			}
 
-			// TODO: Support Pattern Properties
 			if ('properties' in this.part || 'patternProperties' in this.part) {
 				const propertyDefinitions: JsonObject = (this.part.properties as any) ?? {}
 				const definedProperties = Object.keys(propertyDefinitions)
