@@ -87,6 +87,54 @@ async function addSubmit(value: string) {
 	addValue.value = ''
 }
 
+let justCompletedEdit = false
+
+async function editCompletion(completion: CompletionItem) {
+	justCompletedEdit = true
+
+	const selectedTree = props.instance.selectedTree.value
+
+	if (!selectedTree) return
+
+	if (selectedTree.type === 'property') {
+		props.instance.edit(
+			new ModifyPropertyKeyEdit(
+				selectedTree.tree.parent as ObjectElement,
+				selectedTree.tree.key as string,
+				completion.value as string
+			)
+		)
+
+		return
+	} else {
+		if (selectedTree.tree instanceof ValueElement) {
+			props.instance.edit(new ModifyValueEdit(selectedTree.tree, completion.value as string))
+
+			return
+		}
+	}
+}
+
+async function editSubmit(value: string) {
+	const selectedTree = props.instance.selectedTree.value
+
+	if (!selectedTree) return
+
+	if (selectedTree.type === 'property') {
+		props.instance.edit(
+			new ModifyPropertyKeyEdit(selectedTree.tree.parent as ObjectElement, selectedTree.tree.key as string, value)
+		)
+
+		return
+	} else {
+		if (selectedTree.tree instanceof ValueElement) {
+			props.instance.edit(new ModifyValueEdit(selectedTree.tree, value))
+
+			return
+		}
+	}
+}
+
 const editValue = computed<string>({
 	get() {
 		const selectedTree = props.instance.selectedTree.value
@@ -102,27 +150,13 @@ const editValue = computed<string>({
 		return ''
 	},
 	set(newValue) {
-		const selectedTree = props.instance.selectedTree.value
-
-		if (!selectedTree) return
-
-		if (selectedTree.type === 'property') {
-			props.instance.edit(
-				new ModifyPropertyKeyEdit(
-					selectedTree.tree.parent as ObjectElement,
-					selectedTree.tree.key as string,
-					newValue
-				)
-			)
+		if (justCompletedEdit) {
+			justCompletedEdit = false
 
 			return
-		} else {
-			if (selectedTree.tree instanceof ValueElement) {
-				props.instance.edit(new ModifyValueEdit(selectedTree.tree, newValue))
-
-				return
-			}
 		}
+
+		editSubmit(newValue)
 	},
 })
 
@@ -190,6 +224,8 @@ onMounted(() => {
 						"
 						v-model="editValue"
 						class="flex-1 !mt-0"
+						@complete="editCompletion"
+						@submit="editSubmit"
 					/>
 				</div>
 			</div>
