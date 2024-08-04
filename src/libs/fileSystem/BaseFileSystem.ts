@@ -54,11 +54,7 @@ export class BaseFileSystem {
 
 			const entry = entries.find((entry) => entry.path === path)
 
-			if (!entry) {
-				console.log(entries)
-
-				throw new Error('Entry does not exist')
-			}
+			if (!entry) throw new Error('Entry does not exist')
 
 			return entry
 		} catch (error) {

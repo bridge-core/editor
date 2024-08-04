@@ -32,8 +32,6 @@ const contextMenu: Ref<typeof FreeContextMenu | null> = ref(null)
 const addValue = ref('')
 
 async function addCompletion(completion: CompletionItem) {
-	console.log('Adding completion!', completion)
-
 	addValue.value = completion.value as string
 
 	if (!props.instance.selectedTree.value) return
@@ -65,8 +63,6 @@ async function addCompletion(completion: CompletionItem) {
 }
 
 async function addSubmit(value: string) {
-	console.log('Submit add!', value)
-
 	addValue.value = value
 
 	if (!props.instance.selectedTree.value) return

@@ -392,8 +392,6 @@ export class ReplaceEdit implements TreeEdit {
 	}
 
 	undo(): TreeSelection {
-		console.log('undoing')
-
 		const parent = this.newElement.parent
 
 		if (parent === null) {

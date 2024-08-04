@@ -40,11 +40,7 @@ function matchesType(value: unknown, type: string): boolean {
 	return detectedType === type
 }
 
-// TODO: Investigate optimizatations!
-
 // TODO: Investigate translating errors
-
-// TODO: Handle other types of schemas
 
 // TODO: Use correct pathing (do a/ instead of /a )
 
@@ -120,7 +116,17 @@ export class AllOfSchema extends Schema {
 	}
 
 	public getCompletionItems(value: unknown, path: string): CompletionItem[] {
-		throw new Error('Method not implemented.')
+		let parts: JsonObject[] = this.part.allOf as any
+
+		let diagnostics: CompletionItem[] = []
+
+		for (const part of parts) {
+			const schema = createSchema(part, this.requestSchema, this.path)
+
+			diagnostics = diagnostics.concat(schema.getCompletionItems(value, path))
+		}
+
+		return diagnostics
 	}
 }
 
@@ -152,7 +158,17 @@ export class AnyOfSchema extends Schema {
 	}
 
 	public getCompletionItems(value: unknown, path: string): CompletionItem[] {
-		throw new Error('Method not implemented.')
+		let parts: JsonObject[] = this.part.anyOf as any
+
+		let diagnostics: CompletionItem[] = []
+
+		for (const part of parts) {
+			const schema = createSchema(part, this.requestSchema, this.path)
+
+			diagnostics = diagnostics.concat(schema.getCompletionItems(value, path))
+		}
+
+		return diagnostics
 	}
 }
 
@@ -227,7 +243,34 @@ export class IfSchema extends Schema {
 	}
 
 	public getCompletionItems(value: unknown, path: string): CompletionItem[] {
-		throw new Error('Method not implemented.')
+		const condition: JsonObject | boolean = this.part.if as any
+		const passResult: JsonObject = this.part.then as any
+		const failResult: JsonObject | undefined = this.part.else as any
+
+		let processedPart = { ...this.part }
+
+		delete processedPart.if
+		delete processedPart.then
+
+		if ('else' in processedPart) delete processedPart.else
+
+		let passed = false
+
+		if (getType(condition) === 'boolean') {
+			passed = condition as boolean
+		} else {
+			const conditionSchema = createSchema(condition as JsonObject, this.requestSchema, this.path)
+
+			passed = conditionSchema.isValid(value)
+		}
+
+		if (passed) {
+			processedPart = { ...processedPart, ...passResult }
+		} else if (failResult) {
+			processedPart = { ...processedPart, ...failResult }
+		}
+
+		return createSchema(processedPart, this.requestSchema, this.path).getCompletionItems(value, path)
 	}
 }
 
@@ -325,7 +368,7 @@ export class ValueSchema extends Schema {
 			}
 
 			// TODO: Support Pattern Properties
-			if (this.part.properties) {
+			if ('properties' in this.part) {
 				const propertyDefinitions: JsonObject = this.part.properties as any
 				const definedProperties = Object.keys(propertyDefinitions)
 
