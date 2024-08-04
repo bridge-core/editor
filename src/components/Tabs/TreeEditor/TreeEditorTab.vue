@@ -31,12 +31,8 @@ const tabElement: Ref<HTMLDivElement | null> = ref(null)
 const contextMenu: Ref<typeof FreeContextMenu | null> = ref(null)
 
 function convertToMatchingType(value: string, types: string[]): any {
-	if (types.includes('number') || types.includes('integer')) {
-		try {
-			let parsed = parseFloat(value)
-
-			if (!isNaN(parsed)) return parsed
-		} catch {}
+	if (types.includes('number') || (types.includes('integer') && /^-?([0-9]*[.])?[0-9]+$/.test(value))) {
+		return parseFloat(value)
 	}
 
 	if (types.includes('boolean')) {
@@ -258,7 +254,7 @@ onMounted(() => {
 							contextMenu?.open(event)
 						}
 					"
-					path=""
+					path="/"
 				/>
 			</div>
 
