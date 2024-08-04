@@ -255,7 +255,7 @@ export class TreeEditorTab extends FileTab {
 		return path
 	}
 
-	public getTypes(tree: TreeElements): string[] {
+	public getTypes(path: string): string[] {
 		if (!ProjectManager.currentProject) return []
 		if (!(ProjectManager.currentProject instanceof BedrockProject)) return []
 
@@ -270,7 +270,6 @@ export class TreeEditorTab extends FileTab {
 
 		const valueSchema = createSchema(schema, (path: string) => schemaData.getSchemaForFile(filePath, path))
 
-		const path = this.getTreeSchemaPath(tree)
 		const types = valueSchema.getTypes(this.tree.value.toJson(), path)
 
 		console.timeEnd('Get Types')

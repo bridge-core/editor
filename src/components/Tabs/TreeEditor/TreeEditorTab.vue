@@ -17,6 +17,7 @@ import {
 	ModifyPropertyKeyEdit,
 	ModifyValueEdit,
 	ObjectElement,
+	TreeElements,
 	ValueElement,
 } from './Tree'
 import { CompletionItem } from '@/libs/jsonSchema/Schema'
@@ -39,13 +40,22 @@ async function addCompletion(completion: CompletionItem) {
 	const selectedTree = props.instance.selectedTree.value
 
 	if (selectedTree.tree instanceof ObjectElement) {
-		props.instance.edit(
-			new AddPropertyEdit(
-				selectedTree.tree,
-				completion.value as string,
-				new ObjectElement(selectedTree.tree, completion.value as string)
-			)
-		)
+		const path = props.instance.getTreeSchemaPath(selectedTree.tree) + completion.value + '/'
+		const types = props.instance.getTypes(path)
+
+		let value: TreeElements = new ObjectElement(selectedTree.tree, completion.value as string)
+
+		if (types[0] === 'number') {
+			value = new ValueElement(selectedTree.tree, completion.value as string, 1)
+		} else if (types[0] === 'string') {
+			value = new ValueElement(selectedTree.tree, completion.value as string, '')
+		} else if (types[0] === 'integer') {
+			value = new ValueElement(selectedTree.tree, completion.value as string, 1)
+		} else if (types[0] === 'array') {
+			value = new ArrayElement(selectedTree.tree, completion.value as string)
+		}
+
+		props.instance.edit(new AddPropertyEdit(selectedTree.tree, completion.value as string, value))
 	}
 
 	if (selectedTree.tree instanceof ArrayElement) {
@@ -70,7 +80,22 @@ async function addSubmit(value: string) {
 	const selectedTree = props.instance.selectedTree.value
 
 	if (selectedTree.tree instanceof ObjectElement) {
-		props.instance.edit(new AddPropertyEdit(selectedTree.tree, value, new ObjectElement(selectedTree.tree, value)))
+		const path = props.instance.getTreeSchemaPath(selectedTree.tree) + value + '/'
+		const types = props.instance.getTypes(path)
+
+		let addValue: TreeElements = new ObjectElement(selectedTree.tree, value)
+
+		if (types[0] === 'number') {
+			addValue = new ValueElement(selectedTree.tree, value, 1)
+		} else if (types[0] === 'string') {
+			addValue = new ValueElement(selectedTree.tree, value, '')
+		} else if (types[0] === 'integer') {
+			addValue = new ValueElement(selectedTree.tree, value, 1)
+		} else if (types[0] === 'array') {
+			addValue = new ArrayElement(selectedTree.tree, value)
+		}
+
+		props.instance.edit(new AddPropertyEdit(selectedTree.tree, value, addValue))
 	}
 
 	if (selectedTree.tree instanceof ArrayElement) {
@@ -119,10 +144,6 @@ async function editSubmit(value: string) {
 	const selectedTree = props.instance.selectedTree.value
 
 	if (!selectedTree) return
-
-	console.log('Edit submit')
-
-	console.log(props.instance.getTypes(selectedTree.tree))
 
 	if (selectedTree.type === 'property') {
 		props.instance.edit(
