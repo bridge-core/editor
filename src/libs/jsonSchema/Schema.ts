@@ -530,6 +530,14 @@ export class ValueSchema extends Schema {
 			}
 		}
 
-		return completions
+		let uniqueCompletions = []
+
+		for (let index = 0; index < completions.length; index++) {
+			if (completions.findIndex((completion) => completion.label === completions[index].label) !== index) continue
+
+			uniqueCompletions.push(completions[index])
+		}
+
+		return uniqueCompletions
 	}
 }
