@@ -120,6 +120,10 @@ async function editSubmit(value: string) {
 
 	if (!selectedTree) return
 
+	console.log('Edit submit')
+
+	console.log(props.instance.getTypes(selectedTree.tree))
+
 	if (selectedTree.type === 'property') {
 		props.instance.edit(
 			new ModifyPropertyKeyEdit(selectedTree.tree.parent as ObjectElement, selectedTree.tree.key as string, value)
@@ -226,6 +230,7 @@ onMounted(() => {
 						class="flex-1 !mt-0"
 						@complete="editCompletion"
 						@submit="editSubmit"
+						:update-always="true"
 					/>
 				</div>
 			</div>

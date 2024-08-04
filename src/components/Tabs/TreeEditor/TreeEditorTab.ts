@@ -201,6 +201,83 @@ export class TreeEditorTab extends FileTab {
 		this.updateCompletions()
 	}
 
+	public getTreeSchemaPath(tree: TreeElements): string {
+		let path = '/'
+
+		let parents = []
+		let currentElement: ParentElements | TreeElements = tree
+
+		while (currentElement?.parent) {
+			parents.push(currentElement)
+
+			currentElement = currentElement.parent
+		}
+
+		parents.reverse()
+
+		for (const element of parents) {
+			if (typeof element.key !== 'string') {
+				path += 'any_index/'
+
+				continue
+			}
+
+			path += element.key?.toString() + '/'
+		}
+
+		return path
+	}
+
+	public getTreeParentSchemaPath(tree: TreeElements): string {
+		let path = '/'
+
+		let parents = []
+		let currentElement: ParentElements | TreeElements = tree
+
+		while (currentElement?.parent) {
+			parents.push(currentElement)
+
+			currentElement = currentElement.parent
+		}
+
+		parents.reverse()
+
+		for (const element of parents.slice(0, -1)) {
+			if (typeof element.key !== 'string') {
+				path += 'any_index/'
+
+				continue
+			}
+
+			path += element.key?.toString() + '/'
+		}
+
+		return path
+	}
+
+	public getTypes(tree: TreeElements): string[] {
+		if (!ProjectManager.currentProject) return []
+		if (!(ProjectManager.currentProject instanceof BedrockProject)) return []
+
+		const schemaData = ProjectManager.currentProject.schemaData
+
+		const schemas = schemaData.getSchemasForFile(this.path)
+		const schema = schemas.localSchemas[schemas.main]
+
+		const filePath = this.path
+
+		console.time('Get Types')
+
+		const valueSchema = createSchema(schema, (path: string) => schemaData.getSchemaForFile(filePath, path))
+
+		const path = this.getTreeSchemaPath(tree)
+		const types = valueSchema.getTypes(this.tree.value.toJson(), path)
+
+		console.timeEnd('Get Types')
+
+		return types
+	}
+
 	private validate() {
 		if (!ProjectManager.currentProject) return
 		if (!(ProjectManager.currentProject instanceof BedrockProject)) return
@@ -242,27 +319,8 @@ export class TreeEditorTab extends FileTab {
 
 		const valueSchema = createSchema(schema, (path: string) => schemaData.getSchemaForFile(filePath, path))
 
-		let path = '/'
-		let parentPath = '/'
-
-		let parents = []
-		let currentElement: ParentElements | TreeElements = this.selectedTree.value.tree
-
-		while (currentElement?.parent) {
-			parents.push(currentElement)
-
-			currentElement = currentElement.parent
-		}
-
-		parents.reverse()
-
-		for (const element of parents) {
-			path += element.key?.toString() + '/'
-		}
-
-		for (const element of parents.slice(0, -1)) {
-			parentPath += element.key?.toString() + '/'
-		}
+		let path = this.getTreeSchemaPath(this.selectedTree.value.tree)
+		let parentPath = this.getTreeParentSchemaPath(this.selectedTree.value.tree)
 
 		this.completions.value = valueSchema.getCompletionItems(this.tree.value.toJson(), path)
 		this.parentCompletions.value = valueSchema.getCompletionItems(this.tree.value.toJson(), parentPath)

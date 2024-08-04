@@ -19,6 +19,8 @@ export abstract class Schema {
 
 	public abstract getCompletionItems(value: unknown, path: string): CompletionItem[]
 
+	public abstract getTypes(value: unknown, path: string): string[]
+
 	public isValid(value: unknown) {
 		return this.validate(value).length === 0
 	}
@@ -130,6 +132,20 @@ export class AllOfSchema extends Schema {
 
 		return diagnostics
 	}
+
+	public getTypes(value: unknown, path: string): string[] {
+		let parts: JsonObject[] = this.part.allOf as any
+
+		let types: string[] = []
+
+		for (const part of parts) {
+			const schema = createSchema(part, this.requestSchema, this.path)
+
+			types = types.concat(schema.getTypes(value, path))
+		}
+
+		return types
+	}
 }
 
 export class AnyOfSchema extends Schema {
@@ -172,6 +188,20 @@ export class AnyOfSchema extends Schema {
 
 		return diagnostics
 	}
+
+	public getTypes(value: unknown, path: string): string[] {
+		let parts: JsonObject[] = this.part.anyOf as any
+
+		let types: string[] = []
+
+		for (const part of parts) {
+			const schema = createSchema(part, this.requestSchema, this.path)
+
+			types = types.concat(schema.getTypes(value, path))
+		}
+
+		return types
+	}
 }
 
 export class RefSchema extends Schema {
@@ -201,6 +231,16 @@ export class RefSchema extends Schema {
 		processedPart = { ...processedPart, ...this.requestSchema(this.part.$ref as string) }
 
 		return createSchema(processedPart, this.requestSchema, this.path).getCompletionItems(value, path)
+	}
+
+	public getTypes(value: unknown, path: string): string[] {
+		let processedPart = { ...this.part }
+
+		delete processedPart.$ref
+
+		processedPart = { ...processedPart, ...this.requestSchema(this.part.$ref as string) }
+
+		return createSchema(processedPart, this.requestSchema, this.path).getTypes(value, path)
 	}
 }
 
@@ -273,6 +313,37 @@ export class IfSchema extends Schema {
 		}
 
 		return createSchema(processedPart, this.requestSchema, this.path).getCompletionItems(value, path)
+	}
+
+	public getTypes(value: unknown, path: string): string[] {
+		const condition: JsonObject | boolean = this.part.if as any
+		const passResult: JsonObject = this.part.then as any
+		const failResult: JsonObject | undefined = this.part.else as any
+
+		let processedPart = { ...this.part }
+
+		delete processedPart.if
+		delete processedPart.then
+
+		if ('else' in processedPart) delete processedPart.else
+
+		let passed = false
+
+		if (getType(condition) === 'boolean') {
+			passed = condition as boolean
+		} else {
+			const conditionSchema = createSchema(condition as JsonObject, this.requestSchema, this.path)
+
+			passed = conditionSchema.isValid(value)
+		}
+
+		if (passed) {
+			processedPart = { ...processedPart, ...passResult }
+		} else if (failResult) {
+			processedPart = { ...processedPart, ...failResult }
+		}
+
+		return createSchema(processedPart, this.requestSchema, this.path).getTypes(value, path)
 	}
 }
 
@@ -414,7 +485,7 @@ export class ValueSchema extends Schema {
 				const itemsDefinition: JsonObject = this.part.items as any
 
 				for (let index = 0; index < value.length; index++) {
-					const schema = createSchema(itemsDefinition, this.requestSchema, this.path + index.toString() + '/')
+					const schema = createSchema(itemsDefinition, this.requestSchema, this.path + 'any_index/')
 
 					diagnostics = diagnostics.concat(schema.validate(value[index]))
 				}
@@ -487,6 +558,8 @@ export class ValueSchema extends Schema {
 					)
 				} else {
 					for (const property of definedProperties) {
+						if (!path.startsWith(this.path + property + '/')) continue
+
 						const schema = createSchema(
 							(this.part.properties as JsonObject)[property] as JsonObject,
 							this.requestSchema,
@@ -500,13 +573,15 @@ export class ValueSchema extends Schema {
 				}
 			}
 		} else if (Array.isArray(value)) {
-			if ('items' in this.part) {
-				const itemsDefinition: JsonObject = this.part.items as any
+			if (path.startsWith(this.path + 'any_index/')) {
+				if ('items' in this.part) {
+					const itemsDefinition: JsonObject = this.part.items as any
 
-				for (let index = 0; index < value.length; index++) {
-					const schema = createSchema(itemsDefinition, this.requestSchema, this.path + index.toString() + '/')
+					for (let index = 0; index < value.length; index++) {
+						const schema = createSchema(itemsDefinition, this.requestSchema, this.path + 'any_index/')
 
-					completions = completions.concat(schema.getCompletionItems(value[index], path))
+						completions = completions.concat(schema.getCompletionItems(value[index], path))
+					}
 				}
 			}
 		} else {
@@ -558,5 +633,59 @@ export class ValueSchema extends Schema {
 		}
 
 		return uniqueCompletions
+	}
+
+	public getTypes(value: unknown, path: string): string[] {
+		if (path === this.path) {
+			let types: string | string[] = (this.part.type as any) ?? []
+			if (!Array.isArray(types)) types = [types]
+
+			return types
+		}
+
+		let types: string[] = []
+
+		const valueType = getType(value)
+
+		if (valueType === 'object') {
+			if ('properties' in this.part) {
+				const propertyDefinitions: JsonObject = this.part.properties as any
+				const definedProperties = Object.keys(propertyDefinitions)
+
+				for (const property of definedProperties) {
+					if (!path.startsWith(this.path + property + '/')) continue
+
+					const schema = createSchema(
+						(this.part.properties as JsonObject)[property] as JsonObject,
+						this.requestSchema,
+						this.path + property + '/'
+					)
+
+					types = types.concat(schema.getTypes((value as JsonObject)[property], path))
+				}
+			}
+		} else if (Array.isArray(value)) {
+			if (path.startsWith(this.path + 'any_index/')) {
+				if ('items' in this.part) {
+					const itemsDefinition: JsonObject = this.part.items as any
+
+					for (let index = 0; index < value.length; index++) {
+						const schema = createSchema(itemsDefinition, this.requestSchema, this.path + 'any_index/')
+
+						types = types.concat(schema.getTypes(value[index], path))
+					}
+				}
+			}
+		}
+
+		let uniqueTypes = []
+
+		for (let index = 0; index < types.length; index++) {
+			if (types.findIndex((type) => type === types[index]) !== index) continue
+
+			uniqueTypes.push(types[index])
+		}
+
+		return uniqueTypes
 	}
 }

@@ -14,6 +14,7 @@ const props = defineProps<{
 	label: string
 	completions: CompletionItem[]
 	borderColor?: string
+	updateAlways?: boolean
 }>()
 
 const emit = defineEmits<{
@@ -65,8 +66,18 @@ function completion(item: { id: any; label: string }) {
 	window.removeEventListener('mousedown', click)
 }
 
+function updateInput(event: Event) {
+	if (!props.updateAlways) return
+	if (!inputElement.value) return
+
+	const inputValue = inputElement.value.value
+
+	model.value = inputValue
+}
+
 function enter(event: KeyboardEvent) {
 	if (!inputElement.value) return
+
 	if (event.key !== 'Enter') return
 
 	labeledInput.value?.blur()
@@ -105,6 +116,7 @@ onUnmounted(() => {
 					class="outline-none border-none bg-transparent font-inter flex-1"
 					:value="model"
 					@keyup="enter"
+					@input="updateInput"
 				/>
 
 				<IconButton
