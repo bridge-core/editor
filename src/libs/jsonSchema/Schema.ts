@@ -528,6 +528,25 @@ export class ValueSchema extends Schema {
 					)
 				}
 			}
+
+			if (this.path === path) {
+				let types: string | string[] = (this.part.type as any) ?? []
+				if (!Array.isArray(types)) types = [types]
+
+				if (types.includes('boolean')) {
+					for (const completionValue of [true, false]) {
+						console.log(value, completionValue)
+
+						if (completionValue === value) continue
+
+						completions.push({
+							label: completionValue.toString(),
+							type: 'value',
+							value: completionValue.toString(),
+						})
+					}
+				}
+			}
 		}
 
 		let uniqueCompletions = []
