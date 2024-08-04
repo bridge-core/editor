@@ -452,6 +452,8 @@ export class ValueSchema extends Schema {
 		if ('doNotSuggest' in this.part) return []
 
 		if ('const' in this.part) {
+			if (value === this.part.const) return []
+
 			return [
 				{
 					type: 'value',
@@ -472,11 +474,16 @@ export class ValueSchema extends Schema {
 
 				if (this.path === path) {
 					completions = completions.concat(
-						definedProperties.map((property) => ({
-							label: property,
-							type: 'value',
-							value: property,
-						}))
+						definedProperties
+							.map(
+								(property) =>
+									({
+										label: property,
+										type: 'value',
+										value: property,
+									} as CompletionItem)
+							)
+							.filter((completion) => !((completion.value as string) in (value as JsonObject)))
 					)
 				} else {
 					for (const property of definedProperties) {
@@ -508,11 +515,16 @@ export class ValueSchema extends Schema {
 
 				if (this.path === path) {
 					completions = completions.concat(
-						allowedValues.map((value) => ({
-							type: 'value',
-							label: value?.toString() ?? 'undefined',
-							value: value,
-						}))
+						allowedValues
+							.map(
+								(value) =>
+									({
+										type: 'value',
+										label: value?.toString() ?? 'undefined',
+										value: value,
+									} as CompletionItem)
+							)
+							.filter((completion) => completion.value !== value)
 					)
 				}
 			}
