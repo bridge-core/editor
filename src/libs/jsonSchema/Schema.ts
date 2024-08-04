@@ -26,7 +26,7 @@ export abstract class Schema {
 	}
 }
 
-function getType(value: unknown) {
+export function getType(value: unknown) {
 	if (Array.isArray(value)) return 'array'
 
 	if (value === null) return 'null'

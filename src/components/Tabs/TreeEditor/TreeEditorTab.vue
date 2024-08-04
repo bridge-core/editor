@@ -30,6 +30,24 @@ const tabElement: Ref<HTMLDivElement | null> = ref(null)
 
 const contextMenu: Ref<typeof FreeContextMenu | null> = ref(null)
 
+function convertToMatchingType(value: string, types: string[]): any {
+	if (types.includes('number') || types.includes('integer')) {
+		try {
+			let parsed = parseFloat(value)
+
+			if (!isNaN(parsed)) return parsed
+		} catch {}
+	}
+
+	if (types.includes('boolean')) {
+		if (value === 'true') return true
+
+		if (value === 'false') return false
+	}
+
+	return value
+}
+
 const addValue = ref('')
 
 async function addCompletion(completion: CompletionItem) {
@@ -51,6 +69,8 @@ async function addCompletion(completion: CompletionItem) {
 			value = new ValueElement(selectedTree.tree, completion.value as string, '')
 		} else if (types[0] === 'integer') {
 			value = new ValueElement(selectedTree.tree, completion.value as string, 1)
+		} else if (types[0] === 'boolean') {
+			value = new ValueElement(selectedTree.tree, completion.value as string, true)
 		} else if (types[0] === 'array') {
 			value = new ArrayElement(selectedTree.tree, completion.value as string)
 		}
@@ -59,10 +79,17 @@ async function addCompletion(completion: CompletionItem) {
 	}
 
 	if (selectedTree.tree instanceof ArrayElement) {
+		const path = props.instance.getTreeSchemaPath(selectedTree.tree) + 'any_index/'
+		const types = props.instance.getTypes(path)
+
 		props.instance.edit(
 			new AddElementEdit(
 				selectedTree.tree,
-				new ValueElement(selectedTree.tree, selectedTree.tree.children.length, completion.value as string)
+				new ValueElement(
+					selectedTree.tree,
+					selectedTree.tree.children.length,
+					convertToMatchingType(completion.value as string, types)
+				)
 			)
 		)
 	}
@@ -91,6 +118,8 @@ async function addSubmit(value: string) {
 			addValue = new ValueElement(selectedTree.tree, value, '')
 		} else if (types[0] === 'integer') {
 			addValue = new ValueElement(selectedTree.tree, value, 1)
+		} else if (types[0] === 'boolean') {
+			addValue = new ValueElement(selectedTree.tree, value, true)
 		} else if (types[0] === 'array') {
 			addValue = new ArrayElement(selectedTree.tree, value)
 		}
@@ -99,10 +128,17 @@ async function addSubmit(value: string) {
 	}
 
 	if (selectedTree.tree instanceof ArrayElement) {
+		const path = props.instance.getTreeSchemaPath(selectedTree.tree) + 'any_index/'
+		const types = props.instance.getTypes(path)
+
 		props.instance.edit(
 			new AddElementEdit(
 				selectedTree.tree,
-				new ValueElement(selectedTree.tree, selectedTree.tree.children.length, value)
+				new ValueElement(
+					selectedTree.tree,
+					selectedTree.tree.children.length,
+					convertToMatchingType(value, types)
+				)
 			)
 		)
 	}
@@ -133,7 +169,7 @@ async function editCompletion(completion: CompletionItem) {
 		return
 	} else {
 		if (selectedTree.tree instanceof ValueElement) {
-			props.instance.edit(new ModifyValueEdit(selectedTree.tree, completion.value as string))
+			props.instance.edit(new ModifyValueEdit(selectedTree.tree, completion.value as any))
 
 			return
 		}
@@ -153,7 +189,12 @@ async function editSubmit(value: string) {
 		return
 	} else {
 		if (selectedTree.tree instanceof ValueElement) {
-			props.instance.edit(new ModifyValueEdit(selectedTree.tree, value))
+			const path = props.instance.getTreeSchemaPath(selectedTree.tree)
+			const types = props.instance.getTypes(path)
+
+			console.log(path, types, convertToMatchingType(value, types))
+
+			props.instance.edit(new ModifyValueEdit(selectedTree.tree, convertToMatchingType(value, types)))
 
 			return
 		}
