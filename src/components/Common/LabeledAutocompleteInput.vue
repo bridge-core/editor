@@ -117,6 +117,7 @@ onUnmounted(() => {
 		</LabeledInput>
 
 		<Dropdown
+			v-if="completions.length > 0"
 			class="mb-4 flex-1"
 			v-model="expanded"
 			:parent
