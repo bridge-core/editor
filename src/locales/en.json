@@ -451,6 +451,10 @@
 		"convertToString": {
 			"name": "Convert To String",
 			"description": "Convert the selected value to a string"
+		},
+		"convertToBoolean": {
+			"name": "Convert To Boolean",
+			"description": "Convert the selected value to a boolean"
 		}
 	},
 	"toolbar": {

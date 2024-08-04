@@ -686,4 +686,40 @@ function setupConvertActions() {
 			icon: 'swap_horiz',
 		})
 	)
+
+	ActionManager.addAction(
+		new Action({
+			id: 'convertToBoolean',
+			trigger: () => {
+				const focusedTab = TabManager.getFocusedTab()
+
+				if (focusedTab === null) return
+
+				if (!(focusedTab instanceof TreeEditorTab)) return
+
+				let element: TreeElements = <any>null
+
+				if (focusedTab.contextTree.value) {
+					element = focusedTab.contextTree.value.tree
+				} else if (focusedTab.selectedTree.value) {
+					element = focusedTab.selectedTree.value.tree
+				}
+
+				let newElement = new ValueElement(element.parent, element.key, true)
+
+				if (element instanceof ValueElement) {
+					if (element.value === 'false') newElement.value = false
+				}
+
+				focusedTab.edit(
+					new ReplaceEdit(element, newElement, (element) => {
+						focusedTab.tree.value = element
+					})
+				)
+			},
+			name: 'actions.convertToBoolean.name',
+			description: 'actions.convertToBoolean.description',
+			icon: 'swap_horiz',
+		})
+	)
 }

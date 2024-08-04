@@ -412,6 +412,16 @@ onMounted(() => {
 							}
 						"
 					/>
+
+					<ActionContextMenuItem
+						action="convertToBoolean"
+						@click="
+							() => {
+								ActionManager.trigger('convertToBoolean')
+								close()
+							}
+						"
+					/>
 				</template>
 			</SubMenu>
 
