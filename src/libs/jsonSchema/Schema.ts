@@ -46,6 +46,7 @@ function matchesType(value: unknown, type: string): boolean {
 
 const validPartProperties = [
 	'properties',
+	'patternProperties',
 	'type',
 	'required',
 	'additionalProperties',
@@ -368,9 +369,12 @@ export class ValueSchema extends Schema {
 			}
 
 			// TODO: Support Pattern Properties
-			if ('properties' in this.part) {
-				const propertyDefinitions: JsonObject = this.part.properties as any
+			if ('properties' in this.part || 'patternProperties' in this.part) {
+				const propertyDefinitions: JsonObject = (this.part.properties as any) ?? {}
 				const definedProperties = Object.keys(propertyDefinitions)
+
+				const patternDefinitions: JsonObject = (this.part.patternProperties as any) ?? {}
+				const definedPatterns = Object.keys(patternDefinitions)
 
 				// TODO: Support schema
 				let additionalProperties: undefined | boolean | unknown = this.part.additionalProperties as any
@@ -378,7 +382,10 @@ export class ValueSchema extends Schema {
 
 				for (const property of properties) {
 					if (!definedProperties.includes(property)) {
-						if (!additionalProperties) {
+						let matchesPatterns =
+							definedPatterns.find((pattern) => new RegExp(pattern).test(property)) !== undefined
+
+						if (!matchesPatterns && !additionalProperties) {
 							// TODO: Proper message
 							diagnostics.push({
 								severity: 'warning',
@@ -390,7 +397,10 @@ export class ValueSchema extends Schema {
 						}
 					} else {
 						const schema = createSchema(
-							(this.part.properties as JsonObject)[property] as JsonObject,
+							(propertyDefinitions[property] as JsonObject) ??
+								patternDefinitions[
+									definedPatterns.find((pattern) => new RegExp(pattern).test(property))!
+								],
 							this.requestSchema,
 							this.path + '/' + property
 						)
