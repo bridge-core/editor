@@ -8,9 +8,10 @@ import Button from '@/components/Common/Button.vue'
 
 import { useTranslate } from '@/libs/locales/Locales'
 import { Settings } from '@/libs/settings/Settings'
-import { CustomItem, DropdownItem, SettingsWindow, ToggleItem } from './SettingsWindow'
+import { AutocompleteItem, CustomItem, DropdownItem, SettingsWindow, ToggleItem } from './SettingsWindow'
 import { ref } from 'vue'
 import { Windows } from '../Windows'
+import LabeledAutocompleteInput from '@/components/Common/LabeledAutocompleteInput.vue'
 
 const t = useTranslate()
 
@@ -138,6 +139,15 @@ SettingsWindow.setup()
 						<h2 class="mb-2 text-text font-inter">{{ t((item as ToggleItem).label) }}</h2>
 
 						<Switch :model-value="get(id)" @update:model-value="(value) => Settings.set(id, value)" />
+					</div>
+
+					<div v-if="item.type === 'autocomplete'">
+						<LabeledAutocompleteInput
+							:completions="(item as AutocompleteItem).completions.value"
+							:label="(item as AutocompleteItem).label"
+							:model-value="get(id)"
+							@update:model-value="(value) => Settings.set(id, value)"
+						/>
 					</div>
 
 					<!--<Button v-if="item.type === 'button'" @click="item.trigger" :text="t(item.text)" />

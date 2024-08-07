@@ -7,6 +7,7 @@ import { FileTab } from '@/components/TabSystem/FileTab'
 import { Disposable, disposeAll } from '@/libs/disposeable/Disposeable'
 import { buildTree, ObjectElement, ParentElements, TreeEdit, TreeElements, TreeSelection } from './Tree'
 import { CompletionItem, createSchema, Diagnostic } from '@/libs/jsonSchema/Schema'
+import { Settings } from '@/libs/settings/Settings'
 
 export class TreeEditorTab extends FileTab {
 	public component: Component | null = TreeEditorTabComponent
@@ -48,7 +49,35 @@ export class TreeEditorTab extends FileTab {
 		return path === this.path
 	}
 
-	public static setup() {}
+	public static setup() {
+		Settings.addSetting('showTreeEditorLocationBar', {
+			default: true,
+		})
+
+		Settings.addSetting('bridgePredictions', {
+			default: true,
+		})
+
+		Settings.addSetting('inlineDiagnostics', {
+			default: true,
+		})
+
+		Settings.addSetting('autoOpenTreeNodes', {
+			default: true,
+		})
+
+		Settings.addSetting('dragAndDropTreeNodes', {
+			default: true,
+		})
+
+		Settings.addSetting('showArrayIndices', {
+			default: false,
+		})
+
+		Settings.addSetting('hideBrackets', {
+			default: false,
+		})
+	}
 
 	public async create() {
 		if (!ProjectManager.currentProject) return

@@ -11,27 +11,6 @@ import { FileTab } from '@/components/TabSystem/FileTab'
 import { Settings } from '@/libs/settings/Settings'
 import { Disposable, disposeAll } from '@/libs/disposeable/Disposeable'
 
-enum EditorSettings {
-	JsonEditor = 'jsonEditor',
-	BracketPairColorization = 'bracketPairColorization',
-	WordWrap = 'wordWrap',
-	WordWrapColumns = 'wordWrapColumns',
-	KeepTabsOpen = 'keepTabsOpen',
-	AutoSaveChanges = 'autoSaveChanges',
-	ShowTreeEditorLocationBar = 'showTreeEditorLocationBar',
-	BridgePredictions = 'bridgePredictions',
-	InlineDiagnostics = 'inlineDiagnostics',
-	AutoOpenTreeNodes = 'autoOpenTreeNodes',
-	DragAndDropTreeNodes = 'dragAndDropTreeNodes',
-	ShowArrayIndices = 'showArrayIndices',
-	HideBrackets = 'hideBrackets',
-}
-
-enum JSONEditorOptions {
-	TreeEditor = 'Tree Editor',
-	RawText = 'Raw Text',
-}
-
 export class TextTab extends FileTab {
 	public component: Component | null = TextTabComponent
 	public icon = ref('loading')
@@ -58,57 +37,17 @@ export class TextTab extends FileTab {
 	}
 
 	public static setup() {
-		Settings.addSetting(EditorSettings.JsonEditor, {
-			default: JSONEditorOptions.TreeEditor,
-		}) // TODO: Move to New Location
-
-		Settings.addSetting(EditorSettings.BracketPairColorization, {
+		Settings.addSetting('bracketPairColorization', {
 			default: false,
 		})
 
-		Settings.addSetting(EditorSettings.WordWrap, {
+		Settings.addSetting('wordWrap', {
 			default: false,
-		}) // TODO: Implement Option
+		})
 
-		Settings.addSetting(EditorSettings.WordWrapColumns, {
+		Settings.addSetting('wordWrapColumns', {
 			default: 120,
-		}) // TODO: Implement Option
-
-		Settings.addSetting(EditorSettings.KeepTabsOpen, {
-			default: false,
-		}) // TODO: Move to New Location
-
-		Settings.addSetting(EditorSettings.AutoSaveChanges, {
-			default: false,
-		}) // TODO: Move to New Location
-
-		Settings.addSetting(EditorSettings.ShowTreeEditorLocationBar, {
-			default: true,
-		}) // TODO: Move to New Location
-
-		Settings.addSetting(EditorSettings.BridgePredictions, {
-			default: true,
-		}) // TODO: Move to New Location
-
-		Settings.addSetting(EditorSettings.InlineDiagnostics, {
-			default: true,
-		}) // TODO: Move to New Location
-
-		Settings.addSetting(EditorSettings.AutoOpenTreeNodes, {
-			default: true,
-		}) // TODO: Move to New Location
-
-		Settings.addSetting(EditorSettings.DragAndDropTreeNodes, {
-			default: true,
-		}) // TODO: Move to New Location
-
-		Settings.addSetting(EditorSettings.ShowArrayIndices, {
-			default: false,
-		}) // TODO: Move to New Location
-
-		Settings.addSetting(EditorSettings.HideBrackets, {
-			default: false,
-		}) // TODO: Move to New Location
+		})
 	}
 
 	public async create() {
@@ -198,6 +137,8 @@ export class TextTab extends FileTab {
 			fontFamily: 'Consolas',
 			//@ts-ignore Monaco types have not been update yet
 			'bracketPairColorization.enabled': Settings.get('bracketPairColorization'),
+			wordWrap: Settings.get<boolean>('wordWrap') ? 'wordWrapColumn' : 'off',
+			wordWrapColumn: Settings.get<number>('wordWrapColumns'),
 			automaticLayout: true,
 			contextmenu: false,
 		})
