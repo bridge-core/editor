@@ -233,7 +233,7 @@ defineExpose({ open })
 					'--color': propertySelected ? 'var(--theme-color-backgroundSecondary)' : 'none',
 				}"
 				@click="clickProperty"
-				@contextmenu.stop.prevent="(event: PointerEvent) => emit('opencontextmenu', {selection: { type: 'property', tree }, event})"
+				@contextmenu.stop.prevent="(event: MouseEvent) => emit('opencontextmenu', {selection: { type: 'property', tree }, event})"
 			>
 				<Icon
 					icon="chevron_right"
@@ -271,7 +271,7 @@ defineExpose({ open })
 					'--color': valueSelected ? 'var(--theme-color-backgroundSecondary)' : 'none',
 				}"
 				@click="editor.select(tree)"
-				@contextmenu.stop.prevent="(event: PointerEvent) => emit('opencontextmenu', {selection: { type: 'value', tree }, event})"
+				@contextmenu.stop.prevent="(event: MouseEvent) => emit('opencontextmenu', {selection: { type: 'value', tree }, event})"
 				>{{ tree instanceof ObjectElement ? '{' : '[' }}</span
 			>
 
@@ -305,7 +305,7 @@ defineExpose({ open })
 					'--color': valueSelected ? 'var(--theme-color-backgroundSecondary)' : 'none',
 				}"
 				@click="editor.select(tree)"
-				@contextmenu.stop.prevent="(event: PointerEvent) => emit('opencontextmenu', {selection: { type: 'value', tree }, event})"
+				@contextmenu.stop.prevent="(event: MouseEvent) => emit('opencontextmenu', {selection: { type: 'value', tree }, event})"
 				>{{ tree instanceof ObjectElement ? '}' : ']' }}</span
 			>
 		</div>

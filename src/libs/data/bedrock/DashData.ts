@@ -26,7 +26,11 @@ export class DashData implements Disposable {
 		this.componentsPath = this.project.resolvePackPath('behaviorPack', 'components')
 		this.commandsPath = this.project.resolvePackPath('behaviorPack', 'commands')
 
-		this.disposables.push(fileSystem.pathUpdated.on(this.pathUpdated.bind(this)))
+		this.disposables.push(
+			fileSystem.pathUpdated.on((path: unknown) => {
+				this.pathUpdated(path as string)
+			})
+		)
 
 		if (await fileSystem.exists(this.componentsPath)) await this.generateSchemasInPath(this.componentsPath)
 		if (await fileSystem.exists(this.commandsPath)) await this.generateSchemasInPath(this.commandsPath)

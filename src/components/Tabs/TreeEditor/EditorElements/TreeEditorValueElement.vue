@@ -32,7 +32,7 @@ const value = computed(() => (props.tree instanceof ValueElement ? props.tree.va
 			'--color': selected ? 'var(--theme-color-backgroundSecondary)' : 'none',
 		}"
 		@click.stop="click"
-		@contextmenu.prevent.stop="(event: PointerEvent) => emit('opencontextmenu', { selection: { type: 'value', tree }, event })"
+		@contextmenu.prevent.stop="(event: MouseEvent) => emit('opencontextmenu', { selection: { type: 'value', tree }, event })"
 	>
 		<span v-if="tree instanceof ObjectElement" class="select-none flex" :style="{ fontFamily: 'Consolas' }">{{
 			Object.keys(tree.children).length === 0 ? '{}' : '{...}'
