@@ -1,5 +1,5 @@
 import { tauriBuild } from '@/libs/tauri/Tauri'
-import { BaseFileSystem } from './BaseFileSystem'
+import { BaseEntry, BaseFileSystem } from './BaseFileSystem'
 import { PWAFileSystem } from './PWAFileSystem'
 import { TauriFileSystem } from './TauriFileSystem'
 import { get, set } from 'idb-keyval'
@@ -36,6 +36,16 @@ export async function selectOrLoadBridgeFolder() {
 
 		await set('bridgeFolderHandle', fileSystem.baseHandle)
 	} catch {}
+}
+
+export async function iterateDirectory(fileSystem: BaseFileSystem, path: string, callback: (entry: BaseEntry) => void) {
+	for (const entry of await fileSystem.readDirectoryEntries(path)) {
+		if (entry.kind === 'directory') {
+			await iterateDirectory(fileSystem, entry.path, callback)
+		} else {
+			callback(entry)
+		}
+	}
 }
 
 /**

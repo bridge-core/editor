@@ -9,6 +9,7 @@ import { Event } from '@/libs/event/Event'
 import { Disposable } from '@/libs/disposeable/Disposeable'
 import { Theme } from '@/libs/theme/Theme'
 import { Snippet } from '@/libs/snippets/Snippet'
+import { TBaseModule } from '@bridge-editor/js-runtime/dist/Runtime'
 
 export class Extensions {
 	public static globalExtensions: Record<string, Extension> = {}
@@ -22,6 +23,8 @@ export class Extensions {
 	public static presets: Record<string, any> = {}
 
 	public static loaded: boolean = false
+
+	private static modules: Record<string, TBaseModule> = {}
 
 	public static setup() {
 		if (fileSystem instanceof PWAFileSystem) fileSystem.reloaded.on(this.fileSystemReloaded.bind(this))
@@ -103,6 +106,16 @@ export class Extensions {
 		}
 
 		await this.updateExtensions()
+	}
+
+	public static registerModule(name: string, value: any) {
+		console.log('Registered module', name)
+
+		this.modules[name] = value
+	}
+
+	public static getModules(): [string, TBaseModule][] {
+		return Object.entries(this.modules)
 	}
 
 	private static async updateExtensions() {

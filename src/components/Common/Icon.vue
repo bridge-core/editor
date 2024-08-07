@@ -28,6 +28,7 @@ const mdiMap: { [key: string]: string | undefined } = {
 	'mdi-alpha-m': 'help',
 	'mdi-alpha-m-box-outline': 'data_object',
 	'mdi-web': 'language',
+	'mdi-tools': 'construction',
 }
 
 defineProps({

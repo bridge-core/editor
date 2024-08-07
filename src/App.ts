@@ -21,6 +21,7 @@ import { setupMolang } from '@/libs/monaco/languages/Molang'
 import { setupSnippetCompletions } from '@/libs/monaco/SnippetCompletions'
 import { LocalFileSystem } from '@/libs/fileSystem/LocalFileSystem'
 import { NotificationSystem } from '@/components/Notifications/NotificationSystem'
+import { setupModules } from './libs/extensions/Modules'
 
 export function setupBeforeComponents() {
 	NotificationSystem.setup()
@@ -34,6 +35,8 @@ export function setupBeforeComponents() {
 
 	setupActions()
 	setupSidebar()
+
+	setupModules()
 }
 
 export async function setup() {
