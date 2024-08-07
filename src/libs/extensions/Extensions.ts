@@ -109,8 +109,6 @@ export class Extensions {
 	}
 
 	public static registerModule(name: string, value: any) {
-		console.log('Registered module', name)
-
 		this.modules[name] = value
 	}
 
