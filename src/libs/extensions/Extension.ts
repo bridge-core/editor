@@ -86,7 +86,7 @@ export class Extension {
 		const scriptsPath = join(this.path, 'scripts')
 		if (await fileSystem.exists(scriptsPath)) {
 			iterateDirectory(fileSystem, scriptsPath, (entry) => {
-				fileSystem.readFileText(entry.path).then(console.log)
+				// fileSystem.readFileText(entry.path).then(console.log)
 
 				promises.push(runtime.run(entry.path))
 			})
