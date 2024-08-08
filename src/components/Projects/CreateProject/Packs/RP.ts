@@ -9,6 +9,7 @@ import { CreateFlipbookTextures } from '../Files/RP/FlipbookTextures'
 import { CreateBiomesClient } from '../Files/RP/BiomesClient'
 import { CreateSounds } from '../Files/RP/Sounds'
 import { CreateSoundDefintions } from '../Files/RP/SoundDefinitions'
+import { CreateSplashes } from '../Files/RP/Splashes'
 
 export class CreateRP extends CreatePack {
 	protected readonly packPath = 'RP'
@@ -23,5 +24,6 @@ export class CreateRP extends CreatePack {
 		new CreateBiomesClient(),
 		new CreateSounds(),
 		new CreateSoundDefintions(),
+		new CreateSplashes()
 	]
 }

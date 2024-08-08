@@ -84,7 +84,9 @@
 		"biome": "Biome",
 		"block": "Block",
 		"bridgeConfig": "Project Config",
+		"cameraPreset": "Camera Preset",
 		"dialogue": "Dialogue",
+		"dimension": "Dimension",
 		"entity": "Entity",
 		"feature": "Feature",
 		"featureRule": "Feature Rule",
@@ -98,6 +100,7 @@
 		"serverScript": "Server Script",
 		"script": "Script",
 		"spawnRule": "Spawn Rule",
+		"splashes": "Splashes",
 		"mcstructure": "Structure",
 		"tradeTable": "Trade Table",
 		"clientManifest": "Client Manifest",
@@ -716,6 +719,10 @@
 					"soundDefinitions": {
 						"name": "sound_definitions.json",
 						"description": "Used to register ids for sound files to be used elsewhere in the project"
+					},
+					"splashes": {
+						"name": "splashes.json",
+						"description": "Used to define splash messages on the title screen"
 					}
 				}
 			}
