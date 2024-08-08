@@ -131,6 +131,7 @@ async function addSubmit(value: string) {
 	if (selectedTree.tree instanceof ArrayElement) {
 		let elementValue = value
 
+		// TODO: If adding an object with a property with the same name as value is valid, add that instead
 		if (Settings.get('bridgePredictions')) {
 			const path = props.instance.getTreeSchemaPath(selectedTree.tree) + 'any_index/'
 			const types = props.instance.getTypes(path)
