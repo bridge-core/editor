@@ -23,6 +23,7 @@ import { LocalFileSystem } from '@/libs/fileSystem/LocalFileSystem'
 import { NotificationSystem } from '@/components/Notifications/NotificationSystem'
 import { setupModules } from '@/libs/extensions/Modules'
 import { setupEditorSettings } from '@/libs/settings/SetupSettings'
+import { TreeEditorTab } from '@/components/Tabs/TreeEditor/TreeEditorTab'
 
 export function setupBeforeComponents() {
 	NotificationSystem.setup()
@@ -32,6 +33,7 @@ export function setupBeforeComponents() {
 	Extensions.setup()
 	Toolbar.setup()
 	TextTab.setup()
+	TreeEditorTab.setup()
 	Sidebar.setup()
 
 	setupActions()

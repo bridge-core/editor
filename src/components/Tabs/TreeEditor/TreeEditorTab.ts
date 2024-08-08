@@ -52,7 +52,7 @@ export class TreeEditorTab extends FileTab {
 	public static setup() {
 		Settings.addSetting('showTreeEditorLocationBar', {
 			default: true,
-		})
+		}) // TODO: Implement
 
 		Settings.addSetting('bridgePredictions', {
 			default: true,
@@ -64,19 +64,19 @@ export class TreeEditorTab extends FileTab {
 
 		Settings.addSetting('autoOpenTreeNodes', {
 			default: true,
-		})
+		}) // TODO: Implement
 
 		Settings.addSetting('dragAndDropTreeNodes', {
 			default: true,
-		})
+		}) // TODO: Implement
 
 		Settings.addSetting('showArrayIndices', {
 			default: false,
-		})
+		}) // TODO: Implement
 
 		Settings.addSetting('hideBrackets', {
 			default: false,
-		})
+		}) // TODO: Implement
 	}
 
 	public async create() {
@@ -138,6 +138,14 @@ export class TreeEditorTab extends FileTab {
 		watch(this.selectedTree, () => {
 			this.updateCompletions()
 		})
+
+		this.disposables.push(
+			Settings.updated.on((event: { id: string; value: any } | undefined) => {
+				if (!event) return
+
+				if (event.id === 'inlineDiagnostics') this.validate()
+			})
+		)
 	}
 
 	public async destroy() {
@@ -309,6 +317,10 @@ export class TreeEditorTab extends FileTab {
 	private validate() {
 		if (!ProjectManager.currentProject) return
 		if (!(ProjectManager.currentProject instanceof BedrockProject)) return
+
+		if (!Settings.get('inlineDiagnostics')) {
+			return (this.diagnostics.value = [])
+		}
 
 		const schemaData = ProjectManager.currentProject.schemaData
 

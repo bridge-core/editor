@@ -21,6 +21,7 @@ import {
 	ValueElement,
 } from './Tree'
 import { CompletionItem } from '@/libs/jsonSchema/Schema'
+import { Settings } from '@/libs/settings/Settings'
 
 const t = useTranslate()
 
@@ -54,38 +55,41 @@ async function addCompletion(completion: CompletionItem) {
 	const selectedTree = props.instance.selectedTree.value
 
 	if (selectedTree.tree instanceof ObjectElement) {
-		const path = props.instance.getTreeSchemaPath(selectedTree.tree) + completion.value + '/'
-		const types = props.instance.getTypes(path)
-
 		let value: TreeElements = new ObjectElement(selectedTree.tree, completion.value as string)
 
-		if (types[0] === 'number') {
-			value = new ValueElement(selectedTree.tree, completion.value as string, 1)
-		} else if (types[0] === 'string') {
-			value = new ValueElement(selectedTree.tree, completion.value as string, '')
-		} else if (types[0] === 'integer') {
-			value = new ValueElement(selectedTree.tree, completion.value as string, 1)
-		} else if (types[0] === 'boolean') {
-			value = new ValueElement(selectedTree.tree, completion.value as string, true)
-		} else if (types[0] === 'array') {
-			value = new ArrayElement(selectedTree.tree, completion.value as string)
+		if (Settings.get('bridgePredictions')) {
+			const path = props.instance.getTreeSchemaPath(selectedTree.tree) + completion.value + '/'
+			const types = props.instance.getTypes(path)
+			if (types[0] === 'number') {
+				value = new ValueElement(selectedTree.tree, completion.value as string, 1)
+			} else if (types[0] === 'string') {
+				value = new ValueElement(selectedTree.tree, completion.value as string, '')
+			} else if (types[0] === 'integer') {
+				value = new ValueElement(selectedTree.tree, completion.value as string, 1)
+			} else if (types[0] === 'boolean') {
+				value = new ValueElement(selectedTree.tree, completion.value as string, true)
+			} else if (types[0] === 'array') {
+				value = new ArrayElement(selectedTree.tree, completion.value as string)
+			}
 		}
 
 		props.instance.edit(new AddPropertyEdit(selectedTree.tree, completion.value as string, value))
 	}
 
 	if (selectedTree.tree instanceof ArrayElement) {
-		const path = props.instance.getTreeSchemaPath(selectedTree.tree) + 'any_index/'
-		const types = props.instance.getTypes(path)
+		let value: any = completion.value
+
+		if (Settings.get('bridgePredictions')) {
+			const path = props.instance.getTreeSchemaPath(selectedTree.tree) + 'any_index/'
+			const types = props.instance.getTypes(path)
+
+			value = convertToMatchingType(completion.value as string, types)
+		}
 
 		props.instance.edit(
 			new AddElementEdit(
 				selectedTree.tree,
-				new ValueElement(
-					selectedTree.tree,
-					selectedTree.tree.children.length,
-					convertToMatchingType(completion.value as string, types)
-				)
+				new ValueElement(selectedTree.tree, selectedTree.tree.children.length, value)
 			)
 		)
 	}
@@ -103,38 +107,41 @@ async function addSubmit(value: string) {
 	const selectedTree = props.instance.selectedTree.value
 
 	if (selectedTree.tree instanceof ObjectElement) {
-		const path = props.instance.getTreeSchemaPath(selectedTree.tree) + value + '/'
-		const types = props.instance.getTypes(path)
-
 		let addValue: TreeElements = new ObjectElement(selectedTree.tree, value)
 
-		if (types[0] === 'number') {
-			addValue = new ValueElement(selectedTree.tree, value, 1)
-		} else if (types[0] === 'string') {
-			addValue = new ValueElement(selectedTree.tree, value, '')
-		} else if (types[0] === 'integer') {
-			addValue = new ValueElement(selectedTree.tree, value, 1)
-		} else if (types[0] === 'boolean') {
-			addValue = new ValueElement(selectedTree.tree, value, true)
-		} else if (types[0] === 'array') {
-			addValue = new ArrayElement(selectedTree.tree, value)
+		if (Settings.get('bridgePredictions')) {
+			const path = props.instance.getTreeSchemaPath(selectedTree.tree) + value + '/'
+			const types = props.instance.getTypes(path)
+			if (types[0] === 'number') {
+				addValue = new ValueElement(selectedTree.tree, value, 1)
+			} else if (types[0] === 'string') {
+				addValue = new ValueElement(selectedTree.tree, value, '')
+			} else if (types[0] === 'integer') {
+				addValue = new ValueElement(selectedTree.tree, value, 1)
+			} else if (types[0] === 'boolean') {
+				addValue = new ValueElement(selectedTree.tree, value, true)
+			} else if (types[0] === 'array') {
+				addValue = new ArrayElement(selectedTree.tree, value)
+			}
 		}
 
 		props.instance.edit(new AddPropertyEdit(selectedTree.tree, value, addValue))
 	}
 
 	if (selectedTree.tree instanceof ArrayElement) {
-		const path = props.instance.getTreeSchemaPath(selectedTree.tree) + 'any_index/'
-		const types = props.instance.getTypes(path)
+		let elementValue = value
+
+		if (Settings.get('bridgePredictions')) {
+			const path = props.instance.getTreeSchemaPath(selectedTree.tree) + 'any_index/'
+			const types = props.instance.getTypes(path)
+
+			elementValue = convertToMatchingType(value, types)
+		}
 
 		props.instance.edit(
 			new AddElementEdit(
 				selectedTree.tree,
-				new ValueElement(
-					selectedTree.tree,
-					selectedTree.tree.children.length,
-					convertToMatchingType(value, types)
-				)
+				new ValueElement(selectedTree.tree, selectedTree.tree.children.length, elementValue)
 			)
 		)
 	}
@@ -185,12 +192,16 @@ async function editSubmit(value: string) {
 		return
 	} else {
 		if (selectedTree.tree instanceof ValueElement) {
-			const path = props.instance.getTreeSchemaPath(selectedTree.tree)
-			const types = props.instance.getTypes(path)
+			let elementValue = value
 
-			console.log(path, types, convertToMatchingType(value, types))
+			if (Settings.get('bridgePredictions')) {
+				const path = props.instance.getTreeSchemaPath(selectedTree.tree)
+				const types = props.instance.getTypes(path)
 
-			props.instance.edit(new ModifyValueEdit(selectedTree.tree, convertToMatchingType(value, types)))
+				elementValue = convertToMatchingType(value, types)
+			}
+
+			props.instance.edit(new ModifyValueEdit(selectedTree.tree, elementValue))
 
 			return
 		}

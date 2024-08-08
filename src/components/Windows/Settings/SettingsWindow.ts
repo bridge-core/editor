@@ -174,6 +174,16 @@ function setupEditorCategory() {
 			}))
 		),
 	})
+
+	SettingsWindow.addItem('editor', 'bridgePredictions', <ToggleItem>{
+		type: 'toggle',
+		label: 'windows.settings.editor.bridgePredictions.name',
+	})
+
+	SettingsWindow.addItem('editor', 'inlineDiagnostics', <ToggleItem>{
+		type: 'toggle',
+		label: 'windows.settings.editor.inlineTreeEditorDiagnostics.name',
+	})
 }
 
 function setupDeveloperCategory() {
