@@ -24,6 +24,7 @@ import { NotificationSystem } from '@/components/Notifications/NotificationSyste
 import { setupModules } from '@/libs/extensions/Modules'
 import { setupEditorSettings } from '@/libs/settings/SetupSettings'
 import { TreeEditorTab } from '@/components/Tabs/TreeEditor/TreeEditorTab'
+import { tauriBuild } from '@/libs/tauri/Tauri'
 
 export function setupBeforeComponents() {
 	NotificationSystem.setup()
@@ -96,4 +97,12 @@ async function setupTauriFileSystem() {
 	await fileSystem.ensureDirectory('/')
 
 	fileSystem.startFileWatching()
+}
+
+if (tauriBuild) {
+	// Import Tauri updater for native builds
+	import('@/libs/tauri/Updater')
+} else {
+	// Only import service worker for non-Tauri builds
+	import('@/libs/app/PWAServiceWorker')
 }
