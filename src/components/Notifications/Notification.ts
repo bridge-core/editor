@@ -69,7 +69,9 @@ export class Notification {
 	}
 
 	protected updateAppBadge() {
+		// @ts-expect-error
 		if (typeof navigator.setAppBadge === 'function')
+			// @ts-expect-error
 			navigator.setAppBadge(
 				Object.values(NotificationStore).filter(
 					({ isVisible }) => isVisible
