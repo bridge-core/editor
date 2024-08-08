@@ -28,6 +28,8 @@ export class TextTab extends FileTab {
 	private savedViewState: editor.ICodeEditorViewState | undefined = undefined
 	private initialVersionId: number = 0
 
+	private lastEditorElement: HTMLElement | null = null
+
 	public static canEdit(path: string): boolean {
 		return true
 	}
@@ -47,6 +49,15 @@ export class TextTab extends FileTab {
 
 		Settings.addSetting('wordWrapColumns', {
 			default: 120,
+			async save(value) {
+				const number = parseInt(value)
+
+				if (isNaN(number)) {
+					Settings.settings['wordWrapColumns'] = 120
+				} else {
+					Settings.settings['wordWrapColumns'] = number
+				}
+			},
 		})
 	}
 
@@ -97,6 +108,14 @@ export class TextTab extends FileTab {
 		await scriptTypeData.applyTypes(this.fileType?.types ?? [])
 
 		this.icon.value = this.fileTypeIcon
+
+		this.disposables.push(
+			Settings.updated.on((event: { id: string; value: any } | undefined) => {
+				if (!event) return
+
+				if (['wordWrap', 'wordWrapColumns', 'bracketPairColorization'].includes(event.id)) this.remountEditor()
+			})
+		)
 	}
 
 	public async destroy() {
@@ -146,12 +165,21 @@ export class TextTab extends FileTab {
 		this.editor.setModel(this.model)
 
 		if (this.savedViewState) this.editor.restoreViewState(this.savedViewState)
+
+		this.lastEditorElement = element
 	}
 
 	public unmountEditor() {
 		this.savedViewState = this.editor?.saveViewState() ?? undefined
 
 		this.editor?.dispose()
+	}
+
+	public async remountEditor() {
+		if (!this.lastEditorElement) return
+
+		await this.unmountEditor()
+		await this.mountEditor(this.lastEditorElement)
 	}
 
 	public async save() {

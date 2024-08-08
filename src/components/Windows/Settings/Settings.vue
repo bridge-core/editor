@@ -145,7 +145,7 @@ SettingsWindow.setup()
 						<LabeledAutocompleteInput
 							:completions="(item as AutocompleteItem).completions.value"
 							:label="(item as AutocompleteItem).label"
-							:model-value="get(id)"
+							:model-value="get(id).toString()"
 							@update:model-value="(value: string) => Settings.set(id, value)"
 						/>
 					</div>
