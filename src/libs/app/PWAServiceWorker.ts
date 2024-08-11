@@ -8,7 +8,7 @@ const updateSW = registerSW({
 
 		await set('firstStartAfterUpdate', true)
 
-		NotificationSystem.addNotification('mdi-update', () => updateSW())
+		NotificationSystem.addNotification('upgrade', () => updateSW())
 	},
 	onOfflineReady() {
 		// bridge. is ready to work offline

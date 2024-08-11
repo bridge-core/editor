@@ -1,11 +1,12 @@
 import { checkUpdate, installUpdate } from '@tauri-apps/api/updater'
 import { relaunch } from '@tauri-apps/api/process'
 import { NotificationSystem } from '@/components/Notifications/NotificationSystem'
+import { emit } from '@tauri-apps/api/event'
 
 async function installTauriUpdate() {
 	// Task to indicate background progress
 	// TODO: Make tasks with undetermined time
-	const task = NotificationSystem.addProgressNotification('mdi-update', 0, 100, undefined)
+	const task = NotificationSystem.addProgressNotification('upgrade', 0, 100, undefined)
 
 	// Install the update
 	await installUpdate()
@@ -14,7 +15,7 @@ async function installTauriUpdate() {
 	NotificationSystem.clearNotification(task)
 
 	// Create a notification to indicate that the app needs to be restarted
-	NotificationSystem.addNotification('mdi-update', async () => {
+	NotificationSystem.addNotification('upgrade', async () => {
 		// ...and finally relaunch the app
 		await relaunch()
 	})
@@ -22,9 +23,11 @@ async function installTauriUpdate() {
 
 checkUpdate()
 	.then(async (update) => {
+		console.log(update)
+
 		if (!update.shouldUpdate) return
 
-		const notification = NotificationSystem.addNotification('mdi-update', async () => {
+		const notification = NotificationSystem.addNotification('upgrade', async () => {
 			// Install the update
 			await installTauriUpdate()
 		})
