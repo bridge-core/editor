@@ -9,14 +9,14 @@ import {
 	writeBinaryFile,
 } from '@tauri-apps/api/fs'
 import { BaseEntry, BaseFileSystem } from './BaseFileSystem'
-import { join } from 'pathe'
+import { join, resolve } from 'pathe'
 import { sep } from '@tauri-apps/api/path'
 import { listen } from '@tauri-apps/api/event'
+import { invoke } from '@tauri-apps/api'
 
 export class TauriFileSystem extends BaseFileSystem {
 	private basePath: string | null = null
 	private textEncoder = new TextEncoder()
-	private pathsToWatch: string[] = []
 
 	public setBasePath(newPath: string) {
 		this.basePath = newPath
@@ -26,10 +26,7 @@ export class TauriFileSystem extends BaseFileSystem {
 		listen('watch_event', (event) => {
 			if (this.basePath === null) throw new Error('Base path not set!')
 
-			const paths = (event.payload as string[])
-				.filter((path) => path.startsWith(this.basePath!))
-				.filter((path) => this.pathsToWatch.find((watchPath) => path.startsWith(watchPath)) !== undefined)
-				.map((path) => path.substring(this.basePath!.length))
+			const paths = (event.payload as string[]).map((path) => resolve('/', path.substring(this.basePath!.length)))
 
 			for (const path of paths) {
 				this.pathUpdated.dispatch(path)
@@ -164,6 +161,8 @@ export class TauriFileSystem extends BaseFileSystem {
 	public async ensureDirectory(path: string) {
 		if (this.basePath === null) throw new Error('Base path not set!')
 
+		if (await exists(join(this.basePath, path))) return
+
 		try {
 			await createDir(join(this.basePath, path), { recursive: true })
 		} catch (error) {
@@ -206,10 +205,10 @@ export class TauriFileSystem extends BaseFileSystem {
 	}
 
 	public async watch(path: string) {
-		this.pathsToWatch.push(path)
+		invoke('watch', { path: join(this.basePath, path) })
 	}
 
 	public async unwatch(path: string) {
-		this.pathsToWatch.splice(this.pathsToWatch.indexOf(path), 1)
+		invoke('unwatch', { path: join(this.basePath, path) })
 	}
 }

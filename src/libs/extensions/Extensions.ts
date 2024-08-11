@@ -53,9 +53,11 @@ export class Extensions {
 	public static async loadProjectExtensions() {
 		if (ProjectManager.currentProject === null) return
 
-		for (const entry of await fileSystem.readDirectoryEntries(
-			join(ProjectManager.currentProject.path, '.bridge/extensions')
-		)) {
+		const path = join(ProjectManager.currentProject.path, '.bridge/extensions')
+
+		if (!(await fileSystem.exists(path))) await fileSystem.makeDirectory(path)
+
+		for (const entry of await fileSystem.readDirectoryEntries(path)) {
 			const extension = await this.loadExtension(entry.path)
 
 			this.projectExtensions[extension.id] = extension

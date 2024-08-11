@@ -14,6 +14,8 @@ fn main() {
 
     let app_watcher_mutex = watcher_mutex.clone();
     tauri::Builder::default()
+        .manage(watcher_mutex)
+        .invoke_handler(tauri::generate_handler![watch::watch, watch::unwatch])
         .setup(move |app| {
             let window = app.get_window("main").unwrap();
 
