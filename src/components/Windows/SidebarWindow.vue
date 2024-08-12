@@ -34,7 +34,7 @@ const sidebarExpanded = ref(true)
 
 		<div
 			v-if="isMobile"
-			class="flex flex-col shadow-window rounded-md overflow-hidden window relative w-screen h-app"
+			class="bg-background flex flex-col shadow-window rounded-md overflow-hidden window relative w-screen h-app"
 		>
 			<div class="flex justify-between align-center p-2">
 				<span class="flex align-center">
@@ -62,7 +62,7 @@ const sidebarExpanded = ref(true)
 				</div>
 
 				<div
-					class="bg-background w-full h-full absolute left-0 transition-[left] duration-200 ease-out"
+					class="w-full h-full absolute left-0 transition-[left] duration-200 ease-out"
 					:class="{ 'left-full': sidebarExpanded }"
 				>
 					<slot name="content" />
