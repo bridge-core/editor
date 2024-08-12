@@ -12,6 +12,7 @@ import { AutocompleteItem, CustomItem, DropdownItem, SettingsWindow, ToggleItem 
 import { ref } from 'vue'
 import { Windows } from '../Windows'
 import LabeledAutocompleteInput from '@/components/Common/LabeledAutocompleteInput.vue'
+import { useIsMobile } from '@/libs/Mobile'
 
 const t = useTranslate()
 
@@ -20,6 +21,8 @@ const get = Settings.useGet()
 const search = ref('')
 
 SettingsWindow.setup()
+
+const isMobile = useIsMobile()
 </script>
 
 <template>
@@ -82,7 +85,10 @@ SettingsWindow.setup()
 		</template>
 
 		<template #content>
-			<div class="max-w-[64rem] w-[50vw] h-[38rem] flex flex-col overflow-y-auto p-4 pt-0">
+			<div
+				class="max-w-[64rem] w-[50vw] h-[38rem] flex flex-col overflow-y-auto p-4 pt-0"
+				:class="{ 'w-full': isMobile, 'h-full': isMobile }"
+			>
 				<div
 					v-if="SettingsWindow.selectedCategory.value !== null"
 					v-for="[id, item] in Object.entries(SettingsWindow.items[SettingsWindow.selectedCategory.value])"
