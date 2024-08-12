@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import IconButton from '@/components/Common/IconButton.vue'
+import { useIsMobile } from '@/libs/Mobile'
 
-import { onMounted } from 'vue'
+import { onMounted, ref } from 'vue'
 
 defineProps({
 	name: {
@@ -13,21 +14,59 @@ defineProps({
 const emit = defineEmits(['open', 'close'])
 
 function close() {
+	console.warn('close')
+
 	emit('close')
 }
 
 onMounted(() => {
 	emit('open')
 })
+
+const isMobile = useIsMobile()
+
+const sidebarExpanded = ref(true)
 </script>
 
 <template>
 	<div class="w-screen h-app flex justify-center items-center absolute top-toolbar left-0">
 		<div class="bg-menu w-screen h-app absolute top-0 left-0 opacity-30" @click="close" />
 
-		<div class="bg-background shadow-window rounded-md overflow-hidden flex items-stretch window relative">
+		<div v-if="isMobile" class="shadow-window rounded-md overflow-hidden window relative">
+			<div
+				class="bg-background-secondary w-screen h-app absolute right-0 transition-[right] duration-200 ease-out"
+				:class="{ 'right-full': !sidebarExpanded }"
+			>
+				<slot name="sidebar" :hide="() => (sidebarExpanded = false)" />
+			</div>
+
+			<div
+				class="bg-background w-screen h-app relative left-0 transition-[left] duration-200 ease-out"
+				:class="{ 'left-full': sidebarExpanded }"
+			>
+				<div class="flex justify-between align-center p-2">
+					<span class="flex align-center">
+						<IconButton
+							icon="chevron_right"
+							class="text-base text-text-secondary"
+							@click="sidebarExpanded = true"
+						/>
+
+						<span class="select-none ml-1 text-text-secondary font-inter">
+							{{ name }}
+						</span>
+					</span>
+
+					<IconButton icon="close" class="text-sm" @click="close" />
+				</div>
+
+				<slot name="content" />
+			</div>
+		</div>
+
+		<div v-else class="bg-background shadow-window rounded-md overflow-hidden flex items-stretch window relative">
 			<div class="bg-background-secondary w-96">
-				<slot name="sidebar" />
+				<slot name="sidebar" :hide="() => (sidebarExpanded = false)" />
 			</div>
 
 			<div class="flex-1 w-min">
@@ -37,6 +76,7 @@ onMounted(() => {
 					</span>
 					<IconButton icon="close" class="text-sm" @click="close" />
 				</div>
+
 				<slot name="content" />
 			</div>
 		</div>

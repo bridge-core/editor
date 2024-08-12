@@ -31,7 +31,7 @@ SettingsWindow.setup()
 		)}`"
 		@close="Windows.close(SettingsWindow)"
 	>
-		<template #sidebar>
+		<template #sidebar="{ hide }">
 			<div class="p-4">
 				<LabeledInput
 					v-slot="{ focus, blur }"
@@ -56,7 +56,12 @@ SettingsWindow.setup()
 						:class="{
 							'bg-primary': SettingsWindow.selectedCategory.value === id,
 						}"
-						@click="SettingsWindow.selectedCategory.value = id"
+						@click="
+							() => {
+								SettingsWindow.selectedCategory.value = id
+								hide()
+							}
+						"
 					>
 						<Icon
 							:icon="category.icon"

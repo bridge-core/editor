@@ -42,7 +42,7 @@ async function edit(name: string) {}
 
 <template>
 	<main class="w-full h-app flex justify-center items-center" v-if="currentProject === null">
-		<div class="flex flex-col max-w-[28.5rem] w-full">
+		<div class="flex flex-col max-w-[28.5rem] w-full mx-8">
 			<Logo class="ml-auto mr-auto mb-24 -mt-24 w-48" />
 
 			<div class="flex justify-between">
