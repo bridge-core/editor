@@ -11,6 +11,7 @@ import FileSystemDrop from '@/components/Common/FileSystemDrop.vue'
 import { ProjectManager, useUsingProjectOutputFolder } from '@/libs/project/ProjectManager'
 import { CompilerWindow } from './CompilerWindow'
 import { Windows } from '../Windows'
+import { useIsMobile } from '@/libs/Mobile'
 
 const t = useTranslate()
 
@@ -55,11 +56,13 @@ async function droppedOutputFolder(items: DataTransferItemList) {
 
 	await ProjectManager.currentProject.setLocalProjectFolderHandle(fileHandle)
 }
+
+const isMobile = useIsMobile()
 </script>
 
 <template>
 	<SidebarWindow :name="t('sidebar.compiler.name')" @close="Windows.close(CompilerWindow)">
-		<template #sidebar>
+		<template #sidebar="{ hide }">
 			<div class="p-4">
 				<div class="overflow-y-scroll max-h-[34rem]">
 					<button
@@ -68,7 +71,12 @@ async function droppedOutputFolder(items: DataTransferItemList) {
 						:class="{
 							'bg-primary': selectedCategory === category.id,
 						}"
-						@click="selectedCategory = category.id"
+						@click="
+							() => {
+								selectedCategory = category.id
+								hide()
+							}
+						"
 					>
 						<Icon
 							:icon="category.icon"
@@ -84,7 +92,10 @@ async function droppedOutputFolder(items: DataTransferItemList) {
 			</div>
 		</template>
 		<template #content>
-			<div class="max-w-[64rem] w-[50vw] h-[38rem] flex flex-col overflow-y-auto p-3 pt-0">
+			<div
+				class="max-w-[64rem] w-[50vw] h-[38rem] flex flex-col overflow-y-auto p-3 pt-0"
+				:class="{ 'w-full': isMobile, 'h-full': isMobile }"
+			>
 				<div v-if="selectedCategory === 'general'">
 					<TextButton
 						text="Compile"

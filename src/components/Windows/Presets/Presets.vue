@@ -13,8 +13,10 @@ import { BedrockProject } from '@/libs/project/BedrockProject'
 import { ProjectManager } from '@/libs/project/ProjectManager'
 import { Windows } from '../Windows'
 import { PresetsWindow } from './PresetsWindow'
+import { useIsMobile } from '@/libs/Mobile'
 
 const t = useTranslate()
+const isMobile = useIsMobile()
 
 const selectedPresetPath: Ref<string | null> = ref(null)
 
@@ -90,7 +92,7 @@ watch(filteredCategories, () => {
 
 <template>
 	<SidebarWindow :name="t('windows.createPreset.title')" @close="Windows.close(PresetsWindow)">
-		<template #sidebar>
+		<template #sidebar="{ hide }">
 			<div class="p-4">
 				<LabeledInput
 					v-slot="{ focus, blur }"
@@ -126,7 +128,12 @@ watch(filteredCategories, () => {
 								:class="{
 									'bg-primary': selectedPresetPath === presetPath,
 								}"
-								@click="selectedPresetPath = presetPath"
+								@click="
+									() => {
+										selectedPresetPath = presetPath
+										hide()
+									}
+								"
 							>
 								<Icon
 									:icon="availablePresets[presetPath].icon"
@@ -144,7 +151,10 @@ watch(filteredCategories, () => {
 			</div>
 		</template>
 		<template #content>
-			<div class="window-content h-[38rem] flex flex-col overflow-y-auto p-4 pt-0">
+			<div
+				class="h-[38rem] flex flex-col overflow-y-auto p-4 pt-0"
+				:class="{ 'w-full': isMobile, 'window-content': !isMobile, 'h-full': isMobile }"
+			>
 				<div v-if="selectedPreset !== null" class="flex flex-col h-full">
 					<div>
 						<div class="flex items-center gap-2 mb-2">

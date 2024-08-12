@@ -11,17 +11,20 @@ import Button from '@/components/Common/Button.vue'
 import ContextMenu from '@/components/Common/ContextMenu.vue'
 import ContextMenuItem from '@/components/Common/ContextMenuItem.vue'
 import { Windows } from '../Windows'
+import { useIsMobile } from '@/libs/Mobile'
 
 const t = useTranslate()
 
 const isInstalledGlobal = Extensions.useIsInstalledGlobal()
 const isInstalledProject = Extensions.useIsInstalledProject()
 const isInstalled = Extensions.useIsInstalled()
+
+const isMobile = useIsMobile()
 </script>
 
 <template>
 	<SidebarWindow :name="t('windows.extensionLibrary.title')" @close="Windows.close(ExtensionLibraryWindow)">
-		<template #sidebar>
+		<template #sidebar="{ hide }">
 			<div class="p-4">
 				<LabeledInput
 					v-slot="{ focus, blur }"
@@ -45,7 +48,12 @@ const isInstalled = Extensions.useIsInstalled()
 						:style="{
 							'--color': `var(--theme-color-${ExtensionLibraryWindow.tags[tag].color ?? 'primary'})`,
 						}"
-						@click="ExtensionLibraryWindow.selectedTag.value = tag"
+						@click="
+							() => {
+								ExtensionLibraryWindow.selectedTag.value = tag
+								hide()
+							}
+						"
 					>
 						<Icon
 							:icon="ExtensionLibraryWindow.tags[tag].icon"
@@ -62,7 +70,10 @@ const isInstalled = Extensions.useIsInstalled()
 			</div>
 		</template>
 		<template #content>
-			<div class="max-w-[64rem] w-[50vw] h-[38rem] flex flex-col overflow-y-auto p-4 pt-0 mr-2">
+			<div
+				class="max-w-[64rem] w-[50vw] h-[38rem] flex flex-col overflow-y-auto p-4 pt-0 mr-2"
+				:class="{ 'w-full': isMobile, 'h-full': isMobile }"
+			>
 				<div
 					v-for="extension in ExtensionLibraryWindow.extensions.filter(
 						(extension) =>
