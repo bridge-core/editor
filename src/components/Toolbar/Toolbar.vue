@@ -12,12 +12,15 @@ import { tauriBuild } from '@/libs/tauri/Tauri'
 import { Toolbar } from './Toolbar'
 import { ChangelogWindow } from '@/components/Windows/Changelog/ChangelogWindow'
 import { ActionManager } from '@/libs/actions/ActionManager'
+import { useIsMobile } from '@/libs/Mobile'
 
 const t = useTranslate()
 
 function openChangelog() {
 	Windows.open(ChangelogWindow)
 }
+
+const isMobile = useIsMobile()
 </script>
 
 <template>
@@ -65,10 +68,15 @@ function openChangelog() {
 				</ContextMenu>
 			</span>
 		</div>
+
 		<div class="flex gap-4 items-center">
 			<div class="flex gap-2 items-center hover:cursor-pointer" @click="openChangelog">
 				<Logo class="w-4" />
-				<span class="text-sm text-text-secondary font-inter transition ease-out hover:text-accent duration-100">
+
+				<span
+					v-if="!isMobile"
+					class="text-sm text-text-secondary font-inter transition ease-out hover:text-accent duration-100"
+				>
 					v{{ appVersion }}
 				</span>
 			</div>
