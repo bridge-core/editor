@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import IconButton from '@/components/Common/IconButton.vue'
+import { useIsMobile } from '@/libs/Mobile'
 
 defineProps({
 	name: {
@@ -13,13 +14,18 @@ const emit = defineEmits(['close'])
 function close() {
 	emit('close')
 }
+
+const isMobile = useIsMobile()
 </script>
 
 <template>
 	<div class="w-screen h-app flex justify-center items-center absolute top-toolbar left-0">
 		<div class="bg-menu w-screen h-app absolute top-0 left-0 opacity-30" @click="close" />
 
-		<div class="bg-background shadow-window relative rounded-md overflow-hidden window">
+		<div
+			class="bg-background shadow-window relative rounded-md overflow-hidden window"
+			:class="{ 'w-full': isMobile, 'h-full': isMobile }"
+		>
 			<div class="w-full flex justify-between align-center p-2">
 				<span class="select-none ml-1 text-text-secondary font-inter">
 					{{ name }}

@@ -1,6 +1,6 @@
 <template>
 	<Window :name="t('windows.changelogWindow.title')" @close="Windows.close(ChangelogWindow)">
-		<div class="max-w-2xl overflow-auto h-[42rem] p-8">
+		<div class="w-full max-w-2xl overflow-auto h-[42rem] p-8" :class="{ 'h-full': isMobile }">
 			<div v-html="content" class="changelog" />
 		</div>
 	</Window>
@@ -14,8 +14,11 @@ import { baseUrl } from '@/libs/app/AppEnv'
 import { useTranslate } from '@/libs/locales/Locales'
 import { Windows } from '../Windows'
 import { ChangelogWindow } from './ChangelogWindow'
+import { useIsMobile } from '@/libs/Mobile'
 
 const t = useTranslate()
+
+const isMobile = useIsMobile()
 
 const content = ref('')
 
