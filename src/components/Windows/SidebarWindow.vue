@@ -14,8 +14,6 @@ defineProps({
 const emit = defineEmits(['open', 'close'])
 
 function close() {
-	console.warn('close')
-
 	emit('close')
 }
 
