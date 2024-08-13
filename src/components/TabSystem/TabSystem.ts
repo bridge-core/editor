@@ -1,6 +1,7 @@
 import { v4 as uuid } from 'uuid'
 import { Tab } from './Tab'
-import { Ref, ref, shallowRef } from 'vue'
+import { Ref, shallowRef } from 'vue'
+import { Editor } from '@/components/Editor/Editor'
 
 export class TabSystem {
 	public id = uuid()
@@ -29,6 +30,8 @@ export class TabSystem {
 
 		this.selectedTab.value = tab
 
+		Editor.showTabs()
+
 		await tab.activate()
 	}
 
@@ -46,5 +49,7 @@ export class TabSystem {
 		if (this.tabs.value.length != 0) await this.selectTab(this.tabs.value[Math.max(tabIndex - 1, 0)])
 
 		await tab.destroy()
+
+		if (this.tabs.value.length === 0) Editor.hideTabs()
 	}
 }
