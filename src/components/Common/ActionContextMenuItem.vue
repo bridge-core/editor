@@ -21,7 +21,7 @@ const t = useTranslate()
 			t(ActionManager.actions[action]?.name ?? 'actions.unknown.name')
 		}}</span>
 
-		<span v-if="ActionManager.actions[action]?.keyBinding" class="text-text-secondary ml-auto font-inter">
+		<span v-if="ActionManager.actions[action]?.keyBinding" class="min-w-max text-text-secondary ml-auto font-inter">
 			{{ ActionManager.actions[action].keyBinding }}
 		</span>
 	</div>
