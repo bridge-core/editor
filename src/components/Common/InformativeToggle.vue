@@ -1,6 +1,6 @@
 <template>
 	<div
-		class="cursor-pointer w-60 rounded bg-[var(--color)] hover:border-accent p-2 border-2 transition-colors duration-100 ease-out"
+		class="cursor-pointer basis-60 grow rounded bg-[var(--color)] hover:border-accent p-2 border-2 transition-colors duration-100 ease-out"
 		:class="{
 			'!border-primary': selected,
 			'border-[var(--color)]': !selected,
@@ -35,6 +35,8 @@
 </template>
 
 <script setup lang="ts">
+// min-w-[12rem] max-w-[15rem]
+
 import Icon from '@/components/Common/Icon.vue'
 
 defineProps({
