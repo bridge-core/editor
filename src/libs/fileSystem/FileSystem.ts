@@ -38,14 +38,37 @@ export async function selectOrLoadBridgeFolder() {
 	} catch {}
 }
 
-export async function iterateDirectory(fileSystem: BaseFileSystem, path: string, callback: (entry: BaseEntry) => void) {
+export async function iterateDirectory(
+	fileSystem: BaseFileSystem,
+	path: string,
+	callback: (entry: BaseEntry) => void | Promise<void>
+) {
 	for (const entry of await fileSystem.readDirectoryEntries(path)) {
 		if (entry.kind === 'directory') {
 			await iterateDirectory(fileSystem, entry.path, callback)
 		} else {
-			callback(entry)
+			await callback(entry)
 		}
 	}
+}
+
+export async function iterateDirectoryParrallel(
+	fileSystem: BaseFileSystem,
+	path: string,
+	callback: (entry: BaseEntry) => void | Promise<void>,
+	ignoreFolders: Set<string> = new Set()
+) {
+	const promises = []
+
+	for (const entry of await fileSystem.readDirectoryEntries(path)) {
+		if (entry.kind === 'directory') {
+			if (!ignoreFolders.has(entry.path)) promises.push(iterateDirectory(fileSystem, entry.path, callback))
+		} else {
+			promises.push(callback(entry))
+		}
+	}
+
+	await Promise.all(promises)
 }
 
 /**

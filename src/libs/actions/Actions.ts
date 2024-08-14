@@ -492,7 +492,7 @@ export function setupActions() {
 
 	ActionManager.addAction(
 		new Action({
-			id: 'exportBRProject',
+			id: 'exportBrProject',
 			trigger: () => {},
 			name: 'packExplorer.exportAs.brproject',
 			icon: 'folder_zip',
@@ -501,7 +501,7 @@ export function setupActions() {
 
 	ActionManager.addAction(
 		new Action({
-			id: 'exportMCAddon',
+			id: 'exportMcAddon',
 			trigger: () => {},
 			name: 'packExplorer.exportAs.mcaddon',
 			icon: 'deployed_code',

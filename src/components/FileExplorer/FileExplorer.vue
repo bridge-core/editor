@@ -185,10 +185,10 @@ function executeContextMenuAction(action: string, data: any) {
 								<template #menu="">
 									<ActionContextMenuItem
 										class="pt-4"
-										action="exportBRProject"
+										action="exportBrProject"
 										@click="
 											() => {
-												ActionManager.trigger('exportBRProject')
+												ActionManager.trigger('exportBrProject')
 												close()
 											}
 										"
@@ -196,10 +196,10 @@ function executeContextMenuAction(action: string, data: any) {
 
 									<ActionContextMenuItem
 										class="pb-4"
-										action="exportMCAddon"
+										action="exportMcAddon"
 										@click="
 											() => {
-												ActionManager.trigger('exportMCAddon')
+												ActionManager.trigger('exportMcAddon')
 												close()
 											}
 										"
