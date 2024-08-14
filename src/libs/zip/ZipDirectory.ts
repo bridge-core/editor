@@ -25,7 +25,8 @@ export async function zipDirectory(fileSystem: BaseFileSystem, path: string, ign
 		fileSystem,
 		path,
 		async (entry) => {
-			directoryContents[entry.path] = new Uint8Array(await fileSystem.readFile(entry.path))
+			// remove the trailing slash
+			directoryContents[entry.path.slice(path.length + 1)] = new Uint8Array(await fileSystem.readFile(entry.path))
 		},
 		ignoreFolders
 	)

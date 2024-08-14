@@ -12,7 +12,7 @@ import { NotificationSystem } from '@/components/Notifications/NotificationSyste
 import { TreeEditorTab } from '@/components/Tabs/TreeEditor/TreeEditorTab'
 import { SettingsWindow } from '@/components/Windows/Settings/SettingsWindow'
 import { ExtensionLibraryWindow } from '@/components/Windows/ExtensionLibrary/ExtensionLibrary'
-import { ProjectManager } from '../project/ProjectManager'
+import { ProjectManager } from '@/libs/project/ProjectManager'
 import {
 	ArrayElement,
 	DeleteElementEdit,
@@ -21,6 +21,8 @@ import {
 	TreeElements,
 	ValueElement,
 } from '@/components/Tabs/TreeEditor/Tree'
+import { exportAsBrProject } from '@/libs/export/BrProject'
+import { exportAsMcAddon } from '../export/McAddon'
 
 export function setupActions() {
 	ActionManager.addAction(
@@ -493,7 +495,9 @@ export function setupActions() {
 	ActionManager.addAction(
 		new Action({
 			id: 'exportBrProject',
-			trigger: () => {},
+			trigger: () => {
+				exportAsBrProject()
+			},
 			name: 'packExplorer.exportAs.brproject',
 			icon: 'folder_zip',
 		})
@@ -502,7 +506,9 @@ export function setupActions() {
 	ActionManager.addAction(
 		new Action({
 			id: 'exportMcAddon',
-			trigger: () => {},
+			trigger: () => {
+				exportAsMcAddon()
+			},
 			name: 'packExplorer.exportAs.mcaddon',
 			icon: 'deployed_code',
 		})
