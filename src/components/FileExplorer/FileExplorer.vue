@@ -5,6 +5,8 @@ import Icon from '@/components/Common/Icon.vue'
 import ContextMenu from '@/components/Common/ContextMenu.vue'
 import ContextMenuItem from '@/components/Common/ContextMenuItem.vue'
 import FreeContextMenu from '@/components/Common/FreeContextMenu.vue'
+import SubMenu from '@/components/Common/SubMenu.vue'
+import ActionContextMenuItem from '@/components/Common/ActionContextMenuItem.vue'
 
 import { FileExplorer } from '@/components/FileExplorer/FileExplorer'
 import { TabManager } from '@/components/TabSystem/TabManager'
@@ -159,13 +161,59 @@ function executeContextMenuAction(action: string, data: any) {
 					</template>
 
 					<template #menu="{ close }">
-						<div class="bg-background-secondary rounded mt-2 shadow-window overflow-hidden relative z-10">
-							<ContextMenuItem text="New File" icon="add" @click="() => contextMenuNewFile(close)" />
+						<div class="bg-background-secondary rounded mt-2 shadow-window relative z-10">
+							<ContextMenuItem
+								text="New File"
+								icon="add"
+								@click="() => contextMenuNewFile(close)"
+								class="pt-4"
+							/>
 							<ContextMenuItem text="Build" icon="manufacturing" @click="() => contextMenuBuild(close)" />
+
+							<div class="bg-background-tertiary w-full h-[2px] my-1"></div>
+
+							<SubMenu>
+								<template #main="slotProps">
+									<ContextMenuItem
+										icon="ios_share"
+										text="Export As"
+										@mouseenter="slotProps.show"
+										@mouseleave="slotProps.hide"
+									/>
+								</template>
+
+								<template #menu="">
+									<ActionContextMenuItem
+										class="pt-4"
+										action="exportBRProject"
+										@click="
+											() => {
+												ActionManager.trigger('exportBRProject')
+												close()
+											}
+										"
+									/>
+
+									<ActionContextMenuItem
+										class="pb-4"
+										action="exportMCAddon"
+										@click="
+											() => {
+												ActionManager.trigger('exportMCAddon')
+												close()
+											}
+										"
+									/>
+								</template>
+							</SubMenu>
+
+							<div class="bg-background-tertiary w-full h-[2px] my-1"></div>
+
 							<ContextMenuItem
 								text="Open Project Config"
 								icon="settings"
 								@click="() => contextMenuOpenProjectConfig(close)"
+								class="pb-4"
 							/>
 						</div>
 					</template>
@@ -202,6 +250,7 @@ function executeContextMenuAction(action: string, data: any) {
 			text="Create Folder"
 			@click.stop="executeContextMenuAction('createFolder', selectedPackPath)"
 		/>
+
 		<ContextMenuItem
 			icon="content_paste"
 			text="Paste"

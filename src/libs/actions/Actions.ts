@@ -489,6 +489,24 @@ export function setupActions() {
 	)
 
 	setupConvertActions()
+
+	ActionManager.addAction(
+		new Action({
+			id: 'exportBRProject',
+			trigger: () => {},
+			name: 'packExplorer.exportAs.brproject',
+			icon: 'folder_zip',
+		})
+	)
+
+	ActionManager.addAction(
+		new Action({
+			id: 'exportMCAddon',
+			trigger: () => {},
+			name: 'packExplorer.exportAs.mcaddon',
+			icon: 'deployed_code',
+		})
+	)
 }
 
 function setupConvertActions() {
