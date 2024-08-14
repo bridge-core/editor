@@ -198,7 +198,7 @@ const isMobile = useIsMobile()
 
 <template>
 	<Window :name="t('windows.createProject.title')" @close="Windows.close(CreateProjectWindow)">
-		<div class="flex flex-col pb-8 h-full">
+		<div class="flex flex-col pb-8 grow">
 			<div
 				class="overflow-y-scroll p-4 pt-2 m-4 mt-0 max-width overflow-x-auto basis-0 grow"
 				:class="{ 'max-h-[38rem]': !isMobile }"
