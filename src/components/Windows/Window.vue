@@ -23,7 +23,7 @@ const isMobile = useIsMobile()
 		<div class="bg-menu w-screen h-app absolute top-0 left-0 opacity-30" @click="close" />
 
 		<div
-			class="flex flex-col bg-background shadow-window relative rounded-md overflow-hidden window"
+			class="flex flex-col bg-background shadow-window relative rounded-md window"
 			:class="{ 'w-full': isMobile, 'h-full': isMobile }"
 		>
 			<div class="w-full flex justify-between align-center p-2">
