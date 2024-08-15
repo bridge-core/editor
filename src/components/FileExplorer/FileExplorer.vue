@@ -195,11 +195,31 @@ function executeContextMenuAction(action: string, data: any) {
 									/>
 
 									<ActionContextMenuItem
-										class="pb-4"
 										action="exportMcAddon"
 										@click="
 											() => {
 												ActionManager.trigger('exportMcAddon')
+												close()
+											}
+										"
+									/>
+
+									<ActionContextMenuItem
+										action="exportMcWorld"
+										@click="
+											() => {
+												ActionManager.trigger('exportMcWorld')
+												close()
+											}
+										"
+									/>
+
+									<ActionContextMenuItem
+										class="pb-4"
+										action="exportMcTemplate"
+										@click="
+											() => {
+												ActionManager.trigger('exportMcTemplate')
 												close()
 											}
 										"

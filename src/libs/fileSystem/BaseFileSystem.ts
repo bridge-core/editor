@@ -76,6 +76,18 @@ export class BaseFileSystem {
 		throw new Error('Not implemented!')
 	}
 
+	public async move(path: string, newPath: string) {
+		const entry = await this.getEntry(path)
+
+		if (entry.kind === 'directory') {
+			await this.copyDirectory(path, newPath)
+			await this.removeDirectory(path)
+		} else {
+			await this.copyFile(path, newPath)
+			await this.removeFile(path)
+		}
+	}
+
 	public async copyDirectory(path: string, newPath: string) {
 		await this.makeDirectory(newPath)
 

@@ -23,6 +23,7 @@ import {
 } from '@/components/Tabs/TreeEditor/Tree'
 import { exportAsBrProject } from '@/libs/export/BrProject'
 import { exportAsMcAddon } from '../export/McAddon'
+import { exportAsTemplate } from '../export/McTemplate'
 
 export function setupActions() {
 	ActionManager.addAction(
@@ -511,6 +512,28 @@ export function setupActions() {
 			},
 			name: 'packExplorer.exportAs.mcaddon',
 			icon: 'deployed_code',
+		})
+	)
+
+	ActionManager.addAction(
+		new Action({
+			id: 'exportMcWorld',
+			trigger: () => {
+				exportAsTemplate(true)
+			},
+			name: 'packExplorer.exportAs.mcworld',
+			icon: 'globe',
+		})
+	)
+
+	ActionManager.addAction(
+		new Action({
+			id: 'exportMcTemplate',
+			trigger: () => {
+				exportAsTemplate()
+			},
+			name: 'packExplorer.exportAs.mctemplate',
+			icon: 'package',
 		})
 	)
 }
