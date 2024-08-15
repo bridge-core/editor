@@ -7,6 +7,8 @@ import { DashService } from '@/libs/compiler/DashService'
 import { BedrockProject } from '@/libs/project/BedrockProject'
 import { v4 as uuid } from 'uuid'
 import { Data } from '@/libs/data/Data'
+import { Windows } from '@/components/Windows/Windows'
+import { DropdownWindow } from '@/components/Windows/Dropdown/DropdownWindow'
 
 export async function exportAsTemplate(asMcworld = false) {
 	if (!ProjectManager.currentProject) return
@@ -28,7 +30,7 @@ export async function exportAsTemplate(asMcworld = false) {
 			...(await fileSystem.readDirectoryEntries(join(projectPath, 'worlds'))).map((entry) => entry.path)
 		)
 
-	let exportWorldFolder: string
+	let exportWorldFolder: string | null
 
 	// No world to package
 	if (baseWorlds.length === 0) {
@@ -38,16 +40,25 @@ export async function exportAsTemplate(asMcworld = false) {
 	} else if (baseWorlds.length === 1) {
 		exportWorldFolder = baseWorlds[0]
 	} else {
-		exportWorldFolder = baseWorlds[0]
-		// TODO: Implement dropdown
-		// const optionsWindow = new DropdownWindow({
-		// 	default: baseWorlds[0],
-		// 	name: 'packExplorer.exportAsMctemplate.chooseWorld',
-		// 	options: baseWorlds,
-		// })
-
-		// exportWorldFolder = await optionsWindow.fired
+		exportWorldFolder = await new Promise((res) => {
+			Windows.open(
+				new DropdownWindow(
+					'packExplorer.exportAsMctemplate.chooseWorld',
+					'',
+					baseWorlds,
+					(value) => {
+						res(value)
+					},
+					() => {
+						res(null)
+					},
+					baseWorlds[0]
+				)
+			)
+		})
 	}
+
+	if (exportWorldFolder === null) return
 
 	await fileSystem.ensureDirectory(join(projectPath, `builds/mctemplate/behavior_packs`))
 	await fileSystem.ensureDirectory(join(projectPath, `builds/mctemplate/resource_packs`))
