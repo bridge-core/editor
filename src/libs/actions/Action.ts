@@ -1,21 +1,66 @@
+/**
+ * @description Interface to define an action's configuration.
+ */
 interface ActionConfig {
+	/**
+	 * @description The id of the action.
+	 */
 	id: string
+	/**
+	 * @description The callback to execute when the action is triggered.
+	 * @param data The data passed into the callback when the action is triggered.
+	 */
 	trigger: (data?: unknown) => void
+	/**
+	 * @description The keybind/shortcut set for the action.
+	 */
 	keyBinding?: string
+	/**
+	 * @description The icon to display for the action.
+	 */
 	icon?: string
+	/**
+	 * @description The name to display for the action.
+	 */
 	name?: string
+	/**
+	 * @description The description to display for the action.
+	 */
 	description?: string
 }
 
 export class Action {
+	/**
+	 * @description The id of the action.
+	 */
 	public id: string
+	/**
+	 * @description The keybind/shortcut to set for the action.
+	 */
 	public keyBinding?: string
+	/**
+	 * @description The icon to display for the action.
+	 */
 	public icon?: string
+	/**
+	 * @description The name to display for the action.
+	 */
 	public name?: string
+	/**
+	 * @description The description to display for the action.
+	 */
 	public description?: string
 
+	/**
+	 * @description Triggers the action.
+	 * @param data The data to pass into when triggered.
+	 */
 	public trigger: (data?: unknown) => void
 
+	/**
+	 * @description Creates a new action.
+	 * @param config The configuration for the action.
+	 */
 	constructor(config: ActionConfig) {
 		this.id = config.id
 		this.trigger = config.trigger

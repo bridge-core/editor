@@ -549,10 +549,22 @@
 		},
 		"exportAs": {
 			"name": "Export As",
-			"mcaddon": ".mcaddon",
-			"brproject": ".brproject",
-			"mcworld": ".mcworld",
-			"mctemplate": ".mctemplate"
+			"mcaddon": {
+				"name": ".mcaddon",
+				"description": "Exports the project to the .mcaddon format."
+			},
+			"brproject": {
+				"name": ".brproject",
+				"description": "Exports the project to the .brproject format."
+			},
+			"mcworld": {
+				"name": ".mcworld",
+				"description": "Exports the project to the .mcworld format."
+			},
+			"mctemplate": {
+				"name": ".mctemplate",
+				"description": "Exports the project to the .mctemplate format."
+			}
 		},
 		"fileDiagnostics": {
 			"fileUnused": "This file is not used within your project"
