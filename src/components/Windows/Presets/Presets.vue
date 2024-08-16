@@ -5,7 +5,7 @@ import Expandable from '@/components/Common/Expandable.vue'
 import Icon from '@/components/Common/Icon.vue'
 import Button from '@/components/Common/Button.vue'
 import Switch from '@/components/Common/Switch.vue'
-import Dropdown from '@/components/Common/Dropdown.vue'
+import Dropdown from '@/components/Common/LegacyDropdown.vue'
 
 import { useTranslate } from '@/libs/locales/Locales'
 import { ComputedRef, Ref, computed, ref, watch } from 'vue'
@@ -13,8 +13,10 @@ import { BedrockProject } from '@/libs/project/BedrockProject'
 import { ProjectManager } from '@/libs/project/ProjectManager'
 import { Windows } from '../Windows'
 import { PresetsWindow } from './PresetsWindow'
+import { useIsMobile } from '@/libs/Mobile'
 
 const t = useTranslate()
+const isMobile = useIsMobile()
 
 const selectedPresetPath: Ref<string | null> = ref(null)
 
@@ -70,6 +72,8 @@ async function create() {
 
 const search = ref('')
 
+const expandables: Ref<(typeof Expandable)[]> = ref([])
+
 const filteredCategories = computed(() => {
 	return Object.keys(categories.value).filter(
 		(category) =>
@@ -78,11 +82,17 @@ const filteredCategories = computed(() => {
 			).length > 0
 	)
 })
+
+watch(filteredCategories, () => {
+	for (const expandable of expandables.value) {
+		expandable.open()
+	}
+})
 </script>
 
 <template>
 	<SidebarWindow :name="t('windows.createPreset.title')" @close="Windows.close(PresetsWindow)">
-		<template #sidebar>
+		<template #sidebar="{ hide }">
 			<div class="p-4">
 				<LabeledInput
 					v-slot="{ focus, blur }"
@@ -102,7 +112,12 @@ const filteredCategories = computed(() => {
 				</LabeledInput>
 
 				<div class="overflow-y-scroll max-h-[34rem]">
-					<Expandable v-for="category of filteredCategories" :key="category" :name="t(category)">
+					<Expandable
+						v-for="category of filteredCategories"
+						:key="category"
+						:name="t(category)"
+						ref="expandables"
+					>
 						<div class="flex flex-col">
 							<button
 								v-for="presetPath of categories[category].filter((presetPath) =>
@@ -113,7 +128,12 @@ const filteredCategories = computed(() => {
 								:class="{
 									'bg-primary': selectedPresetPath === presetPath,
 								}"
-								@click="selectedPresetPath = presetPath"
+								@click="
+									() => {
+										selectedPresetPath = presetPath
+										hide()
+									}
+								"
 							>
 								<Icon
 									:icon="availablePresets[presetPath].icon"
@@ -131,7 +151,10 @@ const filteredCategories = computed(() => {
 			</div>
 		</template>
 		<template #content>
-			<div class="window-content h-[38rem] flex flex-col overflow-y-auto p-4 pt-0">
+			<div
+				class="h-[38rem] flex flex-col overflow-y-auto p-4 pt-0"
+				:class="{ 'w-full': isMobile, 'window-content': !isMobile, 'h-full': isMobile }"
+			>
 				<div v-if="selectedPreset !== null" class="flex flex-col h-full">
 					<div>
 						<div class="flex items-center gap-2 mb-2">

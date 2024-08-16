@@ -10,6 +10,7 @@ export class TabManager {
 	public static tabSystems: TabSystem[] = [new TabSystem()]
 	public static focusedTabSystem: ShallowRef<TabSystem | null> = shallowRef(null)
 
+	// private static tabTypes: (typeof FileTab)[] = [ImageTab, TextTab]
 	private static tabTypes: (typeof FileTab)[] = [ImageTab, TreeEditorTab, TextTab]
 
 	public static async openTab(tab: Tab) {

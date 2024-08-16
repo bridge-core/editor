@@ -11,27 +11,6 @@ import { FileTab } from '@/components/TabSystem/FileTab'
 import { Settings } from '@/libs/settings/Settings'
 import { Disposable, disposeAll } from '@/libs/disposeable/Disposeable'
 
-enum EditorSettings {
-	JsonEditor = 'jsonEditor',
-	BracketPairColorization = 'bracketPairColorization',
-	WordWrap = 'wordWrap',
-	WordWrapColumns = 'wordWrapColumns',
-	KeepTabsOpen = 'keepTabsOpen',
-	AutoSaveChanges = 'autoSaveChanges',
-	ShowTreeEditorLocationBar = 'showTreeEditorLocationBar',
-	BridgePredictions = 'bridgePredictions',
-	InlineDiagnostics = 'inlineDiagnostics',
-	AutoOpenTreeNodes = 'autoOpenTreeNodes',
-	DragAndDropTreeNodes = 'dragAndDropTreeNodes',
-	ShowArrayIndices = 'showArrayIndices',
-	HideBrackets = 'hideBrackets',
-}
-
-enum JSONEditorOptions {
-	TreeEditor = 'Tree Editor',
-	RawText = 'Raw Text',
-}
-
 export class TextTab extends FileTab {
 	public component: Component | null = TextTabComponent
 	public icon = ref('loading')
@@ -47,6 +26,9 @@ export class TextTab extends FileTab {
 	private disposables: Disposable[] = []
 
 	private savedViewState: editor.ICodeEditorViewState | undefined = undefined
+	private initialVersionId: number = 0
+
+	private lastEditorElement: HTMLElement | null = null
 
 	public static canEdit(path: string): boolean {
 		return true
@@ -57,57 +39,26 @@ export class TextTab extends FileTab {
 	}
 
 	public static setup() {
-		Settings.addSetting(EditorSettings.JsonEditor, {
-			default: JSONEditorOptions.TreeEditor,
-		}) // TODO: Move to New Location
-
-		Settings.addSetting(EditorSettings.BracketPairColorization, {
+		Settings.addSetting('bracketPairColorization', {
 			default: false,
 		})
 
-		Settings.addSetting(EditorSettings.WordWrap, {
+		Settings.addSetting('wordWrap', {
 			default: false,
-		}) // TODO: Implement Option
+		})
 
-		Settings.addSetting(EditorSettings.WordWrapColumns, {
+		Settings.addSetting('wordWrapColumns', {
 			default: 120,
-		}) // TODO: Implement Option
+			async save(value) {
+				const number = parseInt(value)
 
-		Settings.addSetting(EditorSettings.KeepTabsOpen, {
-			default: false,
-		}) // TODO: Move to New Location
-
-		Settings.addSetting(EditorSettings.AutoSaveChanges, {
-			default: false,
-		}) // TODO: Move to New Location
-
-		Settings.addSetting(EditorSettings.ShowTreeEditorLocationBar, {
-			default: true,
-		}) // TODO: Move to New Location
-
-		Settings.addSetting(EditorSettings.BridgePredictions, {
-			default: true,
-		}) // TODO: Move to New Location
-
-		Settings.addSetting(EditorSettings.InlineDiagnostics, {
-			default: true,
-		}) // TODO: Move to New Location
-
-		Settings.addSetting(EditorSettings.AutoOpenTreeNodes, {
-			default: true,
-		}) // TODO: Move to New Location
-
-		Settings.addSetting(EditorSettings.DragAndDropTreeNodes, {
-			default: true,
-		}) // TODO: Move to New Location
-
-		Settings.addSetting(EditorSettings.ShowArrayIndices, {
-			default: false,
-		}) // TODO: Move to New Location
-
-		Settings.addSetting(EditorSettings.HideBrackets, {
-			default: false,
-		}) // TODO: Move to New Location
+				if (isNaN(number)) {
+					Settings.settings['wordWrapColumns'] = 120
+				} else {
+					Settings.settings['wordWrapColumns'] = number
+				}
+			},
+		})
 	}
 
 	public async create() {
@@ -131,6 +82,8 @@ export class TextTab extends FileTab {
 		if (this.model === null)
 			this.model = monaco.createModel(fileContent, this.fileType?.meta?.language, Uri.file(this.path))
 
+		this.initialVersionId = this.model.getAlternativeVersionId()
+
 		this.language.value = this.model.getLanguageId()
 
 		this.disposables.push(
@@ -138,6 +91,12 @@ export class TextTab extends FileTab {
 				if (this.editor === undefined) return
 
 				this.updateEditorTheme()
+			})
+		)
+
+		this.disposables.push(
+			this.model.onDidChangeContent(() => {
+				this.modified.value = this.initialVersionId !== this.model?.getVersionId()
 			})
 		)
 
@@ -149,6 +108,14 @@ export class TextTab extends FileTab {
 		await scriptTypeData.applyTypes(this.fileType?.types ?? [])
 
 		this.icon.value = this.fileTypeIcon
+
+		this.disposables.push(
+			Settings.updated.on((event: { id: string; value: any } | undefined) => {
+				if (!event) return
+
+				if (['wordWrap', 'wordWrapColumns', 'bracketPairColorization'].includes(event.id)) this.remountEditor()
+			})
+		)
 	}
 
 	public async destroy() {
@@ -189,6 +156,8 @@ export class TextTab extends FileTab {
 			fontFamily: 'Consolas',
 			//@ts-ignore Monaco types have not been update yet
 			'bracketPairColorization.enabled': Settings.get('bracketPairColorization'),
+			wordWrap: Settings.get<boolean>('wordWrap') ? 'wordWrapColumn' : 'off',
+			wordWrapColumn: Settings.get<number>('wordWrapColumns'),
 			automaticLayout: true,
 			contextmenu: false,
 		})
@@ -196,6 +165,8 @@ export class TextTab extends FileTab {
 		this.editor.setModel(this.model)
 
 		if (this.savedViewState) this.editor.restoreViewState(this.savedViewState)
+
+		this.lastEditorElement = element
 	}
 
 	public unmountEditor() {
@@ -204,13 +175,23 @@ export class TextTab extends FileTab {
 		this.editor?.dispose()
 	}
 
+	public async remountEditor() {
+		if (!this.lastEditorElement) return
+
+		await this.unmountEditor()
+		await this.mountEditor(this.lastEditorElement)
+	}
+
 	public async save() {
 		if (!this.model) return
 		if (!this.editor) return
 
 		this.icon.value = 'loading'
 
-		this.format()
+		await this.format()
+
+		this.initialVersionId = this.model.getVersionId()
+		this.modified.value = false
 
 		await fileSystem.writeFile(this.path, this.model.getValue())
 
@@ -241,10 +222,12 @@ export class TextTab extends FileTab {
 		this.editor.trigger('action', 'editor.action.clipboardPasteAction', undefined)
 	}
 
-	public format() {
+	public async format() {
 		if (!this.editor) return
 
-		this.editor.trigger('action', 'editor.action.formatDocument', undefined)
+		const action = this.editor.getAction('editor.action.formatDocument')
+
+		await action?.run()
 	}
 
 	public goToDefinition() {

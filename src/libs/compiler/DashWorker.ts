@@ -37,7 +37,7 @@ async function getJsonData(path: string): Promise<any> {
 	).data
 }
 
-async function setup(config: any, configPath: string, actionId: string) {
+async function setup(config: any, mode: 'development' | 'production', configPath: string, actionId: string) {
 	const packType = new CompatabilityPackType(config)
 	const fileType = new CompatabilityFileType(config, () => false)
 
@@ -68,6 +68,7 @@ async function setup(config: any, configPath: string, actionId: string) {
 			time: console.time,
 			timeEnd: console.timeEnd,
 		},
+		mode,
 	})
 
 	dash.progress.onChange((progress: { percentage: number }) => {
@@ -120,7 +121,7 @@ async function compileFile(actionId: string, filePath: string, fileData: Uint8Ar
 onmessage = (event: any) => {
 	if (!event.data) return
 
-	if (event.data.action === 'setup') setup(event.data.config, event.data.configPath, event.data.id)
+	if (event.data.action === 'setup') setup(event.data.config, event.data.mode, event.data.configPath, event.data.id)
 
 	if (event.data.action === 'build') build(event.data.id)
 

@@ -10,9 +10,9 @@ const t = useTranslate()
 	<div class="flex-col w-full">
 		<div
 			v-for="action in Object.values(ActionManager.actions)"
-			class="text-normal p-4 mb-2 rounded bg-background-secondary w-full"
+			class="text-normal p-2 mb-3 rounded bg-background-secondary w-full"
 		>
-			<div class="flex w-full">
+			<div class="flex w-full mb-2">
 				<Icon
 					v-if="action.icon"
 					class="mr-1 content-center"
@@ -20,7 +20,7 @@ const t = useTranslate()
 					:icon="action.icon"
 				/>
 
-				<h3 class="text-lg font-medium w-full">{{ action.name ? t(action.name) : action.id }}</h3>
+				<h3 class="text-lg font-medium w-full font-inter">{{ action.name ? t(action.name) : action.id }}</h3>
 
 				<div class="flex-1" />
 
@@ -28,11 +28,11 @@ const t = useTranslate()
 			</div>
 
 			<div class="flex w-full">
-				<p v-if="action.description" class="text-text-secondary">{{ t(action.description) }}</p>
+				<p v-if="action.description" class="text-text-secondary font-inter">{{ t(action.description) }}</p>
 
 				<div class="flex-1" />
 
-				<p class="text-text-secondary">{{ action.keyBinding ?? t('Unbound') }}</p>
+				<p class="text-text-secondary font-inter">{{ action.keyBinding ?? t('Unbound') }}</p>
 			</div>
 		</div>
 	</div>

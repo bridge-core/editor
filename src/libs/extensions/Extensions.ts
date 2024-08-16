@@ -9,6 +9,7 @@ import { Event } from '@/libs/event/Event'
 import { Disposable } from '@/libs/disposeable/Disposeable'
 import { Theme } from '@/libs/theme/Theme'
 import { Snippet } from '@/libs/snippets/Snippet'
+import { TBaseModule } from '@bridge-editor/js-runtime/dist/Runtime'
 
 export class Extensions {
 	public static globalExtensions: Record<string, Extension> = {}
@@ -22,6 +23,8 @@ export class Extensions {
 	public static presets: Record<string, any> = {}
 
 	public static loaded: boolean = false
+
+	private static modules: Record<string, TBaseModule> = {}
 
 	public static setup() {
 		if (fileSystem instanceof PWAFileSystem) fileSystem.reloaded.on(this.fileSystemReloaded.bind(this))
@@ -50,9 +53,11 @@ export class Extensions {
 	public static async loadProjectExtensions() {
 		if (ProjectManager.currentProject === null) return
 
-		for (const entry of await fileSystem.readDirectoryEntries(
-			join(ProjectManager.currentProject.path, '.bridge/extensions')
-		)) {
+		const path = join(ProjectManager.currentProject.path, '.bridge/extensions')
+
+		if (!(await fileSystem.exists(path))) await fileSystem.makeDirectory(path)
+
+		for (const entry of await fileSystem.readDirectoryEntries(path)) {
 			const extension = await this.loadExtension(entry.path)
 
 			this.projectExtensions[extension.id] = extension
@@ -105,6 +110,14 @@ export class Extensions {
 		await this.updateExtensions()
 	}
 
+	public static registerModule(name: string, value: any) {
+		this.modules[name] = value
+	}
+
+	public static getModules(): [string, TBaseModule][] {
+		return Object.entries(this.modules)
+	}
+
 	private static async updateExtensions() {
 		this.activeExtensions = { ...this.globalExtensions, ...this.projectExtensions }
 
@@ -116,7 +129,7 @@ export class Extensions {
 			this.presets = { ...this.presets, ...extension.presets }
 		}
 
-		this.updated.dispatch(undefined)
+		this.updated.dispatch()
 	}
 
 	private static async installExtension(extension: ExtensionManifest, path: string): Promise<Extension> {

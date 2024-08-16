@@ -19,19 +19,30 @@ import { setupLang } from '@/libs/monaco/languages/Lang'
 import { setupMcFunction } from '@/libs/monaco/languages/McFunction/Language'
 import { setupMolang } from '@/libs/monaco/languages/Molang'
 import { setupSnippetCompletions } from '@/libs/monaco/SnippetCompletions'
-import { LocalFileSystem } from './libs/fileSystem/LocalFileSystem'
+import { LocalFileSystem } from '@/libs/fileSystem/LocalFileSystem'
+import { NotificationSystem } from '@/components/Notifications/NotificationSystem'
+import { setupModules } from '@/libs/extensions/Modules'
+import { setupEditorSettings } from '@/libs/settings/SetupSettings'
+import { TreeEditorTab } from '@/components/Tabs/TreeEditor/TreeEditorTab'
+import { tauriBuild } from '@/libs/tauri/Tauri'
 
 export function setupBeforeComponents() {
+	NotificationSystem.setup()
 	ProjectManager.setup()
 	ThemeManager.setup()
 	LocaleManager.setup()
 	Extensions.setup()
 	Toolbar.setup()
 	TextTab.setup()
+	TreeEditorTab.setup()
 	Sidebar.setup()
 
 	setupActions()
 	setupSidebar()
+
+	setupEditorSettings()
+
+	setupModules()
 }
 
 export async function setup() {
@@ -86,4 +97,12 @@ async function setupTauriFileSystem() {
 	await fileSystem.ensureDirectory('/')
 
 	fileSystem.startFileWatching()
+}
+
+if (tauriBuild) {
+	// Import Tauri updater for native builds
+	import('@/libs/tauri/Updater')
+} else {
+	// Only import service worker for non-Tauri builds
+	import('@/libs/app/PWAServiceWorker')
 }

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import LabeledInput from '@/components/Common/LabeledInput.vue'
+import LabeledTextInput from '@/components/Common/LabeledTextInput.vue'
 import Icon from '@/components/Common/Icon.vue'
 import Button from '@/components/Common/Button.vue'
 
@@ -36,31 +37,9 @@ function startSearch() {
 <template>
 	<div class="w-full h-full flex gap-4 items-stretch">
 		<div class="mt-2">
-			<LabeledInput v-slot="{ focus, blur }" :label="t('Search')" class="bg-background !mt-1">
-				<div class="flex gap-1">
-					<Icon icon="search" class="transition-colors duration-100 ease-out" />
+			<LabeledTextInput label="Search" v-model="search" icon="search" class="!mt-1" />
 
-					<input
-						@focus="focus"
-						@blur="blur"
-						class="outline-none border-none bg-transparent font-inter"
-						v-model="search"
-					/>
-				</div>
-			</LabeledInput>
-
-			<LabeledInput v-slot="{ focus, blur }" :label="t('Replace')" class="bg-background !mt-4">
-				<div class="flex gap-1">
-					<Icon icon="content_paste_search" class="transition-colors duration-100 ease-out" />
-
-					<input
-						@focus="focus"
-						@blur="blur"
-						class="outline-none border-none bg-transparent font-inter"
-						v-model="replace"
-					/>
-				</div>
-			</LabeledInput>
+			<LabeledTextInput label="Replace" v-model="replace" icon="content_paste_search" class="mt-4" />
 
 			<div class="flex mt-3">
 				<Button :text="t('Replace')" @click="() => instance.replace(replace)" />

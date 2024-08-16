@@ -1,8 +1,10 @@
-import { fileSystem } from '@/libs/fileSystem/FileSystem'
+import { fileSystem, iterateDirectory } from '@/libs/fileSystem/FileSystem'
 import { join } from 'pathe'
 import { dark, light } from '@/libs/theme/DefaultThemes'
 import { Theme } from '@/libs/theme/Theme'
 import { Snippet, SnippetData } from '@/libs/snippets/Snippet'
+import { Runtime } from '@/libs/runtime/Runtime'
+import { Extensions } from './Extensions'
 
 export interface ExtensionManifest {
 	author: string
@@ -72,5 +74,24 @@ export class Extension {
 				this.snippets.push(new Snippet(snippet))
 			}
 		}
+
+		await this.loadScripts()
+	}
+
+	private async loadScripts() {
+		const runtime = new Runtime(fileSystem, Extensions.getModules())
+
+		const promises: Promise<any>[] = []
+
+		const scriptsPath = join(this.path, 'scripts')
+		if (await fileSystem.exists(scriptsPath)) {
+			iterateDirectory(fileSystem, scriptsPath, (entry) => {
+				// fileSystem.readFileText(entry.path).then(console.log)
+
+				promises.push(runtime.run(entry.path))
+			})
+		}
+
+		await Promise.all(promises)
 	}
 }

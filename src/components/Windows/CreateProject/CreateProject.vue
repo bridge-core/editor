@@ -6,7 +6,7 @@ import Switch from '@/components/Common/Switch.vue'
 import LabeledInput from '@/components/Common/LabeledInput.vue'
 import InformativeToggle from '@/components/Common/InformativeToggle.vue'
 import Expandable from '@/components/Common/Expandable.vue'
-import Dropdown from '@/components/Common/Dropdown.vue'
+import Dropdown from '@/components/Common/LegacyDropdown.vue'
 
 import { Ref, computed, onMounted, ref, watch } from 'vue'
 import { IPackType, PackType } from 'mc-project-core'
@@ -19,6 +19,7 @@ import { fileSystem } from '@/libs/fileSystem/FileSystem'
 import { Windows } from '../Windows'
 import { CreateProjectWindow } from './CreateProjectWindow'
 import TextButton from '@/components/Common/TextButton.vue'
+import { useIsMobile } from '@/libs/Mobile'
 
 const t = useTranslate()
 const getData = useGetData()
@@ -191,14 +192,16 @@ function chooseProjectIcon() {
 }
 
 onMounted(setup)
+
+const isMobile = useIsMobile()
 </script>
 
 <template>
 	<Window :name="t('windows.createProject.title')" @close="Windows.close(CreateProjectWindow)">
-		<div class="flex flex-col">
-			<div class="max-h-[38rem] overflow-y-scroll p-4 pt-2 m-4 mt-0 max-width overflow-x-auto">
+		<div class="flex flex-col pb-8 grow" :class="{ 'h-[42rem]': !isMobile }">
+			<div class="overflow-y-scroll p-4 pt-2 m-4 mt-0 max-width overflow-x-auto basis-0 grow">
 				<!-- Pack Types -->
-				<div class="flex gap-3 mb-4">
+				<div class="flex justify-stretch flex-wrap gap-3 mb-4">
 					<InformativeToggle
 						v-for="packType in packTypes"
 						:icon="packType.icon"
@@ -390,7 +393,7 @@ onMounted(setup)
 			<TextButton
 				:text="t('Create')"
 				@click="create"
-				class="mt-4 mr-8 mb-8 self-end transition-[color, opacity]"
+				class="mt-4 mr-8 self-end transition-[color, opacity]"
 				:enabled="dataValid"
 			/>
 		</div>

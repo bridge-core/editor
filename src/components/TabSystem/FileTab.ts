@@ -1,7 +1,10 @@
 import { basename } from 'pathe'
 import { Tab } from './Tab'
+import { ref, Ref } from 'vue'
 
 export class FileTab extends Tab {
+	public modified: Ref<boolean> = ref(false)
+
 	constructor(public path: string) {
 		super()
 

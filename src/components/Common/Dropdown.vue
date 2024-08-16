@@ -1,39 +1,30 @@
 <script setup lang="ts">
-import { Ref, onMounted, ref } from 'vue'
+defineProps<{ parent: HTMLElement | null; items: { id: any; label: string }[] }>()
 
-const expanded = ref(false)
-const container: Ref<HTMLElement | null> = ref(null)
-const sizing: Ref<HTMLElement | null> = ref(null)
+const emit = defineEmits<{ selected: [item: { id: any; label: string }] }>()
 
-const emit = defineEmits(['expanded', 'collapsed'])
-
-function toggleExpanded() {
-	expanded.value = !expanded.value
-
-	if (expanded.value) {
-		emit('expanded')
-	} else {
-		emit('collapsed')
-	}
-}
-
-onMounted(() => {
-	if (!container.value) return
-	if (!sizing.value) return
-
-	container.value.style.width = `${sizing.value.clientWidth}px`
-})
+const [expanded, expandedModifiers] = defineModel<boolean>()
 </script>
 
 <template>
-	<div>
-		<div ref="sizing">
-			<slot name="main" :expanded="expanded" :toggle="toggleExpanded" />
-		</div>
+	<div class="absolute z-10" :style="{ width: `${parent?.clientWidth ?? 100}px` }">
+		<div v-if="expanded">
+			<div class="mt-2 bg-background-secondary w-full rounded">
+				<div class="flex p-1 flex-col max-h-[8rem] overflow-y-auto light-scroll">
+					<button
+						v-for="item in items"
+						@click="
+							() => {
+								emit('selected', item)
 
-		<div class="absolute z-10" ref="container">
-			<div v-if="expanded">
-				<slot name="choices" :collapse="toggleExpanded" />
+								expanded = false
+							}
+						"
+						class="hover:bg-background-tertiary text-start p-1 rounded transition-colors duration-100 ease-out font-inter text-sm"
+					>
+						{{ item.label }}
+					</button>
+				</div>
 			</div>
 		</div>
 	</div>

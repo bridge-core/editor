@@ -42,7 +42,7 @@ export class Settings {
 		if (Settings.settings[id] !== undefined) delete Settings.settings[id]
 	}
 
-	public static get(id: string): any {
+	public static get<T>(id: string): T {
 		return Settings.settings[id]
 	}
 

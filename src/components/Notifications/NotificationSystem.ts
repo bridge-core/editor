@@ -14,11 +14,9 @@ export interface Notification {
 export class NotificationSystem {
 	public static notifications: Ref<Notification[]> = ref([])
 
-	/* Probably don't need this but who knows?
 	public static setup() {
 		this.notifications.value = []
 	}
-    */
 
 	public static addNotification(icon: string, callback?: () => void, color?: string): Notification {
 		const notification: Notification = {

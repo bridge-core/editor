@@ -66,7 +66,7 @@ export class ProjectManager {
 			if (await this.cacheFileSystem.exists('projects.json'))
 				this.projects = await this.cacheFileSystem.readFileJson('projects.json')
 
-			this.updatedProjects.dispatch(undefined)
+			this.updatedProjects.dispatch()
 
 			return
 		}
@@ -87,7 +87,7 @@ export class ProjectManager {
 
 		this.updateProjectCache()
 
-		this.updatedProjects.dispatch(undefined)
+		this.updatedProjects.dispatch()
 	}
 
 	private static addProject(project: ProjectInfo) {
@@ -95,7 +95,7 @@ export class ProjectManager {
 
 		this.updateProjectCache()
 
-		this.updatedProjects.dispatch(undefined)
+		this.updatedProjects.dispatch()
 	}
 
 	public static async createProject(config: CreateProjectConfig, fileSystem: BaseFileSystem) {
@@ -132,9 +132,19 @@ export class ProjectManager {
 
 		await this.currentProject.load()
 
-		this.updatedCurrentProject.dispatch(undefined)
+		this.updatedCurrentProject.dispatch()
 
 		console.timeEnd('[APP] Load Project')
+	}
+
+	public static async closeProject() {
+		if (!this.currentProject) return
+
+		await this.currentProject.dispose()
+
+		this.currentProject = null
+
+		this.updatedCurrentProject.dispatch()
 	}
 
 	public static async getProjectInfo(path: string): Promise<ProjectInfo> {
@@ -183,7 +193,7 @@ export class ProjectManager {
 
 			ProjectManager.updateProjectCache()
 
-			ProjectManager.updatedProjects.dispatch(undefined)
+			ProjectManager.updatedProjects.dispatch()
 		}
 
 		await set('favoriteProjects', JSON.stringify(favorites))

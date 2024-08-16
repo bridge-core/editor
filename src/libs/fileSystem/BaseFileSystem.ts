@@ -54,11 +54,7 @@ export class BaseFileSystem {
 
 			const entry = entries.find((entry) => entry.path === path)
 
-			if (!entry) {
-				console.log(entries)
-
-				throw new Error('Entry does not exist')
-			}
+			if (!entry) throw new Error('Entry does not exist')
 
 			return entry
 		} catch (error) {
@@ -78,6 +74,18 @@ export class BaseFileSystem {
 
 	public async removeDirectory(path: string) {
 		throw new Error('Not implemented!')
+	}
+
+	public async move(path: string, newPath: string) {
+		const entry = await this.getEntry(path)
+
+		if (entry.kind === 'directory') {
+			await this.copyDirectory(path, newPath)
+			await this.removeDirectory(path)
+		} else {
+			await this.copyFile(path, newPath)
+			await this.removeFile(path)
+		}
 	}
 
 	public async copyDirectory(path: string, newPath: string) {

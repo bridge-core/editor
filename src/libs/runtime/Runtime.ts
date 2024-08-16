@@ -2,12 +2,13 @@ import { Runtime as BridgeRuntime, initRuntimes } from '@bridge-editor/js-runtim
 import { basename } from 'pathe'
 import { BaseFileSystem } from '@/libs/fileSystem/BaseFileSystem'
 import wasmUrl from '@swc/wasm-web/wasm-web_bg.wasm?url'
+import { TBaseModule } from '@bridge-editor/js-runtime/dist/Runtime'
 
 export class Runtime extends BridgeRuntime {
-	constructor(public fileSystem: BaseFileSystem) {
+	constructor(public fileSystem: BaseFileSystem, modules?: [string, TBaseModule][]) {
 		initRuntimes(wasmUrl)
 
-		super()
+		super(modules)
 	}
 
 	async readFile(filePath: string): Promise<File> {

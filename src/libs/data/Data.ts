@@ -53,7 +53,7 @@ export class Data {
 			if (await Data.fileSystem.exists('hash')) {
 				console.log('[Data] Failed to fetch hash but cache exists')
 
-				Data.loaded.dispatch(undefined)
+				Data.loaded.dispatch()
 
 				return
 			} else {
@@ -74,7 +74,7 @@ export class Data {
 		if ((await Data.fileSystem.exists('hash')) && (await Data.fileSystem.readFileText('hash')) === hash) {
 			console.log('[Data] Skipped fetching data because hash matches')
 
-			Data.loaded.dispatch(undefined)
+			Data.loaded.dispatch()
 
 			return
 		}
@@ -111,7 +111,7 @@ export class Data {
 
 		await Data.fileSystem.writeFile('hash', hash)
 
-		Data.loaded.dispatch(undefined)
+		Data.loaded.dispatch()
 	}
 
 	public static async get(path: string): Promise<any> {

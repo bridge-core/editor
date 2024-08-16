@@ -11,6 +11,8 @@ const y: Ref<number> = ref(0)
 
 const id = uuid()
 
+const emit = defineEmits(['close'])
+
 watch(openContextMenuId, () => {
 	if (openContextMenuId.value === id) return
 
@@ -19,6 +21,8 @@ watch(openContextMenuId, () => {
 	window.removeEventListener('mousedown', hideContextMenu)
 
 	isOpen.value = false
+
+	emit('close')
 })
 
 function hideContextMenu(event: Event) {
@@ -27,6 +31,8 @@ function hideContextMenu(event: Event) {
 	window.removeEventListener('mousedown', hideContextMenu)
 
 	isOpen.value = false
+
+	emit('close')
 }
 
 async function open(event: MouseEvent) {
@@ -56,6 +62,8 @@ function close() {
 	window.removeEventListener('mousedown', hideContextMenu)
 
 	isOpen.value = false
+
+	emit('close')
 }
 
 onUnmounted(() => {
@@ -72,14 +80,14 @@ defineExpose({ open, close })
 		<div
 			v-if="isOpen"
 			ref="contextMenuElement"
-			class="bg-background-secondary rounded shadow-window overflow-hidden z-10 absolute"
+			class="bg-background-secondary rounded shadow-window z-10 absolute"
 			:style="{
 				left: x + 'px',
 				top: y + 'px',
 			}"
 			@contextmenu.stop.prevent=""
 		>
-			<slot />
+			<slot :close="close" />
 		</div>
 	</Transition>
 </template>

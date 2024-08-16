@@ -46,7 +46,7 @@ export class ThemeManager {
 			if (colorScheme === 'light' || (colorScheme === 'auto' && !ThemeManager.prefersDarkMode()))
 				themeId = Settings.get('lightTheme')
 
-			ThemeManager.applyTheme(themeId)
+			ThemeManager.applyTheme(themeId as string)
 		})
 
 		Extensions.updated.on((event) => {
@@ -72,7 +72,7 @@ export class ThemeManager {
 			this.themes.push(theme)
 		}
 
-		this.themesUpdated.dispatch(undefined)
+		this.themesUpdated.dispatch()
 	}
 
 	private static reloadThemes() {
@@ -114,7 +114,7 @@ export class ThemeManager {
 
 		set('lastUsedTheme', JSON.stringify(theme))
 
-		this.themeChanged.dispatch(undefined)
+		this.themeChanged.dispatch()
 	}
 
 	public static get(themeId: string): Theme {

@@ -8,6 +8,7 @@ import { ThemeManager } from '@/libs/theme/ThemeManager'
 import { LocaleManager } from '@/libs/locales/Locales'
 import { Window } from '../Window'
 import Settings from './Settings.vue'
+import { CompletionItem } from '@/libs/jsonSchema/Schema'
 
 interface Category {
 	label: string
@@ -28,6 +29,12 @@ export interface DropdownItem extends Item {
 	label: string
 	values: ComputedRef<string[]>
 	labels: ComputedRef<string[]>
+}
+
+export interface AutocompleteItem extends Item {
+	type: 'autocomplete'
+	label: string
+	completions: ComputedRef<CompletionItem[]>
 }
 
 export interface ToggleItem extends Item {
@@ -149,6 +156,33 @@ function setupEditorCategory() {
 	SettingsWindow.addItem('editor', 'bracketPairColorization', <ToggleItem>{
 		type: 'toggle',
 		label: 'windows.settings.editor.bracketPairColorization.name',
+	})
+
+	SettingsWindow.addItem('editor', 'wordWrap', <ToggleItem>{
+		type: 'toggle',
+		label: 'windows.settings.editor.wordWrap.name',
+	})
+
+	SettingsWindow.addItem('editor', 'wordWrapColumns', <AutocompleteItem>{
+		type: 'autocomplete',
+		label: 'windows.settings.editor.wordWrapColumns.name',
+		completions: computed(() =>
+			[40, 60, 80, 100, 120, 160].map((value) => ({
+				type: 'value',
+				label: value.toString(),
+				value,
+			}))
+		),
+	})
+
+	SettingsWindow.addItem('editor', 'bridgePredictions', <ToggleItem>{
+		type: 'toggle',
+		label: 'windows.settings.editor.bridgePredictions.name',
+	})
+
+	SettingsWindow.addItem('editor', 'inlineDiagnostics', <ToggleItem>{
+		type: 'toggle',
+		label: 'windows.settings.editor.inlineTreeEditorDiagnostics.name',
 	})
 }
 

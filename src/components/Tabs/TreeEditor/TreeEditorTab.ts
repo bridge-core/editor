@@ -1,10 +1,13 @@
-import { Component, Ref, ref } from 'vue'
+import { Component, Ref, ref, watch } from 'vue'
 import TreeEditorTabComponent from './TreeEditorTab.vue'
 import { fileSystem } from '@/libs/fileSystem/FileSystem'
 import { BedrockProject } from '@/libs/project/BedrockProject'
 import { ProjectManager } from '@/libs/project/ProjectManager'
 import { FileTab } from '@/components/TabSystem/FileTab'
 import { Disposable, disposeAll } from '@/libs/disposeable/Disposeable'
+import { buildTree, ObjectElement, ParentElements, TreeEdit, TreeElements, TreeSelection } from './Tree'
+import { CompletionItem, createSchema, Diagnostic } from '@/libs/jsonSchema/Schema'
+import { Settings } from '@/libs/settings/Settings'
 
 export class TreeEditorTab extends FileTab {
 	public component: Component | null = TreeEditorTabComponent
@@ -12,13 +15,25 @@ export class TreeEditorTab extends FileTab {
 	public language = ref('plaintext')
 	public hasDocumentation = ref(false)
 
-	public json: Ref<any> = ref({})
+	public tree: Ref<TreeElements> = ref(new ObjectElement(null))
+
+	public history: TreeEdit[] = []
+	public currentEditIndex = -1
+
+	public selectedTree: Ref<TreeSelection> = ref(null)
+	public draggedTree: Ref<TreeSelection> = ref(null)
+	public contextTree: Ref<TreeSelection> = ref(null)
+
 	public knownWords: Record<string, string[]> = {
 		keywords: [],
 		typeIdentifiers: [],
 		variables: [],
 		definitions: [],
 	}
+
+	public diagnostics: Ref<Diagnostic[]> = ref([])
+	public completions: Ref<CompletionItem[]> = ref([])
+	public parentCompletions: Ref<CompletionItem[]> = ref([])
 
 	private fileTypeIcon: string = 'data_object'
 
@@ -34,7 +49,35 @@ export class TreeEditorTab extends FileTab {
 		return path === this.path
 	}
 
-	public static setup() {}
+	public static setup() {
+		Settings.addSetting('showTreeEditorLocationBar', {
+			default: true,
+		}) // TODO: Implement
+
+		Settings.addSetting('bridgePredictions', {
+			default: true,
+		})
+
+		Settings.addSetting('inlineDiagnostics', {
+			default: true,
+		})
+
+		Settings.addSetting('autoOpenTreeNodes', {
+			default: true,
+		}) // TODO: Implement
+
+		Settings.addSetting('dragAndDropTreeNodes', {
+			default: true,
+		}) // TODO: Implement
+
+		Settings.addSetting('showArrayIndices', {
+			default: false,
+		}) // TODO: Implement
+
+		Settings.addSetting('hideBrackets', {
+			default: false,
+		}) // TODO: Implement
+	}
 
 	public async create() {
 		if (!ProjectManager.currentProject) return
@@ -53,7 +96,7 @@ export class TreeEditorTab extends FileTab {
 		const fileContent = await fileSystem.readFileText(this.path)
 
 		try {
-			this.json = JSON.parse(fileContent)
+			this.tree.value = buildTree(JSON.parse(fileContent))
 		} catch {}
 
 		const schemaData = ProjectManager.currentProject.schemaData
@@ -82,6 +125,27 @@ export class TreeEditorTab extends FileTab {
 			variables,
 			definitions,
 		}
+
+		this.disposables.push(
+			schemaData.updated.on((path) => {
+				if (path !== this.path) return
+
+				this.validate()
+				this.updateCompletions()
+			})
+		)
+
+		watch(this.selectedTree, () => {
+			this.updateCompletions()
+		})
+
+		this.disposables.push(
+			Settings.updated.on((event: { id: string; value: any } | undefined) => {
+				if (!event) return
+
+				if (event.id === 'inlineDiagnostics') this.validate()
+			})
+		)
 	}
 
 	public async destroy() {
@@ -109,8 +173,198 @@ export class TreeEditorTab extends FileTab {
 	}
 
 	public async save() {
+		this.modified.value = false
 		this.icon.value = 'loading'
 
+		await fileSystem.writeFile(this.path, JSON.stringify(this.tree.value.toJson(), null, 2))
+
 		this.icon.value = this.fileTypeIcon
+	}
+
+	public select(tree: TreeElements) {
+		this.selectedTree.value = { type: 'value', tree }
+	}
+
+	public selectProperty(tree: TreeElements) {
+		this.selectedTree.value = { type: 'property', tree }
+	}
+
+	public drag(tree: TreeElements) {
+		this.draggedTree.value = { type: 'property', tree }
+	}
+
+	public cancelDrag() {
+		this.draggedTree.value = null
+	}
+
+	public edit(edit: TreeEdit) {
+		this.modified.value = true
+
+		if (this.currentEditIndex !== this.history.length - 1)
+			this.history = this.history.slice(0, this.currentEditIndex + 1)
+
+		this.history.push(edit)
+		this.currentEditIndex++
+
+		this.selectedTree.value = edit.apply()
+
+		this.validate()
+		this.updateCompletions()
+	}
+
+	public undo() {
+		if (this.currentEditIndex < 0) return
+
+		this.modified.value = true
+
+		this.selectedTree.value = this.history[this.currentEditIndex].undo()
+
+		this.currentEditIndex--
+
+		this.validate()
+		this.updateCompletions()
+	}
+
+	public redo() {
+		if (this.currentEditIndex >= this.history.length - 1) return
+
+		this.modified.value = true
+
+		this.currentEditIndex++
+
+		this.selectedTree.value = this.history[this.currentEditIndex].apply()
+
+		this.validate()
+		this.updateCompletions()
+	}
+
+	public getTreeSchemaPath(tree: TreeElements): string {
+		let path = '/'
+
+		let parents = []
+		let currentElement: ParentElements | TreeElements = tree
+
+		while (currentElement?.parent) {
+			parents.push(currentElement)
+
+			currentElement = currentElement.parent
+		}
+
+		parents.reverse()
+
+		for (const element of parents) {
+			if (typeof element.key !== 'string') {
+				path += 'any_index/'
+
+				continue
+			}
+
+			path += element.key?.toString() + '/'
+		}
+
+		return path
+	}
+
+	public getTreeParentSchemaPath(tree: TreeElements): string {
+		let path = '/'
+
+		let parents = []
+		let currentElement: ParentElements | TreeElements = tree
+
+		while (currentElement?.parent) {
+			parents.push(currentElement)
+
+			currentElement = currentElement.parent
+		}
+
+		parents.reverse()
+
+		for (const element of parents.slice(0, -1)) {
+			if (typeof element.key !== 'string') {
+				path += 'any_index/'
+
+				continue
+			}
+
+			path += element.key?.toString() + '/'
+		}
+
+		return path
+	}
+
+	public getTypes(path: string): string[] {
+		if (!ProjectManager.currentProject) return []
+		if (!(ProjectManager.currentProject instanceof BedrockProject)) return []
+
+		const schemaData = ProjectManager.currentProject.schemaData
+
+		const schemas = schemaData.getSchemasForFile(this.path)
+		const schema = schemas.localSchemas[schemas.main]
+
+		const filePath = this.path
+
+		console.time('Get Types')
+
+		const valueSchema = createSchema(schema, (path: string) => schemaData.getSchemaForFile(filePath, path))
+
+		const types = valueSchema.getTypes(this.tree.value.toJson(), path)
+
+		console.timeEnd('Get Types')
+
+		return types
+	}
+
+	private validate() {
+		if (!ProjectManager.currentProject) return
+		if (!(ProjectManager.currentProject instanceof BedrockProject)) return
+
+		if (!Settings.get('inlineDiagnostics')) {
+			return (this.diagnostics.value = [])
+		}
+
+		const schemaData = ProjectManager.currentProject.schemaData
+
+		const schemas = schemaData.getSchemasForFile(this.path)
+		const schema = schemas.localSchemas[schemas.main]
+
+		const filePath = this.path
+
+		console.time('Validate')
+
+		const valueSchema = createSchema(schema, (path: string) => schemaData.getSchemaForFile(filePath, path))
+
+		this.diagnostics.value = valueSchema.validate(this.tree.value.toJson())
+
+		console.timeEnd('Validate')
+	}
+
+	private updateCompletions() {
+		if (!ProjectManager.currentProject) return
+		if (!(ProjectManager.currentProject instanceof BedrockProject)) return
+
+		if (!this.selectedTree.value) {
+			this.completions.value = []
+
+			return
+		}
+
+		const schemaData = ProjectManager.currentProject.schemaData
+
+		const schemas = schemaData.getSchemasForFile(this.path)
+		const schema = schemas.localSchemas[schemas.main]
+
+		const filePath = this.path
+
+		console.time('Completions')
+
+		const valueSchema = createSchema(schema, (path: string) => schemaData.getSchemaForFile(filePath, path))
+
+		let path = this.getTreeSchemaPath(this.selectedTree.value.tree)
+		let parentPath = this.getTreeParentSchemaPath(this.selectedTree.value.tree)
+
+		this.completions.value = valueSchema.getCompletionItems(this.tree.value.toJson(), path)
+		this.parentCompletions.value = valueSchema.getCompletionItems(this.tree.value.toJson(), parentPath)
+
+		console.timeEnd('Completions')
 	}
 }

@@ -1,77 +1,464 @@
 <script setup lang="ts">
+import ActionContextMenuItem from '@/components/Common/ActionContextMenuItem.vue'
 import ContextMenuItem from '@/components/Common/ContextMenuItem.vue'
-import TreeEditorObjectElement from './TreeEditorObjectElement.vue'
-
-import { Ref, onMounted, onUnmounted, ref } from 'vue'
-import { type TreeEditorTab } from './TreeEditorTab'
+import TreeEditorPropertyElement from './EditorElements/TreeEditorPropertyElement.vue'
+import LabeledAutocompleteInput from '@/components/Common/LabeledAutocompleteInput.vue'
 import FreeContextMenu from '@/components/Common/FreeContextMenu.vue'
-import { ActionManager } from '@/libs/actions/ActionManager'
+import SubMenu from '@/components/Common/SubMenu.vue'
 
-const { instance }: { instance: TreeEditorTab } = <any>defineProps({
-	instance: {
-		required: true,
-	},
-})
+import { computed, nextTick, onMounted, Ref, ref } from 'vue'
+import { type TreeEditorTab } from './TreeEditorTab'
+import { ActionManager } from '@/libs/actions/ActionManager'
+import { useTranslate } from '@/libs/locales/Locales'
+import {
+	AddElementEdit,
+	AddPropertyEdit,
+	ArrayElement,
+	ModifyPropertyKeyEdit,
+	ModifyValueEdit,
+	ObjectElement,
+	TreeElements,
+	ValueElement,
+} from './Tree'
+import { CompletionItem } from '@/libs/jsonSchema/Schema'
+import { Settings } from '@/libs/settings/Settings'
+
+const t = useTranslate()
+
+const props = defineProps<{ instance: TreeEditorTab }>()
 
 const tabElement: Ref<HTMLDivElement | null> = ref(null)
 
 const contextMenu: Ref<typeof FreeContextMenu | null> = ref(null)
 
-function triggerActionAndCloseContextMenu(action: string) {
-	ActionManager.trigger(action)
+function convertToMatchingType(value: string, types: string[]): any {
+	if (types.includes('number') || (types.includes('integer') && /^-?([0-9]*[.])?[0-9]+$/.test(value))) {
+		return parseFloat(value)
+	}
 
-	contextMenu.value?.close()
+	if (types.includes('boolean')) {
+		if (value === 'true') return true
+
+		if (value === 'false') return false
+	}
+
+	return value
 }
 
-//@contextmenu.prevent="contextMenu?.open"
+const addValue = ref('')
+
+async function addCompletion(completion: CompletionItem) {
+	addValue.value = completion.value as string
+
+	if (!props.instance.selectedTree.value) return
+
+	const selectedTree = props.instance.selectedTree.value
+
+	if (selectedTree.tree instanceof ObjectElement) {
+		let value: TreeElements = new ObjectElement(selectedTree.tree, completion.value as string)
+
+		if (Settings.get('bridgePredictions')) {
+			const path = props.instance.getTreeSchemaPath(selectedTree.tree) + completion.value + '/'
+			const types = props.instance.getTypes(path)
+			if (types[0] === 'number') {
+				value = new ValueElement(selectedTree.tree, completion.value as string, 1)
+			} else if (types[0] === 'string') {
+				value = new ValueElement(selectedTree.tree, completion.value as string, '')
+			} else if (types[0] === 'integer') {
+				value = new ValueElement(selectedTree.tree, completion.value as string, 1)
+			} else if (types[0] === 'boolean') {
+				value = new ValueElement(selectedTree.tree, completion.value as string, true)
+			} else if (types[0] === 'array') {
+				value = new ArrayElement(selectedTree.tree, completion.value as string)
+			}
+		}
+
+		props.instance.edit(new AddPropertyEdit(selectedTree.tree, completion.value as string, value))
+	}
+
+	if (selectedTree.tree instanceof ArrayElement) {
+		let value: any = completion.value
+
+		if (Settings.get('bridgePredictions')) {
+			const path = props.instance.getTreeSchemaPath(selectedTree.tree) + 'any_index/'
+			const types = props.instance.getTypes(path)
+
+			value = convertToMatchingType(completion.value as string, types)
+		}
+
+		props.instance.edit(
+			new AddElementEdit(
+				selectedTree.tree,
+				new ValueElement(selectedTree.tree, selectedTree.tree.children.length, value)
+			)
+		)
+	}
+
+	await nextTick()
+
+	addValue.value = ''
+}
+
+async function addSubmit(value: string) {
+	addValue.value = value
+
+	if (!props.instance.selectedTree.value) return
+
+	const selectedTree = props.instance.selectedTree.value
+
+	if (selectedTree.tree instanceof ObjectElement) {
+		let addValue: TreeElements = new ObjectElement(selectedTree.tree, value)
+
+		if (Settings.get('bridgePredictions')) {
+			const path = props.instance.getTreeSchemaPath(selectedTree.tree) + value + '/'
+			const types = props.instance.getTypes(path)
+			if (types[0] === 'number') {
+				addValue = new ValueElement(selectedTree.tree, value, 1)
+			} else if (types[0] === 'string') {
+				addValue = new ValueElement(selectedTree.tree, value, '')
+			} else if (types[0] === 'integer') {
+				addValue = new ValueElement(selectedTree.tree, value, 1)
+			} else if (types[0] === 'boolean') {
+				addValue = new ValueElement(selectedTree.tree, value, true)
+			} else if (types[0] === 'array') {
+				addValue = new ArrayElement(selectedTree.tree, value)
+			}
+		}
+
+		props.instance.edit(new AddPropertyEdit(selectedTree.tree, value, addValue))
+	}
+
+	if (selectedTree.tree instanceof ArrayElement) {
+		let elementValue = value
+
+		// TODO: If adding an object with a property with the same name as value is valid, add that instead
+		if (Settings.get('bridgePredictions')) {
+			const path = props.instance.getTreeSchemaPath(selectedTree.tree) + 'any_index/'
+			const types = props.instance.getTypes(path)
+
+			elementValue = convertToMatchingType(value, types)
+		}
+
+		props.instance.edit(
+			new AddElementEdit(
+				selectedTree.tree,
+				new ValueElement(selectedTree.tree, selectedTree.tree.children.length, elementValue)
+			)
+		)
+	}
+
+	await nextTick()
+
+	addValue.value = ''
+}
+
+let justCompletedEdit = false
+
+async function editCompletion(completion: CompletionItem) {
+	justCompletedEdit = true
+
+	const selectedTree = props.instance.selectedTree.value
+
+	if (!selectedTree) return
+
+	if (selectedTree.type === 'property') {
+		props.instance.edit(
+			new ModifyPropertyKeyEdit(
+				selectedTree.tree.parent as ObjectElement,
+				selectedTree.tree.key as string,
+				completion.value as string
+			)
+		)
+
+		return
+	} else {
+		if (selectedTree.tree instanceof ValueElement) {
+			props.instance.edit(new ModifyValueEdit(selectedTree.tree, completion.value as any))
+
+			return
+		}
+	}
+}
+
+async function editSubmit(value: string) {
+	const selectedTree = props.instance.selectedTree.value
+
+	if (!selectedTree) return
+
+	if (selectedTree.type === 'property') {
+		props.instance.edit(
+			new ModifyPropertyKeyEdit(selectedTree.tree.parent as ObjectElement, selectedTree.tree.key as string, value)
+		)
+
+		return
+	} else {
+		if (selectedTree.tree instanceof ValueElement) {
+			let elementValue = value
+
+			if (Settings.get('bridgePredictions')) {
+				const path = props.instance.getTreeSchemaPath(selectedTree.tree)
+				const types = props.instance.getTypes(path)
+
+				elementValue = convertToMatchingType(value, types)
+			}
+
+			props.instance.edit(new ModifyValueEdit(selectedTree.tree, elementValue))
+
+			return
+		}
+	}
+}
+
+const editValue = computed<string>({
+	get() {
+		const selectedTree = props.instance.selectedTree.value
+
+		if (!selectedTree) return ''
+
+		if (selectedTree.type === 'property') {
+			return selectedTree.tree.key as string
+		} else {
+			if (selectedTree.tree instanceof ValueElement) return selectedTree.tree.value?.toString() ?? 'null'
+		}
+
+		return ''
+	},
+	set(newValue) {
+		if (justCompletedEdit) {
+			justCompletedEdit = false
+
+			return
+		}
+
+		editSubmit(newValue)
+	},
+})
+
+const rootElement: Ref<typeof TreeEditorPropertyElement> = <any>ref(null)
+
+onMounted(() => {
+	rootElement.value.open()
+
+	props.instance.select(props.instance.tree.value)
+})
 </script>
 
 <template>
-	<div class="w-full h-full" ref="tabElement">
-		<div class="h-full w-full" ref="editorContainer">
-			<TreeEditorObjectElement :editor="instance" :value="instance.json" />
+	<div
+		class="w-full h-full"
+		ref="tabElement"
+		@contextmenu.prevent="
+			(event) => {
+				instance.contextTree.value = null
+				contextMenu?.open(event)
+			}
+		"
+	>
+		<div class="h-full w-full flex flex-col" ref="editorContainer">
+			<div class="w-full flex-1 overflow-auto">
+				<TreeEditorPropertyElement
+					:editor="instance"
+					:tree="instance.tree.value"
+					ref="rootElement"
+					@opencontextmenu="
+						({ selection, event }) => {
+							instance.contextTree.value = selection
+							contextMenu?.open(event)
+						}
+					"
+					path="/"
+				/>
+			</div>
+
+			<div class="border-background-secondary border-t-2 w-full h-56 p-2">
+				<div class="flex items-center gap-4 mt-3">
+					<LabeledAutocompleteInput
+						v-if="
+							instance.selectedTree.value && !(instance.selectedTree.value.tree instanceof ValueElement)
+						"
+						label="editors.treeEditor.add"
+						:completions="instance.completions.value"
+						v-model="addValue"
+						class="flex-1 !mt-0"
+						@complete="addCompletion"
+						@submit="addSubmit"
+					/>
+
+					<LabeledAutocompleteInput
+						v-if="
+							instance.selectedTree.value &&
+							(instance.selectedTree.value.type === 'property' ||
+								instance.selectedTree.value.tree instanceof ValueElement)
+						"
+						label="editors.treeEditor.edit"
+						:completions="
+							instance.selectedTree.value?.type === 'property'
+								? instance.parentCompletions.value
+								: instance.completions.value
+						"
+						v-model="editValue"
+						class="flex-1 !mt-0"
+						@complete="editCompletion"
+						@submit="editSubmit"
+						:update-always="true"
+					/>
+				</div>
+			</div>
 		</div>
 
-		<FreeContextMenu class="w-56" ref="contextMenu">
-			<ContextMenuItem
-				text="Copy"
-				icon="content_copy"
-				class="pt-4"
-				@click="triggerActionAndCloseContextMenu('copy')"
+		<FreeContextMenu class="w-56" ref="contextMenu" #default="{ close }" @close="instance.contextTree.value = null">
+			<ActionContextMenuItem
+				v-if="instance.contextTree.value"
+				action="copy"
+				@click="
+					() => {
+						ActionManager.trigger('copy', undefined)
+						close()
+					}
+				"
 			/>
-			<ContextMenuItem text="Cut" icon="content_cut" @click="triggerActionAndCloseContextMenu('cut')" />
-			<ContextMenuItem text="Paste" icon="content_paste" @click="triggerActionAndCloseContextMenu('paste')" />
+
+			<ActionContextMenuItem
+				v-if="instance.contextTree.value"
+				action="cut"
+				@click="
+					() => {
+						ActionManager.trigger('cut', undefined)
+						close()
+					}
+				"
+			/>
+
+			<ActionContextMenuItem
+				v-if="instance.contextTree.value"
+				action="paste"
+				@click="
+					() => {
+						ActionManager.trigger('paste', undefined)
+						close()
+					}
+				"
+			/>
+
+			<div v-if="instance.contextTree.value" class="bg-background-tertiary h-px m-2 my-0" />
+
+			<ActionContextMenuItem
+				v-if="instance.contextTree.value"
+				action="delete"
+				@click="
+					() => {
+						ActionManager.trigger('delete', undefined)
+						close()
+					}
+				"
+			/>
+
+			<ActionContextMenuItem
+				v-if="instance.contextTree.value"
+				action="convert"
+				@click="
+					() => {
+						ActionManager.trigger('convert', undefined)
+						close()
+					}
+				"
+			/>
+
+			<SubMenu>
+				<template #main="slotProps">
+					<ContextMenuItem
+						icon="swap_horiz"
+						text="Convert"
+						@mouseenter="slotProps.show"
+						@mouseleave="slotProps.hide"
+					/>
+				</template>
+
+				<template #menu="">
+					<ActionContextMenuItem
+						action="convertToObject"
+						@click="
+							() => {
+								ActionManager.trigger('convertToObject')
+								close()
+							}
+						"
+					/>
+
+					<ActionContextMenuItem
+						action="convertToArray"
+						@click="
+							() => {
+								ActionManager.trigger('convertToArray')
+								close()
+							}
+						"
+					/>
+
+					<ActionContextMenuItem
+						action="convertToNull"
+						@click="
+							() => {
+								ActionManager.trigger('convertToNull')
+								close()
+							}
+						"
+					/>
+
+					<ActionContextMenuItem
+						action="convertToNumber"
+						@click="
+							() => {
+								ActionManager.trigger('convertToNumber')
+								close()
+							}
+						"
+					/>
+
+					<ActionContextMenuItem
+						action="convertToString"
+						@click="
+							() => {
+								ActionManager.trigger('convertToString')
+								close()
+							}
+						"
+					/>
+
+					<ActionContextMenuItem
+						action="convertToBoolean"
+						@click="
+							() => {
+								ActionManager.trigger('convertToBoolean')
+								close()
+							}
+						"
+					/>
+				</template>
+			</SubMenu>
+
+			<div v-if="instance.contextTree.value" class="bg-background-tertiary h-px m-2 my-0" />
+
+			<ActionContextMenuItem
+				action="save"
+				@click="
+					() => {
+						ActionManager.trigger('save', undefined)
+						close()
+					}
+				"
+			/>
 
 			<div class="bg-background-tertiary h-px m-2 my-0" />
 
-			<ContextMenuItem text="Save" icon="save" @click="triggerActionAndCloseContextMenu('save')" />
-
-			<div class="bg-background-tertiary h-px m-2 my-0" />
-
-			<ContextMenuItem
-				v-if="instance.hasDocumentation.value"
-				text="View Documentation"
-				icon="menu_book"
-				@click="triggerActionAndCloseContextMenu('viewDocumentation')"
-			/>
-			<ContextMenuItem text="Format" icon="edit_note" @click="triggerActionAndCloseContextMenu('format')" />
-			<ContextMenuItem
-				v-if="instance.language.value !== 'json'"
-				text="Change All Occurences"
-				icon="edit"
-				@click="triggerActionAndCloseContextMenu('changeAllOccurrences')"
-			/>
-			<ContextMenuItem
-				v-if="instance.language.value !== 'json'"
-				text="Go to Definition"
-				icon="search"
-				@click="triggerActionAndCloseContextMenu('goToDefinition')"
-			/>
-			<ContextMenuItem
-				text="Go to Symbol"
-				icon="arrow_forward"
-				class="pb-4"
-				@click="triggerActionAndCloseContextMenu('goToSymbol')"
+			<ActionContextMenuItem
+				action="viewDocumentation"
+				@click="
+					() => {
+						ActionManager.trigger('viewDocumentation', undefined)
+						close()
+					}
+				"
 			/>
 		</FreeContextMenu>
 	</div>

@@ -23,12 +23,12 @@ export class DashService implements AsyncDisposable {
 	private watchRebuildRequestId: string | null = null
 	private disposables: Disposable[] = []
 
-	constructor(public project: BedrockProject) {
+	constructor(public project: BedrockProject, fileSystem?: BaseFileSystem) {
 		this.worker.onmessage = this.onWorkerMessage.bind(this)
 
 		this.outputFileSystem = new WorkerFileSystemEntryPoint(
 			this.worker,
-			project.outputFileSystem,
+			fileSystem ?? project.outputFileSystem,
 			'outputFileSystem'
 		)
 	}
@@ -54,11 +54,12 @@ export class DashService implements AsyncDisposable {
 		}
 	}
 
-	public async setup() {
+	public async setup(mode: 'development' | 'production') {
 		await sendAndWait(
 			{
 				action: 'setup',
 				config: this.project.config,
+				mode,
 				configPath: join(this.project.path, 'config.json'),
 			},
 			this.worker
