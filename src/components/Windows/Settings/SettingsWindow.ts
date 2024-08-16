@@ -57,6 +57,7 @@ export class SettingsWindow extends Window {
 		setupActionsCategory()
 		setupAppearanceCategory()
 		setupEditorCategory()
+		setupSideBarCategory()
 		setupDeveloperCategory()
 	}
 
@@ -183,6 +184,25 @@ function setupEditorCategory() {
 	SettingsWindow.addItem('editor', 'inlineDiagnostics', <ToggleItem>{
 		type: 'toggle',
 		label: 'windows.settings.editor.inlineTreeEditorDiagnostics.name',
+	})
+
+	/*
+	SettingsWindow.addItem('editor', 'autoSaveChanges', <ToggleItem>{
+		type: 'toggle',
+		label: 'windows.settings.editor.autoSaveChanges.name',
+	})
+	*/
+}
+
+function setupSideBarCategory() {
+	SettingsWindow.addCategory('sidebar', {
+		label: 'windows.settings.sidebar.name',
+		icon: 'code', //Placeholder!
+	})
+
+	SettingsWindow.addItem('sidebar', 'sidebarRight', <ToggleItem>{
+		type: 'toggle',
+		label: 'windows.settings.sidebar.sidebarRight.name',
 	})
 }
 

@@ -6,6 +6,7 @@ import Tabs from '@/components/TabSystem/Tabs.vue'
 import { ProjectManager } from '@/libs/project/ProjectManager'
 import { useIsMobile } from '@/libs/Mobile'
 import { Editor } from '@/components/Editor/Editor'
+import { Settings } from '@/libs/settings/Settings'
 
 const currentProject = ProjectManager.useCurrentProject()
 const isMobile = useIsMobile()
@@ -13,9 +14,17 @@ const isMobile = useIsMobile()
 
 <template>
 	<main class="w-full h-app flex gap-2" v-if="currentProject !== null && !isMobile">
-		<Sidebar />
-		<FileExplorer />
-		<Tabs />
+		<!-- YES I KNOW THIS IS STUPID, STILL WORKING ON THIS! -->
+		<template v-if="Settings.get('sidebarRight')">
+			<FileExplorer />
+			<Sidebar />
+			<Tabs />
+		</template>
+		<template v-else>
+			<Sidebar />
+			<FileExplorer />
+			<Tabs />
+		</template>
 	</main>
 
 	<main class="w-full h-app relative" v-if="currentProject !== null && isMobile">
