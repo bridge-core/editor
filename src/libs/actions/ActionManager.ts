@@ -1,6 +1,12 @@
 import { Action } from './Action'
 
+/**
+ * @description An action manager.
+ */
 export class ActionManager {
+	/**
+	 * @description A list of registered actions.
+	 */
 	public static actions: Record<string, Action> = {}
 
 	/**

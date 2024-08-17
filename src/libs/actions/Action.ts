@@ -29,6 +29,9 @@ interface ActionConfig {
 	description?: string
 }
 
+/**
+ * @description Defines an action.
+ */
 export class Action {
 	/**
 	 * @description The id of the action.

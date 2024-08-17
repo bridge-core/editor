@@ -9,13 +9,31 @@ interface Setting<T> {
 	save?: (value: T) => Promise<any>
 }
 
+/**
+ * @description The settings for bridge.
+ */
 export class Settings {
+	/**
+	 * @description A list of registered settings.
+	 */
 	public static settings: Record<string, any> = {}
+	/**
+	 * @description TODO
+	 */
 	public static updated: Event<{ id: string; value: any }> = new Event()
+	/**
+	 * @description TODO
+	 */
 	public static definitions: Record<string, Setting<any>> = {}
 
+	/**
+	 * @description TODO
+	 */
 	public static loadedSettings: Record<string, any> = {}
 
+	/**
+	 * @description Loads the settings.
+	 */
 	public static async load() {
 		try {
 			Settings.loadedSettings = JSON.parse((await get('settings')) as string)
@@ -30,22 +48,41 @@ export class Settings {
 		}
 	}
 
+	/**
+	 * @description Adds and registers a new setting.
+	 * @param id The id of the setting.
+	 * @param setting The configurations of the setting.
+	 */
 	public static async addSetting(id: string, setting: Setting<any>) {
 		Settings.definitions[id] = setting
 
 		await this.updateSetting(id)
 	}
 
+	/**
+	 * @description TODO
+	 * @param id
+	 */
 	public static removeDefinition(id: string) {
 		delete Settings.definitions[id]
 
 		if (Settings.settings[id] !== undefined) delete Settings.settings[id]
 	}
 
+	/**
+	 * @description Gets a value from the settings.
+	 * @param id The id of the setting.
+	 * @returns The value of the setting.
+	 */
 	public static get<T>(id: string): T {
 		return Settings.settings[id]
 	}
 
+	/**
+	 * @description Sets a settings value.
+	 * @param id The id of the setting.
+	 * @param value The value to set for the setting.
+	 */
 	public static async set(id: string, value: any) {
 		Settings.settings[id] = value
 
@@ -70,6 +107,10 @@ export class Settings {
 		Settings.updated.dispatch({ id, value })
 	}
 
+	/**
+	 * @description Updates a setting.
+	 * @param id The id of the setting to update.
+	 */
 	private static async updateSetting(id: string) {
 		const definition = Settings.definitions[id]
 
@@ -88,6 +129,10 @@ export class Settings {
 		Settings.settings[id] = Settings.loadedSettings[id]
 	}
 
+	/**
+	 * @description TODO
+	 * @returns
+	 */
 	public static useGet(): Ref<(id: string) => any> {
 		const get: Ref<(id: string) => any> = ref(Settings.get)
 
@@ -111,6 +156,10 @@ export class Settings {
 	}
 }
 
+/**
+ * @description TODO
+ * @returns
+ */
 export function useSettings(): Ref<Settings> {
 	const currentSettings: ShallowRef<Settings> = shallowRef(Settings)
 
