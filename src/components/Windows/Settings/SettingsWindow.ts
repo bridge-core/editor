@@ -9,6 +9,7 @@ import { LocaleManager } from '@/libs/locales/Locales'
 import { Window } from '../Window'
 import Settings from './Settings.vue'
 import { CompletionItem } from '@/libs/jsonSchema/Schema'
+import { JSONEditorOptions } from '@/libs/settings/SetupSettings'
 
 interface Category {
 	label: string
@@ -152,6 +153,13 @@ function setupEditorCategory() {
 	SettingsWindow.addCategory('editor', {
 		label: 'windows.settings.editor.name',
 		icon: 'edit',
+	})
+
+	SettingsWindow.addItem('editor', 'jsonEditor', <DropdownItem>{
+		type: 'dropdown',
+		label: 'windows.settings.editor.jsonEditor.name',
+		values: computed(() => Object.values(JSONEditorOptions)),
+		labels: computed(() => Object.values(JSONEditorOptions)),
 	})
 
 	SettingsWindow.addItem('editor', 'bracketPairColorization', <ToggleItem>{

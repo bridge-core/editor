@@ -1,6 +1,7 @@
 import { Settings } from './Settings'
 
-enum JSONEditorOptions {
+//Move to somehere better.
+export enum JSONEditorOptions {
 	TreeEditor = 'Tree Editor',
 	RawText = 'Raw Text',
 }
