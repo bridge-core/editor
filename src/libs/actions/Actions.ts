@@ -558,7 +558,7 @@ export function setupActions() {
 
 				const file = files[0]
 
-				await importFromBrProject(await (await file.getFile()).arrayBuffer())
+				await importFromBrProject(await (await file.getFile()).arrayBuffer(), basename(file.name, '.brproject'))
 			},
 			name: 'actions.importProject.name',
 			icon: 'package',
