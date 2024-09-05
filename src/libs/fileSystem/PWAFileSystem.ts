@@ -1,5 +1,5 @@
 import { sep, parse, basename, join, resolve } from 'pathe'
-import { BaseEntry, BaseFileSystem } from './BaseFileSystem'
+import { BaseEntry, BaseFileSystem, StreamableLike } from './BaseFileSystem'
 import { Ref, onMounted, onUnmounted, ref } from 'vue'
 import { md5 } from 'js-md5'
 import { Event } from '@/libs/event/Event'
@@ -168,6 +168,52 @@ export class PWAFileSystem extends BaseFileSystem {
 			const writable: FileSystemWritableFileStream = await handle.createWritable()
 
 			await writable.write(content)
+			await writable.close()
+		} catch (error) {
+			console.error(`Failed to write "${path}"`, error)
+		}
+	}
+
+	public async writeFileStreaming(path: string, stream: StreamableLike) {
+		if (this.baseHandle === null) throw new Error('Base handle not set!')
+
+		path = this.resolvePath(path)
+
+		try {
+			const handle = await (
+				await this.traverse(path)
+			).getFileHandle(basename(path), {
+				create: true,
+			})
+
+			const writable: FileSystemWritableFileStream = await handle.createWritable()
+			let writeIndex = 0
+			const writePromises: Promise<void>[] = []
+
+			await new Promise<void>((resolve, reject) => {
+				stream.ondata = (err, chunk, final) => {
+					if (err) return reject(err)
+
+					if (chunk) {
+						writePromises.push(
+							writable.write({
+								type: 'write',
+								data: chunk,
+								position: writeIndex,
+							})
+						)
+						writeIndex += chunk.length
+					}
+
+					if (final) {
+						resolve()
+					}
+				}
+
+				if (stream.start) stream.start()
+			})
+
+			await Promise.all(writePromises)
 			await writable.close()
 		} catch (error) {
 			console.error(`Failed to write "${path}"`, error)

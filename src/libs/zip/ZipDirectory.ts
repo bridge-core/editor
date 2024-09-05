@@ -2,7 +2,11 @@ import { zip, Zippable } from 'fflate'
 import { iterateDirectoryParrallel } from '@/libs/fileSystem/FileSystem'
 import { BaseFileSystem } from '@/libs/fileSystem/BaseFileSystem'
 
-export async function zipDirectory(fileSystem: BaseFileSystem, path: string, ignoreFolders?: Set<string>) {
+export async function zipDirectory(
+	fileSystem: BaseFileSystem,
+	path: string,
+	ignoreFolders?: Set<string>
+): Promise<Uint8Array> {
 	// if (import.meta.env.VITE_IS_TAURI_APP) {
 	//     const files: { [key: string]: number[] } = {}
 

@@ -455,6 +455,10 @@
 		"convertToBoolean": {
 			"name": "Convert To Boolean",
 			"description": "Convert the selected value to a boolean"
+		},
+		"importProject": {
+			"name": "Import Project",
+			"description": "Import a project from a .brproject or .mcaddon file"
 		}
 	},
 	"toolbar": {

@@ -24,6 +24,7 @@ import {
 import { exportAsBrProject } from '@/libs/export/BrProject'
 import { exportAsMcAddon } from '../export/McAddon'
 import { exportAsTemplate } from '../export/McTemplate'
+import { importFromBrProject } from '../import/BrProject'
 
 export function setupActions() {
 	ActionManager.addAction(
@@ -533,6 +534,33 @@ export function setupActions() {
 				exportAsTemplate()
 			},
 			name: 'packExplorer.exportAs.mctemplate',
+			icon: 'package',
+		})
+	)
+
+	ActionManager.addAction(
+		new Action({
+			id: 'importProject',
+			trigger: async () => {
+				const files = await window.showOpenFilePicker({
+					multiple: false,
+					types: [
+						{
+							description: 'Choose a Project',
+							accept: {
+								'application/zip': ['.brproject', '.mcaddon'],
+							},
+						},
+					],
+				})
+
+				if (!files) return
+
+				const file = files[0]
+
+				await importFromBrProject(await (await file.getFile()).arrayBuffer())
+			},
+			name: 'actions.importProject.name',
 			icon: 'package',
 		})
 	)

@@ -32,6 +32,10 @@ export class BaseFileSystem {
 		}
 	}
 
+	public async writeFileStreaming(path: string, stream: StreamableLike) {
+		throw new Error('Not implemented!')
+	}
+
 	public async removeFile(path: string) {
 		throw new Error('Not implemented!')
 	}
@@ -117,6 +121,11 @@ export class BaseFileSystem {
 	protected resolvePath(path: string): string {
 		return path
 	}
+}
+
+export type StreamableLike = {
+	ondata: (err: any | null, data: Uint8Array, final: boolean) => void
+	start?: () => void
 }
 
 export class BaseEntry {
