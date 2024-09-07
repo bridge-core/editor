@@ -202,12 +202,11 @@ export class PWAFileSystem extends BaseFileSystem {
 								position: writeIndex,
 							})
 						)
+
 						writeIndex += chunk.length
 					}
 
-					if (final) {
-						resolve()
-					}
+					if (final) resolve()
 				}
 
 				if (stream.start) stream.start()

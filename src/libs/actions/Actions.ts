@@ -22,9 +22,10 @@ import {
 	ValueElement,
 } from '@/components/Tabs/TreeEditor/Tree'
 import { exportAsBrProject } from '@/libs/export/BrProject'
-import { exportAsMcAddon } from '../export/McAddon'
-import { exportAsTemplate } from '../export/McTemplate'
-import { importFromBrProject } from '../import/BrProject'
+import { exportAsMcAddon } from '@/libs/export/McAddon'
+import { exportAsTemplate } from '@/libs/export/McTemplate'
+import { importFromBrProject } from '@/libs/import/BrProject'
+import { importFromMcAddon } from '@/libs/import/McAddon'
 
 export function setupActions() {
 	ActionManager.addAction(
@@ -558,7 +559,14 @@ export function setupActions() {
 
 				const file = files[0]
 
-				await importFromBrProject(await (await file.getFile()).arrayBuffer(), basename(file.name, '.brproject'))
+				if (file.name.endsWith('.mcaddon')) {
+					await importFromMcAddon(await (await file.getFile()).arrayBuffer(), basename(file.name, '.mcaddon'))
+				} else {
+					await importFromBrProject(
+						await (await file.getFile()).arrayBuffer(),
+						basename(file.name, '.brproject')
+					)
+				}
 			},
 			name: 'actions.importProject.name',
 			icon: 'package',
