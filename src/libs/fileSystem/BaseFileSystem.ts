@@ -118,6 +118,24 @@ export class BaseFileSystem {
 		throw new Error('Not implemented!')
 	}
 
+	public async findSuitableFolderName(targetPath: string) {
+		const entries = await this.readDirectoryEntries(dirname(targetPath))
+		let newPath = targetPath
+
+		while (entries.find((entry) => entry.path === newPath)) {
+			if (!newPath.includes(' copy')) {
+				// 1. Add "copy" to the end of the name
+				newPath = `${newPath} copy`
+			} else {
+				// 2. Add a number to the end of the name
+				const number = parseInt(newPath.match(/copy (\d+)/)?.[1] ?? '1')
+				newPath = newPath.replace(/ \d+$/, '') + ` ${number + 1}`
+			}
+		}
+
+		return newPath
+	}
+
 	protected resolvePath(path: string): string {
 		return path
 	}
