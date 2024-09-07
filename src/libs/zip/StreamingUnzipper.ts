@@ -10,7 +10,7 @@ export async function streamingUnzip(
 	let totalFiles = 0
 	let currentFiles = 0
 
-	await new Promise<void>((resolve) => {
+	await new Promise<void>(async (resolve) => {
 		const unzip = new Unzip(async (file) => {
 			totalFiles++
 
@@ -35,6 +35,13 @@ export async function streamingUnzip(
 		const chunks = getChunks(data)
 		for (let chunkIndex = 0; chunkIndex < chunks.length; chunkIndex++) {
 			unzip.push(chunks[chunkIndex], chunkIndex == chunks.length - 1)
+
+			// We throttle about how many files should be unzipped / handled at a time because on some computers it creates too many threads which really slows things down
+			while (totalFiles - currentFiles >= 15) {
+				await new Promise((resolve) => {
+					setTimeout(resolve, 10)
+				})
+			}
 		}
 	})
 }
