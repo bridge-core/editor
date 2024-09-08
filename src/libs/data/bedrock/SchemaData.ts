@@ -202,6 +202,12 @@ export class SchemaData implements Disposable {
 	}
 
 	public async updateSchemaForFile(path: string, fileType?: string, schemaUri?: string) {
+		if (!(await fileSystem.exists(path))) {
+			if (this.fileSchemas[path]) delete this.fileSchemas[path]
+
+			return
+		}
+
 		if (schemaUri === undefined) {
 			if (this.fileSchemas[path] !== undefined) delete this.fileSchemas[path]
 
