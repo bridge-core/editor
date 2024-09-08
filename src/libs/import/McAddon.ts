@@ -71,7 +71,6 @@ export async function importFromMcAddon(arrayBuffer: ArrayBuffer, name: string) 
 		name: projectName,
 		description: description ?? '',
 		namespace: 'bridge',
-		// TODO: Handle author properly
 		author: authors ?? ['Unknown'],
 		targetVersion: await getLatestStableFormatVersion(),
 		icon: '',
