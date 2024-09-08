@@ -53,7 +53,14 @@ export class Project implements AsyncDisposable {
 			this.packs[packId] = join(this.path, packPath)
 		}
 
-		this.icon = await fileSystem.readFileDataUrl(join(this.path, 'BP', 'pack_icon.png'))
+		if (await fileSystem.exists(join(this.path, 'BP', 'pack_icon.png')))
+			this.icon = await fileSystem.readFileDataUrl(join(this.path, 'BP', 'pack_icon.png'))
+
+		if (await fileSystem.exists(join(this.path, 'RP', 'pack_icon.png')))
+			this.icon = await fileSystem.readFileDataUrl(join(this.path, 'RP', 'pack_icon.png'))
+
+		if (await fileSystem.exists(join(this.path, 'SP', 'pack_icon.png')))
+			this.icon = await fileSystem.readFileDataUrl(join(this.path, 'SP', 'pack_icon.png'))
 
 		this.disposables.push(Settings.updated.on(this.settingsChanged.bind(this)))
 
@@ -190,7 +197,5 @@ export class Project implements AsyncDisposable {
 }
 
 export async function validProject(path: string) {
-	if (!(await fileSystem.exists(join(path, 'BP/pack_icon.png')))) return false
-
 	return await fileSystem.exists(join(path, 'config.json'))
 }

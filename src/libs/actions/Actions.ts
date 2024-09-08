@@ -26,6 +26,7 @@ import { exportAsMcAddon } from '@/libs/export/McAddon'
 import { exportAsTemplate } from '@/libs/export/McTemplate'
 import { importFromBrProject } from '@/libs/import/BrProject'
 import { importFromMcAddon } from '@/libs/import/McAddon'
+import { importFromMcPack } from '@/libs/import/McPack'
 
 export function setupActions() {
 	ActionManager.addAction(
@@ -549,7 +550,7 @@ export function setupActions() {
 						{
 							description: 'Choose a Project',
 							accept: {
-								'application/zip': ['.brproject', '.mcaddon'],
+								'application/zip': ['.brproject', '.mcaddon', '.mcpack'],
 							},
 						},
 					],
@@ -561,6 +562,8 @@ export function setupActions() {
 
 				if (file.name.endsWith('.mcaddon')) {
 					await importFromMcAddon(await (await file.getFile()).arrayBuffer(), basename(file.name, '.mcaddon'))
+				} else if (file.name.endsWith('.mcpack')) {
+					await importFromMcPack(await (await file.getFile()).arrayBuffer(), basename(file.name, '.mcpack'))
 				} else {
 					await importFromBrProject(
 						await (await file.getFile()).arrayBuffer(),
