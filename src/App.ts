@@ -25,6 +25,7 @@ import { setupModules } from '@/libs/extensions/Modules'
 import { setupEditorSettings } from '@/libs/settings/SetupSettings'
 import { TreeEditorTab } from '@/components/Tabs/TreeEditor/TreeEditorTab'
 import { tauriBuild } from '@/libs/tauri/Tauri'
+import { setupImporters } from '@/libs/import/Importers'
 
 export function setupBeforeComponents() {
 	NotificationSystem.setup()
@@ -43,6 +44,8 @@ export function setupBeforeComponents() {
 	setupEditorSettings()
 
 	setupModules()
+
+	setupImporters()
 }
 
 export async function setup() {

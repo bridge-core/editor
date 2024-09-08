@@ -1,4 +1,4 @@
-import { basename, dirname, join } from 'pathe'
+import { basename, dirname, extname, join } from 'pathe'
 import { Event } from '@/libs/event/Event'
 
 export class BaseFileSystem {
@@ -116,6 +116,25 @@ export class BaseFileSystem {
 
 	public async unwatch(path: string) {
 		throw new Error('Not implemented!')
+	}
+
+	public async findSuitableFileName(targetPath: string) {
+		const entries = await this.readDirectoryEntries(dirname(targetPath))
+		const fileExt = extname(targetPath)
+		let newPath = targetPath
+
+		while (entries.find((entry) => entry.path === newPath + fileExt)) {
+			if (!newPath.includes(' copy')) {
+				// 1. Add "copy" to the end of the name
+				newPath = `${newPath} copy`
+			} else {
+				// 2. Add a number to the end of the name
+				const number = parseInt(newPath.match(/copy (\d+)/)?.[1] ?? '1')
+				newPath = newPath.replace(/ \d+$/, '') + ` ${number + 1}`
+			}
+		}
+
+		return newPath + fileExt
 	}
 
 	public async findSuitableFolderName(targetPath: string) {
