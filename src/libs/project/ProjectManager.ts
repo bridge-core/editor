@@ -154,10 +154,10 @@ export class ProjectManager {
 			iconDataUrl = await fileSystem.readFileDataUrl(join(path, 'BP', 'pack_icon.png'))
 
 		if (await fileSystem.exists(join(path, defaultPackPaths['resourcePack'], 'pack_icon.png')))
-			iconDataUrl = await fileSystem.readFileDataUrl(join(path, 'BP', 'pack_icon.png'))
+			iconDataUrl = await fileSystem.readFileDataUrl(join(path, 'RP', 'pack_icon.png'))
 
 		if (await fileSystem.exists(join(path, defaultPackPaths['skinPack'], 'pack_icon.png')))
-			iconDataUrl = await fileSystem.readFileDataUrl(join(path, 'BP', 'pack_icon.png'))
+			iconDataUrl = await fileSystem.readFileDataUrl(join(path, 'SP', 'pack_icon.png'))
 
 		let favorites: string[] = []
 
