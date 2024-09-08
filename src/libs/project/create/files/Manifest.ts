@@ -34,7 +34,7 @@ export async function createManifest(
 	const manifest: { [key: string]: any } = {
 		format_version: 2,
 		metadata: {
-			authors: [config.author],
+			authors: Array.isArray(config.author) ? config.author : [config.author],
 			generated_with: {
 				bridge: [appVersion],
 				dash: [dashVersion],

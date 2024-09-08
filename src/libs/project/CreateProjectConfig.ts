@@ -2,7 +2,7 @@ export interface CreateProjectConfig {
 	name: string
 	description: string
 	namespace: string
-	author: string
+	author: string | string[]
 	targetVersion: string
 	icon: FileSystemWriteChunkType
 	packs: string[]
