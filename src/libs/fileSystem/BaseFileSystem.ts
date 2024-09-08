@@ -121,7 +121,7 @@ export class BaseFileSystem {
 	public async findSuitableFileName(targetPath: string) {
 		const entries = await this.readDirectoryEntries(dirname(targetPath))
 		const fileExt = extname(targetPath)
-		let newPath = targetPath
+		let newPath = join(dirname(targetPath), basename(targetPath, fileExt))
 
 		while (entries.find((entry) => entry.path === newPath + fileExt)) {
 			if (!newPath.includes(' copy')) {

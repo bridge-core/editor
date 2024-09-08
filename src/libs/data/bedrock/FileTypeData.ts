@@ -1,7 +1,8 @@
-import { extname, sep } from 'pathe'
-import { isMatch } from 'bridge-common-utils'
+import { extname, join, sep } from 'pathe'
+import { hasAnyPath, isMatch } from 'bridge-common-utils'
 import { ProjectManager } from '@/libs/project/ProjectManager'
 import { Data } from '@/libs/data/Data'
+import { TPackTypeId } from 'mc-project-core'
 
 export class FileTypeData {
 	public fileTypes: any[] = []
@@ -78,6 +79,62 @@ export class FileTypeData {
 			}
 
 			return fileType
+		}
+
+		return null
+	}
+
+	public async guessFolder(fileHandle: FileSystemFileHandle): Promise<string | null> {
+		// Helper function
+		const getStartPath = (scope: string | string[], packId: TPackTypeId) => {
+			let startPath = Array.isArray(scope) ? scope[0] : scope
+			if (!startPath.endsWith('/')) startPath += '/'
+
+			const packPath = ProjectManager.currentProject?.resolvePackPath(packId) ?? './unknown'
+
+			return join(packPath, startPath)
+		}
+
+		const extension = `.${fileHandle.name.split('.').pop()!}`
+		// 1. Guess based on file extension
+		const validTypes = this.fileTypes.filter(({ detect }) => {
+			if (!detect || !detect.scope) return false
+
+			return detect.fileExtensions?.includes(extension)
+		})
+
+		const onlyOneExtensionMatch = validTypes.length === 1
+		const notAJsonFileButMatch = extension !== '.json' && validTypes.length > 0
+
+		if (onlyOneExtensionMatch || notAJsonFileButMatch) {
+			const { detect } = validTypes[0]
+
+			return getStartPath(
+				detect!.scope!,
+				Array.isArray(detect!.packType) ? detect!.packType[0] : detect!.packType ?? 'behaviorPack'
+			)
+		}
+
+		if (extension !== '.json') return null
+
+		// 2. Guess based on json file content
+		const file = await fileHandle.getFile()
+		let json: any
+		try {
+			json = JSON.parse(await file.text())
+		} catch {
+			return null
+		}
+
+		for (const { type, detect } of validTypes) {
+			if (typeof type === 'string' && type !== 'json') continue
+
+			const { scope, fileContent, packType = 'behaviorPack' } = detect ?? {}
+			if (!scope || !fileContent) continue
+
+			if (!hasAnyPath(json, fileContent)) continue
+
+			return getStartPath(scope, Array.isArray(packType) ? packType[0] : packType)
 		}
 
 		return null

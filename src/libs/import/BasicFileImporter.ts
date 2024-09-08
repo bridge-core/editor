@@ -2,6 +2,8 @@ import { join } from 'pathe'
 import { FileImporter } from './file/FileImporter'
 import { fileSystem } from '../fileSystem/FileSystem'
 import { TabManager } from '@/components/TabSystem/TabManager'
+import { ProjectManager } from '../project/ProjectManager'
+import { BedrockProject } from '../project/BedrockProject'
 
 export class BasicFileImporter extends FileImporter {
 	public constructor() {
@@ -26,6 +28,14 @@ export class BasicFileImporter extends FileImporter {
 
 	public async onImport(fileHandle: FileSystemFileHandle, basePath: string) {
 		if (basePath === '/') return
+
+		if (
+			ProjectManager.currentProject &&
+			ProjectManager.currentProject instanceof BedrockProject &&
+			basePath === ProjectManager.currentProject.path
+		) {
+			basePath = (await ProjectManager.currentProject.fileTypeData.guessFolder(fileHandle)) ?? basePath
+		}
 
 		const targetPath = join(basePath, fileHandle.name)
 		const suitablePath = await fileSystem.findSuitableFileName(targetPath)
