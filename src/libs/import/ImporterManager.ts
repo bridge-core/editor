@@ -32,9 +32,11 @@ export class ImporterManager {
 
 	public static async importFile(fileHandle: FileSystemFileHandle, basePath?: string) {
 		if (!basePath) {
-			if (!ProjectManager.currentProject) return
-
-			basePath = ProjectManager.currentProject.path
+			if (ProjectManager.currentProject) {
+				basePath = ProjectManager.currentProject.path
+			} else {
+				basePath = '/'
+			}
 		}
 
 		console.log('Importing', fileHandle)
@@ -42,8 +44,12 @@ export class ImporterManager {
 		const extension = extname(fileHandle.name)
 
 		if (this.fileImporters[extension] && this.fileImporters[extension].length > 0) {
+			console.log(this.fileImporters[extension][0])
+
 			await this.fileImporters[extension][0].onImport(fileHandle, basePath)
 		} else if (this.defaultFileImporters.length > 0) {
+			console.log(this.defaultFileImporters[0])
+
 			await this.defaultFileImporters[0].onImport(fileHandle, basePath)
 		} else {
 			throw new Error('Could not import file. No importers added!')

@@ -10,6 +10,7 @@ import { getPackId, IManifestModule } from '@/libs/manifest/getPackId'
 import { CreateProjectConfig } from '@/libs/project/CreateProjectConfig'
 import { getLatestStableFormatVersion } from '@/libs/data/bedrock/FormatVersion'
 import { createConfig } from '@/libs/project/create/files/Config'
+import { FileImporter } from './file/FileImporter'
 
 export async function importFromMcPack(arrayBuffer: ArrayBuffer, name: string) {
 	if (fileSystem instanceof PWAFileSystem && !fileSystem.setup) await selectOrLoadBridgeFolder()
@@ -87,4 +88,14 @@ export async function importFromMcPack(arrayBuffer: ArrayBuffer, name: string) {
 	await ProjectManager.loadProject(projectName)
 
 	console.timeEnd('[IMPORT] .mcpack')
+}
+
+export class McPackFileImporter extends FileImporter {
+	public constructor() {
+		super(['.mcpack'])
+	}
+
+	public async onImport(fileHandle: FileSystemFileHandle, basePath: string) {
+		await importFromMcPack(await (await fileHandle.getFile()).arrayBuffer(), basename(fileHandle.name, '.mcpack'))
+	}
 }

@@ -10,6 +10,7 @@ import { getPackId, IManifestModule } from '@/libs/manifest/getPackId'
 import { CreateProjectConfig } from '@/libs/project/CreateProjectConfig'
 import { getLatestStableFormatVersion } from '@/libs/data/bedrock/FormatVersion'
 import { createConfig } from '@/libs/project/create/files/Config'
+import { FileImporter } from './file/FileImporter'
 
 export async function importFromMcAddon(arrayBuffer: ArrayBuffer, name: string) {
 	if (fileSystem instanceof PWAFileSystem && !fileSystem.setup) await selectOrLoadBridgeFolder()
@@ -89,4 +90,14 @@ export async function importFromMcAddon(arrayBuffer: ArrayBuffer, name: string) 
 	await ProjectManager.loadProject(projectName)
 
 	console.timeEnd('[IMPORT] .mcaddon')
+}
+
+export class AddonFileImporter extends FileImporter {
+	public constructor() {
+		super(['.mcaddon'])
+	}
+
+	public async onImport(fileHandle: FileSystemFileHandle, basePath: string) {
+		await importFromMcAddon(await (await fileHandle.getFile()).arrayBuffer(), basename(fileHandle.name, '.mcaddon'))
+	}
 }

@@ -25,6 +25,8 @@ export class BasicFileImporter extends FileImporter {
 	}
 
 	public async onImport(fileHandle: FileSystemFileHandle, basePath: string) {
+		if (basePath === '/') return
+
 		const targetPath = join(basePath, fileHandle.name)
 		const suitablePath = await fileSystem.findSuitableFileName(targetPath)
 
