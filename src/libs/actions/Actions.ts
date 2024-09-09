@@ -28,6 +28,9 @@ import { importFromBrProject } from '@/libs/import/BrProject'
 import { importFromMcAddon } from '@/libs/import/McAddon'
 import { importFromMcPack } from '@/libs/import/McPack'
 
+/**
+ * @description Sets up all of bridge's actions.
+ */
 export function setupActions() {
 	ActionManager.addAction(
 		new Action({
@@ -502,7 +505,8 @@ export function setupActions() {
 			trigger: () => {
 				exportAsBrProject()
 			},
-			name: 'packExplorer.exportAs.brproject',
+			name: 'packExplorer.exportAs.brproject.name',
+			description: 'packExplorer.exportAs.brproject.description',
 			icon: 'folder_zip',
 		})
 	)
@@ -513,7 +517,8 @@ export function setupActions() {
 			trigger: () => {
 				exportAsMcAddon()
 			},
-			name: 'packExplorer.exportAs.mcaddon',
+			name: 'packExplorer.exportAs.mcaddon.name',
+			description: 'packExplorer.exportAs.mcaddon.description',
 			icon: 'deployed_code',
 		})
 	)
@@ -524,7 +529,8 @@ export function setupActions() {
 			trigger: () => {
 				exportAsTemplate(true)
 			},
-			name: 'packExplorer.exportAs.mcworld',
+			name: 'packExplorer.exportAs.mcworld.name',
+			description: 'packExplorer.exportAs.mcworld.description',
 			icon: 'globe',
 		})
 	)
@@ -535,7 +541,8 @@ export function setupActions() {
 			trigger: () => {
 				exportAsTemplate()
 			},
-			name: 'packExplorer.exportAs.mctemplate',
+			name: 'packExplorer.exportAs.mctemplate.name',
+			description: 'packExplorer.exportAs.mctemplate.description',
 			icon: 'package',
 		})
 	)

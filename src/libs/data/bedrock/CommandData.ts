@@ -12,6 +12,7 @@ export interface Argument {
 		| 'blockState'
 		| 'subcommand'
 		| 'command'
+		| 'jsonData'
 	argumentName: string
 	additionalData?: {
 		values?: string[]

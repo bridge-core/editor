@@ -1,3 +1,5 @@
+import { Settings } from '@/libs/settings/Settings'
+
 export class Sidebar {
 	public static items: {
 		type: 'button' | 'divider'
@@ -7,6 +9,10 @@ export class Sidebar {
 
 	public static setup() {
 		this.items = []
+
+		Settings.addSetting('sidebarRight', {
+			default: false,
+		})
 	}
 
 	public static addButton(icon: string, callback: () => void) {

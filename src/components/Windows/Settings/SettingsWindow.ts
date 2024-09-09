@@ -9,6 +9,7 @@ import { LocaleManager } from '@/libs/locales/Locales'
 import { Window } from '../Window'
 import Settings from './Settings.vue'
 import { CompletionItem } from '@/libs/jsonSchema/Schema'
+import { JSONEditorOptions } from '@/libs/settings/SetupSettings'
 
 interface Category {
 	label: string
@@ -57,6 +58,7 @@ export class SettingsWindow extends Window {
 		setupActionsCategory()
 		setupAppearanceCategory()
 		setupEditorCategory()
+		setupSideBarCategory()
 		setupDeveloperCategory()
 	}
 
@@ -153,6 +155,13 @@ function setupEditorCategory() {
 		icon: 'edit',
 	})
 
+	SettingsWindow.addItem('editor', 'jsonEditor', <DropdownItem>{
+		type: 'dropdown',
+		label: 'windows.settings.editor.jsonEditor.name',
+		values: computed(() => Object.values(JSONEditorOptions)),
+		labels: computed(() => Object.values(JSONEditorOptions)),
+	})
+
 	SettingsWindow.addItem('editor', 'bracketPairColorization', <ToggleItem>{
 		type: 'toggle',
 		label: 'windows.settings.editor.bracketPairColorization.name',
@@ -183,6 +192,25 @@ function setupEditorCategory() {
 	SettingsWindow.addItem('editor', 'inlineDiagnostics', <ToggleItem>{
 		type: 'toggle',
 		label: 'windows.settings.editor.inlineTreeEditorDiagnostics.name',
+	})
+
+	/*
+	SettingsWindow.addItem('editor', 'autoSaveChanges', <ToggleItem>{
+		type: 'toggle',
+		label: 'windows.settings.editor.autoSaveChanges.name',
+	})
+	*/
+}
+
+function setupSideBarCategory() {
+	SettingsWindow.addCategory('sidebar', {
+		label: 'windows.settings.sidebar.name',
+		icon: 'code', //Placeholder!
+	})
+
+	SettingsWindow.addItem('sidebar', 'sidebarRight', <ToggleItem>{
+		type: 'toggle',
+		label: 'windows.settings.sidebar.sidebarRight.name',
 	})
 }
 

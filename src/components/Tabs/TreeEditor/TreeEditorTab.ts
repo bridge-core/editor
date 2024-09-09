@@ -8,6 +8,7 @@ import { Disposable, disposeAll } from '@/libs/disposeable/Disposeable'
 import { buildTree, ObjectElement, ParentElements, TreeEdit, TreeElements, TreeSelection } from './Tree'
 import { CompletionItem, createSchema, Diagnostic } from '@/libs/jsonSchema/Schema'
 import { Settings } from '@/libs/settings/Settings'
+import { JSONEditorOptions } from '@/libs/settings/SetupSettings' //DUMB, Might move this enum to somewhere else or register per tab dynamically.
 
 export class TreeEditorTab extends FileTab {
 	public component: Component | null = TreeEditorTabComponent
@@ -42,7 +43,8 @@ export class TreeEditorTab extends FileTab {
 	private disposables: Disposable[] = []
 
 	public static canEdit(path: string): boolean {
-		return path.endsWith('.json')
+		//TODO: Needs improving, maybe switch tab types when the setting is updated?
+		return path.endsWith('.json') && Settings.get<string>('jsonEditor') === JSONEditorOptions.TreeEditor
 	}
 
 	public is(path: string) {
