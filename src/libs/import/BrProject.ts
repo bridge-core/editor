@@ -3,7 +3,8 @@ import { PWAFileSystem } from '@/libs/fileSystem/PWAFileSystem'
 import { streamingUnzip } from '@/libs/zip/StreamingUnzipper'
 import { basename, join } from 'pathe'
 import { ProjectManager } from '@/libs/project/ProjectManager'
-import { FileImporter } from './file/FileImporter'
+import { FileImporter } from './FileImporter'
+import { DirectoryImporter } from './DirectoryImporter'
 
 export async function importFromBrProject(arrayBuffer: ArrayBuffer, name: string) {
 	if (fileSystem instanceof PWAFileSystem && !fileSystem.setup) await selectOrLoadBridgeFolder()
@@ -41,5 +42,21 @@ export class BrProjectFileImporter extends FileImporter {
 			await (await fileHandle.getFile()).arrayBuffer(),
 			basename(fileHandle.name, '.brproject')
 		)
+	}
+}
+
+export class BrProjectDirectoryImporter extends DirectoryImporter {
+	public async onImport(directoryHandle: FileSystemDirectoryHandle, basePath: string) {
+		if (basePath !== '/') return
+
+		const targetPath = join('/projects', directoryHandle.name)
+		const projectPath = await fileSystem.findSuitableFolderName(targetPath)
+		const projectName = basename(projectPath)
+
+		await fileSystem.copyDirectoryHandle(projectPath, directoryHandle)
+
+		await ProjectManager.closeProject()
+		await ProjectManager.loadProjects()
+		await ProjectManager.loadProject(projectName)
 	}
 }

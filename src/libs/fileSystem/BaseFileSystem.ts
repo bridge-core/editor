@@ -80,6 +80,18 @@ export class BaseFileSystem {
 		throw new Error('Not implemented!')
 	}
 
+	public async copyDirectoryHandle(path: string, handle: FileSystemDirectoryHandle) {
+		await this.makeDirectory(path)
+
+		for await (const value of handle.values()) {
+			if (value.kind === 'file') {
+				await this.writeFile(join(path, value.name), await value.getFile())
+			} else {
+				await this.copyDirectoryHandle(join(path, value.name), value)
+			}
+		}
+	}
+
 	public async move(path: string, newPath: string) {
 		const entry = await this.getEntry(path)
 

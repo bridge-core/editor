@@ -19,18 +19,22 @@ async function drop(event: DragEvent) {
 
 	if (!items) return
 
-	const filePromises: Promise<FileSystemFileHandle | null>[] = []
+	const promises: Promise<FileSystemHandle | null>[] = []
 
 	for (const item of items) {
 		if (item.kind === 'file') {
-			filePromises.push(<any>item.getAsFileSystemHandle())
+			promises.push(<any>item.getAsFileSystemHandle())
 		}
 	}
 
-	const files = (await Promise.all(filePromises)).filter((file) => file !== null)
+	const handles = (await Promise.all(promises)).filter((file) => file !== null)
 
-	for (const file of files) {
-		await ImporterManager.importFile(file)
+	for (const handle of handles) {
+		if (handle.kind === 'file') {
+			await ImporterManager.importFile(handle as FileSystemFileHandle)
+		} else {
+			await ImporterManager.importDirectory(handle as FileSystemDirectoryHandle)
+		}
 	}
 }
 </script>

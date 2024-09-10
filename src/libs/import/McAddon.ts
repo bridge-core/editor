@@ -10,7 +10,7 @@ import { getPackId, IManifestModule } from '@/libs/manifest/getPackId'
 import { CreateProjectConfig } from '@/libs/project/CreateProjectConfig'
 import { getLatestStableFormatVersion } from '@/libs/data/bedrock/FormatVersion'
 import { createConfig } from '@/libs/project/create/files/Config'
-import { FileImporter } from './file/FileImporter'
+import { FileImporter } from './FileImporter'
 
 export async function importFromMcAddon(arrayBuffer: ArrayBuffer, name: string) {
 	if (fileSystem instanceof PWAFileSystem && !fileSystem.setup) await selectOrLoadBridgeFolder()

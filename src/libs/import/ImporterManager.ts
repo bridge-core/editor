@@ -1,10 +1,13 @@
 import { extname } from 'pathe'
-import { FileImporter } from './file/FileImporter'
+import { FileImporter } from './FileImporter'
 import { ProjectManager } from '@/libs/project/ProjectManager'
+import { DirectoryImporter } from './DirectoryImporter'
 
 export class ImporterManager {
 	protected static fileImporters: Record<string, FileImporter[]> = {}
 	protected static defaultFileImporters: FileImporter[] = []
+
+	protected static directoryImporters: DirectoryImporter[] = []
 
 	public static addFileImporter(importer: FileImporter, defaultImporter: boolean = true) {
 		for (const extension of importer.extensions) {
@@ -30,6 +33,14 @@ export class ImporterManager {
 		this.defaultFileImporters.splice(this.defaultFileImporters.indexOf(importer), 1)
 	}
 
+	public static addDirectoryImporter(importer: DirectoryImporter) {
+		this.directoryImporters.push(importer)
+	}
+
+	public static removeDirectoryImporter(importer: DirectoryImporter) {
+		this.directoryImporters.splice(this.directoryImporters.indexOf(importer), 1)
+	}
+
 	public static async importFile(fileHandle: FileSystemFileHandle, basePath?: string) {
 		if (!basePath) {
 			if (ProjectManager.currentProject) {
@@ -39,20 +50,30 @@ export class ImporterManager {
 			}
 		}
 
-		console.log('Importing', fileHandle)
-
 		const extension = extname(fileHandle.name)
 
 		if (this.fileImporters[extension] && this.fileImporters[extension].length > 0) {
-			console.log(this.fileImporters[extension][0])
-
 			await this.fileImporters[extension][0].onImport(fileHandle, basePath)
 		} else if (this.defaultFileImporters.length > 0) {
-			console.log(this.defaultFileImporters[0])
-
 			await this.defaultFileImporters[0].onImport(fileHandle, basePath)
 		} else {
 			throw new Error('Could not import file. No importers added!')
+		}
+	}
+
+	public static async importDirectory(directoryHandle: FileSystemDirectoryHandle, basePath?: string) {
+		if (!basePath) {
+			if (ProjectManager.currentProject) {
+				basePath = ProjectManager.currentProject.path
+			} else {
+				basePath = '/'
+			}
+		}
+
+		if (this.directoryImporters.length > 0) {
+			await this.directoryImporters[0].onImport(directoryHandle, basePath)
+		} else {
+			throw new Error('Could not import directory. No importers added!')
 		}
 	}
 }

@@ -1,5 +1,5 @@
 import { join } from 'pathe'
-import { FileImporter } from './file/FileImporter'
+import { FileImporter } from './FileImporter'
 import { fileSystem } from '../fileSystem/FileSystem'
 import { TabManager } from '@/components/TabSystem/TabManager'
 import { ProjectManager } from '../project/ProjectManager'
