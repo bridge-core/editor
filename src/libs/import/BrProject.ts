@@ -46,6 +46,10 @@ export class BrProjectFileImporter extends FileImporter {
 }
 
 export class BrProjectDirectoryImporter extends DirectoryImporter {
+	public icon: string = 'folder_open'
+	public name: string = 'fileDropper.importMethod.folder.project.name'
+	public description: string = 'fileDropper.importMethod.folder.project.description'
+
 	public async onImport(directoryHandle: FileSystemDirectoryHandle, basePath: string) {
 		const targetPath = join('/projects', directoryHandle.name)
 		const projectPath = await fileSystem.findSuitableFolderName(targetPath)

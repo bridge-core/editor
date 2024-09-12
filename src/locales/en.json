@@ -1163,6 +1163,10 @@
 					"name": "Output Folder",
 					"description": "Sets this folder as a new output folder"
 				},
+				"project": {
+					"name": "New Project",
+					"description": "Imports this folder as a new project"
+				},
 				"open": {
 					"name": "Open Folder",
 					"description": "Opens this folder in bridge.'s file explorer"

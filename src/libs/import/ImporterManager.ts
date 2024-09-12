@@ -2,6 +2,8 @@ import { extname } from 'pathe'
 import { FileImporter } from './FileImporter'
 import { ProjectManager } from '@/libs/project/ProjectManager'
 import { DirectoryImporter } from './DirectoryImporter'
+import { Windows } from '@/components/Windows/Windows'
+import { InformedChoiceWindow } from '@/components/Windows/InformedChoice/InformedChoiceWindow'
 
 export class ImporterManager {
 	protected static fileImporters: Record<string, FileImporter[]> = {}
@@ -70,7 +72,21 @@ export class ImporterManager {
 			}
 		}
 
-		if (this.directoryImporters.length > 0) {
+		if (this.directoryImporters.length > 1) {
+			Windows.open(
+				new InformedChoiceWindow(
+					'fileDropper.importMethod.name',
+					this.directoryImporters.map((importer) => ({
+						icon: importer.icon,
+						name: importer.name,
+						description: importer.description,
+						choose: () => {
+							importer.onImport(directoryHandle, basePath)
+						},
+					}))
+				)
+			)
+		} else if (this.directoryImporters.length > 0) {
 			await this.directoryImporters[0].onImport(directoryHandle, basePath)
 		} else {
 			throw new Error('Could not import directory. No importers added!')
