@@ -10,4 +10,8 @@ export class Editor {
 	public static hideTabs() {
 		this.sideCollapsed.value = false
 	}
+
+	public static toggleTabs() {
+		this.sideCollapsed.value = !this.sideCollapsed.value
+	}
 }

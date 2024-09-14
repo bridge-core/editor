@@ -2,10 +2,11 @@
 import Sidebar from '@/components/Sidebar/Sidebar.vue'
 import FileExplorer from '@/components/FileExplorer/FileExplorer.vue'
 import Tabs from '@/components/TabSystem/Tabs.vue'
+import Icon from '@/components/Common/Icon.vue'
+import { Editor } from '@/components/Editor/Editor'
 
 import { ProjectManager } from '@/libs/project/ProjectManager'
 import { useIsMobile } from '@/libs/Mobile'
-import { Editor } from '@/components/Editor/Editor'
 
 const currentProject = ProjectManager.useCurrentProject()
 const isMobile = useIsMobile()
@@ -33,6 +34,22 @@ const isMobile = useIsMobile()
 			:class="{ 'left-full': !Editor.sideCollapsed.value }"
 		>
 			<Tabs />
+		</div>
+
+		<div
+			class="absolute left-2 bottom-2 rounded flex p-1 transition-colors duration-200 ease-out outline-none border-none"
+			:class="{
+				'bg-background-secondary': Editor.sideCollapsed.value,
+				'bg-background': !Editor.sideCollapsed.value,
+			}"
+			v-if="currentProject !== null && isMobile"
+			@click="Editor.toggleTabs"
+		>
+			<Icon
+				icon="chevron_right"
+				class="transition-tansform duration-200 ease-out"
+				:class="{ 'rotate-180': Editor.sideCollapsed.value }"
+			/>
 		</div>
 	</main>
 </template>
