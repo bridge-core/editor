@@ -131,7 +131,7 @@ const isMobile = useIsMobile()
 						</div>
 					</div>
 
-					<div class="mb-4 flex gap-4">
+					<div class="mb-4 flex flex-wrap gap-4">
 						<span
 							class="font-inter text-sm py-1 px-2 bg-primary hover:bg-accent rounded-full flex items-center gap-1 group hover:text-background transition-colors duration-100 ease-out cursor-pointer"
 						>
