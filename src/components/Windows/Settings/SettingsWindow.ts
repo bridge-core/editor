@@ -129,6 +129,7 @@ function setupAppearanceCategory() {
 	})
 
 	const themes = ThemeManager.useThemesImmediate()
+
 	const darkThemes = computed(() => themes.value.filter((theme) => theme.colorScheme === 'dark'))
 	const lightThemes = computed(() => themes.value.filter((theme) => theme.colorScheme === 'light'))
 

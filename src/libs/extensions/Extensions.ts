@@ -98,7 +98,7 @@ export class Extensions {
 
 		const loadedExtension = await this.installExtension(extension, path)
 
-		this.globalExtensions[loadedExtension.id] = loadedExtension
+		this.projectExtensions[loadedExtension.id] = loadedExtension
 
 		await this.updateExtensions()
 
@@ -134,7 +134,10 @@ export class Extensions {
 	private static async updateExtensions() {
 		this.activeExtensions = { ...this.globalExtensions, ...this.projectExtensions }
 
-		this.themes = Object.values(this.activeExtensions).flatMap((extension) => extension.themes)
+		this.themes = Object.values(this.activeExtensions)
+			.filter((extension) => this.isInstalledGlobal(extension.id))
+			.flatMap((extension) => extension.themes)
+
 		this.snippets = Object.values(this.activeExtensions).flatMap((extension) => extension.snippets)
 
 		this.presets = {}
