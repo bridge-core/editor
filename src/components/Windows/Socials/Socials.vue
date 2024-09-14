@@ -5,8 +5,10 @@ import Button from '@/components/Common/Button.vue'
 import { useTranslate } from '@/libs/locales/Locales'
 import { SocialsWindow } from './SocialsWindow'
 import { Windows } from '../Windows'
+import { useIsMobile } from '@/libs/Mobile'
 
 const t = useTranslate()
+const isMobile = useIsMobile()
 
 function openDiscord() {
 	window.open('https://discord.gg/jj2PmqU')
@@ -23,9 +25,12 @@ function openGithub() {
 
 <template>
 	<Window :name="t('windows.socials.title')" @close="Windows.close(SocialsWindow)">
-		<div class="mx-4 mb-4">
+		<div
+			class="mx-4 mb-4 h-full flex flex-col justify-between"
+			:style="{ 'max-width': !isMobile ? '20rem' : undefined }"
+		>
 			<p>{{ t('windows.socials.content') }}</p>
-			<div class="flex flex-row mt-5 gap-2">
+			<div class="flex flex-row mt-5 gap-2 ml-auto">
 				<Button :text="t('windows.socials.discord')" @click="openDiscord" />
 				<Button :text="t('windows.socials.twitter')" @click="openTwitter" />
 				<Button :text="t('windows.socials.github')" @click="openGithub" />
