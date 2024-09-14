@@ -4,7 +4,7 @@
 		:class="{
 			[`bg-[var(--color)] text-[var(--text-color)] hover:bg-[var(--color-hover)] hover:text-[var(--text-color-hover)]`]:
 				enabled,
-			'bg-menu text-text-secondary cursor-default': !enabled,
+			'bg-background-secondary text-text-secondary cursor-default': !enabled,
 		}"
 		:style="{
 			'--color': `var(--theme-color-${color})`,
