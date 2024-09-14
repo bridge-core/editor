@@ -21,6 +21,7 @@ export class Extensions {
 	public static themes: Theme[] = []
 	public static snippets: Snippet[] = []
 	public static presets: Record<string, any> = {}
+	public static ui: Record<string, any> = {}
 
 	public static loaded: boolean = false
 
@@ -48,6 +49,10 @@ export class Extensions {
 		}
 
 		await this.updateExtensions()
+
+		for (const extension of Object.values(this.globalExtensions)) {
+			await extension.runScripts()
+		}
 	}
 
 	public static async loadProjectExtensions() {
@@ -64,6 +69,10 @@ export class Extensions {
 		}
 
 		await this.updateExtensions()
+
+		for (const extension of Object.values(this.globalExtensions)) {
+			await extension.runScripts()
+		}
 	}
 
 	public static unloadProjectExtensions() {
@@ -78,6 +87,8 @@ export class Extensions {
 		this.globalExtensions[loadedExtension.id] = loadedExtension
 
 		await this.updateExtensions()
+
+		await loadedExtension.runScripts()
 	}
 
 	public static async installProject(extension: ExtensionManifest) {
@@ -90,6 +101,8 @@ export class Extensions {
 		this.globalExtensions[loadedExtension.id] = loadedExtension
 
 		await this.updateExtensions()
+
+		await loadedExtension.runScripts()
 	}
 
 	public static async uninstall(id: string) {
@@ -127,6 +140,11 @@ export class Extensions {
 		this.presets = {}
 		for (const extension of Object.values(this.activeExtensions)) {
 			this.presets = { ...this.presets, ...extension.presets }
+		}
+
+		this.ui = {}
+		for (const extension of Object.values(this.activeExtensions)) {
+			this.ui = { ...this.ui, ...extension.ui }
 		}
 
 		this.updated.dispatch()

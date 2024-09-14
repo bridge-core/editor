@@ -1,5 +1,5 @@
 import { fileSystem, iterateDirectory } from '@/libs/fileSystem/FileSystem'
-import { join } from 'pathe'
+import { basename, join } from 'pathe'
 import { dark, light } from '@/libs/theme/DefaultThemes'
 import { Theme } from '@/libs/theme/Theme'
 import { Snippet, SnippetData } from '@/libs/snippets/Snippet'
@@ -27,6 +27,7 @@ export class Extension {
 	public themes: Theme[] = []
 	public presets: any = {}
 	public snippets: Snippet[] = []
+	public ui: Record<string, any> = {}
 
 	constructor(public path: string) {}
 
@@ -75,10 +76,10 @@ export class Extension {
 			}
 		}
 
-		await this.loadScripts()
+		console.log('[EXTENSION] Loaded:', this.manifest.name)
 	}
 
-	private async loadScripts() {
+	public async runScripts() {
 		const runtime = new Runtime(fileSystem, Extensions.getModules())
 
 		const promises: Promise<any>[] = []
@@ -86,9 +87,28 @@ export class Extension {
 		const scriptsPath = join(this.path, 'scripts')
 		if (await fileSystem.exists(scriptsPath)) {
 			iterateDirectory(fileSystem, scriptsPath, (entry) => {
-				// fileSystem.readFileText(entry.path).then(console.log)
-
 				promises.push(runtime.run(entry.path))
+			})
+		}
+
+		await Promise.all(promises)
+	}
+
+	private async loadUI() {
+		const runtime = new Runtime(fileSystem, Extensions.getModules())
+
+		const promises: Promise<any>[] = []
+
+		const uiPath = join(this.path, 'ui')
+		if (await fileSystem.exists(uiPath)) {
+			iterateDirectory(fileSystem, uiPath, (entry) => {
+				promises.push(
+					new Promise(async () => {
+						const source = await fileSystem.readFileText(entry.path)
+
+						// this.ui[basename(entry.path, '.vue')] = component
+					})
+				)
 			})
 		}
 
