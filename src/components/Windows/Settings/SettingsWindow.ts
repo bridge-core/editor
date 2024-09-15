@@ -187,6 +187,13 @@ function setupEditorCategory() {
 		icon: 'edit',
 	})
 
+	SettingsWindow.addItem('editor', 'jsonEditor', <DropdownItem>{
+		type: 'dropdown',
+		label: 'windows.settings.editor.jsonEditor.name',
+		labels: computed(() => ['Raw Text Editor', 'Tree Editor']),
+		values: computed(() => ['text', 'tree']),
+	})
+
 	SettingsWindow.addItem('editor', 'bracketPairColorization', <ToggleItem>{
 		type: 'toggle',
 		label: 'windows.settings.editor.bracketPairColorization.name',

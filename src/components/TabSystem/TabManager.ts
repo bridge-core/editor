@@ -5,13 +5,31 @@ import { TextTab } from '@/components/Tabs/Text/TextTab'
 import { TreeEditorTab } from '@/components/Tabs/TreeEditor/TreeEditorTab'
 import { ImageTab } from '@/components/Tabs/Image/ImageTab'
 import { FileTab } from './FileTab'
+import { Settings } from '@/libs/settings/Settings'
 
 export class TabManager {
 	public static tabSystems: TabSystem[] = [new TabSystem()]
 	public static focusedTabSystem: ShallowRef<TabSystem | null> = shallowRef(null)
 
-	// private static tabTypes: (typeof FileTab)[] = [ImageTab, TextTab]
-	private static tabTypes: (typeof FileTab)[] = [ImageTab, TreeEditorTab, TextTab]
+	private static tabTypes: (typeof FileTab)[] = [ImageTab, TextTab, TreeEditorTab]
+
+	public static setup() {
+		Settings.addSetting('jsonEditor', {
+			default: 'text',
+		})
+
+		Settings.updated.on((event) => {
+			const { id, value } = event as { id: string; value: any }
+
+			if (id !== 'jsonEditor') return
+
+			if (value === 'text') {
+				this.tabTypes = [ImageTab, TextTab, TreeEditorTab]
+			} else {
+				this.tabTypes = [ImageTab, TreeEditorTab, TextTab]
+			}
+		})
+	}
 
 	public static async openTab(tab: Tab) {
 		for (const tabSystem of TabManager.tabSystems) {
