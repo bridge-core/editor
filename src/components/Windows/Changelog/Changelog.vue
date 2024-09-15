@@ -40,26 +40,26 @@ onMounted(async () => {
 }
 
 .changelog h1 {
-	@apply text-3xl font-bold mb-4 font-inter text-text;
+	@apply text-3xl font-bold mb-4 font-theme text-text;
 }
 .changelog h2 {
-	@apply text-2xl font-semibold mb-2 font-inter text-text;
+	@apply text-2xl font-semibold mb-2 font-theme text-text;
 }
 .changelog h3 {
-	@apply text-xl font-semibold mb-2 font-inter text-text;
+	@apply text-xl font-semibold mb-2 font-theme text-text;
 }
 .changelog h4 {
-	@apply text-lg font-medium font-inter text-text;
+	@apply text-lg font-medium font-theme text-text;
 }
 .changelog h5 {
-	@apply text-base font-semibold font-inter text-text;
+	@apply text-base font-semibold font-theme text-text;
 }
 .changelog h6 {
-	@apply text-base font-medium font-inter text-text;
+	@apply text-base font-medium font-theme text-text;
 }
 
 .changelog p {
-	@apply text-base font-normal mb-2 font-inter text-text;
+	@apply text-base font-normal mb-2 font-theme text-text;
 }
 
 .changelog hr {

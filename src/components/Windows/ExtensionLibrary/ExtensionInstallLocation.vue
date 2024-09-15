@@ -29,14 +29,14 @@ function cancel() {
 <template>
 	<Window :name="t('Extension Install Location')" @close="cancel">
 		<div class="p-4 h-full flex flex-col justify-between">
-			<p class="mb-4 max-w-sm font-inter">
+			<p class="mb-4 max-w-sm font-theme">
 				{{ t('Do you want to install this extension globally or just for this project?') }}
 			</p>
 
 			<div class="flex justify-end gap-2 ml-auto">
-				<Button :text="t('global')" class="font-inter" @click="global" />
-				<Button :text="t('project')" class="font-inter" @click="project" />
-				<Button :text="t('cancel')" class="font-inter" @click="cancel" />
+				<Button :text="t('global')" class="font-theme" @click="global" />
+				<Button :text="t('project')" class="font-theme" @click="project" />
+				<Button :text="t('cancel')" class="font-theme" @click="cancel" />
 			</div>
 		</div>
 	</Window>

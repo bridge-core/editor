@@ -34,7 +34,7 @@ const isMobile = useIsMobile()
 				>
 					<div class="flex gap-1">
 						<Icon icon="search" class="transition-colors duration-100 ease-out" />
-						<input @focus="focus" @blur="blur" class="outline-none border-none bg-transparent font-inter" />
+						<input @focus="focus" @blur="blur" class="outline-none border-none bg-transparent font-theme" />
 					</div>
 				</LabeledInput>
 
@@ -64,7 +64,7 @@ const isMobile = useIsMobile()
 							"
 							class="text-base"
 						/>
-						<span class="font-inter">{{ t(tag) }}</span>
+						<span class="font-theme">{{ t(tag) }}</span>
 					</button>
 				</div>
 			</div>
@@ -86,7 +86,7 @@ const isMobile = useIsMobile()
 					<div class="flex justify-between mb-4">
 						<div class="flex gap-2">
 							<Icon :icon="'data_object'" color="primary" />
-							<h1 class="font-inter font-bold">{{ extension.name }}</h1>
+							<h1 class="font-theme font-bold">{{ extension.name }}</h1>
 						</div>
 
 						<div class="flex gap-2 items-center">
@@ -133,7 +133,7 @@ const isMobile = useIsMobile()
 
 					<div class="mb-4 flex flex-wrap gap-4">
 						<span
-							class="font-inter text-sm py-1 px-2 bg-primary hover:bg-accent rounded-full flex items-center gap-1 group hover:text-background transition-colors duration-100 ease-out cursor-pointer"
+							class="font-theme text-sm py-1 px-2 bg-primary hover:bg-accent rounded-full flex items-center gap-1 group hover:text-background transition-colors duration-100 ease-out cursor-pointer"
 						>
 							<span
 								class="material-symbols-rounded text-sm group-hover:text-background transition-colors duration-100 ease-out"
@@ -143,13 +143,13 @@ const isMobile = useIsMobile()
 							{{ extension.author }}
 						</span>
 
-						<span class="font-inter text-sm py-1 px-2 bg-background rounded-full">
+						<span class="font-theme text-sm py-1 px-2 bg-background rounded-full">
 							{{ extension.version }}
 						</span>
 
 						<span
 							v-for="tag in extension.tags"
-							class="font-inter text-sm py-1 px-2 bg-[var(--color)] hover:bg-accent rounded-full flex items-center gap-1 group hover:text-background transition-colors duration-100 ease-out cursor-pointer"
+							class="font-theme text-sm py-1 px-2 bg-[var(--color)] hover:bg-accent rounded-full flex items-center gap-1 group hover:text-background transition-colors duration-100 ease-out cursor-pointer"
 							:style="{
 								'--color': `var(--theme-color-${ExtensionLibraryWindow.tags[tag].color ?? 'primary'})`,
 							}"
@@ -163,7 +163,7 @@ const isMobile = useIsMobile()
 						</span>
 					</div>
 
-					<p class="font-inter text-text-secondary">{{ extension.description }}</p>
+					<p class="font-theme text-text-secondary">{{ extension.description }}</p>
 				</div>
 			</div>
 		</template>

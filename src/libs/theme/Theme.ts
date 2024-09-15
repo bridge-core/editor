@@ -30,6 +30,7 @@ export interface Theme {
 	name: string
 	colorScheme?: 'dark' | 'light'
 	colors: Record<(typeof colorNames)[number], string>
+	font?: string
 	highlighter?: Record<
 		string,
 		{

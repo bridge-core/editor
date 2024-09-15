@@ -221,7 +221,7 @@ defineExpose({ open })
 			:path
 		/>
 
-		<p v-if="diagnostic" class="ml-6 text-xs text-warning font-inter opacity-60">
+		<p v-if="diagnostic" class="ml-6 text-xs text-warning font-theme opacity-60">
 			<Icon icon="arrow_downward" color="warning" class="text-xs" /> {{ diagnostic.message }}
 		</p>
 

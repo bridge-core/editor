@@ -1,6 +1,6 @@
 <template>
 	<button
-		class="px-2 py-1 rounded font-inter font-medium select-none transition-colors duration-100 ease-out"
+		class="px-2 py-1 rounded font-theme font-medium select-none transition-colors duration-100 ease-out"
 		:class="{
 			[`bg-[var(--color)] text-[var(--text-color)] hover:bg-[var(--color-hover)] hover:text-[var(--text-color-hover)]`]:
 				enabled,

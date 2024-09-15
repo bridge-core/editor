@@ -42,8 +42,8 @@ function cancel() {
 			/>
 
 			<div class="flex justify-end gap-2">
-				<Button :text="t('Confirm')" class="font-inter" @click="confirm" />
-				<Button :text="t('Cancel')" class="font-inter" @click="cancel" />
+				<Button :text="t('Confirm')" class="font-theme" @click="confirm" />
+				<Button :text="t('Cancel')" class="font-theme" @click="cancel" />
 			</div>
 		</div>
 	</Window>

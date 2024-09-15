@@ -146,6 +146,39 @@ function setupAppearanceCategory() {
 		values: computed(() => lightThemes.value.map((theme) => theme.id)),
 		labels: computed(() => lightThemes.value.map((theme) => theme.name)),
 	})
+
+	SettingsWindow.addItem('appearance', 'fontOverride', <DropdownItem>{
+		type: 'dropdown',
+		label: 'windows.settings.appearance.fontOverride.name',
+		values: computed(() => [
+			'None',
+			'Inter',
+			'Roboto',
+			'Arial',
+			'Verdana',
+			'Helvetica',
+			'Tahome',
+			'Trebuchet MS',
+			'Menlo',
+			'Monaco',
+			'Courier New',
+			'Monospace',
+		]),
+		labels: computed(() => [
+			'None',
+			'Inter',
+			'Roboto',
+			'Arial',
+			'Verdana',
+			'Helvetica',
+			'Tahome',
+			'Trebuchet MS',
+			'Menlo',
+			'Monaco',
+			'Courier New',
+			'monospace',
+		]),
+	})
 }
 
 function setupEditorCategory() {

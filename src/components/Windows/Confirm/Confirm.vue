@@ -30,13 +30,13 @@ function cancel() {
 <template>
 	<Window :name="t('general.confirm')" @close="cancel">
 		<div class="p-4">
-			<p class="mb-4 max-w-sm font-inter">
+			<p class="mb-4 max-w-sm font-theme">
 				{{ t(window.text) }}
 			</p>
 
 			<div class="flex justify-end gap-2">
-				<Button :text="t('Confirm')" class="font-inter" @click="confirm" />
-				<Button :text="t('Cancel')" class="font-inter" @click="cancel" />
+				<Button :text="t('Confirm')" class="font-theme" @click="confirm" />
+				<Button :text="t('Cancel')" class="font-theme" @click="cancel" />
 			</div>
 		</div>
 	</Window>

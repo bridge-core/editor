@@ -86,7 +86,7 @@ const isMobile = useIsMobile()
 								'text-primary': selectedCategory !== category.id,
 							}"
 						/>
-						<span class="font-inter select-none">{{ t(category.name) }}</span>
+						<span class="font-theme select-none">{{ t(category.name) }}</span>
 					</button>
 				</div>
 			</div>
@@ -137,7 +137,7 @@ const isMobile = useIsMobile()
 					<div>
 						<p
 							v-for="log in (<BedrockProject>ProjectManager.currentProject).dashService.logs"
-							class="font-inter border-b border-background-secondary pb-2 mb-2 text-sm"
+							class="font-theme border-b border-background-secondary pb-2 mb-2 text-sm"
 						>
 							{{ log }}
 						</p>

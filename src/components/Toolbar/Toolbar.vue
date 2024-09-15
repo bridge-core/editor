@@ -29,7 +29,7 @@ const isMobile = useIsMobile()
 			<span v-for="item in Toolbar.items">
 				<button v-if="item.type === 'button'" class="flex items-center gap-1 group" @click="item.action">
 					<span
-						class="text-sm group-hover:text-primary transition-colors duration-100 ease-out font-inter select-none"
+						class="text-sm group-hover:text-primary transition-colors duration-100 ease-out font-theme select-none"
 						>{{ t(item.name) }}</span
 					>
 				</button>
@@ -38,7 +38,7 @@ const isMobile = useIsMobile()
 					<template #main="{ toggle }">
 						<button class="flex items-center gap-1 group" @click="toggle">
 							<span
-								class="text-sm group-hover:text-primary transition-colors duration-100 ease-out font-inter select-none"
+								class="text-sm group-hover:text-primary transition-colors duration-100 ease-out font-theme select-none"
 								>{{ t(item.name) }}</span
 							>
 						</button>
@@ -75,7 +75,7 @@ const isMobile = useIsMobile()
 
 				<span
 					v-if="!isMobile"
-					class="text-sm text-text-secondary font-inter transition ease-out hover:text-accent duration-100"
+					class="text-sm text-text-secondary font-theme transition ease-out hover:text-accent duration-100"
 				>
 					v{{ appVersion }}
 				</span>

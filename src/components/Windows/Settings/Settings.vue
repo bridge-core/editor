@@ -46,7 +46,7 @@ const isMobile = useIsMobile()
 						<input
 							@focus="focus"
 							@blur="blur"
-							class="outline-none border-none bg-transparent font-inter"
+							class="outline-none border-none bg-transparent font-theme"
 							v-model="search"
 						/>
 					</div>
@@ -72,7 +72,7 @@ const isMobile = useIsMobile()
 							class="text-base"
 						/>
 						<span
-							class="font-inter"
+							class="font-theme"
 							:class="{
 								'text-accent': SettingsWindow.selectedCategory.value === id,
 								'text-text': SettingsWindow.selectedCategory.value !== id,
@@ -104,7 +104,7 @@ const isMobile = useIsMobile()
 								class="bg-background"
 							>
 								<div class="flex items-center justify-between cursor-pointer" @click="toggle">
-									<span class="font-inter">{{
+									<span class="font-theme">{{
 										(item as DropdownItem).labels.value[
 											(item as DropdownItem).values.value.indexOf(get(id))
 										]
@@ -130,7 +130,7 @@ const isMobile = useIsMobile()
 												collapse()
 											}
 										"
-										class="hover:bg-primary text-start p-1 rounded transition-colors duration-100 ease-out font-inter"
+										class="hover:bg-primary text-start p-1 rounded transition-colors duration-100 ease-out font-theme"
 										:class="{
 											'bg-background-tertiary': get(id) === value,
 										}"
@@ -147,7 +147,7 @@ const isMobile = useIsMobile()
 					</Dropdown>
 
 					<div v-if="item.type === 'toggle'">
-						<h2 class="mb-2 text-text font-inter">{{ t((item as ToggleItem).label) }}</h2>
+						<h2 class="mb-2 text-text font-theme">{{ t((item as ToggleItem).label) }}</h2>
 
 						<Switch :model-value="get(id)" @update:model-value="(value) => Settings.set(id, value)" />
 					</div>

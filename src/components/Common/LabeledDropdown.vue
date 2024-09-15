@@ -75,7 +75,7 @@ onUnmounted(() => {
 			:border-color="borderColor"
 		>
 			<div class="flex gap-1">
-				<p @click="interact(focus)" class="font-inter flex-1">{{ model }}</p>
+				<p @click="interact(focus)" class="font-theme flex-1">{{ model }}</p>
 
 				<IconButton
 					icon="arrow_drop_down"

@@ -46,7 +46,7 @@ async function edit(name: string) {}
 			<Logo class="ml-auto mr-auto mb-24 -mt-24 w-48" />
 
 			<div class="flex justify-between">
-				<p class="mb-1 text-lg text-text font-inter font-medium">
+				<p class="mb-1 text-lg text-text font-theme font-medium">
 					{{ t('greet.projects') }}
 				</p>
 
@@ -77,7 +77,7 @@ async function edit(name: string) {}
 			</div>
 
 			<div class="flex items-center flex-col mt-6" v-if="!suggestSelectBridgeFolder && projects.length === 0">
-				<p class="opacity-30 text-text mb-4 font-inter">
+				<p class="opacity-30 text-text mb-4 font-theme">
 					{{ t('greet.noProjects') }}
 				</p>
 
@@ -85,7 +85,7 @@ async function edit(name: string) {}
 			</div>
 
 			<div class="flex items-center flex-col mt-6" v-if="suggestSelectBridgeFolder">
-				<p class="opacity-30 text-text mb-4 font-inter">
+				<p class="opacity-30 text-text mb-4 font-theme">
 					{{ t('greet.noBridgeFolderSelected') }}
 				</p>
 

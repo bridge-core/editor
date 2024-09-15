@@ -36,7 +36,7 @@ function cancel() {
 		<div class="px-4 pb-4">
 			<LabeledInput :label="t(window.label)" class="mb-4 max-w-sm flex-1 bg-background" v-slot="{ focus, blur }">
 				<input
-					class="bg-background outline-none placeholder:text-text-secondary max-w-none w-full font-inter"
+					class="bg-background outline-none placeholder:text-text-secondary max-w-none w-full font-theme"
 					@focus="focus"
 					@blur="blur"
 					:placeholder="t(window.placeholder)"
@@ -46,8 +46,8 @@ function cancel() {
 			</LabeledInput>
 
 			<div class="flex justify-end gap-2">
-				<Button :text="t('Confirm')" class="font-inter" @click="confirm" />
-				<Button :text="t('Cancel')" class="font-inter" @click="cancel" />
+				<Button :text="t('Confirm')" class="font-theme" @click="confirm" />
+				<Button :text="t('Cancel')" class="font-theme" @click="cancel" />
 			</div>
 		</div>
 	</Window>

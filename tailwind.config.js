@@ -40,6 +40,7 @@ module.exports = {
 				window: '0 0 16px -2px rgb(0, 0, 0, 0.4)',
 			},
 			fontFamily: {
+				theme: 'var(--theme-font)',
 				inter: ['Inter', 'ui-sans-serif', 'system-ui', 'Segoe UI', 'Roboto', 'sans-serif'],
 			},
 		},

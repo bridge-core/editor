@@ -36,7 +36,7 @@ function change(event: Event) {
 			<input
 				@focus="focus"
 				@blur="blur"
-				class="outline-none border-none bg-transparent font-inter flex-1"
+				class="outline-none border-none bg-transparent font-theme flex-1"
 				:value="model"
 				@input="input"
 				@change="change"

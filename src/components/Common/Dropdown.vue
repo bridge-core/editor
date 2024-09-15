@@ -20,7 +20,7 @@ const [expanded, expandedModifiers] = defineModel<boolean>()
 								expanded = false
 							}
 						"
-						class="hover:bg-background-tertiary text-start p-1 rounded transition-colors duration-100 ease-out font-inter text-sm"
+						class="hover:bg-background-tertiary text-start p-1 rounded transition-colors duration-100 ease-out font-theme text-sm"
 					>
 						{{ item.label }}
 					</button>

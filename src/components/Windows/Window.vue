@@ -27,7 +27,7 @@ const isMobile = useIsMobile()
 			:class="{ 'w-full': isMobile, 'h-full': isMobile }"
 		>
 			<div class="w-full flex justify-between align-center p-2">
-				<span class="select-none ml-1 text-text-secondary font-inter">
+				<span class="select-none ml-1 text-text-secondary font-theme">
 					{{ name }}
 				</span>
 

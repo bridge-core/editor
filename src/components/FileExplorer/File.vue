@@ -42,7 +42,7 @@ function executeContextMenuAction(action: string, data: any) {
 	>
 		<Icon icon="draft" :color="color" class="text-sm" />
 
-		<span class="select-none font-inter"> {{ basename(path) }} </span>
+		<span class="select-none font-theme"> {{ basename(path) }} </span>
 
 		<FreeContextMenu ref="contextMenu">
 			<ContextMenuItem

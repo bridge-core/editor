@@ -105,7 +105,7 @@ watch(filteredCategories, () => {
 						<input
 							@focus="focus"
 							@blur="blur"
-							class="outline-none border-none bg-transparent font-inter"
+							class="outline-none border-none bg-transparent font-theme"
 							v-model="search"
 						/>
 					</div>
@@ -143,7 +143,7 @@ watch(filteredCategories, () => {
 										'text-primary': selectedPresetPath !== presetPath,
 									}"
 								/>
-								<span class="font-inter select-none">{{ availablePresets[presetPath].name }}</span>
+								<span class="font-theme select-none">{{ availablePresets[presetPath].name }}</span>
 							</button>
 						</div>
 					</Expandable>
@@ -160,10 +160,10 @@ watch(filteredCategories, () => {
 						<div class="flex items-center gap-2 mb-2">
 							<Icon :icon="selectedPreset.icon" />
 
-							<span class="text-3xl font-bold font-inter select-none">{{ selectedPreset.name }}</span>
+							<span class="text-3xl font-bold font-theme select-none">{{ selectedPreset.name }}</span>
 						</div>
 
-						<p class="font-inter text-text-secondary mb-12 select-none">
+						<p class="font-theme text-text-secondary mb-12 select-none">
 							{{ selectedPreset.description }}
 						</p>
 
@@ -177,7 +177,7 @@ watch(filteredCategories, () => {
 							v-slot="{ focus, blur }"
 						>
 							<input
-								class="bg-background outline-none placeholder:text-text-secondary max-w-none w-full font-inter"
+								class="bg-background outline-none placeholder:text-text-secondary max-w-none w-full font-theme"
 								@focus="focus"
 								@blur="blur"
 								:placeholder="t('Folders')"
@@ -197,7 +197,7 @@ watch(filteredCategories, () => {
 								v-slot="{ focus, blur }"
 							>
 								<input
-									class="bg-background outline-none placeholder:text-text-secondary max-w-none w-full font-inter"
+									class="bg-background outline-none placeholder:text-text-secondary max-w-none w-full font-theme"
 									@focus="focus"
 									@blur="blur"
 									:placeholder="fieldName"
@@ -218,7 +218,7 @@ watch(filteredCategories, () => {
 								<input type="file" class="hidden" />
 
 								<button
-									class="flex align-center gap-2 text-text-secondary font-inter placeholder:text-text-secondary"
+									class="flex align-center gap-2 text-text-secondary font-theme placeholder:text-text-secondary"
 									@mouseenter="focus"
 									@mouseleave="blur"
 								>
@@ -238,7 +238,7 @@ watch(filteredCategories, () => {
 										(createPresetOptions[fieldId] = value)"
 								/>
 
-								<p class="font-inter text-text-secondary">{{ fieldName }}</p>
+								<p class="font-theme text-text-secondary">{{ fieldName }}</p>
 							</div>
 
 							<Dropdown
@@ -252,7 +252,7 @@ watch(filteredCategories, () => {
 								<template #main="{ expanded, toggle }">
 									<LabeledInput :label="t(fieldName)" :focused="expanded" class="bg-background">
 										<div class="flex items-center justify-between cursor-pointer" @click="toggle">
-											<span class="font-inter">{{
+											<span class="font-theme">{{
 												fieldOptions.options.find(
 													(option: any) => option.value === createPresetOptions[fieldId]
 												).text
@@ -278,7 +278,7 @@ watch(filteredCategories, () => {
 														collapse()
 													}
 												"
-												class="hover:bg-primary text-start p-1 rounded transition-colors duration-100 ease-out font-inter"
+												class="hover:bg-primary text-start p-1 rounded transition-colors duration-100 ease-out font-theme"
 												:class="{
 													'bg-menu': createPresetOptions[fieldId] === dropdownItem.value,
 												}"
@@ -301,7 +301,7 @@ watch(filteredCategories, () => {
 								<template #main="{ expanded, toggle }">
 									<LabeledInput :label="t(fieldName)" :focused="expanded" class="bg-background">
 										<div class="flex items-center justify-between cursor-pointer" @click="toggle">
-											<span class="font-inter">{{ createPresetOptions[fieldId] }}</span>
+											<span class="font-theme">{{ createPresetOptions[fieldId] }}</span>
 
 											<Icon
 												icon="arrow_drop_down"
@@ -323,7 +323,7 @@ watch(filteredCategories, () => {
 														collapse()
 													}
 												"
-												class="hover:bg-primary text-start p-1 rounded transition-colors duration-100 ease-out font-inter"
+												class="hover:bg-primary text-start p-1 rounded transition-colors duration-100 ease-out font-theme"
 												:class="{
 													'bg-menu': createPresetOptions[fieldId] === dropdownItem,
 												}"

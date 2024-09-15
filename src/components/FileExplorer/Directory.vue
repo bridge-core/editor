@@ -67,7 +67,7 @@ function executeContextMenuAction(action: string, data: any) {
 	>
 		<Icon :icon="expanded ? 'folder_open' : 'folder'" :color="color" class="text-sm" />
 
-		<span class="select-none font-inter"> {{ basename(path) }} </span>
+		<span class="select-none font-theme"> {{ basename(path) }} </span>
 	</div>
 
 	<div class="ml-1 border-l pl-1 border-background-tertiary min-h-[1rem]" v-if="expanded">

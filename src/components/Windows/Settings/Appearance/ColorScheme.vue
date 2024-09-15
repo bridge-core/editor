@@ -13,7 +13,7 @@ defineProps(['item'])
 		<div>
 			<button
 				@click="Settings.set('colorScheme', 'auto')"
-				class="px-2 py-1 font-inter rounded-l border-transparent hover:border-accent border-2 transition-colors duration-100 ease-out"
+				class="px-2 py-1 font-theme rounded-l border-transparent hover:border-accent border-2 transition-colors duration-100 ease-out"
 				:class="{
 					'bg-primary': get('colorScheme') === 'auto',
 					'bg-background-secondary': get('colorScheme') !== 'auto',
@@ -24,7 +24,7 @@ defineProps(['item'])
 
 			<button
 				@click="Settings.set('colorScheme', 'dark')"
-				class="px-2 py-1 font-inter border-transparent hover:border-accent border-2 transition-colors duration-100 ease-out"
+				class="px-2 py-1 font-theme border-transparent hover:border-accent border-2 transition-colors duration-100 ease-out"
 				:class="{
 					'bg-primary': get('colorScheme') === 'dark',
 					'bg-background-secondary': get('colorScheme') !== 'dark',
@@ -35,7 +35,7 @@ defineProps(['item'])
 
 			<button
 				@click="Settings.set('colorScheme', 'light')"
-				class="px-2 py-1 font-inter rounded-r border-transparent hover:border-accent border-2 transition-colors duration-100 ease-out"
+				class="px-2 py-1 font-theme rounded-r border-transparent hover:border-accent border-2 transition-colors duration-100 ease-out"
 				:class="{
 					'bg-primary': get('colorScheme') === 'light',
 					'bg-background-secondary': get('colorScheme') !== 'light',

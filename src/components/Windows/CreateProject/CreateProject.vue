@@ -218,7 +218,7 @@ const isMobile = useIsMobile()
 								:model-value="linkResourcePack"
 								@update:model-value="setLinkResourcePack"
 							/>
-							<span class="text-xs text-text-secondary select-none font-inter">{{
+							<span class="text-xs text-text-secondary select-none font-theme">{{
 								t('windows.createProject.rpAsBpDependency')
 							}}</span>
 						</div>
@@ -230,7 +230,7 @@ const isMobile = useIsMobile()
 								:model-value="linkBehaviourPack"
 								@update:model-value="setLinkBehaviourPack"
 							/>
-							<span class="text-xs text-text-secondary select-none font-inter">{{
+							<span class="text-xs text-text-secondary select-none font-theme">{{
 								t('windows.createProject.bpAsRpDependency')
 							}}</span>
 						</div>
@@ -278,7 +278,7 @@ const isMobile = useIsMobile()
 						<input type="file" class="hidden" ref="projectIconInput" @:change="chooseProjectIcon" />
 
 						<button
-							class="flex align-center gap-2 text-text-secondary font-inter"
+							class="flex align-center gap-2 text-text-secondary font-theme"
 							@mouseenter="focus"
 							@mouseleave="blur"
 							@click="projectIconInput?.click()"
@@ -294,7 +294,7 @@ const isMobile = useIsMobile()
 						v-slot="{ focus, blur }"
 					>
 						<input
-							class="bg-background outline-none max-w-none w-full placeholder:text-text-secondary font-inter"
+							class="bg-background outline-none max-w-none w-full placeholder:text-text-secondary font-theme"
 							@focus="focus"
 							@blur="blur"
 							v-model="projectName"
@@ -309,7 +309,7 @@ const isMobile = useIsMobile()
 					v-slot="{ focus, blur }"
 				>
 					<input
-						class="bg-background outline-none max-w-none placeholder:text-text-secondary max-w-none w-full font-inter"
+						class="bg-background outline-none max-w-none placeholder:text-text-secondary max-w-none w-full font-theme"
 						@focus="focus"
 						@blur="blur"
 						v-model="projectDescription"
@@ -324,7 +324,7 @@ const isMobile = useIsMobile()
 						v-slot="{ focus, blur }"
 					>
 						<input
-							class="bg-background outline-none placeholder:text-text-secondary max-w-none w-full font-inter"
+							class="bg-background outline-none placeholder:text-text-secondary max-w-none w-full font-theme"
 							@focus="focus"
 							@blur="blur"
 							v-model="projectNamespace"
@@ -338,7 +338,7 @@ const isMobile = useIsMobile()
 						v-slot="{ focus, blur }"
 					>
 						<input
-							class="bg-background outline-none placeholder:text-text-secondary max-w-none w-full font-inter"
+							class="bg-background outline-none placeholder:text-text-secondary max-w-none w-full font-theme"
 							@focus="focus"
 							@blur="blur"
 							v-model="projectAuthor"
@@ -354,7 +354,7 @@ const isMobile = useIsMobile()
 								class="bg-background"
 							>
 								<div class="flex items-center justify-between cursor-pointer" @click="toggle">
-									<span class="font-inter">{{ projectTargetVersion }}</span>
+									<span class="font-theme">{{ projectTargetVersion }}</span>
 
 									<Icon
 										icon="arrow_drop_down"
@@ -376,7 +376,7 @@ const isMobile = useIsMobile()
 												collapse()
 											}
 										"
-										class="hover:bg-primary text-start p-1 rounded transition-colors duration-100 ease-out font-inter"
+										class="hover:bg-primary text-start p-1 rounded transition-colors duration-100 ease-out font-theme"
 										:class="{
 											'bg-background-tertiary': projectTargetVersion === version,
 										}"

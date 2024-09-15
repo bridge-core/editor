@@ -17,11 +17,11 @@ const t = useTranslate()
 			:icon="ActionManager.actions[action]?.icon ?? 'help'"
 			class="text-base text-primary transition-colors duration-100 ease-out"
 		/>
-		<span class="ml-2 font-inter select-none min-w-max mr-2">{{
+		<span class="ml-2 font-theme select-none min-w-max mr-2">{{
 			t(ActionManager.actions[action]?.name ?? 'actions.unknown.name')
 		}}</span>
 
-		<span v-if="ActionManager.actions[action]?.keyBinding" class="min-w-max text-text-secondary ml-auto font-inter">
+		<span v-if="ActionManager.actions[action]?.keyBinding" class="min-w-max text-text-secondary ml-auto font-theme">
 			{{ ActionManager.actions[action].keyBinding }}
 		</span>
 	</div>

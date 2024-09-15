@@ -11,6 +11,7 @@ enum ThemeSettings {
 	ColorScheme = 'colorScheme',
 	DarkTheme = 'darkTheme',
 	LightTheme = 'lightTheme',
+	FontOverride = 'fontOverride',
 }
 
 export class ThemeManager {
@@ -34,17 +35,29 @@ export class ThemeManager {
 			default: 'bridge.default.light',
 		})
 
+		Settings.addSetting(ThemeSettings.FontOverride, {
+			default: 'None',
+		})
+
 		Settings.updated.on((event) => {
 			const { id, value } = event as { id: string; value: any }
 
-			if (!['colorScheme', 'darkTheme', 'lightTheme'].includes(id)) return
+			if (
+				!(<string[]>[
+					ThemeSettings.ColorScheme,
+					ThemeSettings.DarkTheme,
+					ThemeSettings.LightTheme,
+					ThemeSettings.FontOverride,
+				]).includes(id)
+			)
+				return
 
-			const colorScheme = Settings.get('colorScheme')
+			const colorScheme = Settings.get(ThemeSettings.ColorScheme)
 
-			let themeId = Settings.get('darkTheme')
+			let themeId = Settings.get(ThemeSettings.DarkTheme)
 
 			if (colorScheme === 'light' || (colorScheme === 'auto' && !ThemeManager.prefersDarkMode()))
-				themeId = Settings.get('lightTheme')
+				themeId = Settings.get(ThemeSettings.LightTheme)
 
 			ThemeManager.applyTheme(themeId as string)
 		})
@@ -111,6 +124,9 @@ export class ThemeManager {
 		for (const name of colorNames) {
 			root.style.setProperty(`--theme-color-${name}`, theme.colors[name])
 		}
+
+		const fontOverride: string | null = Settings.get(ThemeSettings.FontOverride)
+		root.style.setProperty('--theme-font', (fontOverride !== 'None' ? fontOverride : null) ?? theme.font ?? 'Inter')
 
 		set('lastUsedTheme', JSON.stringify(theme))
 

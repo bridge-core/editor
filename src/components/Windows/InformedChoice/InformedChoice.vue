@@ -21,7 +21,7 @@ function cancel() {
 <template>
 	<Window :name="t(window.name)" @close="cancel">
 		<div class="p-4 pb-1 pt-0">
-			<p class="mb-4 max-w-sm font-inter flex flex-col gap-4">
+			<p class="mb-4 max-w-sm font-theme flex flex-col gap-4">
 				<div v-for="choice in window.choices" class="bg-background-secondary p-4 rounded border-background hover:border-accent border-2 transition-colors duration-100 ease-out group cursor-pointer" @click="() => {
 					choice.choose()
 
@@ -30,10 +30,10 @@ function cancel() {
 					<span class="flex gap-2 items-center mb-1">
 						<Icon :icon="choice.icon"/>
 
-						<h1 class="font-inter font-bold text-lg">{{ t(choice.name) }}</h1>
+						<h1 class="font-theme font-bold text-lg">{{ t(choice.name) }}</h1>
 					</span>
 
-					<p class="font-inter">{{ t(choice.description) }}</p>
+					<p class="font-theme">{{ t(choice.description) }}</p>
 				</div>
 			</p>
 		</div>

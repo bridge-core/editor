@@ -113,7 +113,7 @@ onUnmounted(() => {
 				<input
 					ref="inputElement"
 					@focus="interact(focus)"
-					class="outline-none border-none bg-transparent font-inter flex-1"
+					class="outline-none border-none bg-transparent font-theme flex-1"
 					:value="model"
 					@keyup="enter"
 					@input="updateInput"

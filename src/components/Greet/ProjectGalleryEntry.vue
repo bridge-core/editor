@@ -30,7 +30,7 @@ defineProps({
 			/>
 		</div>
 
-		<p class="text-sm text-center mt-auto mb-auto ml-0.5 mr-0.5 font-inter font-medium">
+		<p class="text-sm text-center mt-auto mb-auto ml-0.5 mr-0.5 font-theme font-medium">
 			{{ name }}
 		</p>
 

@@ -25,7 +25,7 @@
 					<Icon v-if="tab.icon" :icon="tab.icon.value ?? 'help'" class="text-base text-behaviorPack" />
 				</span>
 
-				<span class="font-inter select-none">{{ tab.name.value ?? 'Tab' }}</span>
+				<span class="font-theme select-none">{{ tab.name.value ?? 'Tab' }}</span>
 
 				<IconButton icon="close" class="text-base" @click.stop="() => instance.removeTab(tab)" />
 			</div>

@@ -22,6 +22,6 @@ const t = useTranslate()
 		class="flex item-center group hover:bg-background-tertiary p-2 px-4 cursor-pointer transition-colors duration-100 ease-out rounded"
 	>
 		<Icon :icon="icon" class="text-base text-primary transition-colors duration-100 ease-out" />
-		<span class="ml-2 font-inter select-none min-w-max">{{ t(text) }}</span>
+		<span class="ml-2 font-theme select-none min-w-max">{{ t(text) }}</span>
 	</div>
 </template>

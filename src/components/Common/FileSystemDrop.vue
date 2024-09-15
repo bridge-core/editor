@@ -37,7 +37,7 @@ async function dropped(event: DragEvent) {
 		@dragover.prevent
 		@drop="dropped"
 	>
-		<span class="font-inter text-text-secondary select-none pointer-events-none">
+		<span class="font-theme text-text-secondary select-none pointer-events-none">
 			{{ text }}
 		</span>
 	</div>
