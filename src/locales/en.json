@@ -124,6 +124,7 @@
 		"terrainTexture": "Terrain Texture",
 		"flipbookTexture": "Flipbook Texture",
 		"clientBiome": "Client Biome",
+		"biomesClient": "Biomes Client",
 		"soundDefinition": "Sound Definition",
 		"musicDefinition": "Music Definition",
 		"clientSound": "Client Sound",
