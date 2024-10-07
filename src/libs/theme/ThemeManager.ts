@@ -11,7 +11,8 @@ enum ThemeSettings {
 	ColorScheme = 'colorScheme',
 	DarkTheme = 'darkTheme',
 	LightTheme = 'lightTheme',
-	FontOverride = 'fontOverride',
+	Font = 'font',
+	EditorFont = 'editorFont',
 }
 
 export class ThemeManager {
@@ -35,8 +36,12 @@ export class ThemeManager {
 			default: 'bridge.default.light',
 		})
 
-		Settings.addSetting(ThemeSettings.FontOverride, {
-			default: 'None',
+		Settings.addSetting(ThemeSettings.Font, {
+			default: 'Inter',
+		})
+
+		Settings.addSetting(ThemeSettings.EditorFont, {
+			default: 'Consolas',
 		})
 
 		Settings.updated.on((event) => {
@@ -47,7 +52,8 @@ export class ThemeManager {
 					ThemeSettings.ColorScheme,
 					ThemeSettings.DarkTheme,
 					ThemeSettings.LightTheme,
-					ThemeSettings.FontOverride,
+					ThemeSettings.Font,
+					ThemeSettings.EditorFont,
 				]).includes(id)
 			)
 				return
@@ -125,8 +131,8 @@ export class ThemeManager {
 			root.style.setProperty(`--theme-color-${name}`, theme.colors[name])
 		}
 
-		const fontOverride: string | null = Settings.get(ThemeSettings.FontOverride)
-		root.style.setProperty('--theme-font', (fontOverride !== 'None' ? fontOverride : null) ?? theme.font ?? 'Inter')
+		root.style.setProperty('--theme-font', Settings.get(ThemeSettings.Font))
+		root.style.setProperty('--theme-font-editor', Settings.get(ThemeSettings.EditorFont))
 
 		set('lastUsedTheme', JSON.stringify(theme))
 

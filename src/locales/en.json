@@ -927,10 +927,6 @@
 					"name": "Font",
 					"description": "Change the font that is used inside of bridge.'s user interface"
 				},
-				"fontOverride": {
-					"name": "Font Override",
-					"description": "Override the font that is used inside of bridge.'s user interface instead of the one provided by the active theme"
-				},
 				"hideToolbarItems": {
 					"name": "Hide Toolbar Items",
 					"description": "Make bridge. feel at home on MacOS: Move all toolbar items into a new menu button"

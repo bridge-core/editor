@@ -4,7 +4,6 @@ export const dark = {
 	id: 'bridge.default.dark',
 	name: 'Default Dark',
 	colorScheme: 'dark',
-	font: 'Inter',
 	colors: {
 		primary: '#0073FF',
 		accent: '#ffffff',
@@ -72,7 +71,6 @@ export const light = {
 	id: 'bridge.default.light',
 	name: 'Default Light',
 	colorScheme: 'light',
-	font: 'Inter',
 	colors: {
 		primary: '#0073FF',
 		secondary: '#0073FF',

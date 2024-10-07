@@ -41,6 +41,7 @@ module.exports = {
 			},
 			fontFamily: {
 				theme: 'var(--theme-font)',
+				'theme-editor': 'var(--theme-font-editor)',
 				inter: ['Inter', 'ui-sans-serif', 'system-ui', 'Segoe UI', 'Roboto', 'sans-serif'],
 			},
 		},

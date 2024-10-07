@@ -113,7 +113,8 @@ export class TextTab extends FileTab {
 			Settings.updated.on((event: { id: string; value: any } | undefined) => {
 				if (!event) return
 
-				if (['wordWrap', 'wordWrapColumns', 'bracketPairColorization'].includes(event.id)) this.remountEditor()
+				if (['wordWrap', 'wordWrapColumns', 'bracketPairColorization', 'editorFont'].includes(event.id))
+					this.remountEditor()
 			})
 		)
 	}
@@ -153,7 +154,7 @@ export class TextTab extends FileTab {
 		this.disposables.push(ThemeManager.themeChanged.on(this.updateEditorTheme.bind(this)))
 
 		this.editor = monaco.create(element, {
-			fontFamily: 'Consolas',
+			fontFamily: Settings.get('editorFont'),
 			//@ts-ignore Monaco types have not been update yet
 			'bracketPairColorization.enabled': Settings.get('bracketPairColorization'),
 			wordWrap: Settings.get<boolean>('wordWrap') ? 'wordWrapColumn' : 'off',

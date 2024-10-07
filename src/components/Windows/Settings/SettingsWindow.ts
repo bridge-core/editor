@@ -147,25 +147,10 @@ function setupAppearanceCategory() {
 		labels: computed(() => lightThemes.value.map((theme) => theme.name)),
 	})
 
-	SettingsWindow.addItem('appearance', 'fontOverride', <DropdownItem>{
+	SettingsWindow.addItem('appearance', 'font', <DropdownItem>{
 		type: 'dropdown',
-		label: 'windows.settings.appearance.fontOverride.name',
+		label: 'windows.settings.appearance.font.name',
 		values: computed(() => [
-			'None',
-			'Inter',
-			'Roboto',
-			'Arial',
-			'Verdana',
-			'Helvetica',
-			'Tahome',
-			'Trebuchet MS',
-			'Menlo',
-			'Monaco',
-			'Courier New',
-			'Monospace',
-		]),
-		labels: computed(() => [
-			'None',
 			'Inter',
 			'Roboto',
 			'Arial',
@@ -178,6 +163,26 @@ function setupAppearanceCategory() {
 			'Courier New',
 			'monospace',
 		]),
+		labels: computed(() => [
+			'Inter',
+			'Roboto',
+			'Arial',
+			'Verdana',
+			'Helvetica',
+			'Tahome',
+			'Trebuchet MS',
+			'Menlo',
+			'Monaco',
+			'Courier New',
+			'Monospace',
+		]),
+	})
+
+	SettingsWindow.addItem('appearance', 'editorFont', <DropdownItem>{
+		type: 'dropdown',
+		label: 'windows.settings.appearance.editorFont.name',
+		values: computed(() => ['Roboto', 'Arial', 'Consolas', 'Menlo', 'Monaco', '"Courier New"', 'monospace']),
+		labels: computed(() => ['Roboto', 'Arial', 'Consolas', 'Menlo', 'Monaco', '"Courier New"', 'Monospace']),
 	})
 }
 
