@@ -39,6 +39,9 @@ module.exports = {
 			boxShadow: {
 				window: '0 0 16px -2px rgb(0, 0, 0, 0.4)',
 			},
+			fontSize: {
+				'theme-editor': 'var(--theme-font-size-editor)',
+			},
 			fontFamily: {
 				theme: 'var(--theme-font)',
 				'theme-editor': 'var(--theme-font-editor)',

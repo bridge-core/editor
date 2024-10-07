@@ -245,7 +245,7 @@ defineExpose({ open })
 					@click.stop="toggleOpen"
 				/>
 
-				<span v-if="typeof elementKey === 'string'" class="select-none font-theme-editor">
+				<span v-if="typeof elementKey === 'string'" class="select-none font-theme-editor text-theme-editor">
 					"<HighlightedText
 						:known-words="(editor as TreeEditorTab).knownWords"
 						:value="elementKey"
@@ -265,7 +265,7 @@ defineExpose({ open })
 
 			<span
 				v-else
-				class="select-none px-1 bg-[var(--color)] hover:bg-background-secondary rounded transition-colors ease-out duration-100 cursor-pointer font-theme-editor"
+				class="select-none px-1 bg-[var(--color)] hover:bg-background-secondary rounded transition-colors ease-out duration-100 cursor-pointer font-theme-editor text-theme-editor"
 				:style="{
 					'--color': valueSelected ? 'var(--theme-color-backgroundSecondary)' : 'none',
 				}"
@@ -298,7 +298,7 @@ defineExpose({ open })
 			</div>
 
 			<span
-				class="select-none px-1 bg-[var(--color)] hover:bg-background-secondary rounded transition-colors ease-out duration-100 cursor-pointer font-theme-editor"
+				class="select-none px-1 bg-[var(--color)] hover:bg-background-secondary rounded transition-colors ease-out duration-100 cursor-pointer font-theme-editor text-theme-editor"
 				:style="{
 					'--color': valueSelected ? 'var(--theme-color-backgroundSecondary)' : 'none',
 				}"

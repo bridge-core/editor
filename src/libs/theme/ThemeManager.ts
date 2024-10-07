@@ -13,6 +13,7 @@ enum ThemeSettings {
 	LightTheme = 'lightTheme',
 	Font = 'font',
 	EditorFont = 'editorFont',
+	EditorFontSize = 'editorFontSize',
 }
 
 export class ThemeManager {
@@ -44,6 +45,10 @@ export class ThemeManager {
 			default: 'Consolas',
 		})
 
+		Settings.addSetting(ThemeSettings.EditorFontSize, {
+			default: 14,
+		})
+
 		Settings.updated.on((event) => {
 			const { id, value } = event as { id: string; value: any }
 
@@ -54,6 +59,7 @@ export class ThemeManager {
 					ThemeSettings.LightTheme,
 					ThemeSettings.Font,
 					ThemeSettings.EditorFont,
+					ThemeSettings.EditorFontSize,
 				]).includes(id)
 			)
 				return
@@ -133,6 +139,7 @@ export class ThemeManager {
 
 		root.style.setProperty('--theme-font', Settings.get(ThemeSettings.Font))
 		root.style.setProperty('--theme-font-editor', Settings.get(ThemeSettings.EditorFont))
+		root.style.setProperty('--theme-font-size-editor', Settings.get(ThemeSettings.EditorFontSize) + 'px')
 
 		set('lastUsedTheme', JSON.stringify(theme))
 

@@ -15,29 +15,27 @@ interface Category {
 	icon: string
 }
 
-interface Item {
-	type: string
-}
+type Item = CustomItem | DropdownItem | AutocompleteItem | ToggleItem
 
-export interface CustomItem extends Item {
+export interface CustomItem {
 	type: 'custom'
 	component: any
 }
 
-export interface DropdownItem extends Item {
+export interface DropdownItem {
 	type: 'dropdown'
 	label: string
 	values: ComputedRef<string[]>
 	labels: ComputedRef<string[]>
 }
 
-export interface AutocompleteItem extends Item {
+export interface AutocompleteItem {
 	type: 'autocomplete'
 	label: string
 	completions: ComputedRef<CompletionItem[]>
 }
 
-export interface ToggleItem extends Item {
+export interface ToggleItem {
 	type: 'toggle'
 	label: string
 }
@@ -85,7 +83,7 @@ function setupProjectsCategory() {
 		icon: 'folder',
 	})
 
-	SettingsWindow.addItem('projects', 'outputFolder', <CustomItem>{
+	SettingsWindow.addItem('projects', 'outputFolder', {
 		type: 'custom',
 		component: OutputFolder,
 	})
@@ -97,7 +95,7 @@ function setupGeneralCategory() {
 		icon: 'circle',
 	})
 
-	SettingsWindow.addItem('general', 'language', <DropdownItem>{
+	SettingsWindow.addItem('general', 'language', {
 		type: 'dropdown',
 		label: 'windows.settings.general.language.name',
 		values: computed(() => LocaleManager.getAvailableLanguages().map((language) => language.text)),
@@ -111,7 +109,7 @@ function setupActionsCategory() {
 		icon: 'keyboard',
 	})
 
-	SettingsWindow.addItem('actions', 'actionsList', <CustomItem>{
+	SettingsWindow.addItem('actions', 'actionsList', {
 		type: 'custom',
 		component: ActionsList,
 	})
@@ -123,7 +121,7 @@ function setupAppearanceCategory() {
 		icon: 'palette',
 	})
 
-	SettingsWindow.addItem('appearance', 'colorScheme', <CustomItem>{
+	SettingsWindow.addItem('appearance', 'colorScheme', {
 		type: 'custom',
 		component: ColorScheme,
 	})
@@ -133,21 +131,21 @@ function setupAppearanceCategory() {
 	const darkThemes = computed(() => themes.value.filter((theme) => theme.colorScheme === 'dark'))
 	const lightThemes = computed(() => themes.value.filter((theme) => theme.colorScheme === 'light'))
 
-	SettingsWindow.addItem('appearance', 'darkTheme', <DropdownItem>{
+	SettingsWindow.addItem('appearance', 'darkTheme', {
 		type: 'dropdown',
 		label: 'windows.settings.appearance.darkTheme.name',
 		values: computed(() => darkThemes.value.map((theme) => theme.id)),
 		labels: computed(() => darkThemes.value.map((theme) => theme.name)),
 	})
 
-	SettingsWindow.addItem('appearance', 'lightTheme', <DropdownItem>{
+	SettingsWindow.addItem('appearance', 'lightTheme', {
 		type: 'dropdown',
 		label: 'windows.settings.appearance.lightTheme.name',
 		values: computed(() => lightThemes.value.map((theme) => theme.id)),
 		labels: computed(() => lightThemes.value.map((theme) => theme.name)),
 	})
 
-	SettingsWindow.addItem('appearance', 'font', <DropdownItem>{
+	SettingsWindow.addItem('appearance', 'font', {
 		type: 'dropdown',
 		label: 'windows.settings.appearance.font.name',
 		values: computed(() => [
@@ -178,11 +176,23 @@ function setupAppearanceCategory() {
 		]),
 	})
 
-	SettingsWindow.addItem('appearance', 'editorFont', <DropdownItem>{
+	SettingsWindow.addItem('appearance', 'editorFont', {
 		type: 'dropdown',
 		label: 'windows.settings.appearance.editorFont.name',
 		values: computed(() => ['Roboto', 'Arial', 'Consolas', 'Menlo', 'Monaco', '"Courier New"', 'monospace']),
 		labels: computed(() => ['Roboto', 'Arial', 'Consolas', 'Menlo', 'Monaco', '"Courier New"', 'Monospace']),
+	})
+
+	SettingsWindow.addItem('appearance', 'editorFontSize', {
+		type: 'autocomplete',
+		label: 'windows.settings.appearance.editorFontSize.name',
+		completions: computed(() =>
+			[8, 10, 12, 14, 16, 18, 20].map((value) => ({
+				type: 'value',
+				label: value.toString(),
+				value,
+			}))
+		),
 	})
 }
 
@@ -192,24 +202,24 @@ function setupEditorCategory() {
 		icon: 'edit',
 	})
 
-	SettingsWindow.addItem('editor', 'jsonEditor', <DropdownItem>{
+	SettingsWindow.addItem('editor', 'jsonEditor', {
 		type: 'dropdown',
 		label: 'windows.settings.editor.jsonEditor.name',
 		labels: computed(() => ['Raw Text Editor', 'Tree Editor']),
 		values: computed(() => ['text', 'tree']),
 	})
 
-	SettingsWindow.addItem('editor', 'bracketPairColorization', <ToggleItem>{
+	SettingsWindow.addItem('editor', 'bracketPairColorization', {
 		type: 'toggle',
 		label: 'windows.settings.editor.bracketPairColorization.name',
 	})
 
-	SettingsWindow.addItem('editor', 'wordWrap', <ToggleItem>{
+	SettingsWindow.addItem('editor', 'wordWrap', {
 		type: 'toggle',
 		label: 'windows.settings.editor.wordWrap.name',
 	})
 
-	SettingsWindow.addItem('editor', 'wordWrapColumns', <AutocompleteItem>{
+	SettingsWindow.addItem('editor', 'wordWrapColumns', {
 		type: 'autocomplete',
 		label: 'windows.settings.editor.wordWrapColumns.name',
 		completions: computed(() =>
@@ -221,12 +231,12 @@ function setupEditorCategory() {
 		),
 	})
 
-	SettingsWindow.addItem('editor', 'bridgePredictions', <ToggleItem>{
+	SettingsWindow.addItem('editor', 'bridgePredictions', {
 		type: 'toggle',
 		label: 'windows.settings.editor.bridgePredictions.name',
 	})
 
-	SettingsWindow.addItem('editor', 'inlineDiagnostics', <ToggleItem>{
+	SettingsWindow.addItem('editor', 'inlineDiagnostics', {
 		type: 'toggle',
 		label: 'windows.settings.editor.inlineTreeEditorDiagnostics.name',
 	})
@@ -238,7 +248,7 @@ function setupDeveloperCategory() {
 		icon: 'code',
 	})
 
-	SettingsWindow.addItem('developer', 'dataDeveloperMode', <ToggleItem>{
+	SettingsWindow.addItem('developer', 'dataDeveloperMode', {
 		type: 'toggle',
 		label: 'windows.settings.developer.dataDeveloperMode.name',
 	})

@@ -34,22 +34,22 @@ const value = computed(() => (props.tree instanceof ValueElement ? props.tree.va
 		@click.stop="click"
 		@contextmenu.prevent.stop="(event: MouseEvent) => emit('opencontextmenu', { selection: { type: 'value', tree }, event })"
 	>
-		<span v-if="tree instanceof ObjectElement" class="select-none flex font-theme-editor">{{
+		<span v-if="tree instanceof ObjectElement" class="select-none flex font-theme-editor text-theme-editor">{{
 			Object.keys(tree.children).length === 0 ? '{}' : '{...}'
 		}}</span>
 
-		<span v-else-if="tree instanceof ArrayElement" class="select-none flex font-theme-editor">{{
+		<span v-else-if="tree instanceof ArrayElement" class="select-none flex font-theme-editor text-theme-editor">{{
 			tree.children.length === 0 ? '[]' : '[...]'
 		}}</span>
 
 		<span
 			v-else-if="tree instanceof ValueElement && typeof value === 'string'"
-			class="select-none font-theme-editor"
+			class="select-none font-theme-editor text-theme-editor"
 		>
 			"<HighlightedText :known-words="editor.knownWords" :value="value" type="string" />"
 		</span>
 
-		<span v-else-if="tree instanceof ValueElement" class="select-none font-theme-editor">
+		<span v-else-if="tree instanceof ValueElement" class="select-none font-theme-editor text-theme-editor">
 			<HighlightedText
 				:known-words="editor.knownWords"
 				:value="value === null ? 'null' : value.toString()"
