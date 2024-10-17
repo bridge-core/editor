@@ -9,6 +9,7 @@ import { LocaleManager } from '@/libs/locales/Locales'
 import { Window } from '../Window'
 import Settings from './Settings.vue'
 import { CompletionItem } from '@/libs/jsonSchema/Schema'
+import SidebarSize from './Appearance/SidebarSize.vue'
 
 interface Category {
 	label: string
@@ -19,6 +20,7 @@ type Item = CustomItem | DropdownItem | AutocompleteItem | ToggleItem
 
 export interface CustomItem {
 	type: 'custom'
+	label: string
 	component: any
 }
 
@@ -123,6 +125,7 @@ function setupAppearanceCategory() {
 
 	SettingsWindow.addItem('appearance', 'colorScheme', {
 		type: 'custom',
+		label: 'windows.settings.appearance.colorScheme.name',
 		component: ColorScheme,
 	})
 
@@ -199,6 +202,15 @@ function setupAppearanceCategory() {
 		type: 'toggle',
 		label: 'windows.settings.sidebar.sidebarRight.name',
 	})
+	SettingsWindow.addItem('appearance', 'shrinkSidebarElements', {
+		type: 'toggle',
+		label: 'windows.settings.sidebar.shrinkSidebarElements.name'
+	})
+	SettingsWindow.addItem('appearance', 'sidebarSize', {
+		type: 'custom',
+		label: 'windows.settings.sidebar.sidebarSize.name',
+		component: SidebarSize
+	})
 }
 
 function setupEditorCategory() {
@@ -212,6 +224,11 @@ function setupEditorCategory() {
 		label: 'windows.settings.editor.jsonEditor.name',
 		labels: computed(() => ['Raw Text Editor', 'Tree Editor']),
 		values: computed(() => ['text', 'tree']),
+	})
+
+	SettingsWindow.addItem('editor', 'formatOnSave', {
+		type: 'toggle',
+		label: 'windows.settings.general.formatOnSave.name'
 	})
 
 	SettingsWindow.addItem('editor', 'bracketPairColorization', {

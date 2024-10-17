@@ -194,7 +194,9 @@ export class TextTab extends FileTab {
 
 		this.icon.value = 'loading'
 
-		await this.format()
+		if (Settings.get('formatOnSave')) {
+			await this.format()
+		}
 
 		this.initialVersionId = this.model.getVersionId()
 		this.modified.value = false

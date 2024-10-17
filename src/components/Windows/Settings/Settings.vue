@@ -94,7 +94,12 @@ const isMobile = useIsMobile()
 					v-for="[id, item] in Object.entries(SettingsWindow.items[SettingsWindow.selectedCategory.value])"
 					class="flex gap-6 items-center"
 				>
-					<component v-if="item.type === 'custom'" :is="(item as CustomItem).component" :item="item" />
+					<div v-if="item.type === 'custom'">
+						<h2 v-if="(item as CustomItem).label" class="mb-2 text-text font-theme">
+							{{ t((item as CustomItem).label) }}
+						</h2>
+						<component :is="(item as CustomItem).component" :item="item" />
+					</div>
 
 					<Dropdown v-if="item.type === 'dropdown'" class="mb-4 flex-1">
 						<template #main="{ expanded, toggle }">
@@ -146,7 +151,7 @@ const isMobile = useIsMobile()
 						</template>
 					</Dropdown>
 
-					<div v-if="item.type === 'toggle'">
+					<div v-if="item.type === 'toggle'" class="mt-2 mb-2">
 						<h2 class="mb-2 text-text font-theme">{{ t((item as ToggleItem).label) }}</h2>
 
 						<Switch :model-value="get(id)" @update:model-value="(value) => Settings.set(id, value)" />
