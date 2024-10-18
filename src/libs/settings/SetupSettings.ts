@@ -10,6 +10,10 @@ export function setupEditorSettings() {
 		default: JSONEditorOptions.TreeEditor,
 	})
 
+	Settings.addSetting('formatOnSave', {
+		default: true
+	})
+
 	Settings.addSetting('keepTabsOpen', {
 		default: false,
 	})
