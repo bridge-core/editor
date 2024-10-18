@@ -22,8 +22,10 @@ import { ActionManager } from '@/libs/actions/ActionManager'
 import { Windows } from '@/components/Windows/Windows'
 import { PresetsWindow } from '@/components/Windows/Presets/PresetsWindow'
 import { Disposable } from '@/libs/disposeable/Disposeable'
+import { Settings } from '@/libs/settings/Settings'
 
 const t = useTranslate()
+const get = Settings.useGet()
 
 const currentProject = ProjectManager.useCurrentProject()
 
@@ -122,7 +124,16 @@ function executeContextMenuAction(action: string, data: any) {
 </script>
 
 <template>
-	<div class="max-w-sm w-full h-full mt-2 flex flex-col gap-2" v-if="FileExplorer.open.value">
+	<div
+		class="w-full h-full mt-2 flex flex-col flex-wrap gap-2"
+		:class="{
+			'w-1/12': get('sidebarSize') === 'small',
+			'w-2/12': get('sidebarSize') === 'normal',
+			'w-3/12': get('sidebarSize') === 'large',
+			'w-4/12': get('sidebarSize') === 'x-large',
+		}"
+		v-if="FileExplorer.open.value"
+	>
 		<div class="bg-background-secondary rounded h-16 flex items-center p-3 gap-3">
 			<img :src="currentProject?.icon ?? ''" class="w-10 h-10 select-none" />
 			<p class="text-3xl select-none font-theme font-medium truncate">
