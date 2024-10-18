@@ -125,12 +125,12 @@ function executeContextMenuAction(action: string, data: any) {
 
 <template>
 	<div
-		class="w-full h-full mt-2 flex flex-col flex-wrap gap-2"
+		class="max-w-full h-full mt-2 flex flex-col gap-2"
 		:class="{
-			'w-1/12': get('sidebarSize') === 'small',
-			'w-2/12': get('sidebarSize') === 'normal',
-			'w-3/12': get('sidebarSize') === 'large',
-			'w-4/12': get('sidebarSize') === 'x-large',
+			'w-2/12': get('sidebarSize') === 'small',
+			'w-3/12': get('sidebarSize') === 'normal',
+			'w-4/12': get('sidebarSize') === 'large',
+			'w-6/12': get('sidebarSize') === 'x-large',
 		}"
 		v-if="FileExplorer.open.value"
 	>

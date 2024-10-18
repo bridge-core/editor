@@ -5,6 +5,10 @@ import { Settings } from '@/libs/settings/Settings'
 const t = useTranslate()
 const get = Settings.useGet()
 
+Settings.addSetting('sidebarSize', {
+	default: 'normal',
+})
+
 defineProps(['item'])
 </script>
 
