@@ -57,7 +57,7 @@ jobs:
             #       args: --target aarch64-apple-darwin
 
             - name: Build the app 💻
-              uses: tauri-apps/tauri-action@v0
+              uses: bridge-core/tauri-action@dev
 
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
