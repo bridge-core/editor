@@ -606,7 +606,7 @@
 		},
 		"creationOfCustomBiomes": {
 			"name": "Creation of Custom Biomes",
-			"description": "Enables the creation of custom biomes, features and feature rules."
+			"description": "Enables the creation of custom biomes."
 		},
 		"additionalModdingCapabilities": {
 			"name": "Additional Modding Capabilities",
@@ -614,7 +614,7 @@
 		},
 		"upcomingCreatorFeatures": {
 			"name": "Upcoming Creator Features",
-			"description": "Enables the creation of fog volume files and provides auto-completions for entity properties."
+			"description": "Enables auto-completions for experimental creator features."
 		},
 		"enableGameTestFramework": {
 			"name": "Beta APIs",
@@ -623,6 +623,14 @@
 		"experimentalMolangFeatures": {
 			"name": "Experimental Molang Features",
 			"description": "Enables auto-completions for experimental Molang queries."
+		},
+		"dataDrivenJigsawStructures": {
+			"name": "Data Driven Jigsaw Structures",
+			"description": "Enables the creation of jigsaw structures, template pools, processor lists, and structure sets."
+		},
+		"aimAssist": {
+			"name": "Aim Assist",
+			"description": "Enables the creation of aim assist presets and categories."
 		},
 		"theWildUpdate": {
 			"name": "The Wild Update",
