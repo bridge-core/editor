@@ -1,6 +1,6 @@
 {
 	"name": "bridge",
-	"version": "2.7.38",
+	"version": "2.7.41",
 	"private": true,
 	"scripts": {
 		"dev": "vite",
