@@ -624,6 +624,10 @@
 			"name": "Experimental Molang Features",
 			"description": "Enables auto-completions for experimental Molang queries."
 		},
+		"focusTargetCamera": {
+			"name": "Creator Cameras: Focus Target Camera",
+			"description": "Enables auto-completions for camera entity targeting."
+		},
 		"dataDrivenJigsawStructures": {
 			"name": "Data Driven Jigsaw Structures",
 			"description": "Enables the creation of jigsaw structures, template pools, processor lists, and structure sets."
