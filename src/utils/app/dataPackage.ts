@@ -1,1 +1,1 @@
-export const zipSize = 899077
+export const zipSize = 899466
