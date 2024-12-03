@@ -7,6 +7,7 @@ import { TabManager } from '@/components/TabSystem/TabManager'
 import { basename } from 'pathe'
 import { ref, Ref } from 'vue'
 import { ActionManager } from '@/libs/actions/ActionManager'
+import { FileExplorer } from './FileExplorer'
 
 const contextMenu: Ref<typeof FreeContextMenu | null> = ref(null)
 
@@ -32,12 +33,30 @@ function executeContextMenuAction(action: string, data: any) {
 
 	contextMenu.value.close()
 }
+
+function dragStart() {
+	requestAnimationFrame(() => {
+		FileExplorer.draggedItem.value = path
+	})
+}
+
+function dragEnd() {
+	FileExplorer.draggedItem.value = null
+}
+
+function drop() {}
 </script>
 
 <template>
 	<div
-		class="flex items-center gap-2 cursor-pointer hover:bg-background-tertiary transition-colors duration-100 ease-out"
+		v-show="FileExplorer.draggedItem.value !== path"
+		class="flex items-center gap-2 cursor-pointer hover:bg-background-tertiary transition-colors duration-100 ease-out rounded pl-1"
 		@click="click"
+		draggable="true"
+		@drag=""
+		@dragstart="dragStart"
+		@dragend="dragEnd"
+		@drop="drop"
 		@contextmenu.prevent.stop="contextMenu?.open"
 	>
 		<Icon icon="draft" :color="color" class="text-sm" />
