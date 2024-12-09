@@ -93,6 +93,8 @@ export class BaseFileSystem {
 	}
 
 	public async move(path: string, newPath: string) {
+		if (path === newPath) return
+
 		const entry = await this.getEntry(path)
 
 		if (entry.kind === 'directory') {

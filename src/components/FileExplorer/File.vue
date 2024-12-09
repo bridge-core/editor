@@ -103,8 +103,6 @@ function drop(event: DragEvent) {
 
 	if (!FileExplorer.draggedItem.value) return
 
-	console.log(join(dirname(props.path), basename(FileExplorer.draggedItem.value)))
-
 	fileSystem.move(FileExplorer.draggedItem.value, join(dirname(props.path), basename(FileExplorer.draggedItem.value)))
 
 	FileExplorer.draggedItem.value = null
