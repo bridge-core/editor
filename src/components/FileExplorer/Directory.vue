@@ -10,6 +10,7 @@ import { BaseEntry } from '@/libs/fileSystem/BaseFileSystem'
 import { fileSystem } from '@/libs/fileSystem/FileSystem'
 import { ActionManager } from '@/libs/actions/ActionManager'
 import { Disposable } from '@/libs/disposeable/Disposeable'
+import { FileExplorer } from './FileExplorer'
 
 const props = defineProps({
 	path: {
@@ -57,66 +58,106 @@ function executeContextMenuAction(action: string, data: any) {
 
 	contextMenu.value.close()
 }
+
+const draggingCount = ref(0)
+let expandTimeout: number | null = null
+
+function dragEnter(event: DragEvent) {
+	event.preventDefault()
+
+	// if (props.preview) return
+
+	if (!FileExplorer.draggedItem.value) return
+
+	if (draggingCount.value === 0) {
+		expandTimeout = setTimeout(() => {
+			expanded.value = true
+			expandTimeout = null
+		}, 200)
+	}
+
+	draggingCount.value++
+
+	event.stopPropagation()
+}
+
+function dragLeave(event: DragEvent) {
+	event.preventDefault()
+
+	// if (props.preview) return
+
+	if (!FileExplorer.draggedItem.value) return
+
+	draggingCount.value--
+
+	if (draggingCount.value === 0 && expandTimeout) {
+		clearTimeout(expandTimeout)
+	}
+
+	event.stopPropagation()
+}
 </script>
 
 <template>
-	<div
-		class="flex items-center gap-2 cursor-pointer hover:bg-background-tertiary transition-colors duration-100 ease-out rounded pl-1"
-		@click="expanded = !expanded"
-		@contextmenu.prevent.stop="contextMenu?.open"
-	>
-		<Icon :icon="expanded ? 'folder_open' : 'folder'" :color="color" class="text-sm" />
-
-		<span class="select-none font-theme"> {{ basename(path) }} </span>
-	</div>
-
-	<div class="ml-1 border-l pl-1 border-background-tertiary min-h-[1rem]" v-if="expanded">
+	<div @dragenter="dragEnter" @dragleave="dragLeave">
 		<div
-			v-for="entry in entries.toSorted((a, b) => (a.kind === 'file' ? 1 : 0) - (b.kind === 'file' ? 1 : 0))"
-			:key="entry.path"
+			class="flex items-center gap-2 cursor-pointer hover:bg-background-tertiary transition-colors duration-100 ease-out rounded pl-1"
+			@click="expanded = !expanded"
+			@contextmenu.prevent.stop="contextMenu?.open"
 		>
-			<File :path="entry.path" :color="color" v-if="entry.kind === 'file'" />
-			<Directory :path="entry.path" :color="color" v-if="entry.kind === 'directory'" />
-		</div>
-	</div>
+			<Icon :icon="expanded ? 'folder_open' : 'folder'" :color="color" class="text-sm" />
 
-	<FreeContextMenu ref="contextMenu">
-		<ContextMenuItem
-			icon="note_add"
-			text="Create File"
-			class="pt-4"
-			@click.stop="executeContextMenuAction('createFile', path)"
-		/>
-		<ContextMenuItem
-			icon="folder"
-			text="Create Folder"
-			@click.stop="executeContextMenuAction('createFolder', path)"
-		/>
-		<ContextMenuItem
-			icon="edit"
-			text="Rename"
-			@click.stop="executeContextMenuAction('renameFileSystemEntry', path)"
-		/>
-		<ContextMenuItem
-			icon="delete"
-			text="Delete"
-			@click.stop="executeContextMenuAction('deleteFileSystemEntry', path)"
-		/>
-		<ContextMenuItem
-			icon="folder_copy"
-			text="Duplicate"
-			@click.stop="executeContextMenuAction('duplicateFileSystemEntry', path)"
-		/>
-		<ContextMenuItem
-			icon="content_copy"
-			text="Copy"
-			@click.stop="executeContextMenuAction('copyFileSystemEntry', path)"
-		/>
-		<ContextMenuItem
-			icon="content_paste"
-			text="Paste"
-			class="pb-4"
-			@click.stop="executeContextMenuAction('pasteFileSystemEntry', path)"
-		/>
-	</FreeContextMenu>
+			<span class="select-none font-theme"> {{ basename(path) }} </span>
+		</div>
+
+		<div class="ml-1 border-l pl-1 border-background-tertiary min-h-[1rem]" v-if="expanded">
+			<div
+				v-for="entry in entries.toSorted((a, b) => (a.kind === 'file' ? 1 : 0) - (b.kind === 'file' ? 1 : 0))"
+				:key="entry.path"
+			>
+				<File :path="entry.path" :color="color" v-if="entry.kind === 'file'" />
+				<Directory :path="entry.path" :color="color" v-if="entry.kind === 'directory'" />
+			</div>
+		</div>
+
+		<FreeContextMenu ref="contextMenu">
+			<ContextMenuItem
+				icon="note_add"
+				text="Create File"
+				class="pt-4"
+				@click.stop="executeContextMenuAction('createFile', path)"
+			/>
+			<ContextMenuItem
+				icon="folder"
+				text="Create Folder"
+				@click.stop="executeContextMenuAction('createFolder', path)"
+			/>
+			<ContextMenuItem
+				icon="edit"
+				text="Rename"
+				@click.stop="executeContextMenuAction('renameFileSystemEntry', path)"
+			/>
+			<ContextMenuItem
+				icon="delete"
+				text="Delete"
+				@click.stop="executeContextMenuAction('deleteFileSystemEntry', path)"
+			/>
+			<ContextMenuItem
+				icon="folder_copy"
+				text="Duplicate"
+				@click.stop="executeContextMenuAction('duplicateFileSystemEntry', path)"
+			/>
+			<ContextMenuItem
+				icon="content_copy"
+				text="Copy"
+				@click.stop="executeContextMenuAction('copyFileSystemEntry', path)"
+			/>
+			<ContextMenuItem
+				icon="content_paste"
+				text="Paste"
+				class="pb-4"
+				@click.stop="executeContextMenuAction('pasteFileSystemEntry', path)"
+			/>
+		</FreeContextMenu>
+	</div>
 </template>

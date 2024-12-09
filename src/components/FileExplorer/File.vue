@@ -47,7 +47,7 @@ const draggingAbove = ref(true)
 
 function dragStart() {
 	requestAnimationFrame(() => {
-		FileExplorer.draggedItem.value = props.path
+		FileExplorer.draggedItem.value = { kind: 'file', path: props.path }
 	})
 }
 
@@ -103,7 +103,10 @@ function drop(event: DragEvent) {
 
 	if (!FileExplorer.draggedItem.value) return
 
-	fileSystem.move(FileExplorer.draggedItem.value, join(dirname(props.path), basename(FileExplorer.draggedItem.value)))
+	fileSystem.move(
+		FileExplorer.draggedItem.value.path,
+		join(dirname(props.path), basename(FileExplorer.draggedItem.value.path))
+	)
 
 	FileExplorer.draggedItem.value = null
 }
@@ -122,13 +125,13 @@ function drop(event: DragEvent) {
 	>
 		<File
 			v-if="FileExplorer.draggedItem.value !== null && draggingOver && draggingAbove && !preview"
-			:path="FileExplorer.draggedItem.value ?? 'Error: No path dragged!'"
+			:path="FileExplorer.draggedItem.value.path ?? 'Error: No path dragged!'"
 			:color="color"
 			:preview="true"
 		/>
 
 		<div
-			v-show="FileExplorer.draggedItem.value !== path || preview"
+			v-show="FileExplorer.draggedItem.value?.path !== path || preview"
 			class="flex items-center gap-2 cursor-pointer hover:bg-background-tertiary transition-colors duration-100 ease-out rounded pl-1"
 			@click="click"
 			@contextmenu.prevent.stop="contextMenu?.open"
@@ -170,7 +173,7 @@ function drop(event: DragEvent) {
 
 		<File
 			v-if="FileExplorer.draggedItem.value !== null && draggingOver && !draggingAbove && !preview"
-			:path="FileExplorer.draggedItem.value ?? 'Error: No path dragged!'"
+			:path="FileExplorer.draggedItem.value.path ?? 'Error: No path dragged!'"
 			:color="color"
 			:preview="true"
 		/>
