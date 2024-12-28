@@ -171,7 +171,7 @@ function drop(event: DragEvent) {
 
 	fileSystem.move(
 		FileExplorer.draggedItem.value.path,
-		join(basename(selectedPackPath.value, FileExplorer.draggedItem.value.path))
+		join(selectedPackPath.value, basename(FileExplorer.draggedItem.value.path))
 	)
 
 	FileExplorer.draggedItem.value = null

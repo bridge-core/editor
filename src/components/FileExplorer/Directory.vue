@@ -87,6 +87,16 @@ const draggingOver = computed(() => draggingCount.value > 0)
 const draggingLocation: Ref<'inside' | 'above' | 'below'> = ref('inside')
 let expandTimeout: number | null = null
 
+function dragStart() {
+	requestAnimationFrame(() => {
+		FileExplorer.draggedItem.value = { kind: 'directory', path: props.path }
+	})
+}
+
+function dragEnd() {
+	FileExplorer.draggedItem.value = null
+}
+
 function dragEnter(event: DragEvent) {
 	event.preventDefault()
 
@@ -191,9 +201,15 @@ function drop(event: DragEvent) {
 
 		<div ref="dragOverElementContainer">
 			<div
-				class="flex items-center gap-2 cursor-pointer hover:bg-background-tertiary transition-colors duration-100 ease-out rounded pl-1"
+				class="flex items-center gap-2 cursor-pointer transition-colors duration-100 ease-out rounded pl-1"
+				:class="{
+					'hover:bg-background-tertiary': !FileExplorer.draggedItem.value,
+				}"
 				@click="expanded = !expanded"
 				@contextmenu.prevent.stop="contextMenu?.open"
+				@dragstart="dragStart"
+				@dragend="dragEnd"
+				:draggable="true"
 				ref="dragOverElement"
 			>
 				<Icon :icon="expanded ? 'folder_open' : 'folder'" :color="color" class="text-sm" />

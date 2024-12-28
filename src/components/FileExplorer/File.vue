@@ -4,11 +4,10 @@ import ContextMenuItem from '@/components/Common/ContextMenuItem.vue'
 import Icon from '@/components/Common/Icon.vue'
 
 import { TabManager } from '@/components/TabSystem/TabManager'
-import { basename, dirname, join } from 'pathe'
-import { computed, ref, Ref } from 'vue'
+import { basename } from 'pathe'
+import { ref, Ref } from 'vue'
 import { ActionManager } from '@/libs/actions/ActionManager'
 import { FileExplorer } from './FileExplorer'
-import { fileSystem } from '@/libs/fileSystem/FileSystem'
 
 const contextMenu: Ref<typeof FreeContextMenu | null> = ref(null)
 
