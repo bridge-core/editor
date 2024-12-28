@@ -15,7 +15,7 @@ import { FileImporter } from './FileImporter'
 export async function importFromMcAddon(arrayBuffer: ArrayBuffer, name: string) {
 	if (fileSystem instanceof PWAFileSystem && !fileSystem.setup) await selectOrLoadBridgeFolder()
 
-	console.time('[IMPORT] .mcaddon')
+	console.time('[Import] .mcaddon')
 
 	const buffer = new Uint8Array(arrayBuffer)
 
@@ -89,7 +89,7 @@ export async function importFromMcAddon(arrayBuffer: ArrayBuffer, name: string) 
 	await ProjectManager.loadProjects()
 	await ProjectManager.loadProject(projectName)
 
-	console.timeEnd('[IMPORT] .mcaddon')
+	console.timeEnd('[Import] .mcaddon')
 }
 
 export class AddonFileImporter extends FileImporter {

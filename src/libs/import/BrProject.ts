@@ -9,7 +9,7 @@ import { DirectoryImporter } from './DirectoryImporter'
 export async function importFromBrProject(arrayBuffer: ArrayBuffer, name: string) {
 	if (fileSystem instanceof PWAFileSystem && !fileSystem.setup) await selectOrLoadBridgeFolder()
 
-	console.time('[IMPORT] .brproject')
+	console.time('[Import] .brproject')
 
 	const buffer = new Uint8Array(arrayBuffer)
 
@@ -29,7 +29,7 @@ export async function importFromBrProject(arrayBuffer: ArrayBuffer, name: string
 	await ProjectManager.loadProjects()
 	await ProjectManager.loadProject(projectName)
 
-	console.timeEnd('[IMPORT] .brproject')
+	console.timeEnd('[Import] .brproject')
 }
 
 export class BrProjectFileImporter extends FileImporter {

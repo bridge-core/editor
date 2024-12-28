@@ -15,7 +15,7 @@ import { FileImporter } from './FileImporter'
 export async function importFromMcPack(arrayBuffer: ArrayBuffer, name: string) {
 	if (fileSystem instanceof PWAFileSystem && !fileSystem.setup) await selectOrLoadBridgeFolder()
 
-	console.time('[IMPORT] .mcpack')
+	console.time('[Import] .mcpack')
 
 	const buffer = new Uint8Array(arrayBuffer)
 
@@ -87,7 +87,7 @@ export async function importFromMcPack(arrayBuffer: ArrayBuffer, name: string) {
 	await ProjectManager.loadProjects()
 	await ProjectManager.loadProject(projectName)
 
-	console.timeEnd('[IMPORT] .mcpack')
+	console.timeEnd('[Import] .mcpack')
 }
 
 export class McPackFileImporter extends FileImporter {

@@ -126,7 +126,7 @@ export class ProjectManager {
 	}
 
 	public static async loadProject(name: string) {
-		console.time('[APP] Load Project')
+		console.time('[App] Load Project')
 
 		this.currentProject = new BedrockProject(name)
 
@@ -134,7 +134,7 @@ export class ProjectManager {
 
 		this.updatedCurrentProject.dispatch()
 
-		console.timeEnd('[APP] Load Project')
+		console.timeEnd('[App] Load Project')
 	}
 
 	public static async closeProject() {

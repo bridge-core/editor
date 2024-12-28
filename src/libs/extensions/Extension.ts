@@ -76,7 +76,7 @@ export class Extension {
 			}
 		}
 
-		console.log('[EXTENSION] Loaded:', this.manifest.name)
+		console.log('[Extension] Loaded:', this.manifest.name)
 	}
 
 	public async runScripts() {
