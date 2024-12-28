@@ -110,7 +110,7 @@ function dragLeave(event: DragEvent) {
 			<span class="select-none font-theme"> {{ basename(path) }} </span>
 		</div>
 
-		<div class="ml-1 border-l pl-1 border-background-tertiary min-h-[1rem]" v-if="expanded">
+		<div class="ml-1 border-l pl-1 border-background-tertiary min-h-[1rem]" v-if="expanded && entries.length > 0">
 			<div
 				v-for="entry in entries.toSorted((a, b) => (a.kind === 'file' ? 1 : 0) - (b.kind === 'file' ? 1 : 0))"
 				:key="entry.path"
