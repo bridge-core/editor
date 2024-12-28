@@ -13,7 +13,7 @@ import { TabManager } from '@/components/TabSystem/TabManager'
 import { fileSystem } from '@/libs/fileSystem/FileSystem'
 import { BaseEntry } from '@/libs/fileSystem/BaseFileSystem'
 import { ComputedRef, Ref, computed, onMounted, onUnmounted, ref, watch } from 'vue'
-import { join } from 'pathe'
+import { basename, join } from 'pathe'
 import { IPackType } from 'mc-project-core'
 import { BedrockProject } from '@/libs/project/BedrockProject'
 import { useTranslate } from '@/libs/locales/Locales'
@@ -60,6 +60,23 @@ const selectedPackPath: ComputedRef<string> = computed(() => {
 })
 
 const entries: Ref<BaseEntry[]> = ref([])
+const orderedEntries = computed(() =>
+	(FileExplorer.isItemDragging()
+		? draggingOver.value
+			? [
+					...entries.value.filter((entry) => entry.path !== FileExplorer.draggedItem.value!.path),
+					FileExplorer.draggedItem.value!,
+			  ]
+			: entries.value.filter((entry) => entry.path !== FileExplorer.draggedItem.value!.path)
+		: entries.value
+	)
+		.toSorted((a, b) => {
+			if (basename(a.path) < basename(b.path)) return -1
+			if (basename(a.path) > basename(b.path)) return 1
+			return 0
+		})
+		.toSorted((a, b) => (a.kind === 'file' ? 1 : -1) - (b.kind === 'file' ? 1 : -1))
+)
 
 async function updateEntries(path: unknown) {
 	if (typeof path !== 'string') return
@@ -120,6 +137,44 @@ function executeContextMenuAction(action: string, data: any) {
 	ActionManager.trigger(action, data)
 
 	contextMenu.value.close()
+}
+
+const draggingCount = ref(0)
+const draggingOver = computed(() => draggingCount.value > 0)
+
+function dragEnter(event: DragEvent) {
+	event.preventDefault()
+
+	if (!FileExplorer.draggedItem.value) return
+
+	draggingCount.value++
+
+	event.stopPropagation()
+}
+
+function dragLeave(event: DragEvent) {
+	event.preventDefault()
+
+	if (!FileExplorer.draggedItem.value) return
+
+	draggingCount.value--
+
+	event.stopPropagation()
+}
+
+function drop(event: DragEvent) {
+	draggingCount.value = 0
+
+	event.stopPropagation()
+
+	if (!FileExplorer.draggedItem.value) return
+
+	fileSystem.move(
+		FileExplorer.draggedItem.value.path,
+		join(basename(selectedPackPath.value, FileExplorer.draggedItem.value.path))
+	)
+
+	FileExplorer.draggedItem.value = null
 }
 </script>
 
@@ -251,18 +306,26 @@ function executeContextMenuAction(action: string, data: any) {
 				</ContextMenu>
 			</div>
 
-			<div class="h-full" @contextmenu.prevent="contextMenu?.open">
-				<div
-					v-for="entry in entries.toSorted(
-						(a, b) => (a.kind === 'file' ? 1 : 0) - (b.kind === 'file' ? 1 : 0)
-					)"
-					:key="entry.path"
-				>
-					<File :path="entry.path" :color="selectedPackDefinition!.color" v-if="entry.kind === 'file'" />
-					<Directory
+			<div
+				class="h-full"
+				@contextmenu.prevent="contextMenu?.open"
+				@dragenter="dragEnter"
+				@dragleave="dragLeave"
+				@drop="drop"
+			>
+				<div v-for="entry in orderedEntries" :key="entry.path">
+					<File
+						v-if="entry.kind === 'file'"
 						:path="entry.path"
 						:color="selectedPackDefinition!.color"
+						:preview="FileExplorer.draggedItem.value?.path === entry.path"
+					/>
+
+					<Directory
 						v-if="entry.kind === 'directory'"
+						:path="entry.path"
+						:color="selectedPackDefinition!.color"
+						:preview="FileExplorer.draggedItem.value?.path === entry.path"
 					/>
 				</div>
 			</div>

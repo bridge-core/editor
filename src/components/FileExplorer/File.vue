@@ -39,12 +39,6 @@ function executeContextMenuAction(action: string, data: any) {
 	contextMenu.value.close()
 }
 
-const dragOverElement: Ref<HTMLDivElement> = <any>ref(null)
-
-const draggingCount = ref(0)
-const draggingOver = computed(() => draggingCount.value > 0)
-const draggingAbove = ref(true)
-
 function dragStart() {
 	requestAnimationFrame(() => {
 		FileExplorer.draggedItem.value = { kind: 'file', path: props.path }
@@ -54,131 +48,52 @@ function dragStart() {
 function dragEnd() {
 	FileExplorer.draggedItem.value = null
 }
-
-function dragEnter(event: DragEvent) {
-	event.preventDefault()
-
-	if (props.preview) return
-
-	if (!FileExplorer.draggedItem.value) return
-
-	draggingCount.value++
-
-	event.stopPropagation()
-}
-
-function dragLeave(event: DragEvent) {
-	event.preventDefault()
-
-	if (props.preview) return
-
-	if (!FileExplorer.draggedItem.value) return
-
-	draggingCount.value--
-
-	event.stopPropagation()
-}
-
-function dragOver(event: DragEvent) {
-	event.preventDefault()
-
-	if (props.preview) return
-
-	if (!FileExplorer.draggedItem.value) return
-
-	const y = event.clientY
-	const boundingRect = dragOverElement.value.getBoundingClientRect()
-	const minY = boundingRect.top
-	const height = boundingRect.height
-
-	draggingAbove.value = y < minY + height / 2
-}
-
-function drop(event: DragEvent) {
-	if (props.preview) return
-
-	draggingCount.value = 0
-
-	event.stopPropagation()
-
-	if (!FileExplorer.draggedItem.value) return
-
-	fileSystem.move(
-		FileExplorer.draggedItem.value.path,
-		join(dirname(props.path), basename(FileExplorer.draggedItem.value.path))
-	)
-
-	FileExplorer.draggedItem.value = null
-}
 </script>
 
 <template>
 	<div
-		draggable="true"
-		@drag=""
+		v-show="FileExplorer.draggedItem.value?.path !== path || preview"
+		class="flex items-center gap-2 cursor-pointer transition-colors duration-100 ease-out rounded pl-1"
+		:class="{
+			'hover:bg-background-tertiary': !FileExplorer.draggedItem.value,
+		}"
+		@click="click"
+		@contextmenu.prevent.stop="contextMenu?.open"
 		@dragstart="dragStart"
 		@dragend="dragEnd"
-		@dragenter="dragEnter"
-		@dragleave="dragLeave"
-		@dragover="dragOver"
-		@drop="drop"
+		draggable="true"
 	>
-		<File
-			v-if="FileExplorer.draggedItem.value !== null && draggingOver && draggingAbove && !preview"
-			:path="FileExplorer.draggedItem.value.path ?? 'Error: No path dragged!'"
-			:color="color"
-			:preview="true"
-		/>
+		<Icon icon="draft" :color="color" class="text-sm" />
 
-		<div
-			v-show="FileExplorer.draggedItem.value?.path !== path || preview"
-			class="flex items-center gap-2 cursor-pointer transition-colors duration-100 ease-out rounded pl-1"
-			:class="{
-				'hover:bg-background-tertiary': !FileExplorer.draggedItem.value,
-			}"
-			@click="click"
-			@contextmenu.prevent.stop="contextMenu?.open"
-			ref="dragOverElement"
-		>
-			<Icon icon="draft" :color="color" class="text-sm" />
+		<span class="select-none font-theme"> {{ basename(path) }} </span>
 
-			<span class="select-none font-theme"> {{ basename(path) }} </span>
-
-			<FreeContextMenu ref="contextMenu">
-				<ContextMenuItem
-					icon="edit"
-					text="Rename"
-					@click.stop="executeContextMenuAction('renameFileSystemEntry', path)"
-				/>
-				<ContextMenuItem
-					icon="delete"
-					text="Delete"
-					@click.stop="executeContextMenuAction('deleteFileSystemEntry', path)"
-				/>
-				<ContextMenuItem
-					icon="folder_copy"
-					text="Duplicate"
-					@click.stop="executeContextMenuAction('duplicateFileSystemEntry', path)"
-				/>
-				<ContextMenuItem
-					icon="content_copy"
-					text="Copy"
-					@click.stop="executeContextMenuAction('copyFileSystemEntry', path)"
-				/>
-				<ContextMenuItem
-					icon="content_paste"
-					text="Paste"
-					class="pb-4"
-					@click.stop="executeContextMenuAction('pasteFileSystemEntry', path)"
-				/>
-			</FreeContextMenu>
-		</div>
-
-		<File
-			v-if="FileExplorer.draggedItem.value !== null && draggingOver && !draggingAbove && !preview"
-			:path="FileExplorer.draggedItem.value.path ?? 'Error: No path dragged!'"
-			:color="color"
-			:preview="true"
-		/>
+		<FreeContextMenu ref="contextMenu">
+			<ContextMenuItem
+				icon="edit"
+				text="Rename"
+				@click.stop="executeContextMenuAction('renameFileSystemEntry', path)"
+			/>
+			<ContextMenuItem
+				icon="delete"
+				text="Delete"
+				@click.stop="executeContextMenuAction('deleteFileSystemEntry', path)"
+			/>
+			<ContextMenuItem
+				icon="folder_copy"
+				text="Duplicate"
+				@click.stop="executeContextMenuAction('duplicateFileSystemEntry', path)"
+			/>
+			<ContextMenuItem
+				icon="content_copy"
+				text="Copy"
+				@click.stop="executeContextMenuAction('copyFileSystemEntry', path)"
+			/>
+			<ContextMenuItem
+				icon="content_paste"
+				text="Paste"
+				class="pb-4"
+				@click.stop="executeContextMenuAction('pasteFileSystemEntry', path)"
+			/>
+		</FreeContextMenu>
 	</div>
 </template>

@@ -4,8 +4,8 @@ import File from './File.vue'
 import FreeContextMenu from '@/components/Common/FreeContextMenu.vue'
 import ContextMenuItem from '@/components/Common/ContextMenuItem.vue'
 
-import { Ref, onMounted, onUnmounted, ref } from 'vue'
-import { basename } from 'pathe'
+import { Ref, computed, onMounted, onUnmounted, ref, watch } from 'vue'
+import { basename, dirname, join } from 'pathe'
 import { BaseEntry } from '@/libs/fileSystem/BaseFileSystem'
 import { fileSystem } from '@/libs/fileSystem/FileSystem'
 import { ActionManager } from '@/libs/actions/ActionManager'
@@ -21,9 +21,30 @@ const props = defineProps({
 		type: String,
 		default: 'text',
 	},
+	preview: {
+		type: Boolean,
+		default: false,
+	},
 })
 
 const entries: Ref<BaseEntry[]> = ref([])
+const orderedEntries = computed(() =>
+	(FileExplorer.isItemDragging()
+		? draggingOver.value && draggingLocation.value === 'inside'
+			? [
+					...entries.value.filter((entry) => entry.path !== FileExplorer.draggedItem.value!.path),
+					FileExplorer.draggedItem.value!,
+			  ]
+			: entries.value.filter((entry) => entry.path !== FileExplorer.draggedItem.value!.path)
+		: entries.value
+	)
+		.toSorted((a, b) => {
+			if (basename(a.path) < basename(b.path)) return -1
+			if (basename(a.path) > basename(b.path)) return 1
+			return 0
+		})
+		.toSorted((a, b) => (a.kind === 'file' ? 1 : -1) - (b.kind === 'file' ? 1 : -1))
+)
 
 const expanded = ref(false)
 
@@ -59,13 +80,17 @@ function executeContextMenuAction(action: string, data: any) {
 	contextMenu.value.close()
 }
 
+const dragOverElement: Ref<HTMLDivElement> = <any>ref(null)
+const dragOverElementContainer: Ref<HTMLDivElement> = <any>ref(null)
 const draggingCount = ref(0)
+const draggingOver = computed(() => draggingCount.value > 0)
+const draggingLocation: Ref<'inside' | 'above' | 'below'> = ref('inside')
 let expandTimeout: number | null = null
 
 function dragEnter(event: DragEvent) {
 	event.preventDefault()
 
-	// if (props.preview) return
+	if (props.preview) return
 
 	if (!FileExplorer.draggedItem.value) return
 
@@ -84,7 +109,7 @@ function dragEnter(event: DragEvent) {
 function dragLeave(event: DragEvent) {
 	event.preventDefault()
 
-	// if (props.preview) return
+	if (props.preview) return
 
 	if (!FileExplorer.draggedItem.value) return
 
@@ -96,29 +121,121 @@ function dragLeave(event: DragEvent) {
 
 	event.stopPropagation()
 }
+
+function dragOver(event: DragEvent) {
+	event.preventDefault()
+
+	if (props.preview) return
+
+	if (!FileExplorer.draggedItem.value) return
+
+	const y = event.clientY
+
+	const boundingRect = dragOverElement.value.getBoundingClientRect()
+	const minY = boundingRect.top
+	const height = boundingRect.height
+
+	const containerBoundingRect = dragOverElementContainer.value.getBoundingClientRect()
+	const containerMinY = containerBoundingRect.top
+	const cotnainerHeight = containerBoundingRect.height
+
+	if (y < minY + height / 2) {
+		draggingLocation.value = 'above'
+	} else if (y > minY + height / 2 && y < containerMinY + cotnainerHeight - 20) {
+		draggingLocation.value = 'inside'
+	} else {
+		draggingLocation.value = 'below'
+	}
+}
+
+function drop(event: DragEvent) {
+	if (props.preview) return
+
+	draggingCount.value = 0
+
+	event.stopPropagation()
+
+	if (!FileExplorer.draggedItem.value) return
+
+	if (draggingLocation.value === 'inside') {
+		fileSystem.move(
+			FileExplorer.draggedItem.value.path,
+			join(props.path, basename(FileExplorer.draggedItem.value.path))
+		)
+	} else {
+		fileSystem.move(
+			FileExplorer.draggedItem.value.path,
+			join(dirname(props.path), basename(FileExplorer.draggedItem.value.path))
+		)
+	}
+
+	FileExplorer.draggedItem.value = null
+}
 </script>
 
 <template>
-	<div @dragenter="dragEnter" @dragleave="dragLeave">
-		<div
-			class="flex items-center gap-2 cursor-pointer hover:bg-background-tertiary transition-colors duration-100 ease-out rounded pl-1"
-			@click="expanded = !expanded"
-			@contextmenu.prevent.stop="contextMenu?.open"
-		>
-			<Icon :icon="expanded ? 'folder_open' : 'folder'" :color="color" class="text-sm" />
+	<div @dragenter="dragEnter" @dragleave="dragLeave" @dragover="dragOver" @drop="drop">
+		<File
+			v-if="FileExplorer.isItemDragging() && draggingOver && draggingLocation === 'above' && !preview && FileExplorer.draggedItem.value!.kind === 'file'"
+			:path="FileExplorer.draggedItem.value!.path ?? 'Error: No path dragged!'"
+			:color="color"
+			:preview="true"
+		/>
 
-			<span class="select-none font-theme"> {{ basename(path) }} </span>
-		</div>
+		<Directory
+			v-if="FileExplorer.isItemDragging() && draggingOver && draggingLocation === 'above' && !preview && FileExplorer.draggedItem.value!.kind === 'directory'"
+			:path="FileExplorer.draggedItem.value!.path ?? 'Error: No path dragged!'"
+			:color="color"
+			:preview="true"
+		/>
 
-		<div class="ml-1 border-l pl-1 border-background-tertiary min-h-[1rem]" v-if="expanded && entries.length > 0">
+		<div ref="dragOverElementContainer">
 			<div
-				v-for="entry in entries.toSorted((a, b) => (a.kind === 'file' ? 1 : 0) - (b.kind === 'file' ? 1 : 0))"
-				:key="entry.path"
+				class="flex items-center gap-2 cursor-pointer hover:bg-background-tertiary transition-colors duration-100 ease-out rounded pl-1"
+				@click="expanded = !expanded"
+				@contextmenu.prevent.stop="contextMenu?.open"
+				ref="dragOverElement"
 			>
-				<File :path="entry.path" :color="color" v-if="entry.kind === 'file'" />
-				<Directory :path="entry.path" :color="color" v-if="entry.kind === 'directory'" />
+				<Icon :icon="expanded ? 'folder_open' : 'folder'" :color="color" class="text-sm" />
+
+				<span class="select-none font-theme"> {{ basename(path) }} </span>
+			</div>
+
+			<div
+				class="ml-1 border-l pl-1 border-background-tertiary min-h-[1rem]"
+				v-if="expanded && entries.length > 0"
+			>
+				<div v-for="entry in orderedEntries" :key="entry.path">
+					<File
+						:path="entry.path"
+						:color="color"
+						v-if="entry.kind === 'file'"
+						:preview="FileExplorer.draggedItem.value?.path === entry.path"
+					/>
+
+					<Directory
+						:path="entry.path"
+						:color="color"
+						v-if="entry.kind === 'directory'"
+						:preview="FileExplorer.draggedItem.value?.path === entry.path"
+					/>
+				</div>
 			</div>
 		</div>
+
+		<File
+			v-if="FileExplorer.isItemDragging() && draggingOver && draggingLocation === 'below' && !preview && FileExplorer.draggedItem.value!.kind === 'file'"
+			:path="FileExplorer.draggedItem.value!.path ?? 'Error: No path dragged!'"
+			:color="color"
+			:preview="true"
+		/>
+
+		<Directory
+			v-if="FileExplorer.isItemDragging() && draggingOver && draggingLocation === 'below' && !preview && FileExplorer.draggedItem.value!.kind === 'directory'"
+			:path="FileExplorer.draggedItem.value!.path ?? 'Error: No path dragged!'"
+			:color="color"
+			:preview="true"
+		/>
 
 		<FreeContextMenu ref="contextMenu">
 			<ContextMenuItem

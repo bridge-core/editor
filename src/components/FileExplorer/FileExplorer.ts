@@ -9,4 +9,8 @@ export class FileExplorer {
 	public static toggle() {
 		FileExplorer.open.value = !FileExplorer.open.value
 	}
+
+	public static isItemDragging(): boolean {
+		return this.draggedItem.value !== null
+	}
 }
