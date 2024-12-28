@@ -132,7 +132,10 @@ function drop(event: DragEvent) {
 
 		<div
 			v-show="FileExplorer.draggedItem.value?.path !== path || preview"
-			class="flex items-center gap-2 cursor-pointer hover:bg-background-tertiary transition-colors duration-100 ease-out rounded pl-1"
+			class="flex items-center gap-2 cursor-pointer transition-colors duration-100 ease-out rounded pl-1"
+			:class="{
+				'hover:bg-background-tertiary': !FileExplorer.draggedItem.value,
+			}"
 			@click="click"
 			@contextmenu.prevent.stop="contextMenu?.open"
 			ref="dragOverElement"
