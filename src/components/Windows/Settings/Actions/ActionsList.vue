@@ -2,23 +2,86 @@
 import Icon from '@/components/Common/Icon.vue'
 import IconButton from '@/components/Common/IconButton.vue'
 import { useTranslate } from '@/libs/locales/Locales'
-import { ActionManager } from '@/libs/actions/ActionManager'
+import { useActions } from '@/libs/actions/ActionManager'
+import { Action } from '@/libs/actions/Action'
+import { onUnmounted, Ref, ref } from 'vue'
 
 const t = useTranslate()
+
+const actions = useActions()
+
+const currentlyRebindingAction: Ref<string | null> = ref(null)
+
+let cancelRebind: (() => void) | null = null
+
+function rebind(action: Action) {
+	Action.disabledAll()
+
+	if (cancelRebind) cancelRebind()
+
+	currentlyRebindingAction.value = action.id
+
+	const listener = (event: KeyboardEvent) => {
+		event.preventDefault()
+
+		if (event.key.toUpperCase() === 'CONTROL') return
+		if (event.key.toUpperCase() === 'SHIFT') return
+		if (event.key.toUpperCase() === 'ALT') return
+
+		if (event.key.toUpperCase() === 'ESCAPE') {
+			action.unbind()
+
+			window.removeEventListener('keydown', listener)
+
+			cancelRebind = null
+
+			Action.enableAll()
+
+			currentlyRebindingAction.value = null
+
+			return
+		}
+
+		const ctrlModifier = event.ctrlKey
+		const shiftModifier = event.shiftKey
+		const altModifier = event.altKey
+		const key = event.key.toUpperCase()
+
+		action.rebind(key, ctrlModifier, shiftModifier, altModifier)
+
+		window.removeEventListener('keydown', listener)
+
+		cancelRebind = null
+
+		Action.enableAll()
+
+		currentlyRebindingAction.value = null
+	}
+
+	cancelRebind = () => {
+		console.trace('Cancel')
+
+		window.removeEventListener('keydown', listener)
+
+		cancelRebind = null
+
+		Action.enableAll()
+
+		currentlyRebindingAction.value = null
+	}
+
+	window.addEventListener('keydown', listener)
+}
+
+onUnmounted(() => {
+	if (cancelRebind) cancelRebind()
+})
 </script>
 <template>
 	<div class="flex-col w-full">
-		<div
-			v-for="action in Object.values(ActionManager.actions)"
-			class="text-normal p-2 mb-3 rounded bg-background-secondary w-full"
-		>
+		<div v-for="action in Object.values(actions)" class="text-normal p-2 mb-3 rounded bg-background-secondary w-full">
 			<div class="flex w-full mb-2">
-				<Icon
-					v-if="action.icon"
-					class="mr-1 content-center"
-					style="color: var(--theme-color-primary)"
-					:icon="action.icon"
-				/>
+				<Icon v-if="action.icon" class="mr-1 content-center" style="color: var(--theme-color-primary)" :icon="action.icon" />
 
 				<h3 class="text-lg font-medium w-full font-theme">{{ action.name ? t(action.name) : action.id }}</h3>
 
@@ -32,7 +95,9 @@ const t = useTranslate()
 
 				<div class="flex-1" />
 
-				<p class="text-text-secondary font-theme">{{ action.keyBinding ?? t('Unbound') }}</p>
+				<p class="text-text-secondary font-theme cursor-pointer" @click="rebind(action)">
+					{{ currentlyRebindingAction === action.id ? t('actions.rebinding') : action.keyBinding ?? t('Unbound') }}
+				</p>
 			</div>
 		</div>
 	</div>
