@@ -94,7 +94,7 @@ const isMobile = useIsMobile()
 					v-for="[id, item] in Object.entries(SettingsWindow.items[SettingsWindow.selectedCategory.value])"
 					class="flex gap-6 items-center"
 				>
-					<div v-if="item.type === 'custom'">
+					<div v-if="item.type === 'custom'" class="w-full">
 						<h2 v-if="(item as CustomItem).label" class="mb-2 text-text font-theme">
 							{{ t((item as CustomItem).label) }}
 						</h2>
