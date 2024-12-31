@@ -17,7 +17,7 @@ import { basename, join } from 'pathe'
 import { IPackType } from 'mc-project-core'
 import { BedrockProject } from '@/libs/project/BedrockProject'
 import { useTranslate } from '@/libs/locales/Locales'
-import { ProjectManager } from '@/libs/project/ProjectManager'
+import { useCurrentProject } from '@/libs/project/ProjectManager'
 import { ActionManager } from '@/libs/actions/ActionManager'
 import { Windows } from '@/components/Windows/Windows'
 import { PresetsWindow } from '@/components/Windows/Presets/PresetsWindow'
@@ -27,7 +27,7 @@ import { Settings } from '@/libs/settings/Settings'
 const t = useTranslate()
 const get = Settings.useGet()
 
-const currentProject = ProjectManager.useCurrentProject()
+const currentProject = useCurrentProject()
 
 const currentProjectPackDefinitions: Ref<IPackType[]> = computed(() => {
 	if (!currentProject.value) return []
@@ -52,21 +52,14 @@ const selectedPackPath: ComputedRef<string> = computed(() => {
 	if (!currentProject.value) return ''
 	if (!(currentProject.value instanceof BedrockProject)) return ''
 
-	return join(
-		currentProject.value.path,
-		currentProject.value.packDefinitions.find((pack: IPackType) => pack.id === selectedPack.value)
-			?.defaultPackPath ?? ''
-	)
+	return join(currentProject.value.path, currentProject.value.packDefinitions.find((pack: IPackType) => pack.id === selectedPack.value)?.defaultPackPath ?? '')
 })
 
 const entries: Ref<BaseEntry[]> = ref([])
 const orderedEntries = computed(() =>
 	(FileExplorer.isItemDragging()
 		? draggingOver.value
-			? [
-					...entries.value.filter((entry) => entry.path !== FileExplorer.draggedItem.value!.path),
-					FileExplorer.draggedItem.value!,
-			  ]
+			? [...entries.value.filter((entry) => entry.path !== FileExplorer.draggedItem.value!.path), FileExplorer.draggedItem.value!]
 			: entries.value.filter((entry) => entry.path !== FileExplorer.draggedItem.value!.path)
 		: entries.value
 	)
@@ -169,10 +162,7 @@ function drop(event: DragEvent) {
 
 	if (!FileExplorer.draggedItem.value) return
 
-	fileSystem.move(
-		FileExplorer.draggedItem.value.path,
-		join(selectedPackPath.value, basename(FileExplorer.draggedItem.value.path))
-	)
+	fileSystem.move(FileExplorer.draggedItem.value.path, join(selectedPackPath.value, basename(FileExplorer.draggedItem.value.path)))
 
 	FileExplorer.draggedItem.value = null
 }
@@ -210,10 +200,7 @@ function drop(event: DragEvent) {
 					}"
 					@click="selectedPack = packDefinition.id"
 				>
-					<Icon
-						:icon="packDefinition.icon"
-						:color="packDefinition.id === selectedPack ? 'text' : packDefinition.color"
-					/>
+					<Icon :icon="packDefinition.icon" :color="packDefinition.id === selectedPack ? 'text' : packDefinition.color" />
 				</button>
 
 				<ContextMenu class="flex-1 basis-5">
@@ -228,24 +215,14 @@ function drop(event: DragEvent) {
 
 					<template #menu="{ close }">
 						<div class="bg-background-secondary rounded mt-2 shadow-window relative z-10">
-							<ContextMenuItem
-								text="New File"
-								icon="add"
-								@click="() => contextMenuNewFile(close)"
-								class="pt-4"
-							/>
+							<ContextMenuItem text="New File" icon="add" @click="() => contextMenuNewFile(close)" class="pt-4" />
 							<ContextMenuItem text="Build" icon="manufacturing" @click="() => contextMenuBuild(close)" />
 
 							<div class="bg-background-tertiary w-full h-[2px] my-1"></div>
 
 							<SubMenu>
 								<template #main="slotProps">
-									<ContextMenuItem
-										icon="ios_share"
-										text="Export As"
-										@mouseenter="slotProps.show"
-										@mouseleave="slotProps.hide"
-									/>
+									<ContextMenuItem icon="ios_share" text="Export As" @mouseenter="slotProps.show" @mouseleave="slotProps.hide" />
 								</template>
 
 								<template #menu="">
@@ -295,31 +272,15 @@ function drop(event: DragEvent) {
 
 							<div class="bg-background-tertiary w-full h-[2px] my-1"></div>
 
-							<ContextMenuItem
-								text="Open Project Config"
-								icon="settings"
-								@click="() => contextMenuOpenProjectConfig(close)"
-								class="pb-4"
-							/>
+							<ContextMenuItem text="Open Project Config" icon="settings" @click="() => contextMenuOpenProjectConfig(close)" class="pb-4" />
 						</div>
 					</template>
 				</ContextMenu>
 			</div>
 
-			<div
-				class="h-full"
-				@contextmenu.prevent="contextMenu?.open"
-				@dragenter="dragEnter"
-				@dragleave="dragLeave"
-				@drop="drop"
-			>
+			<div class="h-full" @contextmenu.prevent="contextMenu?.open" @dragenter="dragEnter" @dragleave="dragLeave" @drop="drop">
 				<div v-for="entry in orderedEntries" :key="entry.path">
-					<File
-						v-if="entry.kind === 'file'"
-						:path="entry.path"
-						:color="selectedPackDefinition!.color"
-						:preview="FileExplorer.draggedItem.value?.path === entry.path"
-					/>
+					<File v-if="entry.kind === 'file'" :path="entry.path" :color="selectedPackDefinition!.color" :preview="FileExplorer.draggedItem.value?.path === entry.path" />
 
 					<Directory
 						v-if="entry.kind === 'directory'"
@@ -333,23 +294,9 @@ function drop(event: DragEvent) {
 	</div>
 
 	<FreeContextMenu ref="contextMenu">
-		<ContextMenuItem
-			icon="note_add"
-			text="Create File"
-			class="pt-4"
-			@click.stop="executeContextMenuAction('createFile', selectedPackPath)"
-		/>
-		<ContextMenuItem
-			icon="folder"
-			text="Create Folder"
-			@click.stop="executeContextMenuAction('createFolder', selectedPackPath)"
-		/>
+		<ContextMenuItem icon="note_add" text="Create File" class="pt-4" @click.stop="executeContextMenuAction('createFile', selectedPackPath)" />
+		<ContextMenuItem icon="folder" text="Create Folder" @click.stop="executeContextMenuAction('createFolder', selectedPackPath)" />
 
-		<ContextMenuItem
-			icon="content_paste"
-			text="Paste"
-			class="pb-4"
-			@click.stop="executeContextMenuAction('pasteFileSystemEntry', selectedPackPath)"
-		/>
+		<ContextMenuItem icon="content_paste" text="Paste" class="pb-4" @click.stop="executeContextMenuAction('pasteFileSystemEntry', selectedPackPath)" />
 	</FreeContextMenu>
 </template>

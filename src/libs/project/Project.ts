@@ -1,5 +1,5 @@
 import { Extensions } from '@/libs/extensions/Extensions'
-import { join } from 'pathe'
+import { basename, join } from 'pathe'
 import { ConfirmWindow } from '@/components/Windows/Confirm/ConfirmWindow'
 import { fileSystem } from '@/libs/fileSystem/FileSystem'
 import { BaseFileSystem } from '@/libs/fileSystem/BaseFileSystem'
@@ -53,14 +53,11 @@ export class Project implements AsyncDisposable {
 			this.packs[packId] = join(this.path, packPath)
 		}
 
-		if (await fileSystem.exists(join(this.path, 'BP', 'pack_icon.png')))
-			this.icon = await fileSystem.readFileDataUrl(join(this.path, 'BP', 'pack_icon.png'))
+		if (await fileSystem.exists(join(this.path, 'BP', 'pack_icon.png'))) this.icon = await fileSystem.readFileDataUrl(join(this.path, 'BP', 'pack_icon.png'))
 
-		if (await fileSystem.exists(join(this.path, 'RP', 'pack_icon.png')))
-			this.icon = await fileSystem.readFileDataUrl(join(this.path, 'RP', 'pack_icon.png'))
+		if (await fileSystem.exists(join(this.path, 'RP', 'pack_icon.png'))) this.icon = await fileSystem.readFileDataUrl(join(this.path, 'RP', 'pack_icon.png'))
 
-		if (await fileSystem.exists(join(this.path, 'SP', 'pack_icon.png')))
-			this.icon = await fileSystem.readFileDataUrl(join(this.path, 'SP', 'pack_icon.png'))
+		if (await fileSystem.exists(join(this.path, 'SP', 'pack_icon.png'))) this.icon = await fileSystem.readFileDataUrl(join(this.path, 'SP', 'pack_icon.png'))
 
 		this.disposables.push(Settings.updated.on(this.settingsChanged.bind(this)))
 
@@ -151,18 +148,12 @@ export class Project implements AsyncDisposable {
 	private async setupOutputFileSystemPWA() {
 		const localProjectFolder = await this.getLocalProjectFolderHandle()
 
-		let newOutputFolderHandle: FileSystemDirectoryHandle | undefined = this.usingProjectOutputFolder
-			? localProjectFolder
-			: Settings.get('outputFolder')
+		let newOutputFolderHandle: FileSystemDirectoryHandle | undefined = this.usingProjectOutputFolder ? localProjectFolder : Settings.get('outputFolder')
 
 		let newOutputFileSystem = new PWAFileSystem()
 
 		if (newOutputFolderHandle && (await newOutputFileSystem.ensurePermissions(newOutputFolderHandle))) {
-			if (
-				this.outputFileSystem instanceof PWAFileSystem &&
-				newOutputFolderHandle === this.outputFileSystem.baseHandle
-			)
-				return
+			if (this.outputFileSystem instanceof PWAFileSystem && newOutputFolderHandle === this.outputFileSystem.baseHandle) return
 
 			newOutputFileSystem.setBaseHandle(newOutputFolderHandle)
 
@@ -180,11 +171,7 @@ export class Project implements AsyncDisposable {
 		NotificationSystem.addNotification(
 			'warning',
 			() => {
-				Windows.open(
-					new ConfirmWindow('You have not set up your output folder yet. Do you want to set it up now?', () =>
-						SettingsWindow.open('projects')
-					)
-				)
+				Windows.open(new ConfirmWindow('You have not set up your output folder yet. Do you want to set it up now?', () => SettingsWindow.open('projects')))
 			},
 			'warning'
 		)
@@ -194,8 +181,4 @@ export class Project implements AsyncDisposable {
 
 		this.setOutputFileSystem(localFileSystem)
 	}
-}
-
-export async function validProject(path: string) {
-	return await fileSystem.exists(join(path, 'config.json'))
 }

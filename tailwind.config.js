@@ -33,6 +33,10 @@ module.exports = {
 				toolbar: '1.5rem',
 				app: 'calc(100vh - 1.5rem)',
 			},
+			maxHeight: {
+				toolbar: '1.5rem',
+				app: 'calc(100vh - 1.5rem)',
+			},
 			spacing: {
 				toolbar: '1.5rem',
 			},

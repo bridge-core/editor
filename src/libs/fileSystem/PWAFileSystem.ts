@@ -87,13 +87,21 @@ export class PWAFileSystem extends BaseFileSystem {
 
 			const reader = new FileReader()
 
-			return new Promise((resolve) => {
+			const result = new Promise((resolve) => {
 				reader.onload = () => {
-					resolve(JSON.parse(reader.result as string))
+					try {
+						resolve(JSON.parse(reader.result as string))
+					} catch {
+						resolve(undefined)
+					}
 				}
 
 				reader.readAsText(file)
 			})
+
+			if (result === undefined) throw new Error(`Failed to read "${path}" as JSON`)
+
+			return result
 		} catch (error) {
 			console.error(`Failed to read "${path}"`)
 
@@ -265,8 +273,7 @@ export class PWAFileSystem extends BaseFileSystem {
 		path = this.resolvePath(path)
 
 		try {
-			const handle =
-				path === '/' ? this.baseHandle : await (await this.traverse(path)).getDirectoryHandle(basename(path))
+			const handle = path === '/' ? this.baseHandle : await (await this.traverse(path)).getDirectoryHandle(basename(path))
 			const handleEntries = handle.entries()
 
 			const entries = []

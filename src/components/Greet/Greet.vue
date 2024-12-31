@@ -8,7 +8,7 @@ import Notification from '@/components/Notifications/Notification.vue'
 import { PWAFileSystem } from '@/libs/fileSystem/PWAFileSystem'
 import { computed, ref } from 'vue'
 import { useTranslate } from '@/libs/locales/Locales'
-import { ProjectInfo, ProjectManager } from '@/libs/project/ProjectManager'
+import { ProjectInfo, ProjectManager, useConvertableProjects, useCurrentProject, useProjects } from '@/libs/project/ProjectManager'
 import { Windows } from '@/components/Windows/Windows'
 import { fileSystem, selectOrLoadBridgeFolder } from '@/libs/fileSystem/FileSystem'
 import { CreateProjectWindow } from '@/components/Windows/CreateProject/CreateProjectWindow'
@@ -16,14 +16,13 @@ import { NotificationSystem } from '@/components/Notifications/NotificationSyste
 
 const t = useTranslate()
 
-const projects = ProjectManager.useProjects()
-const currentProject = ProjectManager.useCurrentProject()
+const projects = useProjects()
+const convertableProjects = useConvertableProjects()
+const currentProject = useCurrentProject()
 let fileSystemSetup = ref(true)
 if (fileSystem instanceof PWAFileSystem) fileSystemSetup = fileSystem.useSetup()
 
-const suggestSelectBridgeFolder = computed(
-	() => fileSystem instanceof PWAFileSystem && !fileSystemSetup.value && projects.value.length == 0
-)
+const suggestSelectBridgeFolder = computed(() => fileSystem instanceof PWAFileSystem && !fileSystemSetup.value && projects.value.length == 0)
 
 async function createProject() {
 	if (fileSystem instanceof PWAFileSystem && !fileSystem.setup) await selectOrLoadBridgeFolder()
@@ -42,8 +41,8 @@ async function edit(name: string) {}
 
 <template>
 	<main class="w-full h-app flex justify-center items-center" v-if="currentProject === null">
-		<div class="flex flex-col max-w-[28.5rem] w-full mx-8">
-			<Logo class="ml-auto mr-auto mb-12 w-48" />
+		<div class="flex flex-col max-w-[28.5rem] w-full mx-8 max-h-app">
+			<Logo class="ml-auto mr-auto my-12 w-48 flex-shrink min-h-0" />
 
 			<div class="flex justify-between">
 				<p class="mb-1 text-lg text-text font-theme font-medium">
@@ -51,12 +50,7 @@ async function edit(name: string) {}
 				</p>
 
 				<div>
-					<IconButton
-						v-if="fileSystem instanceof PWAFileSystem"
-						icon="folder"
-						class="mr-1"
-						@click="selectOrLoadBridgeFolder"
-					/>
+					<IconButton v-if="fileSystem instanceof PWAFileSystem" icon="folder" class="mr-1" @click="selectOrLoadBridgeFolder" />
 					<IconButton icon="add" @click="createProject" v-if="!suggestSelectBridgeFolder" />
 				</div>
 			</div>
@@ -74,6 +68,8 @@ async function edit(name: string) {}
 					@favorite="ProjectManager.toggleFavoriteProject"
 					@edit="edit"
 				/>
+
+				<ProjectGalleryEntry v-for="(project, index) in convertableProjects" :key="index" :icon="project.icon" :name="project.name" :favorite="false" :read-only="true" />
 			</div>
 
 			<div class="flex items-center flex-col mt-6" v-if="!suggestSelectBridgeFolder && projects.length === 0">
@@ -91,7 +87,8 @@ async function edit(name: string) {}
 
 				<TextButton :text="t('greet.selectBridgeFolder')" @click="selectOrLoadBridgeFolder" />
 			</div>
-			<div class="flex flex-row mt-5 overflow-x-auto gap-2">
+
+			<div class="flex flex-row mt-5 overflow-x-auto gap-2 mb-12 min-h-max">
 				<Notification
 					v-for="item in NotificationSystem.notifications.value"
 					:key="item.id"
