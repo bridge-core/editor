@@ -111,9 +111,13 @@ async function convertComMojangProject(convertableProjectInfo: ConvertableComMoj
 		await comMojangFileSystem.removeDirectory(pack.path)
 	}
 
+	ProjectManager.convertableProjects.splice(ProjectManager.convertableProjects.findIndex((project) => project.packs[0].uuid === convertableProjectInfo.packs[0].uuid))
+	ProjectManager.updatedConvertableProjects.dispatch()
+
 	ProjectManager.addProject(projectInfo)
 }
 
 async function convertV1Project(convertableProjectInfo: ConvertableV1ProjectInfo, comMojangFileSystem: BaseFileSystem) {
-	console.log('Converting v1 project', convertableProjectInfo.name)
+	ProjectManager.convertableProjects.splice(ProjectManager.convertableProjects.findIndex((project) => project.packs[0].uuid === convertableProjectInfo.packs[0].uuid))
+	ProjectManager.updatedConvertableProjects.dispatch()
 }
