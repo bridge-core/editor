@@ -109,15 +109,43 @@ export class BaseFileSystem {
 	public async copyDirectory(path: string, newPath: string) {
 		await this.makeDirectory(newPath)
 
+		const promises: Promise<void>[] = []
+
 		for (const entry of await this.readDirectoryEntries(path)) {
 			if (entry.kind === 'file') {
-				await this.copyFile(entry.path, join(newPath, basename(entry.path)))
+				promises.push(this.copyFile(entry.path, join(newPath, basename(entry.path))))
 			}
 
 			if (entry.kind === 'directory') {
-				await this.copyDirectory(entry.path, join(newPath, basename(entry.path)))
+				promises.push(this.copyDirectory(entry.path, join(newPath, basename(entry.path))))
 			}
 		}
+
+		await Promise.all(promises)
+	}
+
+	public async copyFileFromFileSystem(path: string, fileSystem: BaseFileSystem, newPath: string) {
+		const contents = await fileSystem.readFile(path)
+
+		await this.writeFile(newPath, contents)
+	}
+
+	public async copyDirectoryFromFileSystem(path: string, fileSystem: BaseFileSystem, newPath: string) {
+		await this.makeDirectory(newPath)
+
+		const promises: Promise<void>[] = []
+
+		for (const entry of await fileSystem.readDirectoryEntries(path)) {
+			if (entry.kind === 'file') {
+				promises.push(this.copyFileFromFileSystem(entry.path, fileSystem, join(newPath, basename(entry.path))))
+			}
+
+			if (entry.kind === 'directory') {
+				promises.push(this.copyDirectoryFromFileSystem(entry.path, fileSystem, join(newPath, basename(entry.path))))
+			}
+		}
+
+		await Promise.all(promises)
 	}
 
 	public async exists(path: string): Promise<boolean> {
