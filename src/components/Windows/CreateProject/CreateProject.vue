@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import Window from '@/components/Windows/Window.vue'
-import Button from '@/components/Common/Button.vue'
 import Icon from '@/components/Common/Icon.vue'
 import Switch from '@/components/Common/Switch.vue'
 import LabeledInput from '@/components/Common/LabeledInput.vue'
@@ -9,8 +8,8 @@ import Expandable from '@/components/Common/Expandable.vue'
 import Dropdown from '@/components/Common/LegacyDropdown.vue'
 
 import { Ref, computed, onMounted, ref, watch } from 'vue'
-import { IPackType, PackType } from 'mc-project-core'
-import { ProjectManager, packs } from '@/libs/project/ProjectManager'
+import { IPackType } from 'mc-project-core'
+import { ProjectManager } from '@/libs/project/ProjectManager'
 import { ConfigurableFile } from '@/libs/project/create/files/configurable/ConfigurableFile'
 import { FormatVersionDefinitions, ExperimentalToggle, useGetData, Data } from '@/libs/data/Data'
 import { v4 as uuid } from 'uuid'
@@ -20,6 +19,7 @@ import { Windows } from '../Windows'
 import { CreateProjectWindow } from './CreateProjectWindow'
 import TextButton from '@/components/Common/TextButton.vue'
 import { useIsMobile } from '@/libs/Mobile'
+import { packs } from '@/libs/project/Packs'
 
 const t = useTranslate()
 const getData = useGetData()
@@ -30,19 +30,15 @@ const linkBehaviourPack = ref(false)
 const linkResourcePack = ref(false)
 
 function setLinkBehaviourPack(value: boolean) {
-	if (!selectedPackTypes.value.find((pack) => pack.id === 'behaviorPack'))
-		selectPackType(packTypes.value.find((packType) => packType.id === 'behaviorPack')!)
-	if (!selectedPackTypes.value.find((pack) => pack.id === 'resourcePack'))
-		selectPackType(packTypes.value.find((packType) => packType.id === 'resourcePack')!)
+	if (!selectedPackTypes.value.find((pack) => pack.id === 'behaviorPack')) selectPackType(packTypes.value.find((packType) => packType.id === 'behaviorPack')!)
+	if (!selectedPackTypes.value.find((pack) => pack.id === 'resourcePack')) selectPackType(packTypes.value.find((packType) => packType.id === 'resourcePack')!)
 
 	linkBehaviourPack.value = value
 }
 
 function setLinkResourcePack(value: boolean) {
-	if (!selectedPackTypes.value.find((pack) => pack.id === 'behaviorPack'))
-		selectPackType(packTypes.value.find((packType) => packType.id === 'behaviorPack')!)
-	if (!selectedPackTypes.value.find((pack) => pack.id === 'resourcePack'))
-		selectPackType(packTypes.value.find((packType) => packType.id === 'resourcePack')!)
+	if (!selectedPackTypes.value.find((pack) => pack.id === 'behaviorPack')) selectPackType(packTypes.value.find((packType) => packType.id === 'behaviorPack')!)
+	if (!selectedPackTypes.value.find((pack) => pack.id === 'resourcePack')) selectPackType(packTypes.value.find((packType) => packType.id === 'resourcePack')!)
 
 	linkResourcePack.value = value
 }
@@ -65,8 +61,7 @@ async function setup() {
 
 	experimentalToggles.value = (await getData.value('packages/minecraftBedrock/experimentalGameplay.json')) || []
 
-	formatVersionDefinitions.value =
-		<FormatVersionDefinitions>await getData.value('packages/minecraftBedrock/formatVersions.json') || []
+	formatVersionDefinitions.value = <FormatVersionDefinitions>await getData.value('packages/minecraftBedrock/formatVersions.json') || []
 
 	if (!formatVersionDefinitions.value) return
 
@@ -122,12 +117,7 @@ async function create() {
 			rpAsBpDependency: linkResourcePack.value,
 			bpAsRpDependency: linkBehaviourPack.value,
 			uuids: Object.fromEntries(selectedPackTypes.value.map((packType) => [packType.id, uuid()])),
-			experiments: Object.fromEntries(
-				experimentalToggles.value.map((toggle) => [
-					toggle.id,
-					selectedExperimentalToggles.value.includes(toggle),
-				])
-			),
+			experiments: Object.fromEntries(experimentalToggles.value.map((toggle) => [toggle.id, selectedExperimentalToggles.value.includes(toggle)])),
 		},
 		fileSystem
 	)
@@ -212,27 +202,13 @@ const isMobile = useIsMobile()
 						@click="selectPackType(packType)"
 					>
 						<div class="flex items-center my-4" v-if="packType.id === 'behaviorPack'">
-							<Switch
-								class="mr-2"
-								border-color="backgroundTertiary"
-								:model-value="linkResourcePack"
-								@update:model-value="setLinkResourcePack"
-							/>
-							<span class="text-xs text-text-secondary select-none font-theme">{{
-								t('windows.createProject.rpAsBpDependency')
-							}}</span>
+							<Switch class="mr-2" border-color="backgroundTertiary" :model-value="linkResourcePack" @update:model-value="setLinkResourcePack" />
+							<span class="text-xs text-text-secondary select-none font-theme">{{ t('windows.createProject.rpAsBpDependency') }}</span>
 						</div>
 
 						<div class="flex items-center my-4" v-if="packType.id === 'resourcePack'">
-							<Switch
-								class="mr-2"
-								border-color="backgroundTertiary"
-								:model-value="linkBehaviourPack"
-								@update:model-value="setLinkBehaviourPack"
-							/>
-							<span class="text-xs text-text-secondary select-none font-theme">{{
-								t('windows.createProject.bpAsRpDependency')
-							}}</span>
+							<Switch class="mr-2" border-color="backgroundTertiary" :model-value="linkBehaviourPack" @update:model-value="setLinkBehaviourPack" />
+							<span class="text-xs text-text-secondary select-none font-theme">{{ t('windows.createProject.bpAsRpDependency') }}</span>
 						</div>
 					</InformativeToggle>
 				</div>
@@ -270,29 +246,16 @@ const isMobile = useIsMobile()
 				</Expandable>
 
 				<div class="flex gap-4 w-full mt-4">
-					<LabeledInput
-						:label="t('windows.createProject.icon.label')"
-						class="mb-4 flex bg-background"
-						v-slot="{ focus, blur }"
-					>
+					<LabeledInput :label="t('windows.createProject.icon.label')" class="mb-4 flex bg-background" v-slot="{ focus, blur }">
 						<input type="file" class="hidden" ref="projectIconInput" @:change="chooseProjectIcon" />
 
-						<button
-							class="flex align-center gap-2 text-text-secondary font-theme"
-							@mouseenter="focus"
-							@mouseleave="blur"
-							@click="projectIconInput?.click()"
-						>
+						<button class="flex align-center gap-2 text-text-secondary font-theme" @mouseenter="focus" @mouseleave="blur" @click="projectIconInput?.click()">
 							<Icon icon="image" class="no-fill" color="text-text-secondary" />
 							{{ t('windows.createProject.icon.placeholder') }}
 						</button>
 					</LabeledInput>
 
-					<LabeledInput
-						:label="t('windows.createProject.name.label')"
-						class="mb-4 flex-1 bg-background"
-						v-slot="{ focus, blur }"
-					>
+					<LabeledInput :label="t('windows.createProject.name.label')" class="mb-4 flex-1 bg-background" v-slot="{ focus, blur }">
 						<input
 							class="bg-background outline-none max-w-none w-full placeholder:text-text-secondary font-theme"
 							@focus="focus"
@@ -303,11 +266,7 @@ const isMobile = useIsMobile()
 					</LabeledInput>
 				</div>
 
-				<LabeledInput
-					:label="t('windows.createProject.description.label')"
-					class="mb-4 bg-background"
-					v-slot="{ focus, blur }"
-				>
+				<LabeledInput :label="t('windows.createProject.description.label')" class="mb-4 bg-background" v-slot="{ focus, blur }">
 					<input
 						class="bg-background outline-none max-w-none placeholder:text-text-secondary max-w-none w-full font-theme"
 						@focus="focus"
@@ -318,11 +277,7 @@ const isMobile = useIsMobile()
 				</LabeledInput>
 
 				<div class="flex gap-4">
-					<LabeledInput
-						:label="t('windows.createProject.namespace.label')"
-						class="mb-4 flex-1 bg-background"
-						v-slot="{ focus, blur }"
-					>
+					<LabeledInput :label="t('windows.createProject.namespace.label')" class="mb-4 flex-1 bg-background" v-slot="{ focus, blur }">
 						<input
 							class="bg-background outline-none placeholder:text-text-secondary max-w-none w-full font-theme"
 							@focus="focus"
@@ -332,11 +287,7 @@ const isMobile = useIsMobile()
 						/>
 					</LabeledInput>
 
-					<LabeledInput
-						:label="t('windows.createProject.author.label')"
-						class="mb-4 flex-1 bg-background"
-						v-slot="{ focus, blur }"
-					>
+					<LabeledInput :label="t('windows.createProject.author.label')" class="mb-4 flex-1 bg-background" v-slot="{ focus, blur }">
 						<input
 							class="bg-background outline-none placeholder:text-text-secondary max-w-none w-full font-theme"
 							@focus="focus"
@@ -348,19 +299,11 @@ const isMobile = useIsMobile()
 
 					<Dropdown class="mb-4 flex-1">
 						<template #main="{ expanded, toggle }">
-							<LabeledInput
-								:label="t('windows.createProject.targetVersion.label')"
-								:focused="expanded"
-								class="bg-background"
-							>
+							<LabeledInput :label="t('windows.createProject.targetVersion.label')" :focused="expanded" class="bg-background">
 								<div class="flex items-center justify-between cursor-pointer" @click="toggle">
 									<span class="font-theme">{{ projectTargetVersion }}</span>
 
-									<Icon
-										icon="arrow_drop_down"
-										class="transition-transform duration-200 ease-out"
-										:class="{ '-rotate-180': expanded }"
-									/>
+									<Icon icon="arrow_drop_down" class="transition-transform duration-200 ease-out" :class="{ '-rotate-180': expanded }" />
 								</div>
 							</LabeledInput>
 						</template>
@@ -390,12 +333,7 @@ const isMobile = useIsMobile()
 				</div>
 			</div>
 
-			<TextButton
-				:text="t('Create')"
-				@click="create"
-				class="mt-4 mr-8 self-end transition-[color, opacity]"
-				:enabled="dataValid"
-			/>
+			<TextButton :text="t('Create')" @click="create" class="mt-4 mr-8 self-end transition-[color, opacity]" :enabled="dataValid" />
 		</div>
 	</Window>
 </template>

@@ -33,9 +33,7 @@ watch(selectedPreset, () => {
 	if (!(ProjectManager.currentProject instanceof BedrockProject)) return
 	if (!selectedPresetPath.value) return
 
-	createPresetOptions.value = ProjectManager.currentProject.presetData.getDefaultPresetOptions(
-		selectedPresetPath.value
-	)
+	createPresetOptions.value = ProjectManager.currentProject.presetData.getDefaultPresetOptions(selectedPresetPath.value)
 })
 
 let availablePresets: Ref<{ [key: string]: any }> = ref({})
@@ -76,10 +74,7 @@ const expandables: Ref<(typeof Expandable)[]> = ref([])
 
 const filteredCategories = computed(() => {
 	return Object.keys(categories.value).filter(
-		(category) =>
-			categories.value[category].filter((presetPath) =>
-				availablePresets.value[presetPath].name.toLowerCase().includes(search.value.toLowerCase())
-			).length > 0
+		(category) => categories.value[category].filter((presetPath) => availablePresets.value[presetPath].name.toLowerCase().includes(search.value.toLowerCase())).length > 0
 	)
 })
 
@@ -94,35 +89,18 @@ watch(filteredCategories, () => {
 	<SidebarWindow :name="t('windows.createPreset.title')" @close="Windows.close(PresetsWindow)">
 		<template #sidebar="{ hide }">
 			<div class="p-4">
-				<LabeledInput
-					v-slot="{ focus, blur }"
-					:label="t('Search Presets')"
-					class="bg-background-secondary !mt-1 mb-2"
-					border-color="backgroundTertiary"
-				>
+				<LabeledInput v-slot="{ focus, blur }" :label="t('Search Presets')" class="bg-background-secondary !mt-1 mb-2" border-color="backgroundTertiary">
 					<div class="flex gap-1">
 						<Icon icon="search" class="transition-colors duration-100 ease-out" />
-						<input
-							@focus="focus"
-							@blur="blur"
-							class="outline-none border-none bg-transparent font-theme"
-							v-model="search"
-						/>
+						<input @focus="focus" @blur="blur" class="outline-none border-none bg-transparent font-theme" v-model="search" />
 					</div>
 				</LabeledInput>
 
 				<div class="overflow-y-scroll max-h-[34rem]">
-					<Expandable
-						v-for="category of filteredCategories"
-						:key="category"
-						:name="t(category)"
-						ref="expandables"
-					>
+					<Expandable v-for="category of filteredCategories" :key="category" :name="t(category)" ref="expandables">
 						<div class="flex flex-col">
 							<button
-								v-for="presetPath of categories[category].filter((presetPath) =>
-									availablePresets[presetPath].name.toLowerCase().includes(search.toLowerCase())
-								)"
+								v-for="presetPath of categories[category].filter((presetPath) => availablePresets[presetPath].name.toLowerCase().includes(search.toLowerCase()))"
 								:key="presetPath"
 								class="flex align-center gap-2 border-transparent hover:border-text border-2 transition-colors duration-100 ease-out rounded p-2 mt-1"
 								:class="{
@@ -151,10 +129,7 @@ watch(filteredCategories, () => {
 			</div>
 		</template>
 		<template #content>
-			<div
-				class="h-[38rem] flex flex-col overflow-y-auto p-4 pt-0"
-				:class="{ 'w-full': isMobile, 'window-content': !isMobile, 'h-full': isMobile }"
-			>
+			<div class="h-[38rem] flex flex-col overflow-y-auto p-4 pt-0" :class="{ 'w-full': isMobile, 'window-content': !isMobile, 'h-full': isMobile }">
 				<div v-if="selectedPreset !== null" class="flex flex-col h-full">
 					<div>
 						<div class="flex items-center gap-2 mb-2">
@@ -168,10 +143,7 @@ watch(filteredCategories, () => {
 						</p>
 
 						<LabeledInput
-							v-if="
-								selectedPreset.additionalModels &&
-								selectedPreset.additionalModels.PRESET_PATH !== undefined
-							"
+							v-if="selectedPreset.additionalModels && selectedPreset.additionalModels.PRESET_PATH !== undefined"
 							:label="t('Folders')"
 							class="mb-6 flex-1 bg-background"
 							v-slot="{ focus, blur }"
@@ -190,12 +162,7 @@ watch(filteredCategories, () => {
 						</LabeledInput>
 
 						<div v-for="[fieldName, fieldId, fieldOptions] of selectedPreset.fields" :key="fieldId">
-							<LabeledInput
-								v-if="!fieldOptions || !fieldOptions.type"
-								:label="fieldName"
-								class="mb-6 flex-1 bg-background"
-								v-slot="{ focus, blur }"
-							>
+							<LabeledInput v-if="!fieldOptions || !fieldOptions.type" :label="fieldName" class="mb-6 flex-1 bg-background" v-slot="{ focus, blur }">
 								<input
 									class="bg-background outline-none placeholder:text-text-secondary max-w-none w-full font-theme"
 									@focus="focus"
@@ -209,28 +176,16 @@ watch(filteredCategories, () => {
 								/>
 							</LabeledInput>
 
-							<LabeledInput
-								v-if="fieldOptions && fieldOptions.type === 'fileInput'"
-								:label="fieldName"
-								class="mb-6 flex bg-background"
-								v-slot="{ focus, blur }"
-							>
+							<LabeledInput v-if="fieldOptions && fieldOptions.type === 'fileInput'" :label="fieldName" class="mb-6 flex bg-background" v-slot="{ focus, blur }">
 								<input type="file" class="hidden" />
 
-								<button
-									class="flex align-center gap-2 text-text-secondary font-theme placeholder:text-text-secondary"
-									@mouseenter="focus"
-									@mouseleave="blur"
-								>
+								<button class="flex align-center gap-2 text-text-secondary font-theme placeholder:text-text-secondary" @mouseenter="focus" @mouseleave="blur">
 									<Icon icon="image" class="no-fill" color="text-text-secondary" />
 									{{ fieldName }}
 								</button>
 							</LabeledInput>
 
-							<div
-								v-if="fieldOptions && fieldOptions.type === 'switch'"
-								class="mb-6 flex gap-4 items-center"
-							>
+							<div v-if="fieldOptions && fieldOptions.type === 'switch'" class="mb-6 flex gap-4 items-center">
 								<Switch
 									:model-value="createPresetOptions[fieldId]"
 									@update:modelValue="
@@ -241,28 +196,13 @@ watch(filteredCategories, () => {
 								<p class="font-theme text-text-secondary">{{ fieldName }}</p>
 							</div>
 
-							<Dropdown
-								v-if="
-									fieldOptions &&
-									fieldOptions.type === 'selectInput' &&
-									typeof fieldOptions.options[0] === 'object'
-								"
-								class="mb-6 flex-1"
-							>
+							<Dropdown v-if="fieldOptions && fieldOptions.type === 'selectInput' && typeof fieldOptions.options[0] === 'object'" class="mb-6 flex-1">
 								<template #main="{ expanded, toggle }">
 									<LabeledInput :label="t(fieldName)" :focused="expanded" class="bg-background">
 										<div class="flex items-center justify-between cursor-pointer" @click="toggle">
-											<span class="font-theme">{{
-												fieldOptions.options.find(
-													(option: any) => option.value === createPresetOptions[fieldId]
-												).text
-											}}</span>
+											<span class="font-theme">{{ fieldOptions.options.find((option: any) => option.value === createPresetOptions[fieldId]).text }}</span>
 
-											<Icon
-												icon="arrow_drop_down"
-												class="transition-transform duration-200 ease-out"
-												:class="{ '-rotate-180': expanded }"
-											/>
+											<Icon icon="arrow_drop_down" class="transition-transform duration-200 ease-out" :class="{ '-rotate-180': expanded }" />
 										</div>
 									</LabeledInput>
 								</template>
@@ -280,7 +220,7 @@ watch(filteredCategories, () => {
 												"
 												class="hover:bg-primary text-start p-1 rounded transition-colors duration-100 ease-out font-theme"
 												:class="{
-													'bg-menu': createPresetOptions[fieldId] === dropdownItem.value,
+													'bg-background-secondary': createPresetOptions[fieldId] === dropdownItem.value,
 												}"
 											>
 												{{ dropdownItem.text }}
@@ -290,24 +230,13 @@ watch(filteredCategories, () => {
 								</template>
 							</Dropdown>
 
-							<Dropdown
-								v-if="
-									fieldOptions &&
-									fieldOptions.type === 'selectInput' &&
-									typeof fieldOptions.options[0] === 'string'
-								"
-								class="mb-6 flex-1"
-							>
+							<Dropdown v-if="fieldOptions && fieldOptions.type === 'selectInput' && typeof fieldOptions.options[0] === 'string'" class="mb-6 flex-1">
 								<template #main="{ expanded, toggle }">
 									<LabeledInput :label="t(fieldName)" :focused="expanded" class="bg-background">
 										<div class="flex items-center justify-between cursor-pointer" @click="toggle">
 											<span class="font-theme">{{ createPresetOptions[fieldId] }}</span>
 
-											<Icon
-												icon="arrow_drop_down"
-												class="transition-transform duration-200 ease-out"
-												:class="{ '-rotate-180': expanded }"
-											/>
+											<Icon icon="arrow_drop_down" class="transition-transform duration-200 ease-out" :class="{ '-rotate-180': expanded }" />
 										</div>
 									</LabeledInput>
 								</template>
@@ -325,7 +254,7 @@ watch(filteredCategories, () => {
 												"
 												class="hover:bg-primary text-start p-1 rounded transition-colors duration-100 ease-out font-theme"
 												:class="{
-													'bg-menu': createPresetOptions[fieldId] === dropdownItem,
+													'bg-background-secondary': createPresetOptions[fieldId] === dropdownItem,
 												}"
 											>
 												{{ dropdownItem }}

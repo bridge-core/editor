@@ -48,42 +48,33 @@ function startSearch() {
 					class="p-1 rounded transition-colors duration-100 ease-out select-none group hover:bg-text flex items-center ml-2"
 					:class="{
 						'bg-primary': matchWord,
-						'bg-menu': !matchWord,
+						'bg-background-secondary': !matchWord,
 					}"
 					@click="matchWord = !matchWord"
 				>
-					<span
-						class="material-symbols-rounded group-hover:text-background transition-colors duration-100 ease-out"
-						>text_format</span
-					>
+					<span class="material-symbols-rounded group-hover:text-background transition-colors duration-100 ease-out">text_format</span>
 				</button>
 
 				<button
 					class="p-1 rounded transition-colors duration-100 ease-out select-none group hover:bg-text flex items-center ml-2"
 					:class="{
 						'bg-primary': matchCase,
-						'bg-menu': !matchCase,
+						'bg-background-secondary': !matchCase,
 					}"
 					@click="matchCase = !matchCase"
 				>
-					<span
-						class="material-symbols-rounded group-hover:text-background transition-colors duration-100 ease-out"
-						>match_case</span
-					>
+					<span class="material-symbols-rounded group-hover:text-background transition-colors duration-100 ease-out">match_case</span>
 				</button>
 
 				<button
 					class="p-1 rounded transition-colors duration-100 ease-out select-none group hover:bg-text flex items-center ml-2"
 					:class="{
 						'bg-primary': useRegex,
-						'bg-menu': !useRegex,
+						'bg-background-secondary': !useRegex,
 					}"
 					@click="useRegex = !useRegex"
 				>
-					<span
-						class="material-symbols-rounded group-hover:text-background transition-colors duration-100 ease-out"
-						>asterisk</span
-					>
+					<span class="material-symbols-rounded group-hover:text-background transition-colors duration-100 ease-out">asterisk</span>
 				</button>
 			</div>
 		</div>
@@ -102,16 +93,10 @@ function startSearch() {
 					<p class="text-lg font-bold">{{ instance.queryResult.value[path].prettyPath }}</p>
 				</div>
 
-				<div
-					v-for="result of instance.queryResult.value[path].results"
-					class="cursor-pointer"
-					@click="TabManager.openFile(path)"
-				>
+				<div v-for="result of instance.queryResult.value[path].results" class="cursor-pointer" @click="TabManager.openFile(path)">
 					<span class="text-text-secondary">{{ result.previousContext ?? '' }}</span>
 
-					<span v-if="replace === '' || replace === search" class="text-primary font-bold">{{
-						result.value
-					}}</span>
+					<span v-if="replace === '' || replace === search" class="text-primary font-bold">{{ result.value }}</span>
 
 					<span v-else>
 						<span class="text-text-secondary line-through">{{ result.value }}</span>

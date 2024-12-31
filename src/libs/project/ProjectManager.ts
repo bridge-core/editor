@@ -5,11 +5,6 @@ import { PWAFileSystem } from '@/libs/fileSystem/PWAFileSystem'
 import { BaseFileSystem } from '@/libs/fileSystem/BaseFileSystem'
 import { CreateProjectConfig } from './CreateProjectConfig'
 import { Ref, onMounted, onUnmounted, ref, watch } from 'vue'
-import { BehaviourPack } from './create/packs/BehaviorPack'
-import { BridgePack } from './create/packs/Bridge'
-import { Pack } from './create/packs/Pack'
-import { ResourcePack } from './create/packs/ResourcePack'
-import { SkinPack } from './create/packs/SkinPack'
 import { BedrockProject } from './BedrockProject'
 import { IConfigJson, TPackTypeId } from 'mc-project-core'
 import { LocalFileSystem } from '@/libs/fileSystem/LocalFileSystem'
@@ -18,39 +13,16 @@ import { Settings } from '@/libs/settings/Settings'
 import { get, set } from 'idb-keyval'
 import { Event } from '@/libs/event/Event'
 import { Disposable } from '@/libs/disposeable/Disposeable'
-
-export const packs: {
-	[key: string]: Pack | undefined
-} = {
-	bridge: new BridgePack(),
-	behaviorPack: new BehaviourPack(),
-	resourcePack: new ResourcePack(),
-	skinPack: new SkinPack(),
-}
+import { ConvertableProjectInfo } from './ConvertComMojangProject'
+import { packs } from './Packs'
 
 export interface ProjectInfo {
 	name: string
 	icon: string
 	config: IConfigJson
 	favorite: boolean
-	packs: { type: TPackTypeId; uuid: string }[]
+	packs: { type: TPackTypeId; uuid: string; path: string }[]
 }
-
-export interface ConvertableComMojangProjectInfo {
-	type: 'com.mojang'
-	packs: { type: TPackTypeId; uuid: string }[]
-	name: string
-	icon: string
-}
-
-export interface ConvertableV1ProjectInfo {
-	type: 'v1'
-	packs: { type: TPackTypeId; uuid: string }[]
-	name: string
-	icon: string
-}
-
-export type ConvertableProjectInfo = ConvertableComMojangProjectInfo | ConvertableV1ProjectInfo
 
 export class ProjectManager {
 	public static projects: ProjectInfo[] = []
@@ -112,7 +84,7 @@ export class ProjectManager {
 		await ProjectManager.loadConvertableProjects()
 	}
 
-	private static addProject(project: ProjectInfo) {
+	public static addProject(project: ProjectInfo) {
 		this.projects.push(project)
 
 		this.updateProjectCache()
@@ -203,9 +175,9 @@ export class ProjectManager {
 			favorites = JSON.parse((await get('favoriteProjects')) as string)
 		} catch {}
 
-		const packs: { type: TPackTypeId; uuid: string }[] = (
+		const packs: { type: TPackTypeId; uuid: string; path: string }[] = (
 			await Promise.all(
-				Object.entries(config.packs).map(async ([id, packPath]) => {
+				Object.entries(config.packs as Record<string, string>).map(async ([id, packPath]) => {
 					let manifest: any | null = null
 
 					try {
@@ -221,6 +193,7 @@ export class ProjectManager {
 					return {
 						type: id as TPackTypeId,
 						uuid,
+						path: packPath,
 					}
 				})
 			)
@@ -266,25 +239,22 @@ export class ProjectManager {
 	}
 
 	private static async loadConvertableProjects() {
-		this.convertableProjects = []
+		ProjectManager.convertableProjects = []
 
 		if (fileSystem instanceof PWAFileSystem) {
 			const outputFolder: FileSystemDirectoryHandle | undefined = Settings.get('outputFolder')
 
 			if (!outputFolder) return
 
-			const outputFileSystem = new PWAFileSystem()
-			outputFileSystem.setBaseHandle(outputFolder)
+			const comMojangFileSystem = new PWAFileSystem()
+			comMojangFileSystem.setBaseHandle(outputFolder)
 
-			if (outputFolder && (await outputFileSystem.ensurePermissions(outputFolder))) {
-				await this.loadConvertableProjectsFromComMojang(outputFileSystem)
+			if (outputFolder && (await comMojangFileSystem.ensurePermissions(outputFolder))) {
+				await ProjectManager.loadConvertableProjectsFromComMojang(comMojangFileSystem)
+
+				ProjectManager.updatedConvertableProjects.dispatch()
 			}
 		}
-
-		console.log(this.projects)
-		console.log(this.convertableProjects)
-
-		ProjectManager.updatedConvertableProjects.dispatch()
 	}
 
 	private static async loadConvertableProjectsFromComMojang(comMojangFileSystem: BaseFileSystem) {
@@ -292,7 +262,7 @@ export class ProjectManager {
 			const packsEntries = await comMojangFileSystem.readDirectoryEntries('/development_behavior_packs/')
 
 			for (const entry of packsEntries) {
-				await this.loadConvertablePackFromComMojang(comMojangFileSystem, entry.path, 'behaviorPack')
+				await ProjectManager.loadConvertablePackFromComMojang(comMojangFileSystem, entry.path, 'behaviorPack')
 			}
 		}
 
@@ -300,7 +270,7 @@ export class ProjectManager {
 			const packsEntries = await comMojangFileSystem.readDirectoryEntries('/development_resource_packs/')
 
 			for (const entry of packsEntries) {
-				await this.loadConvertablePackFromComMojang(comMojangFileSystem, entry.path, 'resourcePack')
+				await ProjectManager.loadConvertablePackFromComMojang(comMojangFileSystem, entry.path, 'resourcePack')
 			}
 		}
 	}
@@ -356,28 +326,32 @@ export class ProjectManager {
 
 		if (ProjectManager.projects.some((project) => project.packs.some((pack) => pack.uuid === uuid))) return
 
-		const dependencies: undefined | any[] = manifest.dependencies
-
-		if (!dependencies) return
-
 		const relatedPackUuids: string[] = []
 
-		for (const dependency of dependencies) {
-			if (dependency.uuid) relatedPackUuids.push(dependency.uuid)
+		if (manifest.dependencies) {
+			const dependencies: undefined | any[] = manifest.dependencies
+
+			for (const dependency of dependencies!) {
+				if (dependency.uuid) relatedPackUuids.push(dependency.uuid)
+			}
 		}
 
-		const relatedPack = ProjectManager.convertableProjects.find((project) => project.packs.some((pack) => relatedPackUuids.includes(pack.uuid)))
+		const relatedPack = ProjectManager.convertableProjects.find((project) =>
+			project.packs.some((pack) => relatedPackUuids.includes(pack.uuid) || pack.relatedPacks.includes(uuid))
+		)
 
 		if (relatedPack) {
 			relatedPack.packs.push({
 				type,
 				uuid,
+				path,
+				relatedPacks: relatedPackUuids,
 			})
 		} else {
 			ProjectManager.convertableProjects.push({
 				icon: iconDataUrl,
 				name,
-				packs: [{ type, uuid }],
+				packs: [{ type, uuid, path, relatedPacks: relatedPackUuids }],
 				type: (await comMojangFileSystem.exists(join(path, 'bridge'))) ? 'v1' : 'com.mojang',
 			})
 		}

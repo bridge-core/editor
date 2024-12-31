@@ -13,6 +13,7 @@ import { Windows } from '@/components/Windows/Windows'
 import { fileSystem, selectOrLoadBridgeFolder } from '@/libs/fileSystem/FileSystem'
 import { CreateProjectWindow } from '@/components/Windows/CreateProject/CreateProjectWindow'
 import { NotificationSystem } from '@/components/Notifications/NotificationSystem'
+import { convertProject } from '@/libs/project/ConvertComMojangProject'
 
 const t = useTranslate()
 
@@ -69,7 +70,15 @@ async function edit(name: string) {}
 					@edit="edit"
 				/>
 
-				<ProjectGalleryEntry v-for="(project, index) in convertableProjects" :key="index" :icon="project.icon" :name="project.name" :favorite="false" :read-only="true" />
+				<ProjectGalleryEntry
+					v-for="(project, index) in convertableProjects"
+					:key="index"
+					:icon="project.icon"
+					:name="project.name"
+					:favorite="false"
+					:read-only="true"
+					@click="convertProject(project)"
+				/>
 			</div>
 
 			<div class="flex items-center flex-col mt-6" v-if="!suggestSelectBridgeFolder && projects.length === 0">

@@ -1369,5 +1369,13 @@
 		"unpin": "Unpin",
 		"noBridgeFolderSelected": "You need to select a bridge. folder.",
 		"selectBridgeFolder": "Select a bridge. folder"
+	},
+	"convert": {
+		"confirmationMessage": {
+			"v1": "This is a bridge. v1 project. If you click continue, the project will be converted to a bridge. project and stored in the bridge. projects folder.",
+			"com": {
+				"mojang": "bridge. no longer supports opening projects directly withing the com.mojang folder! If you click continue, the project will be converted to a bridge. project and stored in the bridge. projects folder."
+			}
+		}
 	}
 }

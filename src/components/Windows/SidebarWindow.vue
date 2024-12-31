@@ -28,12 +28,9 @@ const sidebarExpanded = ref(true)
 
 <template>
 	<div class="w-screen h-app flex justify-center items-center absolute top-toolbar left-0">
-		<div class="bg-menu w-screen h-app absolute top-0 left-0 opacity-30" @click="close" />
+		<div class="bg-background-secondary w-screen h-app absolute top-0 left-0 opacity-30" @click="close" />
 
-		<div
-			v-if="isMobile"
-			class="bg-background flex flex-col shadow-window rounded-md overflow-hidden window relative w-screen h-app"
-		>
+		<div v-if="isMobile" class="bg-background flex flex-col shadow-window rounded-md overflow-hidden window relative w-screen h-app">
 			<div class="flex justify-between align-center p-2">
 				<span class="flex align-center">
 					<IconButton
@@ -52,17 +49,11 @@ const sidebarExpanded = ref(true)
 			</div>
 
 			<div class="relative w-full flex-1">
-				<div
-					class="bg-background-secondary w-full h-full absolute right-0 transition-[right] duration-200 ease-out"
-					:class="{ 'right-full': !sidebarExpanded }"
-				>
+				<div class="bg-background-secondary w-full h-full absolute right-0 transition-[right] duration-200 ease-out" :class="{ 'right-full': !sidebarExpanded }">
 					<slot name="sidebar" :hide="() => (sidebarExpanded = false)" />
 				</div>
 
-				<div
-					class="w-full h-full absolute left-0 transition-[left] duration-200 ease-out"
-					:class="{ 'left-full': sidebarExpanded }"
-				>
+				<div class="w-full h-full absolute left-0 transition-[left] duration-200 ease-out" :class="{ 'left-full': sidebarExpanded }">
 					<slot name="content" />
 				</div>
 			</div>

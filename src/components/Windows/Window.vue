@@ -20,12 +20,9 @@ const isMobile = useIsMobile()
 
 <template>
 	<div class="w-screen h-app flex justify-center items-center absolute top-toolbar left-0">
-		<div class="bg-menu w-screen h-app absolute top-0 left-0 opacity-30" @click="close" />
+		<div class="bg-background-secondary w-screen h-app absolute top-0 left-0 opacity-30" @click="close" />
 
-		<div
-			class="flex flex-col bg-background shadow-window relative rounded-md window"
-			:class="{ 'w-full': isMobile, 'h-full': isMobile }"
-		>
+		<div class="flex flex-col bg-background shadow-window relative rounded-md window" :class="{ 'w-full': isMobile, 'h-full': isMobile }">
 			<div class="w-full flex justify-between align-center p-2">
 				<span class="select-none ml-1 text-text-secondary font-theme">
 					{{ name }}
