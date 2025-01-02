@@ -13,6 +13,10 @@ export class Sidebar {
 		Settings.addSetting('sidebarRight', {
 			default: false,
 		})
+
+		Settings.addSetting('sidebarSize', {
+			default: 'normal',
+		})
 	}
 
 	public static addButton(icon: string, callback: () => void) {

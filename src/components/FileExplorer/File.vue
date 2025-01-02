@@ -57,42 +57,21 @@ function dragEnd() {
 			'hover:bg-background-tertiary': !FileExplorer.draggedItem.value,
 		}"
 		@click="click"
-		@contextmenu.prevent.stop="contextMenu?.open"
+		@contextmenu.stop="contextMenu?.open"
 		@dragstart="dragStart"
 		@dragend="dragEnd"
 		draggable="true"
 	>
 		<Icon icon="draft" :color="color" class="text-sm" />
 
-		<span class="select-none font-theme"> {{ basename(path) }} </span>
+		<span class="select-none font-theme text-ellipsis overflow-hidden"> {{ basename(path) }} </span>
 
 		<FreeContextMenu ref="contextMenu">
-			<ContextMenuItem
-				icon="edit"
-				text="Rename"
-				@click.stop="executeContextMenuAction('renameFileSystemEntry', path)"
-			/>
-			<ContextMenuItem
-				icon="delete"
-				text="Delete"
-				@click.stop="executeContextMenuAction('deleteFileSystemEntry', path)"
-			/>
-			<ContextMenuItem
-				icon="folder_copy"
-				text="Duplicate"
-				@click.stop="executeContextMenuAction('duplicateFileSystemEntry', path)"
-			/>
-			<ContextMenuItem
-				icon="content_copy"
-				text="Copy"
-				@click.stop="executeContextMenuAction('copyFileSystemEntry', path)"
-			/>
-			<ContextMenuItem
-				icon="content_paste"
-				text="Paste"
-				class="pb-4"
-				@click.stop="executeContextMenuAction('pasteFileSystemEntry', path)"
-			/>
+			<ContextMenuItem icon="edit" text="Rename" @click.stop="executeContextMenuAction('renameFileSystemEntry', path)" />
+			<ContextMenuItem icon="delete" text="Delete" @click.stop="executeContextMenuAction('deleteFileSystemEntry', path)" />
+			<ContextMenuItem icon="folder_copy" text="Duplicate" @click.stop="executeContextMenuAction('duplicateFileSystemEntry', path)" />
+			<ContextMenuItem icon="content_copy" text="Copy" @click.stop="executeContextMenuAction('copyFileSystemEntry', path)" />
+			<ContextMenuItem icon="content_paste" text="Paste" class="pb-4" @click.stop="executeContextMenuAction('pasteFileSystemEntry', path)" />
 		</FreeContextMenu>
 	</div>
 </template>

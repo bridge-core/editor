@@ -16,7 +16,6 @@ import { ComputedRef, Ref, computed, onMounted, onUnmounted, ref, watch } from '
 import { basename, join } from 'pathe'
 import { IPackType } from 'mc-project-core'
 import { BedrockProject } from '@/libs/project/BedrockProject'
-import { useTranslate } from '@/libs/locales/Locales'
 import { useCurrentProject } from '@/libs/project/ProjectManager'
 import { ActionManager } from '@/libs/actions/ActionManager'
 import { Windows } from '@/components/Windows/Windows'
@@ -24,7 +23,6 @@ import { PresetsWindow } from '@/components/Windows/Presets/PresetsWindow'
 import { Disposable } from '@/libs/disposeable/Disposeable'
 import { Settings } from '@/libs/settings/Settings'
 
-const t = useTranslate()
 const get = Settings.useGet()
 
 const currentProject = useCurrentProject()
@@ -172,10 +170,10 @@ function drop(event: DragEvent) {
 	<div
 		class="max-w-full h-full mt-2 flex flex-col gap-2"
 		:class="{
-			'w-2/12': get('sidebarSize') === 'small',
-			'w-3/12': get('sidebarSize') === 'normal',
-			'w-4/12': get('sidebarSize') === 'large',
-			'w-6/12': get('sidebarSize') === 'x-large',
+			'w-[14rem]': get('sidebarSize') === 'small',
+			'w-[18rem]': get('sidebarSize') === 'normal',
+			'w-[22rem]': get('sidebarSize') === 'large',
+			'w-[28rem]': get('sidebarSize') === 'x-large',
 		}"
 		v-if="FileExplorer.open.value"
 	>
