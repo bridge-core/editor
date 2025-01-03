@@ -22,8 +22,10 @@ import { Windows } from '@/components/Windows/Windows'
 import { PresetsWindow } from '@/components/Windows/Presets/PresetsWindow'
 import { Disposable } from '@/libs/disposeable/Disposeable'
 import { Settings } from '@/libs/settings/Settings'
+import { useIsMobile } from '@/libs/Mobile'
 
 const get = Settings.useGet()
+const isMobile = useIsMobile()
 
 const currentProject = useCurrentProject()
 
@@ -168,12 +170,12 @@ function drop(event: DragEvent) {
 
 <template>
 	<div
-		class="max-w-full h-full mt-2 flex flex-col gap-2"
+		class="max-w-full h-full mt-2 flex flex-col gap-2 flex-1"
 		:class="{
-			'w-[14rem]': get('sidebarSize') === 'small',
-			'w-[18rem]': get('sidebarSize') === 'normal',
-			'w-[22rem]': get('sidebarSize') === 'large',
-			'w-[28rem]': get('sidebarSize') === 'x-large',
+			'max-w-[14rem]': get('sidebarSize') === 'small' && !isMobile,
+			'max-w-[18rem]': get('sidebarSize') === 'normal' && !isMobile,
+			'max-w-[22rem]': get('sidebarSize') === 'large' && !isMobile,
+			'max-w-[28rem]': get('sidebarSize') === 'x-large' && !isMobile,
 		}"
 		v-if="FileExplorer.open.value"
 	>
