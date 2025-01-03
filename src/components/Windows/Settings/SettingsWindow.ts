@@ -16,11 +16,11 @@ interface Category {
 	icon: string
 }
 
-type Item = CustomItem | DropdownItem | AutocompleteItem | ToggleItem
+type Item = CustomItem | DropdownItem | AutocompleteItem | ToggleItem | TabItem
 
 export interface CustomItem {
 	type: 'custom'
-	label: string
+	label?: string
 	component: any
 }
 
@@ -40,6 +40,14 @@ export interface AutocompleteItem {
 export interface ToggleItem {
 	type: 'toggle'
 	label: string
+}
+
+export interface TabItem {
+	type: 'tab'
+	label: string
+	description: string
+	values: string[]
+	labels: string[]
 }
 
 export class SettingsWindow extends Window {
@@ -151,32 +159,8 @@ function setupAppearanceCategory() {
 	SettingsWindow.addItem('appearance', 'font', {
 		type: 'dropdown',
 		label: 'windows.settings.appearance.font.name',
-		values: computed(() => [
-			'Inter',
-			'Roboto',
-			'Arial',
-			'Verdana',
-			'Helvetica',
-			'Tahome',
-			'Trebuchet MS',
-			'Menlo',
-			'Monaco',
-			'Courier New',
-			'monospace',
-		]),
-		labels: computed(() => [
-			'Inter',
-			'Roboto',
-			'Arial',
-			'Verdana',
-			'Helvetica',
-			'Tahome',
-			'Trebuchet MS',
-			'Menlo',
-			'Monaco',
-			'Courier New',
-			'Monospace',
-		]),
+		values: computed(() => ['Inter', 'Roboto', 'Arial', 'Verdana', 'Helvetica', 'Tahome', 'Trebuchet MS', 'Menlo', 'Monaco', 'Courier New', 'monospace']),
+		labels: computed(() => ['Inter', 'Roboto', 'Arial', 'Verdana', 'Helvetica', 'Tahome', 'Trebuchet MS', 'Menlo', 'Monaco', 'Courier New', 'Monospace']),
 	})
 
 	SettingsWindow.addItem('appearance', 'editorFont', {
@@ -202,14 +186,19 @@ function setupAppearanceCategory() {
 		type: 'toggle',
 		label: 'windows.settings.sidebar.sidebarRight.name',
 	})
-	SettingsWindow.addItem('appearance', 'shrinkSidebarElements', {
-		type: 'toggle',
-		label: 'windows.settings.sidebar.shrinkSidebarElements.name'
-	})
+
+	// SettingsWindow.addItem('appearance', 'sidebarSize', {
+	// 	type: 'custom',
+	// 	label: 'windows.settings.sidebar.sidebarSize.name',
+	// 	component: SidebarSize,
+	// })
+
 	SettingsWindow.addItem('appearance', 'sidebarSize', {
-		type: 'custom',
+		type: 'tab',
 		label: 'windows.settings.sidebar.sidebarSize.name',
-		component: SidebarSize
+		description: 'windows.settings.sidebar.sidebarSize.description',
+		labels: ['Small', 'Normal', 'Large', 'X-Large'],
+		values: ['small', 'normal', 'large', 'x-large'],
 	})
 }
 
@@ -228,7 +217,7 @@ function setupEditorCategory() {
 
 	SettingsWindow.addItem('editor', 'formatOnSave', {
 		type: 'toggle',
-		label: 'windows.settings.general.formatOnSave.name'
+		label: 'windows.settings.general.formatOnSave.name',
 	})
 
 	SettingsWindow.addItem('editor', 'bracketPairColorization', {

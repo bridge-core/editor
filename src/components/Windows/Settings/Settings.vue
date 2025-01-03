@@ -27,28 +27,15 @@ const isMobile = useIsMobile()
 
 <template>
 	<SidebarWindow
-		:name="`${t('windows.settings.title')} - ${t(
-			SettingsWindow.selectedCategory.value
-				? SettingsWindow.categories[SettingsWindow.selectedCategory.value].label
-				: ''
-		)}`"
+		:name="`${t('windows.settings.title')} - ${t(SettingsWindow.selectedCategory.value ? SettingsWindow.categories[SettingsWindow.selectedCategory.value].label : '')}`"
 		@close="Windows.close(SettingsWindow)"
 	>
 		<template #sidebar="{ hide }">
 			<div class="p-4">
-				<LabeledInput
-					v-slot="{ focus, blur }"
-					:label="t('windows.settings.searchSettings')"
-					class="bg-background-secondary !mt-1"
-				>
+				<LabeledInput v-slot="{ focus, blur }" :label="t('windows.settings.searchSettings')" class="bg-background-secondary !mt-1">
 					<div class="flex gap-1">
 						<Icon icon="search" class="transition-colors duration-100 ease-out" />
-						<input
-							@focus="focus"
-							@blur="blur"
-							class="outline-none border-none bg-transparent font-theme"
-							v-model="search"
-						/>
+						<input @focus="focus" @blur="blur" class="outline-none border-none bg-transparent font-theme" v-model="search" />
 					</div>
 				</LabeledInput>
 
@@ -66,11 +53,7 @@ const isMobile = useIsMobile()
 							}
 						"
 					>
-						<Icon
-							:icon="category.icon"
-							:color="SettingsWindow.selectedCategory.value === id ? 'accent' : 'primary'"
-							class="text-base"
-						/>
+						<Icon :icon="category.icon" :color="SettingsWindow.selectedCategory.value === id ? 'accent' : 'primary'" class="text-base" />
 						<span
 							class="font-theme"
 							:class="{
@@ -85,41 +68,26 @@ const isMobile = useIsMobile()
 		</template>
 
 		<template #content>
-			<div
-				class="max-w-[64rem] w-[50vw] h-[38rem] flex flex-col overflow-y-auto p-4 pt-0"
-				:class="{ 'w-full': isMobile, 'h-full': isMobile }"
-			>
+			<div class="max-w-[64rem] w-[50vw] h-[38rem] flex flex-col overflow-y-auto p-4 pt-0" :class="{ 'w-full': isMobile, 'h-full': isMobile }">
 				<div
 					v-if="SettingsWindow.selectedCategory.value !== null"
 					v-for="[id, item] in Object.entries(SettingsWindow.items[SettingsWindow.selectedCategory.value])"
 					class="flex gap-6 items-center"
 				>
 					<div v-if="item.type === 'custom'" class="w-full">
-						<h2 v-if="(item as CustomItem).label" class="mb-2 text-text font-theme">
-							{{ t((item as CustomItem).label) }}
+						<h2 v-if="item.label" class="mb-2 text-text font-theme">
+							{{ t(item.label) }}
 						</h2>
-						<component :is="(item as CustomItem).component" :item="item" />
+						<component :is="item.component" :item="item" />
 					</div>
 
 					<Dropdown v-if="item.type === 'dropdown'" class="mb-4 flex-1">
 						<template #main="{ expanded, toggle }">
-							<LabeledInput
-								:label="t((item as DropdownItem).label)"
-								:focused="expanded"
-								class="bg-background"
-							>
+							<LabeledInput :label="t(item.label)" :focused="expanded" class="bg-background">
 								<div class="flex items-center justify-between cursor-pointer" @click="toggle">
-									<span class="font-theme">{{
-										(item as DropdownItem).labels.value[
-											(item as DropdownItem).values.value.indexOf(get(id))
-										]
-									}}</span>
+									<span class="font-theme">{{ item.labels.value[item.values.value.indexOf(get(id))] }}</span>
 
-									<Icon
-										icon="arrow_drop_down"
-										class="transition-transform duration-200 ease-out"
-										:class="{ '-rotate-180': expanded }"
-									/>
+									<Icon icon="arrow_drop_down" class="transition-transform duration-200 ease-out" :class="{ '-rotate-180': expanded }" />
 								</div>
 							</LabeledInput>
 						</template>
@@ -128,7 +96,7 @@ const isMobile = useIsMobile()
 							<div class="mt-2 bg-background-secondary w-full p-1 rounded">
 								<div class="flex flex-col max-h-[12rem] overflow-y-auto p-1">
 									<button
-										v-for="value in (item as DropdownItem).values.value"
+										v-for="value in item.values.value"
 										@click="
 											() => {
 												Settings.set(id, value)
@@ -140,30 +108,48 @@ const isMobile = useIsMobile()
 											'bg-background-tertiary': get(id) === value,
 										}"
 									>
-										{{
-											(item as DropdownItem).labels.value[
-												(item as DropdownItem).values.value.indexOf(value)
-											]
-										}}
+										{{ item.labels.value[item.values.value.indexOf(value)] }}
 									</button>
 								</div>
 							</div>
 						</template>
 					</Dropdown>
 
-					<div v-if="item.type === 'toggle'" class="mt-2 mb-2">
-						<h2 class="mb-2 text-text font-theme">{{ t((item as ToggleItem).label) }}</h2>
+					<div v-if="item.type === 'toggle'" class="mt-2 mb-4">
+						<h2 class="mb-2 text-text font-theme">{{ t(item.label) }}</h2>
 
 						<Switch :model-value="get(id)" @update:model-value="(value) => Settings.set(id, value)" />
 					</div>
 
 					<div v-if="item.type === 'autocomplete'">
 						<LabeledAutocompleteInput
-							:completions="(item as AutocompleteItem).completions.value"
-							:label="(item as AutocompleteItem).label"
+							:completions="item.completions.value"
+							:label="item.label"
 							:model-value="get(id).toString()"
 							@update:model-value="(value: string) => Settings.set(id, value)"
 						/>
+					</div>
+
+					<div v-if="item.type === 'tab'" class="flex gap-6 items-center mb-4">
+						<div>
+							<button
+								v-for="(option, index) in item.labels"
+								@click="Settings.set(id, item.values[index])"
+								class="px-2 py-1 font-theme border-transparent hover:border-accent border-2 transition-colors duration-100 ease-out"
+								:class="{
+									'bg-primary': get(id) === item.values[index],
+									'bg-background-secondary': get(id) !== item.values[index],
+									'rounded-l': index === 0,
+									'rounded-r': index === item.labels.length - 1,
+								}"
+							>
+								{{ t(item.labels[index]) }}
+							</button>
+						</div>
+
+						<p class="text-text-secondary mr-6">
+							{{ t(item.description) }}
+						</p>
 					</div>
 
 					<!--<Button v-if="item.type === 'button'" @click="item.trigger" :text="t(item.text)" />

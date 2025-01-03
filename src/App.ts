@@ -27,6 +27,7 @@ import { TreeEditorTab } from '@/components/Tabs/TreeEditor/TreeEditorTab'
 import { tauriBuild } from '@/libs/tauri/Tauri'
 import { setupImporters } from '@/libs/import/Importers'
 import { TabManager } from '@/components/TabSystem/TabManager'
+import { FileExplorer } from './components/FileExplorer/FileExplorer'
 
 export function setupBeforeComponents() {
 	NotificationSystem.setup()
@@ -39,6 +40,7 @@ export function setupBeforeComponents() {
 	TreeEditorTab.setup()
 	Sidebar.setup()
 	TabManager.setup()
+	FileExplorer.setup()
 
 	setupActions()
 	setupSidebar()
