@@ -1,15 +1,13 @@
-import ColorScheme from './Appearance/ColorScheme.vue'
 import OutputFolder from './Projects/OutputFolder.vue'
 import ActionsList from './Actions/ActionsList.vue'
+import Settings from './Settings.vue'
 
-import { Windows } from '@/components/Windows/Windows'
 import { ComputedRef, Ref, computed, ref } from 'vue'
+import { Windows } from '@/components/Windows/Windows'
+import { Window } from '@/components/Windows/Window'
 import { ThemeManager } from '@/libs/theme/ThemeManager'
 import { LocaleManager } from '@/libs/locales/Locales'
-import { Window } from '../Window'
-import Settings from './Settings.vue'
 import { CompletionItem } from '@/libs/jsonSchema/Schema'
-import SidebarSize from './Appearance/SidebarSize.vue'
 
 interface Category {
 	label: string
@@ -132,9 +130,11 @@ function setupAppearanceCategory() {
 	})
 
 	SettingsWindow.addItem('appearance', 'colorScheme', {
-		type: 'custom',
+		type: 'tab',
 		label: 'windows.settings.appearance.colorScheme.name',
-		component: ColorScheme,
+		description: 'windows.settings.appearance.colorScheme.description',
+		labels: ['Auto', 'Dark', 'Light'],
+		values: ['auto', 'dark', 'light'],
 	})
 
 	const themes = ThemeManager.useThemesImmediate()
@@ -187,16 +187,18 @@ function setupAppearanceCategory() {
 		label: 'windows.settings.sidebar.sidebarRight.name',
 	})
 
-	// SettingsWindow.addItem('appearance', 'sidebarSize', {
-	// 	type: 'custom',
-	// 	label: 'windows.settings.sidebar.sidebarSize.name',
-	// 	component: SidebarSize,
-	// })
-
 	SettingsWindow.addItem('appearance', 'sidebarSize', {
 		type: 'tab',
 		label: 'windows.settings.sidebar.sidebarSize.name',
 		description: 'windows.settings.sidebar.sidebarSize.description',
+		labels: ['Small', 'Normal', 'Large', 'X-Large'],
+		values: ['small', 'normal', 'large', 'x-large'],
+	})
+
+	SettingsWindow.addItem('appearance', 'fileExplorerIndentation', {
+		type: 'tab',
+		label: 'windows.settings.appearance.fileExplorerIndentation.name',
+		description: 'windows.settings.appearance.fileExplorerIndentation.description',
 		labels: ['Small', 'Normal', 'Large', 'X-Large'],
 		values: ['small', 'normal', 'large', 'x-large'],
 	})

@@ -11,6 +11,9 @@ import { fileSystem } from '@/libs/fileSystem/FileSystem'
 import { ActionManager } from '@/libs/actions/ActionManager'
 import { Disposable } from '@/libs/disposeable/Disposeable'
 import { FileExplorer } from './FileExplorer'
+import { Settings } from '@/libs/settings/Settings'
+
+const get = Settings.useGet()
 
 const props = defineProps({
 	path: {
@@ -31,10 +34,7 @@ const entries: Ref<BaseEntry[]> = ref([])
 const orderedEntries = computed(() =>
 	(FileExplorer.isItemDragging()
 		? draggingOver.value && draggingLocation.value === 'inside'
-			? [
-					...entries.value.filter((entry) => entry.path !== FileExplorer.draggedItem.value!.path),
-					FileExplorer.draggedItem.value!,
-			  ]
+			? [...entries.value.filter((entry) => entry.path !== FileExplorer.draggedItem.value!.path), FileExplorer.draggedItem.value!]
 			: entries.value.filter((entry) => entry.path !== FileExplorer.draggedItem.value!.path)
 		: entries.value
 	)
@@ -168,15 +168,9 @@ function drop(event: DragEvent) {
 	if (!FileExplorer.draggedItem.value) return
 
 	if (draggingLocation.value === 'inside') {
-		fileSystem.move(
-			FileExplorer.draggedItem.value.path,
-			join(props.path, basename(FileExplorer.draggedItem.value.path))
-		)
+		fileSystem.move(FileExplorer.draggedItem.value.path, join(props.path, basename(FileExplorer.draggedItem.value.path)))
 	} else {
-		fileSystem.move(
-			FileExplorer.draggedItem.value.path,
-			join(dirname(props.path), basename(FileExplorer.draggedItem.value.path))
-		)
+		fileSystem.move(FileExplorer.draggedItem.value.path, join(dirname(props.path), basename(FileExplorer.draggedItem.value.path)))
 	}
 
 	FileExplorer.draggedItem.value = null
@@ -218,23 +212,19 @@ function drop(event: DragEvent) {
 			</div>
 
 			<div
-				class="ml-1 border-l pl-1 border-background-tertiary min-h-[1rem]"
+				class="ml-1 border-l border-background-tertiary min-h-[1rem]"
+				:class="{
+					'pl-0.5': get('fileExplorerIndentation') === 'small',
+					'pl-1': get('fileExplorerIndentation') === 'normal',
+					'pl-3': get('fileExplorerIndentation') === 'large',
+					'pl-6': get('fileExplorerIndentation') === 'x-large',
+				}"
 				v-if="expanded && entries.length > 0"
 			>
 				<div v-for="entry in orderedEntries" :key="entry.path">
-					<File
-						:path="entry.path"
-						:color="color"
-						v-if="entry.kind === 'file'"
-						:preview="FileExplorer.draggedItem.value?.path === entry.path"
-					/>
+					<File :path="entry.path" :color="color" v-if="entry.kind === 'file'" :preview="FileExplorer.draggedItem.value?.path === entry.path" />
 
-					<Directory
-						:path="entry.path"
-						:color="color"
-						v-if="entry.kind === 'directory'"
-						:preview="FileExplorer.draggedItem.value?.path === entry.path"
-					/>
+					<Directory :path="entry.path" :color="color" v-if="entry.kind === 'directory'" :preview="FileExplorer.draggedItem.value?.path === entry.path" />
 				</div>
 			</div>
 		</div>
@@ -254,43 +244,13 @@ function drop(event: DragEvent) {
 		/>
 
 		<FreeContextMenu ref="contextMenu">
-			<ContextMenuItem
-				icon="note_add"
-				text="Create File"
-				class="pt-4"
-				@click.stop="executeContextMenuAction('createFile', path)"
-			/>
-			<ContextMenuItem
-				icon="folder"
-				text="Create Folder"
-				@click.stop="executeContextMenuAction('createFolder', path)"
-			/>
-			<ContextMenuItem
-				icon="edit"
-				text="Rename"
-				@click.stop="executeContextMenuAction('renameFileSystemEntry', path)"
-			/>
-			<ContextMenuItem
-				icon="delete"
-				text="Delete"
-				@click.stop="executeContextMenuAction('deleteFileSystemEntry', path)"
-			/>
-			<ContextMenuItem
-				icon="folder_copy"
-				text="Duplicate"
-				@click.stop="executeContextMenuAction('duplicateFileSystemEntry', path)"
-			/>
-			<ContextMenuItem
-				icon="content_copy"
-				text="Copy"
-				@click.stop="executeContextMenuAction('copyFileSystemEntry', path)"
-			/>
-			<ContextMenuItem
-				icon="content_paste"
-				text="Paste"
-				class="pb-4"
-				@click.stop="executeContextMenuAction('pasteFileSystemEntry', path)"
-			/>
+			<ContextMenuItem icon="note_add" text="Create File" class="pt-4" @click.stop="executeContextMenuAction('createFile', path)" />
+			<ContextMenuItem icon="folder" text="Create Folder" @click.stop="executeContextMenuAction('createFolder', path)" />
+			<ContextMenuItem icon="edit" text="Rename" @click.stop="executeContextMenuAction('renameFileSystemEntry', path)" />
+			<ContextMenuItem icon="delete" text="Delete" @click.stop="executeContextMenuAction('deleteFileSystemEntry', path)" />
+			<ContextMenuItem icon="folder_copy" text="Duplicate" @click.stop="executeContextMenuAction('duplicateFileSystemEntry', path)" />
+			<ContextMenuItem icon="content_copy" text="Copy" @click.stop="executeContextMenuAction('copyFileSystemEntry', path)" />
+			<ContextMenuItem icon="content_paste" text="Paste" class="pb-4" @click.stop="executeContextMenuAction('pasteFileSystemEntry', path)" />
 		</FreeContextMenu>
 	</div>
 </template>

@@ -130,26 +130,30 @@ const isMobile = useIsMobile()
 						/>
 					</div>
 
-					<div v-if="item.type === 'tab'" class="flex gap-6 items-center mb-4">
-						<div>
-							<button
-								v-for="(option, index) in item.labels"
-								@click="Settings.set(id, item.values[index])"
-								class="px-2 py-1 font-theme border-transparent hover:border-accent border-2 transition-colors duration-100 ease-out"
-								:class="{
-									'bg-primary': get(id) === item.values[index],
-									'bg-background-secondary': get(id) !== item.values[index],
-									'rounded-l': index === 0,
-									'rounded-r': index === item.labels.length - 1,
-								}"
-							>
-								{{ t(item.labels[index]) }}
-							</button>
-						</div>
+					<div v-if="item.type === 'tab'">
+						<h2 class="mb-2 text-text font-theme">{{ t(item.label) }}</h2>
 
-						<p class="text-text-secondary mr-6">
-							{{ t(item.description) }}
-						</p>
+						<div class="flex gap-6 items-center mb-4">
+							<div class="min-w-max">
+								<button
+									v-for="(option, index) in item.labels"
+									@click="Settings.set(id, item.values[index])"
+									class="px-2 py-1 font-theme border-transparent hover:border-accent border-2 transition-colors duration-100 ease-out"
+									:class="{
+										'bg-primary': get(id) === item.values[index],
+										'bg-background-secondary': get(id) !== item.values[index],
+										'rounded-l': index === 0,
+										'rounded-r': index === item.labels.length - 1,
+									}"
+								>
+									{{ t(item.labels[index]) }}
+								</button>
+							</div>
+
+							<p class="text-text-secondary mr-6">
+								{{ t(item.description) }}
+							</p>
+						</div>
 					</div>
 
 					<!--<Button v-if="item.type === 'button'" @click="item.trigger" :text="t(item.text)" />

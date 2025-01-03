@@ -931,6 +931,10 @@
 				"hideToolbarItems": {
 					"name": "Hide Toolbar Items",
 					"description": "Make bridge. feel at home on MacOS: Move all toolbar items into a new menu button"
+				},
+				"fileExplorerIndentation": {
+					"name": "File Explorer Indentation",
+					"description": "Change the size of the indentation of directory entries in the file explorer"
 				}
 			},
 			"general": {
