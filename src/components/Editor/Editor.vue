@@ -7,16 +7,24 @@ import { Editor } from '@/components/Editor/Editor'
 
 import { useCurrentProject } from '@/libs/project/ProjectManager'
 import { useIsMobile } from '@/libs/Mobile'
+import { Settings } from '@/libs/settings/Settings'
 
 const currentProject = useCurrentProject()
 const isMobile = useIsMobile()
+const get = Settings.useGet()
 </script>
 
 <template>
-	<main class="w-full h-app flex gap-2" v-if="currentProject !== null && !isMobile">
+	<main class="w-full h-app flex gap-2" v-if="currentProject !== null && !isMobile && !get('sidebarRight')">
 		<Sidebar />
 		<FileExplorer />
 		<Tabs />
+	</main>
+
+	<main class="w-full h-app flex gap-2" v-if="currentProject !== null && !isMobile && get('sidebarRight')">
+		<Tabs />
+		<FileExplorer />
+		<Sidebar />
 	</main>
 
 	<main class="w-full h-app relative" v-if="currentProject !== null && isMobile">
