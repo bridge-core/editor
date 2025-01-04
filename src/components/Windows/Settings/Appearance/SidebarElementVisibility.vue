@@ -24,7 +24,7 @@ function toggle(id: string) {
 	<div class="flex flex-col gap-2">
 		<button
 			v-for="item in Sidebar.items.filter((item) => item.type !== 'divider')"
-			class="flex w-full bg-background-secondary p-2 rounded gap-2 font-inter border-2 border-background-secondary transition-border transition-colors duration-100 ease-out"
+			class="flex w-full bg-background-secondary p-2 rounded gap-2 font-theme border-2 border-background-secondary transition-border transition-colors duration-100 ease-out"
 			:class="{
 				'border-primary': !get('hiddenSidebarElements').includes(item.id),
 				'hover:border-accent': get('hiddenSidebarElements').includes(item.id),

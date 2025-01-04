@@ -18,15 +18,14 @@ const get = Settings.useGet()
 
 <template>
 	<div class="w-full h-full">
-		<div class="w-full flex gap-4 mb-2 pb-2 overflow-x-scroll">
+		<div class="w-full flex gap-2 mb-2 pb-2 overflow-x-scroll">
 			<div
 				v-for="tab in instance.tabs.value"
-				class="flex items-center gap-1 p-2 py-1 rounded cursor-pointer"
+				class="flex items-center gap-1 px-2 py-1 rounded cursor-pointer transition-colors duration-100 ease-out group"
 				:class="{
 					'max-w-[10rem]': get('compactTabDesign'),
-				}"
-				:style="{
-					background: instance.selectedTab.value == tab ? 'var(--theme-color-backgroundSecondary)' : 'transparent',
+					'bg-background-secondary': instance.selectedTab.value === tab,
+					'bg-background-transparent hover:bg-background-secondary': instance.selectedTab.value !== tab,
 				}"
 				@click="() => instance.selectTab(tab)"
 			>
@@ -42,7 +41,15 @@ const get = Settings.useGet()
 					<Icon v-if="tab.icon" :icon="tab.icon.value ?? 'help'" class="text-base text-behaviorPack" />
 				</div>
 
-				<p class="font-theme select-none overflow-hidden text-ellipsis h-6">{{ tab.name.value ?? 'Tab' }}</p>
+				<p
+					class="font-theme select-none overflow-hidden text-ellipsis h-6 transition-colors duration-100 ease-out"
+					:class="{
+						'text-text': instance.selectedTab.value === tab,
+						'text-text-secondary group-hover:text-text': instance.selectedTab.value !== tab,
+					}"
+				>
+					{{ tab.name.value ?? 'Tab' }}
+				</p>
 
 				<IconButton icon="close" class="text-base" @click.stop="() => instance.removeTab(tab)" />
 			</div>
