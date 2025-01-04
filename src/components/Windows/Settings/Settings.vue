@@ -4,14 +4,14 @@ import LabeledInput from '@/components/Common/LabeledInput.vue'
 import Icon from '@/components/Common/Icon.vue'
 import Dropdown from '@/components/Common/LegacyDropdown.vue'
 import Switch from '@/components/Common/Switch.vue'
-import Button from '@/components/Common/Button.vue'
+import LabeledTextInput from '@/components/Common/LabeledTextInput.vue'
+import LabeledAutocompleteInput from '@/components/Common/LabeledAutocompleteInput.vue'
 
+import { ref } from 'vue'
 import { useTranslate } from '@/libs/locales/Locales'
 import { Settings } from '@/libs/settings/Settings'
-import { AutocompleteItem, CustomItem, DropdownItem, SettingsWindow, ToggleItem } from './SettingsWindow'
-import { ref } from 'vue'
-import { Windows } from '../Windows'
-import LabeledAutocompleteInput from '@/components/Common/LabeledAutocompleteInput.vue'
+import { SettingsWindow } from './SettingsWindow'
+import { Windows } from '@/components/Windows/Windows'
 import { useIsMobile } from '@/libs/Mobile'
 
 const t = useTranslate()
@@ -128,6 +128,10 @@ const isMobile = useIsMobile()
 							:model-value="get(id).toString()"
 							@update:model-value="(value: string) => Settings.set(id, value)"
 						/>
+					</div>
+
+					<div v-if="item.type === 'text'" class="w-full">
+						<LabeledTextInput :label="item.label" :model-value="get(id).toString()" @update:model-value="(value: string) => Settings.set(id, value)" />
 					</div>
 
 					<div v-if="item.type === 'tab'">

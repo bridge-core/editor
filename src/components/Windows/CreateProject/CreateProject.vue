@@ -20,6 +20,7 @@ import { CreateProjectWindow } from './CreateProjectWindow'
 import TextButton from '@/components/Common/TextButton.vue'
 import { useIsMobile } from '@/libs/Mobile'
 import { packs } from '@/libs/project/Packs'
+import { Settings } from '@/libs/settings/Settings'
 
 const t = useTranslate()
 const getData = useGetData()
@@ -57,6 +58,8 @@ const experimentalToggles: Ref<ExperimentalToggle[]> = ref([])
 const selectedExperimentalToggles: Ref<ExperimentalToggle[]> = ref([])
 
 async function setup() {
+	projectAuthor.value = Settings.get('defaultAuthor')
+
 	packTypes.value = (await getData.value('packages/minecraftBedrock/packDefinitions.json')) || []
 
 	experimentalToggles.value = (await getData.value('packages/minecraftBedrock/experimentalGameplay.json')) || []

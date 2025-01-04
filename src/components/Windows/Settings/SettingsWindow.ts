@@ -15,7 +15,7 @@ interface Category {
 	icon: string
 }
 
-type Item = CustomItem | DropdownItem | AutocompleteItem | ToggleItem | TabItem
+type Item = CustomItem | DropdownItem | AutocompleteItem | ToggleItem | TabItem | TextItem
 
 export interface CustomItem {
 	type: 'custom'
@@ -34,6 +34,11 @@ export interface AutocompleteItem {
 	type: 'autocomplete'
 	label: string
 	completions: ComputedRef<CompletionItem[]>
+}
+
+export interface TextItem {
+	type: 'text'
+	label: string
 }
 
 export interface ToggleItem {
@@ -109,6 +114,11 @@ function setupGeneralCategory() {
 		label: 'windows.settings.general.language.name',
 		values: computed(() => LocaleManager.getAvailableLanguages().map((language) => language.text)),
 		labels: computed(() => LocaleManager.getAvailableLanguages().map((language) => language.text)),
+	})
+
+	SettingsWindow.addItem('general', 'defaultAuthor', {
+		type: 'text',
+		label: 'windows.settings.projects.defaultAuthor.name',
 	})
 }
 

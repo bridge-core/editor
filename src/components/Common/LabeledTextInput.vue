@@ -3,7 +3,6 @@ import LabeledInput from './LabeledInput.vue'
 import Icon from './Icon.vue'
 
 import { useTranslate } from '@/libs/locales/Locales'
-import { onMounted, watch } from 'vue'
 
 const t = useTranslate()
 
@@ -33,14 +32,7 @@ function change(event: Event) {
 		<div class="flex gap-1">
 			<Icon v-if="icon" :icon="icon" class="transition-colors duration-100 ease-out" />
 
-			<input
-				@focus="focus"
-				@blur="blur"
-				class="outline-none border-none bg-transparent font-theme flex-1"
-				:value="model"
-				@input="input"
-				@change="change"
-			/>
+			<input @focus="focus" @blur="blur" class="outline-none border-none bg-transparent font-theme flex-1" :value="model" @input="input" @change="change" />
 		</div>
 	</LabeledInput>
 </template>
