@@ -57,7 +57,7 @@ function dragEnd() {
 			'hover:bg-background-tertiary': !FileExplorer.draggedItem.value,
 		}"
 		@click="click"
-		@contextmenu.stop="contextMenu?.open"
+		@contextmenu.prevent.stop="contextMenu?.open"
 		@dragstart="dragStart"
 		@dragend="dragEnd"
 		draggable="true"
