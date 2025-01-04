@@ -8,6 +8,9 @@ import { Sidebar } from '@/components/Sidebar/Sidebar'
 import { NotificationSystem } from '@/components/Notifications/NotificationSystem'
 import { Ref, ref } from 'vue'
 import { ActionManager } from '@/libs/actions/ActionManager'
+import { Settings } from '@/libs/settings/Settings'
+
+const get = Settings.useGet()
 
 const contextMenu: Ref<typeof FreeContextMenu | null> = ref(null)
 
@@ -21,11 +24,8 @@ function executeContextMenuAction(action: string, data: any) {
 </script>
 
 <template>
-	<div
-		class="min-w-[3.5rem] h-full bg-background-secondary rounded mt-2 flex flex-col gap-2 items-center p-2 overflow-y-auto"
-		@contextmenu.prevent.stop="contextMenu?.open"
-	>
-		<div v-for="item in Sidebar.items">
+	<div class="min-w-[3.5rem] h-full bg-background-secondary rounded mt-2 flex flex-col gap-2 items-center p-2 overflow-y-auto" @contextmenu.prevent.stop="contextMenu?.open">
+		<div v-for="item in Sidebar.items.filter((item) => item.type !== 'button' || !get('hiddenSidebarElements').includes(item.id))">
 			<div
 				class="w-10 h-10 bg-background rounded flex justify-center items-center hover:bg-primary transition-colors duration-100 ease-out cursor-pointer"
 				v-if="item.type === 'button'"
@@ -52,12 +52,7 @@ function executeContextMenuAction(action: string, data: any) {
 		/>
 
 		<FreeContextMenu ref="contextMenu">
-			<ContextMenuItem
-				icon="delete_forever"
-				text="Clear Notifications"
-				@click.stop="executeContextMenuAction('clearNotifications', null)"
-			>
-			</ContextMenuItem>
+			<ContextMenuItem icon="delete_forever" text="Clear Notifications" @click.stop="executeContextMenuAction('clearNotifications', null)"> </ContextMenuItem>
 		</FreeContextMenu>
 	</div>
 </template>

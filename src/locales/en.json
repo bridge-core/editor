@@ -564,6 +564,12 @@
 		}
 	},
 	"sidebar": {
+		"fileExplorer": {
+			"name": "File Explorer"
+		},
+		"findAndReplace": {
+			"name": "Find and Replace"
+		},
 		"quickExport": {
 			"name": "Quick Export"
 		},
@@ -935,6 +941,9 @@
 				"fileExplorerIndentation": {
 					"name": "File Explorer Indentation",
 					"description": "Change the size of the indentation of directory entries in the file explorer"
+				},
+				"sidebarElementVisibility": {
+					"name": "Sidebar Elements"
 				}
 			},
 			"general": {

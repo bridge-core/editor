@@ -9,18 +9,18 @@ import { NotificationSystem } from '@/components/Notifications/NotificationSyste
 import { SocialsWindow } from '@/components/Windows/Socials/SocialsWindow'
 
 export function setupSidebar() {
-	Sidebar.addButton('folder', () => {
+	Sidebar.addButton('fileExplorer', 'sidebar.fileExplorer.name', 'folder', () => {
 		FileExplorer.toggle()
 	})
 
-	Sidebar.addButton('quick_reference_all', () => {
+	Sidebar.addButton('findAndReplace', 'sidebar.findAndReplace.name', 'quick_reference_all', () => {
 		TabManager.openTab(TabManager.getTabByType(FindAndReplaceTab) ?? new FindAndReplaceTab())
 	})
 
-	Sidebar.addButton('manufacturing', () => {
+	Sidebar.addButton('compiler', 'sidebar.compiler.name', 'manufacturing', () => {
 		Windows.open(CompilerWindow)
 	})
-	Sidebar.addButton('extension', () => {
+	Sidebar.addButton('extensionLibrary', 'sidebar.extensions.name', 'extension', () => {
 		ExtensionLibraryWindow.open()
 	})
 	Sidebar.addDivider()

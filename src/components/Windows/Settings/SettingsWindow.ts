@@ -1,6 +1,7 @@
 import OutputFolder from './Projects/OutputFolder.vue'
 import ActionsList from './Actions/ActionsList.vue'
 import Settings from './Settings.vue'
+import SidebarElementVisibility from './Appearance/SidebarElementVisibility.vue'
 
 import { ComputedRef, Ref, computed, ref } from 'vue'
 import { Windows } from '@/components/Windows/Windows'
@@ -201,6 +202,12 @@ function setupAppearanceCategory() {
 		description: 'windows.settings.appearance.fileExplorerIndentation.description',
 		labels: ['Small', 'Normal', 'Large', 'X-Large'],
 		values: ['small', 'normal', 'large', 'x-large'],
+	})
+
+	SettingsWindow.addItem('appearance', 'fileExplorerIndentation', {
+		type: 'custom',
+		label: 'windows.settings.appearance.sidebarElementVisibility.name',
+		component: SidebarElementVisibility,
 	})
 }
 
