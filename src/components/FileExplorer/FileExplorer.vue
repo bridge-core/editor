@@ -170,7 +170,7 @@ function drop(event: DragEvent) {
 
 <template>
 	<div
-		class="max-w-full h-full mt-2 flex flex-col gap-2 flex-1"
+		class="h-full mt-2 flex flex-col gap-2 flex-1"
 		:class="{
 			'max-w-[14rem]': get('sidebarSize') === 'small' && !isMobile,
 			'max-w-[18rem]': get('sidebarSize') === 'normal' && !isMobile,

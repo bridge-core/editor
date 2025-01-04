@@ -204,7 +204,7 @@ function setupAppearanceCategory() {
 		values: ['small', 'normal', 'large', 'x-large'],
 	})
 
-	SettingsWindow.addItem('appearance', 'fileExplorerIndentation', {
+	SettingsWindow.addItem('appearance', 'sidebarItemVisibility', {
 		type: 'custom',
 		label: 'windows.settings.appearance.sidebarElementVisibility.name',
 		component: SidebarElementVisibility,
