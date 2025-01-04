@@ -1,4 +1,5 @@
 import { SettingsWindow } from '@/components/Windows/Settings/SettingsWindow'
+import { openUrl } from '@/libs/OpenUrl'
 
 type ToolbarItem = Button | Dropdown
 
@@ -85,7 +86,7 @@ export class Toolbar {
 		])
 
 		this.addButton('toolbar.download.name', () => {
-			window.open('https://bridge-core.app/guide/download/')
+			openUrl('https://bridge-core.app/guide/download/')
 		})
 	}
 

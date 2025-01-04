@@ -10,6 +10,7 @@ import { ProjectManager } from '@/libs/project/ProjectManager'
 import { FileTab } from '@/components/TabSystem/FileTab'
 import { Settings } from '@/libs/settings/Settings'
 import { Disposable, disposeAll } from '@/libs/disposeable/Disposeable'
+import { openUrl } from '@/libs/OpenUrl'
 
 export class TextTab extends FileTab {
 	public component: Component | null = TextTabComponent
@@ -79,8 +80,7 @@ export class TextTab extends FileTab {
 
 		this.model = monaco.getModel(Uri.file(this.path))
 
-		if (this.model === null)
-			this.model = monaco.createModel(fileContent, this.fileType?.meta?.language, Uri.file(this.path))
+		if (this.model === null) this.model = monaco.createModel(fileContent, this.fileType?.meta?.language, Uri.file(this.path))
 
 		this.initialVersionId = this.model.getAlternativeVersionId()
 
@@ -113,12 +113,7 @@ export class TextTab extends FileTab {
 			Settings.updated.on((event: { id: string; value: any } | undefined) => {
 				if (!event) return
 
-				if (
-					['wordWrap', 'wordWrapColumns', 'bracketPairColorization', 'editorFont', 'editorFontSize'].includes(
-						event.id
-					)
-				)
-					this.remountEditor()
+				if (['wordWrap', 'wordWrapColumns', 'bracketPairColorization', 'editorFont', 'editorFontSize'].includes(event.id)) this.remountEditor()
 			})
 		)
 	}
@@ -279,7 +274,7 @@ export class TextTab extends FileTab {
 		let url = this.fileType.documentation.baseUrl
 		if (word && (this.fileType.documentation.supportsQuerying ?? true)) url += `#${word}`
 
-		window.open(url)
+		openUrl(url)
 	}
 
 	private async getJsonWordAtPosition(model: editor.ITextModel, position: Position) {
@@ -377,9 +372,7 @@ export class TextTab extends FileTab {
 
 		monaco.setTheme(`bridge`)
 
-		let keywords: string[] = ['minecraft', 'bridge', ProjectManager.currentProject?.config?.namespace].filter(
-			(item) => item !== undefined
-		) as string[]
+		let keywords: string[] = ['minecraft', 'bridge', ProjectManager.currentProject?.config?.namespace].filter((item) => item !== undefined) as string[]
 		let typeIdentifiers: string[] = []
 		let variables: string[] = []
 		let definitions: string[] = []

@@ -7,6 +7,7 @@ import { Windows } from '@/components/Windows/Windows'
 import { CompilerWindow } from '@/components/Windows/Compiler/CompilerWindow'
 import { NotificationSystem } from '@/components/Notifications/NotificationSystem'
 import { SocialsWindow } from '@/components/Windows/Socials/SocialsWindow'
+import { openUrl } from '@/libs/OpenUrl'
 
 export function setupSidebar() {
 	Sidebar.addButton('fileExplorer', 'sidebar.fileExplorer.name', 'folder', () => {
@@ -28,7 +29,7 @@ export function setupSidebar() {
 	NotificationSystem.addNotification(
 		'download',
 		() => {
-			window.open('https://bridge-core.app/guide/download/')
+			openUrl('https://bridge-core.app/guide/download/')
 		},
 		'primary'
 	)
@@ -38,6 +39,6 @@ export function setupSidebar() {
 	})
 
 	NotificationSystem.addNotification('help', () => {
-		window.open('https://bridge-core.app/guide/')
+		openUrl('https://bridge-core.app/guide/')
 	})
 }
