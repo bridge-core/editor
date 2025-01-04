@@ -39,7 +39,7 @@ export class BedrockProject extends Project {
 		await this.langData.setup()
 		await this.commandData.setup()
 
-		await this.dashService.setup('development')
+		await this.dashService.setupForDevelopmentProject()
 
 		await this.schemaData.load()
 

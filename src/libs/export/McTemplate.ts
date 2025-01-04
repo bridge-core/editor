@@ -17,7 +17,7 @@ export async function exportAsTemplate(asMcworld = false) {
 	const projectPath = ProjectManager.currentProject.path
 
 	const dash = new DashService(ProjectManager.currentProject, fileSystem)
-	await dash.setupDashWorker('production')
+	await dash.setup('production')
 	await dash.build()
 	await dash.dispose()
 

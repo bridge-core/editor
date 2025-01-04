@@ -11,7 +11,7 @@ export async function exportAsMcAddon() {
 	if (!(ProjectManager.currentProject instanceof BedrockProject)) return
 
 	const dash = new DashService(ProjectManager.currentProject, fileSystem)
-	await dash.setupDashWorker('production')
+	await dash.setup('production')
 	await dash.build()
 	await dash.dispose()
 

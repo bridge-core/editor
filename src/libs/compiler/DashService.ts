@@ -55,15 +55,9 @@ export class DashService implements AsyncDisposable {
 		}
 	}
 
-	public async setup(mode: 'development' | 'production') {
+	public async setup(mode: 'development' | 'production', compilerConfigPath?: string) {
 		this.mode = mode
 
-		await this.setupCompileActions()
-
-		await this.setupDashWorker(mode)
-	}
-
-	public async setupDashWorker(mode: 'development' | 'production', compilerConfigPath?: string) {
 		await sendAndWait(
 			{
 				action: 'setup',
@@ -76,6 +70,12 @@ export class DashService implements AsyncDisposable {
 		)
 
 		this.isSetup = true
+	}
+
+	public async setupForDevelopmentProject() {
+		await this.setupCompileActions()
+
+		await this.setup('development')
 
 		this.disposables.push(fileSystem.pathUpdated.on(this.pathUpdated.bind(this)))
 	}
@@ -140,15 +140,13 @@ export class DashService implements AsyncDisposable {
 		).result
 	}
 
-	public async getProfiles() {}
-
 	private async setupCompileActions() {
 		this.profiles.push(
 			ActionManager.addAction(
 				new Action({
 					id: 'compileDefault',
 					trigger: async () => {
-						if (this.lastProfile !== null) await this.setupDashWorker(this.mode)
+						if (this.lastProfile !== null) await this.setup(this.mode)
 
 						this.lastProfile = null
 
@@ -182,7 +180,7 @@ export class DashService implements AsyncDisposable {
 					new Action({
 						id: 'compileProfile-' + basename(entry.path),
 						trigger: async () => {
-							if (this.lastProfile !== entry.path) await this.setupDashWorker(this.mode, entry.path)
+							if (this.lastProfile !== entry.path) await this.setup(this.mode, entry.path)
 
 							this.lastProfile = entry.path
 
