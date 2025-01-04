@@ -18,6 +18,10 @@ export class TabManager {
 			default: 'text',
 		})
 
+		Settings.addSetting('compactTabDesign', {
+			default: true,
+		})
+
 		Settings.updated.on((event) => {
 			const { id, value } = event as { id: string; value: any }
 

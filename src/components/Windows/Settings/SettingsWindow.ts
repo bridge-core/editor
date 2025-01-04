@@ -183,6 +183,11 @@ function setupAppearanceCategory() {
 		),
 	})
 
+	SettingsWindow.addItem('appearance', 'compactTabDesign', {
+		type: 'toggle',
+		label: 'windows.settings.editor.compactTabDesign.name',
+	})
+
 	SettingsWindow.addItem('appearance', 'sidebarRight', {
 		type: 'toggle',
 		label: 'windows.settings.sidebar.sidebarRight.name',
