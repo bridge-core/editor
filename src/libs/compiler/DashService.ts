@@ -1,4 +1,4 @@
-import { join } from 'pathe'
+import { basename, join } from 'pathe'
 import DashWorker from './DashWorker?worker'
 import { BedrockProject } from '@/libs/project/BedrockProject'
 import { WorkerFileSystemEntryPoint } from '@/libs/fileSystem/WorkerFileSystem'
@@ -9,10 +9,13 @@ import { Data } from '@/libs/data/Data'
 import { fileSystem } from '@/libs/fileSystem/FileSystem'
 import { Disposable, AsyncDisposable, disposeAll } from '@/libs/disposeable/Disposeable'
 import { NotificationSystem, Notification } from '@/components/Notifications/NotificationSystem'
+import { ActionManager } from '@/libs/actions/ActionManager'
+import { Action } from '@/libs/actions/Action'
 
 export class DashService implements AsyncDisposable {
 	public logs: string[] = []
 	public isSetup: boolean = false
+	public profiles: Action[] = []
 
 	private worker = new DashWorker()
 	private inputFileSystem = new WorkerFileSystemEntryPoint(this.worker, fileSystem, 'inputFileSystem')
@@ -21,16 +24,14 @@ export class DashService implements AsyncDisposable {
 	private inFlightBuildRequest: boolean = false
 	private building: boolean = false
 	private watchRebuildRequestId: string | null = null
+	private lastProfile: string | null = null
+	private mode: 'development' | 'production' = 'development'
 	private disposables: Disposable[] = []
 
 	constructor(public project: BedrockProject, fileSystem?: BaseFileSystem) {
 		this.worker.onmessage = this.onWorkerMessage.bind(this)
 
-		this.outputFileSystem = new WorkerFileSystemEntryPoint(
-			this.worker,
-			fileSystem ?? project.outputFileSystem,
-			'outputFileSystem'
-		)
+		this.outputFileSystem = new WorkerFileSystemEntryPoint(this.worker, fileSystem ?? project.outputFileSystem, 'outputFileSystem')
 	}
 
 	public async onWorkerMessage(event: MessageEvent) {
@@ -55,12 +56,21 @@ export class DashService implements AsyncDisposable {
 	}
 
 	public async setup(mode: 'development' | 'production') {
+		this.mode = mode
+
+		await this.setupCompileActions()
+
+		await this.setupDashWorker(mode)
+	}
+
+	public async setupDashWorker(mode: 'development' | 'production', compilerConfigPath?: string) {
 		await sendAndWait(
 			{
 				action: 'setup',
 				config: this.project.config,
 				mode,
 				configPath: join(this.project.path, 'config.json'),
+				compilerConfigPath,
 			},
 			this.worker
 		)
@@ -75,6 +85,8 @@ export class DashService implements AsyncDisposable {
 
 		this.inputFileSystem.dispose()
 		this.outputFileSystem.dispose()
+
+		this.removeCompileActions()
 
 		disposeAll(this.disposables)
 	}
@@ -94,13 +106,7 @@ export class DashService implements AsyncDisposable {
 
 		this.building = true
 
-		this.progressNotification = NotificationSystem.addProgressNotification(
-			'manufacturing',
-			0,
-			1,
-			undefined,
-			undefined
-		)
+		this.progressNotification = NotificationSystem.addProgressNotification('manufacturing', 0, 1, undefined, undefined)
 
 		await sendAndWait(
 			{
@@ -132,6 +138,69 @@ export class DashService implements AsyncDisposable {
 				[fileData.buffer]
 			)
 		).result
+	}
+
+	public async getProfiles() {}
+
+	private async setupCompileActions() {
+		this.profiles.push(
+			ActionManager.addAction(
+				new Action({
+					id: 'compileDefault',
+					trigger: async () => {
+						if (this.lastProfile !== null) await this.setupDashWorker(this.mode)
+
+						this.lastProfile = null
+
+						this.build()
+					},
+					keyBinding: 'Ctrl + B',
+					name: 'sidebar.compiler.default.name',
+					description: 'sidebar.compiler.default.description',
+					icon: 'manufacturing',
+				})
+			)
+		)
+
+		if (!(await fileSystem.exists(join(this.project.path, '.bridge/compiler')))) return
+
+		const profileEntries = await fileSystem.readDirectoryEntries(join(this.project.path, '.bridge/compiler'))
+
+		for (const entry of profileEntries) {
+			let profile: null | any = null
+
+			try {
+				profile = await fileSystem.readFileJson(entry.path)
+			} catch {}
+
+			if (profile === null) continue
+
+			if (!profile.name) continue
+
+			this.profiles.push(
+				ActionManager.addAction(
+					new Action({
+						id: 'compileProfile-' + basename(entry.path),
+						trigger: async () => {
+							if (this.lastProfile !== entry.path) await this.setupDashWorker(this.mode, entry.path)
+
+							this.lastProfile = entry.path
+
+							this.build()
+						},
+						name: profile.name,
+						description: profile.description ?? undefined,
+						icon: profile.icon ?? 'manufacturing',
+					})
+				)
+			)
+		}
+	}
+
+	private removeCompileActions() {
+		for (const profile of this.profiles) {
+			ActionManager.removeAction(profile)
+		}
 	}
 
 	private pathUpdated(path: unknown) {

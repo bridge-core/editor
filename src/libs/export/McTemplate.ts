@@ -17,7 +17,7 @@ export async function exportAsTemplate(asMcworld = false) {
 	const projectPath = ProjectManager.currentProject.path
 
 	const dash = new DashService(ProjectManager.currentProject, fileSystem)
-	await dash.setup('production')
+	await dash.setupDashWorker('production')
 	await dash.build()
 	await dash.dispose()
 
@@ -25,10 +25,7 @@ export async function exportAsTemplate(asMcworld = false) {
 
 	if (ProjectManager.currentProject.packs['worldTemplate']) baseWorlds.push('WT')
 
-	if (await fileSystem.exists(join(projectPath, 'worlds')))
-		baseWorlds.push(
-			...(await fileSystem.readDirectoryEntries(join(projectPath, 'worlds'))).map((entry) => entry.path)
-		)
+	if (await fileSystem.exists(join(projectPath, 'worlds'))) baseWorlds.push(...(await fileSystem.readDirectoryEntries(join(projectPath, 'worlds'))).map((entry) => entry.path))
 
 	let exportWorldFolder: string | null
 
@@ -76,10 +73,7 @@ export async function exportAsTemplate(asMcworld = false) {
 	if (exportWorldFolder === 'WT') {
 		await fileSystem.move(packLocations.WT!, join(ProjectManager.currentProject!.path, `builds/mctemplate`))
 	} else {
-		await fileSystem.copyDirectory(
-			exportWorldFolder,
-			join(ProjectManager.currentProject!.path, `builds/mctemplate`)
-		)
+		await fileSystem.copyDirectory(exportWorldFolder, join(ProjectManager.currentProject!.path, `builds/mctemplate`))
 	}
 
 	// Generate world_behavior_packs.json
@@ -120,25 +114,15 @@ export async function exportAsTemplate(asMcworld = false) {
 
 	// Move BP & RP into behavior_packs/resource_packs
 	if (packLocations.BP) {
-		await fileSystem.ensureDirectory(
-			join(projectPath, `builds/mctemplate/behavior_packs/BP_${ProjectManager.currentProject.name}`)
-		)
+		await fileSystem.ensureDirectory(join(projectPath, `builds/mctemplate/behavior_packs/BP_${ProjectManager.currentProject.name}`))
 
-		await fileSystem.move(
-			packLocations.BP,
-			join(projectPath, `builds/mctemplate/behavior_packs/BP_${ProjectManager.currentProject.name}`)
-		)
+		await fileSystem.move(packLocations.BP, join(projectPath, `builds/mctemplate/behavior_packs/BP_${ProjectManager.currentProject.name}`))
 	}
 
 	if (packLocations.RP) {
-		await fileSystem.ensureDirectory(
-			join(projectPath, `builds/mctemplate/resource_packs/RP_${ProjectManager.currentProject.name}`)
-		)
+		await fileSystem.ensureDirectory(join(projectPath, `builds/mctemplate/resource_packs/RP_${ProjectManager.currentProject.name}`))
 
-		await fileSystem.move(
-			packLocations.RP,
-			join(projectPath, `builds/mctemplate/resource_packs/RP_${ProjectManager.currentProject.name}`)
-		)
+		await fileSystem.move(packLocations.RP, join(projectPath, `builds/mctemplate/resource_packs/RP_${ProjectManager.currentProject.name}`))
 	}
 
 	// Generate world template manifest if file doesn't exist yet
@@ -153,12 +137,7 @@ export async function exportAsTemplate(asMcworld = false) {
 					version: [1, 0, 0],
 					uuid: uuid(),
 					lock_template_options: true,
-					base_game_version: (
-						ProjectManager.currentProject.config!.targetVersion ??
-						(
-							await Data.get('packages/minecraftBedrock/formatVersions.json')
-						)[0]
-					)
+					base_game_version: (ProjectManager.currentProject.config!.targetVersion ?? (await Data.get('packages/minecraftBedrock/formatVersions.json'))[0])
 						.split('.')
 						.map((str) => Number(str)),
 				},
@@ -178,9 +157,7 @@ export async function exportAsTemplate(asMcworld = false) {
 
 	// ZIP builds/mctemplate folder
 	const zipFile = await zipDirectory(fileSystem, join(ProjectManager.currentProject.path, 'builds/mctemplate'))
-	const savePath =
-		join(ProjectManager.currentProject.path, 'builds/', ProjectManager.currentProject.name) +
-		(asMcworld ? '.mcworld' : '.mctemplate')
+	const savePath = join(ProjectManager.currentProject.path, 'builds/', ProjectManager.currentProject.name) + (asMcworld ? '.mcworld' : '.mctemplate')
 
 	try {
 		await saveOrDownload(savePath, zipFile, fileSystem)

@@ -37,14 +37,15 @@ async function getJsonData(path: string): Promise<any> {
 	).data
 }
 
-async function setup(config: any, mode: 'development' | 'production', configPath: string, actionId: string) {
+async function setup(config: any, mode: 'development' | 'production', configPath: string, compilerConfigPath: string | undefined, actionId: string) {
 	const packType = new CompatabilityPackType(config)
 	const fileType = new CompatabilityFileType(config, () => false)
 
-	dash = new Dash<{ fileTypes: any; packTypes: any }>(compatabilityInputFileSystem, compatabilityOutputFileSystem, <
-		any
-	>{
+	console.warn('Setup with compiler config', compilerConfigPath)
+
+	dash = new Dash<{ fileTypes: any; packTypes: any }>(compatabilityInputFileSystem, compatabilityOutputFileSystem, <any>{
 		config: configPath,
+		compilerConfig: compilerConfigPath,
 		packType,
 		fileType,
 		requestJsonData: <any>getJsonData,
@@ -121,7 +122,7 @@ async function compileFile(actionId: string, filePath: string, fileData: Uint8Ar
 onmessage = (event: any) => {
 	if (!event.data) return
 
-	if (event.data.action === 'setup') setup(event.data.config, event.data.mode, event.data.configPath, event.data.id)
+	if (event.data.action === 'setup') setup(event.data.config, event.data.mode, event.data.configPath, event.data.compilerConfigPath, event.data.id)
 
 	if (event.data.action === 'build') build(event.data.id)
 

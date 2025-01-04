@@ -12,6 +12,7 @@ import { ProjectManager, useUsingProjectOutputFolder } from '@/libs/project/Proj
 import { CompilerWindow } from './CompilerWindow'
 import { Windows } from '../Windows'
 import { useIsMobile } from '@/libs/Mobile'
+import Action from '@/components/Common/Action.vue'
 
 const t = useTranslate()
 
@@ -92,10 +93,7 @@ const isMobile = useIsMobile()
 			</div>
 		</template>
 		<template #content>
-			<div
-				class="max-w-[64rem] w-[50vw] h-[38rem] flex flex-col overflow-y-auto p-3 pt-0"
-				:class="{ 'w-full': isMobile, 'h-full': isMobile }"
-			>
+			<div class="max-w-[64rem] w-[50vw] h-[38rem] flex flex-col overflow-y-auto p-3 pt-0" :class="{ 'w-full': isMobile, 'h-full': isMobile }">
 				<div v-if="selectedCategory === 'general'">
 					<TextButton
 						text="Compile"
@@ -105,30 +103,21 @@ const isMobile = useIsMobile()
 					/>
 				</div>
 
+				<div v-if="selectedCategory === 'profiles'">
+					<div class="flex flex-col gap-3">
+						<Action v-for="action in (ProjectManager.currentProject as BedrockProject).dashService.profiles" :action="action" class="w-full" />
+					</div>
+				</div>
+
 				<div v-if="selectedCategory === 'outputFolder'">
-					<Info
-						v-if="usingProjectOutputFolder"
-						text="This project is using a local project folder."
-						class="mt-4 mb-4 ml-auto mr-auto"
-					/>
+					<Info v-if="usingProjectOutputFolder" text="This project is using a local project folder." class="mt-4 mb-4 ml-auto mr-auto" />
 
-					<Info
-						v-else
-						text="This project not is using a local project folder."
-						class="mt-4 mb-4 ml-auto mr-auto"
-					/>
+					<Info v-else text="This project not is using a local project folder." class="mt-4 mb-4 ml-auto mr-auto" />
 
-					<FileSystemDrop
-						class="mt-8 mb-8 w-full h-48"
-						text="Drop your project output folder here."
-						@drop="droppedOutputFolder"
-					/>
+					<FileSystemDrop class="mt-8 mb-8 w-full h-48" text="Drop your project output folder here." @drop="droppedOutputFolder" />
 
 					<div class="flex gap-6 items-center">
-						<TextButton
-							text="Clear Output Folder"
-							@click="ProjectManager.currentProject!.clearLocalProjectFolder()"
-						/>
+						<TextButton text="Clear Output Folder" @click="ProjectManager.currentProject!.clearLocalProjectFolder()" />
 						<p class="text-text-secondary">{{ t('Forget the current project output folder.') }}</p>
 					</div>
 				</div>

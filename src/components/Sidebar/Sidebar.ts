@@ -29,7 +29,7 @@ export class Sidebar {
 		})
 
 		Settings.addSetting('hiddenSidebarElements', {
-			default: ['compiler'],
+			default: [],
 		})
 	}
 

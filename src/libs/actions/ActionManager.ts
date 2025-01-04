@@ -8,10 +8,18 @@ export class ActionManager {
 
 	public static actionsUpdated: Event<void> = new Event()
 
-	public static addAction(action: Action) {
+	public static addAction(action: Action): Action {
 		this.actions[action.id] = action
 
 		action.updated.on(() => ActionManager.actionsUpdated.dispatch())
+
+		this.actionsUpdated.dispatch()
+
+		return action
+	}
+
+	public static removeAction(action: Action) {
+		delete ActionManager.actions[action.id]
 
 		this.actionsUpdated.dispatch()
 	}

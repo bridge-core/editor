@@ -78,8 +78,8 @@ onUnmounted(() => {
 })
 </script>
 <template>
-	<div class="flex-col w-full">
-		<div v-for="action in Object.values(actions)" class="text-normal p-2 mb-3 rounded bg-background-secondary w-full">
+	<div class="flex flex-col gap-3 w-full">
+		<div v-for="action in Object.values(actions)" class="text-normal p-2 rounded bg-background-secondary w-full">
 			<div class="flex w-full mb-2">
 				<Icon v-if="action.icon" class="mr-1 content-center" style="color: var(--theme-color-primary)" :icon="action.icon" />
 
@@ -95,7 +95,7 @@ onUnmounted(() => {
 
 				<div class="flex-1" />
 
-				<p class="text-text-secondary font-theme cursor-pointer" @click="rebind(action)">
+				<p class="text-text-secondary font-theme cursor-pointer min-w-max" @click="rebind(action)">
 					{{ currentlyRebindingAction === action.id ? t('actions.rebinding') : action.keyBinding ?? t('Unbound') }}
 				</p>
 			</div>

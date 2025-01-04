@@ -11,13 +11,12 @@ export async function exportAsMcAddon() {
 	if (!(ProjectManager.currentProject instanceof BedrockProject)) return
 
 	const dash = new DashService(ProjectManager.currentProject, fileSystem)
-	await dash.setup('production')
+	await dash.setupDashWorker('production')
 	await dash.build()
 	await dash.dispose()
 
 	const zipFile = await zipDirectory(fileSystem, join(ProjectManager.currentProject.path, 'builds/dist'))
-	const savePath =
-		join(ProjectManager.currentProject.path, 'builds/', ProjectManager.currentProject.name) + '.mcaddon'
+	const savePath = join(ProjectManager.currentProject.path, 'builds/', ProjectManager.currentProject.name) + '.mcaddon'
 
 	try {
 		await saveOrDownload(savePath, zipFile, fileSystem)
