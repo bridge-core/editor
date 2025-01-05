@@ -92,7 +92,7 @@ onMounted(async () => {
 	if (!currentProject.value) return
 	if (!(currentProject.value instanceof BedrockProject)) return
 
-	selectedPack.value = currentProject.value.packDefinitions[0]?.id ?? ''
+	selectedPack.value = Object.keys(currentProject.value.packs)[0] ?? ''
 
 	updateEntries(selectedPackPath.value)
 })
