@@ -51,13 +51,9 @@ export class Project implements AsyncDisposable {
 
 		for (const [packId, packPath] of Object.entries(this.config.packs)) {
 			this.packs[packId] = join(this.path, packPath)
+
+			if (await fileSystem.exists(join(this.packs[packId], 'pack_icon.png'))) this.icon = await fileSystem.readFileDataUrl(join(this.packs[packId], 'pack_icon.png'))
 		}
-
-		if (await fileSystem.exists(join(this.path, 'BP', 'pack_icon.png'))) this.icon = await fileSystem.readFileDataUrl(join(this.path, 'BP', 'pack_icon.png'))
-
-		if (await fileSystem.exists(join(this.path, 'RP', 'pack_icon.png'))) this.icon = await fileSystem.readFileDataUrl(join(this.path, 'RP', 'pack_icon.png'))
-
-		if (await fileSystem.exists(join(this.path, 'SP', 'pack_icon.png'))) this.icon = await fileSystem.readFileDataUrl(join(this.path, 'SP', 'pack_icon.png'))
 
 		this.disposables.push(Settings.updated.on(this.settingsChanged.bind(this)))
 

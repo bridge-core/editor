@@ -160,14 +160,11 @@ export class ProjectManager {
 
 		let iconDataUrl = 'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw=='
 
-		if (config.packs['behaviorPack'] && (await fileSystem.exists(join(path, config.packs['behaviorPack'], 'pack_icon.png'))))
-			iconDataUrl = await fileSystem.readFileDataUrl(join(path, 'BP', 'pack_icon.png'))
+		for (const [packId, packPath] of Object.entries(config.packs)) {
+			const projectPackPath = join(path, packPath)
 
-		if (config.packs['resourcePack'] && (await fileSystem.exists(join(path, config.packs['resourcePack'], 'pack_icon.png'))))
-			iconDataUrl = await fileSystem.readFileDataUrl(join(path, 'RP', 'pack_icon.png'))
-
-		if (config.packs['resourcePack'] && (await fileSystem.exists(join(path, config.packs['skinPack'], 'pack_icon.png'))))
-			iconDataUrl = await fileSystem.readFileDataUrl(join(path, 'SP', 'pack_icon.png'))
+			if (await fileSystem.exists(join(projectPackPath, 'pack_icon.png'))) iconDataUrl = await fileSystem.readFileDataUrl(join(projectPackPath, 'pack_icon.png'))
+		}
 
 		let favorites: string[] = []
 

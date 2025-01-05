@@ -3,7 +3,7 @@ import { PWAFileSystem } from '@/libs/fileSystem/PWAFileSystem'
 import { streamingUnzip } from '@/libs/zip/StreamingUnzipper'
 import { basename, join } from 'pathe'
 import { ProjectManager } from '@/libs/project/ProjectManager'
-import { defaultPackPaths, TPackTypeId } from 'mc-project-core'
+import { TPackTypeId } from 'mc-project-core'
 import { Windows } from '@/components/Windows/Windows'
 import { AlertWindow } from '@/components/Windows/Alert/AlertWindow'
 import { getPackId, IManifestModule } from '@/libs/manifest/getPackId'
@@ -11,6 +11,7 @@ import { CreateProjectConfig } from '@/libs/project/CreateProjectConfig'
 import { getLatestStableFormatVersion } from '@/libs/data/bedrock/FormatVersion'
 import { createConfig } from '@/libs/project/create/files/Config'
 import { FileImporter } from './FileImporter'
+import { Data } from '@/libs/data/Data'
 
 export async function importFromMcAddon(arrayBuffer: ArrayBuffer, name: string) {
 	if (fileSystem instanceof PWAFileSystem && !fileSystem.setup) await selectOrLoadBridgeFolder()
@@ -40,6 +41,8 @@ export async function importFromMcAddon(arrayBuffer: ArrayBuffer, name: string) 
 		await fileSystem.writeFileStreaming(path, file)
 	})
 
+	const packDefinitions = await Data.get('packages/minecraftBedrock/packDefinitions.json')
+
 	let authors: string[] | string | undefined
 	let description: string | undefined
 	const packs: (TPackTypeId | '.bridge')[] = ['.bridge']
@@ -56,7 +59,7 @@ export async function importFromMcAddon(arrayBuffer: ArrayBuffer, name: string) 
 			if (!packId) return
 
 			packs.push(packId)
-			const packPath = defaultPackPaths[packId]
+			const packPath = packDefinitions.find((packDefinition: any) => packDefinition.id === packId).defaultPackPath
 
 			// Move the pack to the correct location
 			await fileSystem.move(`/import/${basename(entry.path)}`, join('/projects', projectName, packPath))

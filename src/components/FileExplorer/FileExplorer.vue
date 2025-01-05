@@ -52,7 +52,10 @@ const selectedPackPath: ComputedRef<string> = computed(() => {
 	if (!currentProject.value) return ''
 	if (!(currentProject.value instanceof BedrockProject)) return ''
 
-	return join(currentProject.value.path, currentProject.value.packDefinitions.find((pack: IPackType) => pack.id === selectedPack.value)?.defaultPackPath ?? '')
+	return (
+		currentProject.value.packs[selectedPack.value] ??
+		join(currentProject.value.path, currentProject.value.packDefinitions.find((pack: IPackType) => pack.id === selectedPack.value)?.defaultPackPath ?? '')
+	)
 })
 
 const entries: Ref<BaseEntry[]> = ref([])

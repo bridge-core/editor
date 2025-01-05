@@ -41,8 +41,6 @@ async function setup(config: any, mode: 'development' | 'production', configPath
 	const packType = new CompatabilityPackType(config)
 	const fileType = new CompatabilityFileType(config, () => false)
 
-	console.warn('Setup with compiler config', compilerConfigPath)
-
 	dash = new Dash<{ fileTypes: any; packTypes: any }>(compatabilityInputFileSystem, compatabilityOutputFileSystem, <any>{
 		config: configPath,
 		compilerConfig: compilerConfigPath,
