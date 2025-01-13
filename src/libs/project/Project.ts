@@ -112,6 +112,22 @@ export class Project implements AsyncDisposable {
 		await this.setupOutputFileSystem()
 	}
 
+	public async saveTabManagerState(state: any) {
+		await set(`tabManagerState-${this.name}`, JSON.stringify(state))
+	}
+
+	public async getTabManagerState() {
+		const stateString = await get(`tabManagerState-${this.name}`)
+
+		if (!stateString) return null
+
+		try {
+			return JSON.parse(stateString) ?? null
+		} catch {}
+
+		return null
+	}
+
 	protected async setOutputFileSystem(fileSystem: BaseFileSystem) {
 		this.outputFileSystem = fileSystem
 	}

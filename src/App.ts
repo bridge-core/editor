@@ -29,6 +29,7 @@ import { setupImporters } from '@/libs/import/Importers'
 import { TabManager } from '@/components/TabSystem/TabManager'
 import { FileExplorer } from '@/components/FileExplorer/FileExplorer'
 import { CreateProjectWindow } from '@/components/Windows/CreateProject/CreateProjectWindow'
+import { TabTypes } from '@/components/TabSystem/TabTypes'
 
 export function setupBeforeComponents() {
 	NotificationSystem.setup()
@@ -40,6 +41,7 @@ export function setupBeforeComponents() {
 	TextTab.setup()
 	TreeEditorTab.setup()
 	Sidebar.setup()
+	TabTypes.setup()
 	TabManager.setup()
 	FileExplorer.setup()
 	CreateProjectWindow.setup()
