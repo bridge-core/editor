@@ -9,6 +9,7 @@ export class Tab {
 	public component: Component | null = null
 	public name = ref('New Tab')
 	public icon: Ref<string | null> = ref(null)
+	public active: boolean = false
 
 	public savedState = new Event<void>()
 

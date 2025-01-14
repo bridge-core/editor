@@ -11,6 +11,7 @@ import { FileTab } from '@/components/TabSystem/FileTab'
 import { Settings } from '@/libs/settings/Settings'
 import { Disposable, disposeAll } from '@/libs/disposeable/Disposeable'
 import { openUrl } from '@/libs/OpenUrl'
+import { debounce } from '@/libs/Debounce'
 
 export class TextTab extends FileTab {
 	public component: Component | null = TextTabComponent
@@ -30,6 +31,9 @@ export class TextTab extends FileTab {
 	private initialVersionId: number = 0
 
 	private lastEditorElement: HTMLElement | null = null
+
+	private recoveryState: null | any = null
+	private currentState: null | any = null
 
 	public static canEdit(path: string): boolean {
 		return true
@@ -122,6 +126,8 @@ export class TextTab extends FileTab {
 		disposeAll(this.disposables)
 
 		this.model?.dispose()
+
+		this.debouncedSaveState.dispose()
 	}
 
 	public async activate() {
@@ -142,6 +148,18 @@ export class TextTab extends FileTab {
 		const schemaData = ProjectManager.currentProject.schemaData
 
 		schemaData.removeFileForUpdate(this.path)
+	}
+
+	public async getState(): Promise<any> {
+		if (!this.editor) return
+
+		return this.currentState
+	}
+
+	public async recover(state: any): Promise<void> {
+		if (!state) return
+
+		this.recoveryState = state
 	}
 
 	public async mountEditor(element: HTMLElement) {
@@ -168,6 +186,26 @@ export class TextTab extends FileTab {
 		if (this.savedViewState) this.editor.restoreViewState(this.savedViewState)
 
 		this.lastEditorElement = element
+
+		this.disposables.push(
+			this.editor.onDidScrollChange(() => {
+				this.debouncedSaveState.invoke()
+			})
+		)
+
+		this.disposables.push(
+			this.editor.onDidChangeCursorSelection(() => {
+				this.debouncedSaveState.invoke()
+			})
+		)
+
+		if (!this.recoveryState) return
+
+		this.editor.setSelections(this.recoveryState.selections)
+		this.editor.setScrollTop(this.recoveryState.scrollTop)
+		this.editor.setScrollLeft(this.recoveryState.scrollLeft)
+
+		this.recoveryState = null
 	}
 
 	public unmountEditor() {
@@ -473,4 +511,22 @@ export class TextTab extends FileTab {
 			},
 		})
 	}
+
+	private debouncedSaveState = debounce(() => {
+		if (!this.active) return
+
+		if (this.editor) {
+			const selections = this.editor.getSelections()
+			const scrollTop = this.editor.getScrollTop()
+			const scrollLeft = this.editor.getScrollLeft()
+
+			this.currentState = {
+				selections,
+				scrollTop,
+				scrollLeft,
+			}
+		}
+
+		this.saveState()
+	}, 50)
 }

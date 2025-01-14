@@ -44,12 +44,16 @@ export class TabSystem {
 	public async selectTab(tab: Tab) {
 		if (this.selectedTab.value === tab) return
 
-		if (this.selectedTab.value !== null) await this.selectedTab.value.deactivate()
+		if (this.selectedTab.value !== null) {
+			this.selectedTab.value.active = false
+			await this.selectedTab.value.deactivate()
+		}
 
 		this.selectedTab.value = tab
 
 		Editor.showTabs()
 
+		tab.active = true
 		await tab.activate()
 
 		await this.saveState()
@@ -58,7 +62,10 @@ export class TabSystem {
 	public async removeTab(tab: Tab) {
 		if (!this.tabs.value.includes(tab)) return
 
-		if (this.selectedTab.value?.id === tab.id) await tab.deactivate()
+		if (this.selectedTab.value?.id === tab.id) {
+			tab.active = false
+			await tab.deactivate()
+		}
 
 		this.selectedTab.value = null
 
@@ -80,7 +87,10 @@ export class TabSystem {
 
 	public async clear() {
 		for (const tab of this.tabs.value) {
-			if (this.selectedTab.value?.id === tab.id) await tab.deactivate()
+			if (this.selectedTab.value?.id === tab.id) {
+				tab.active = false
+				await tab.deactivate()
+			}
 
 			await tab.destroy()
 
@@ -101,13 +111,13 @@ export class TabSystem {
 			return {
 				id: tab.id,
 				path: tab.path,
-				state: await tab.getState(),
+				state: (await tab.getState()) ?? null,
 				type: tab.constructor.name,
 			}
 
 		return {
 			id: tab.id,
-			state: await tab.getState(),
+			state: (await tab.getState()) ?? null,
 			type: tab.constructor.name,
 		}
 	}
@@ -165,6 +175,7 @@ export class TabSystem {
 
 		if (this.selectedTab.value === null) return
 
+		this.selectedTab.value.active = true
 		await this.selectedTab.value.activate()
 	}
 }
