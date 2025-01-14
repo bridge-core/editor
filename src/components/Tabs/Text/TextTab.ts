@@ -515,16 +515,16 @@ export class TextTab extends FileTab {
 	private debouncedSaveState = debounce(() => {
 		if (!this.active) return
 
-		if (this.editor) {
-			const selections = this.editor.getSelections()
-			const scrollTop = this.editor.getScrollTop()
-			const scrollLeft = this.editor.getScrollLeft()
+		if (!this.editor) return
 
-			this.currentState = {
-				selections,
-				scrollTop,
-				scrollLeft,
-			}
+		const selections = this.editor.getSelections()
+		const scrollTop = this.editor.getScrollTop()
+		const scrollLeft = this.editor.getScrollLeft()
+
+		this.currentState = {
+			selections,
+			scrollTop,
+			scrollLeft,
 		}
 
 		this.saveState()
