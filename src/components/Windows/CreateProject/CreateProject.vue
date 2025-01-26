@@ -7,7 +7,7 @@ import InformativeToggle from '@/components/Common/InformativeToggle.vue'
 import Expandable from '@/components/Common/Expandable.vue'
 import Dropdown from '@/components/Common/LegacyDropdown.vue'
 
-import { Ref, computed, onMounted, ref, watch } from 'vue'
+import { ComputedRef, Ref, computed, onMounted, ref, watch } from 'vue'
 import { IPackType } from 'mc-project-core'
 import { ProjectManager } from '@/libs/project/ProjectManager'
 import { ConfigurableFile } from '@/libs/project/create/files/configurable/ConfigurableFile'
@@ -90,22 +90,22 @@ const availableConfigurableFiles = computed(() => {
 const selectedFiles: Ref<ConfigurableFile[]> = ref([])
 const formatVersionDefinitions: Ref<FormatVersionDefinitions | null> = ref(null)
 
-const dataValid = computed(() => {
-	if (selectedPackTypes.value.length === 0) return false
-	if (projectName.value === '') return false
-	if (projectName.value.match(/"|\\|\/|:|\||<|>|\*|\?|~/g) !== null) return false
-	if (projectName.value.endsWith('.')) return false
+const validationError: ComputedRef<string | null> = computed(() => {
+	if (selectedPackTypes.value.length === 0) return 'false'
+	if (projectName.value === '') return 'false'
+	if (projectName.value.match(/"|\\|\/|:|\||<|>|\*|\?|~/g) !== null) return 'false'
+	if (projectName.value.endsWith('.')) return 'false'
 
-	if (projectNamespace.value.toLocaleLowerCase() !== projectNamespace.value) return false
-	if (projectNamespace.value.includes(' ')) return false
-	if (projectNamespace.value.includes(':')) return false
-	if (projectNamespace.value === '') return false
+	if (projectNamespace.value.toLocaleLowerCase() !== projectNamespace.value) return 'false'
+	if (projectNamespace.value.includes(' ')) return 'false'
+	if (projectNamespace.value.includes(':')) return 'false'
+	if (projectNamespace.value === '') return 'false'
 
-	return true
+	return null
 })
 
 async function create() {
-	if (!dataValid.value) return
+	if (validationError.value !== null) return
 
 	ProjectManager.createProject(
 		{
@@ -336,7 +336,7 @@ const isMobile = useIsMobile()
 				</div>
 			</div>
 
-			<TextButton :text="t('Create')" @click="create" class="mt-4 mr-8 self-end transition-[color, opacity]" :enabled="dataValid" />
+			<TextButton :text="t('Create')" @click="create" class="mt-4 mr-8 self-end transition-[color, opacity]" :enabled="validationError === null" />
 		</div>
 	</Window>
 </template>
