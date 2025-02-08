@@ -446,6 +446,7 @@ export class PWAFileSystem extends BaseFileSystem {
 
 	private async checkForUpdate(path: string) {
 		const entries = await this.readDirectoryEntries(path)
+		entries.sort((a, b) => a.path.localeCompare(b.path))
 
 		let hash = ''
 
