@@ -5,7 +5,7 @@ import Switch from '@/components/Common/Switch.vue'
 import LabeledInput from '@/components/Common/LabeledInput.vue'
 import InformativeToggle from '@/components/Common/InformativeToggle.vue'
 import Expandable from '@/components/Common/Expandable.vue'
-import Dropdown from '@/components/Common/LegacyDropdown.vue'
+import Dropdown from '@/components/Common/Legacy/LegacyDropdown.vue'
 
 import { ComputedRef, Ref, computed, onMounted, ref, watch } from 'vue'
 import { IPackType } from 'mc-project-core'

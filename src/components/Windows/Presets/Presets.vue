@@ -5,7 +5,7 @@ import Expandable from '@/components/Common/Expandable.vue'
 import Icon from '@/components/Common/Icon.vue'
 import Button from '@/components/Common/Button.vue'
 import Switch from '@/components/Common/Switch.vue'
-import Dropdown from '@/components/Common/LegacyDropdown.vue'
+import Dropdown from '@/components/Common/Legacy/LegacyDropdown.vue'
 
 import { useTranslate } from '@/libs/locales/Locales'
 import { ComputedRef, Ref, computed, ref, watch } from 'vue'
