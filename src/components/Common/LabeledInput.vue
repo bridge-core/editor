@@ -2,14 +2,15 @@
 	<div
 		class="border-2 rounded px-3 py-2 transition-colors duration-100 ease-out relative mt-3 select-none"
 		:class="{
-			'border-[var(--color)]': !(_focused || focused),
+			'border-[var(--color)] hover:border-accent': !(_focused || focused) && !invalid,
+			'border-error hover:border-accent': !(_focused || focused) && invalid,
 			'border-primary': _focused || focused,
 		}"
 		:style="{
 			'--color': `var(--theme-color-${borderColor})`,
 		}"
 	>
-		<span class="absolute -top-1/3 left-2 text-xs bg-inherit p-1 text-text-secondary font-theme">{{ label }}</span>
+		<span class="absolute -top-[0.8rem] left-2 text-xs bg-inherit p-1 text-text-secondary font-theme">{{ label }}</span>
 		<slot :focus :blur :focused="_focused || focused" />
 	</div>
 </template>
@@ -30,6 +31,10 @@ defineProps({
 	borderColor: {
 		type: String,
 		default: 'backgroundSecondary',
+	},
+	invalid: {
+		type: Boolean,
+		required: false,
 	},
 })
 

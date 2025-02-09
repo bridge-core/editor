@@ -21,6 +21,7 @@ import TextButton from '@/components/Common/TextButton.vue'
 import { useIsMobile } from '@/libs/Mobile'
 import { packs } from '@/libs/project/Packs'
 import { Settings } from '@/libs/settings/Settings'
+import LabeledTextInput from '@/components/Common/LabeledTextInput.vue'
 
 const t = useTranslate()
 const getData = useGetData()
@@ -72,6 +73,7 @@ async function setup() {
 }
 
 watch(getData, setup)
+onMounted(setup)
 
 const availableConfigurableFiles = computed(() => {
 	const files: ConfigurableFile[] = []
@@ -87,19 +89,38 @@ const availableConfigurableFiles = computed(() => {
 	return files
 })
 
+function validateProjectName(value: string): string | null {
+	if (value === '') return 'windows.createProject.name.mustNotBeEmpty'
+	if (value.match(/"|\\|\/|:|\||<|>|\*|\?|~/g) !== null) return 'windows.createProject.name.invalidLetters'
+	if (value.endsWith('.')) return 'windows.createProject.name.endsInPeriod'
+
+	return null
+}
+
+function validateProjectNamespace(value: string): string | null {
+	if (value.toLocaleLowerCase() !== value) return 'windows.createProject.namespace.invalidCharacters'
+	if (value.includes(' ')) return 'windows.createProject.namespace.invalidCharacters'
+	if (value.includes(':')) return 'windows.createProject.namespace.invalidCharacters'
+	if (value.match(/"|\\|\/|:|\||<|>|\*|\?|~/g) !== null) return 'windows.createProject.namespace.invalidCharacters'
+	if (value === '') return 'windows.createProject.namespace.mustNotBeEmpty'
+
+	return null
+}
+
 const selectedFiles: Ref<ConfigurableFile[]> = ref([])
 const formatVersionDefinitions: Ref<FormatVersionDefinitions | null> = ref(null)
 
 const validationError: ComputedRef<string | null> = computed(() => {
-	if (selectedPackTypes.value.length === 0) return 'false'
-	if (projectName.value === '') return 'false'
-	if (projectName.value.match(/"|\\|\/|:|\||<|>|\*|\?|~/g) !== null) return 'false'
-	if (projectName.value.endsWith('.')) return 'false'
+	if (selectedPackTypes.value.length === 0) return 'windows.createProject.errors.noPacks'
+	if (projectName.value === '') return 'windows.createProject.name.mustNotBeEmpty'
+	if (projectName.value.match(/"|\\|\/|:|\||<|>|\*|\?|~/g) !== null) return 'windows.createProject.name.invalidLetters'
+	if (projectName.value.endsWith('.')) return 'windows.createProject.name.endsInPeriod'
 
-	if (projectNamespace.value.toLocaleLowerCase() !== projectNamespace.value) return 'false'
-	if (projectNamespace.value.includes(' ')) return 'false'
-	if (projectNamespace.value.includes(':')) return 'false'
-	if (projectNamespace.value === '') return 'false'
+	if (projectNamespace.value.toLocaleLowerCase() !== projectNamespace.value) return 'windows.createProject.namespace.invalidCharacters'
+	if (projectNamespace.value.includes(' ')) return 'windows.createProject.namespace.invalidCharacters'
+	if (projectNamespace.value.includes(':')) return 'windows.createProject.namespace.invalidCharacters'
+	if (projectNamespace.value.match(/"|\\|\/|:|\||<|>|\*|\?|~/g) !== null) return 'windows.createProject.namespace.invalidCharacters'
+	if (projectNamespace.value === '') return 'windows.createProject.namespace.mustNotBeEmpty'
 
 	return null
 })
@@ -184,8 +205,6 @@ function chooseProjectIcon() {
 	projectIcon.value = projectIconInput.value.files[0]
 }
 
-onMounted(setup)
-
 const isMobile = useIsMobile()
 </script>
 
@@ -249,7 +268,8 @@ const isMobile = useIsMobile()
 				</Expandable>
 
 				<div class="flex gap-4 w-full mt-4">
-					<LabeledInput :label="t('windows.createProject.icon.label')" class="mb-4 flex bg-background" v-slot="{ focus, blur }">
+					<!-- Icon -->
+					<LabeledInput :label="t('windows.createProject.icon.label')" class="mb-4 flex bg-background h-min" v-slot="{ focus, blur }">
 						<input type="file" class="hidden" ref="projectIconInput" @:change="chooseProjectIcon" />
 
 						<button class="flex align-center gap-2 text-text-secondary font-theme" @mouseenter="focus" @mouseleave="blur" @click="projectIconInput?.click()">
@@ -258,48 +278,43 @@ const isMobile = useIsMobile()
 						</button>
 					</LabeledInput>
 
-					<LabeledInput :label="t('windows.createProject.name.label')" class="mb-4 flex-1 bg-background" v-slot="{ focus, blur }">
-						<input
-							class="bg-background outline-none max-w-none w-full placeholder:text-text-secondary font-theme"
-							@focus="focus"
-							@blur="blur"
-							v-model="projectName"
-							:placeholder="t('windows.createProject.name.placeholder')"
-						/>
-					</LabeledInput>
+					<!-- Name -->
+					<LabeledTextInput
+						:label="t('windows.createProject.name.label')"
+						class="mb-4 flex-1 h-min"
+						v-model="projectName"
+						:placeholder="t('windows.createProject.name.placeholder')"
+						:rules="[validateProjectName]"
+					/>
 				</div>
 
-				<LabeledInput :label="t('windows.createProject.description.label')" class="mb-4 bg-background" v-slot="{ focus, blur }">
-					<input
-						class="bg-background outline-none max-w-none placeholder:text-text-secondary max-w-none w-full font-theme"
-						@focus="focus"
-						@blur="blur"
-						v-model="projectDescription"
-						:placeholder="t('windows.createProject.description.placeholder')"
-					/>
-				</LabeledInput>
+				<!-- Description -->
+				<LabeledTextInput
+					:label="t('windows.createProject.description.label')"
+					class="mb-4 flex-1 h-min"
+					v-model="projectDescription"
+					:placeholder="t('windows.createProject.description.placeholder')"
+				/>
 
 				<div class="flex gap-4">
-					<LabeledInput :label="t('windows.createProject.namespace.label')" class="mb-4 flex-1 bg-background" v-slot="{ focus, blur }">
-						<input
-							class="bg-background outline-none placeholder:text-text-secondary max-w-none w-full font-theme"
-							@focus="focus"
-							@blur="blur"
-							v-model="projectNamespace"
-							:placeholder="t('windows.createProject.namespace.placeholder')"
-						/>
-					</LabeledInput>
+					<!-- Namespace -->
+					<LabeledTextInput
+						:label="t('windows.createProject.namespace.label')"
+						class="mb-4 flex-1 h-min"
+						v-model="projectNamespace"
+						:placeholder="t('windows.createProject.namespace.placeholder')"
+						:rules="[validateProjectNamespace]"
+					/>
 
-					<LabeledInput :label="t('windows.createProject.author.label')" class="mb-4 flex-1 bg-background" v-slot="{ focus, blur }">
-						<input
-							class="bg-background outline-none placeholder:text-text-secondary max-w-none w-full font-theme"
-							@focus="focus"
-							@blur="blur"
-							v-model="projectAuthor"
-							:placeholder="t('windows.createProject.author.placeholder')"
-						/>
-					</LabeledInput>
+					<!-- Author -->
+					<LabeledTextInput
+						:label="t('windows.createProject.author.label')"
+						class="mb-4 flex-1 h-min"
+						v-model="projectAuthor"
+						:placeholder="t('windows.createProject.author.placeholder')"
+					/>
 
+					<!-- Target Version -->
 					<Dropdown class="mb-4 flex-1">
 						<template #main="{ expanded, toggle }">
 							<LabeledInput :label="t('windows.createProject.targetVersion.label')" :focused="expanded" class="bg-background">
@@ -336,7 +351,13 @@ const isMobile = useIsMobile()
 				</div>
 			</div>
 
-			<TextButton :text="t('Create')" @click="create" class="mt-4 mr-8 self-end transition-[color, opacity]" :enabled="validationError === null" />
+			<div class="mt-4 mr-8 self-end flex flex-col items-end">
+				<TextButton :text="t('Create')" @click="create" class="transition-[color, opacity]" :enabled="validationError === null" />
+
+				<div class="h-0">
+					<p class="text-error font-theme text-xs mt-1">{{ validationError !== null ? t(validationError) : '' }}</p>
+				</div>
+			</div>
 		</div>
 	</Window>
 </template>

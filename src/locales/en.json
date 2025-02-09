@@ -777,6 +777,9 @@
 						"description": "Used to register ids for sound files to be used elsewhere in the project"
 					}
 				}
+			},
+			"errors": {
+				"noPacks": "Your project must contain at least one pack"
 			}
 		},
 		"createPreset": {
@@ -1036,7 +1039,6 @@
 					"name": "JSON Editor",
 					"description": "Choose how you want to edit JSON files"
 				},
-
 				"bracketPairColorization": {
 					"name": "Bracket Pair Colorization",
 					"description": "Give matching brackets an unique color"
