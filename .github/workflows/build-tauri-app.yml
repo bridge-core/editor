@@ -14,18 +14,17 @@ jobs:
         runs-on: ${{ matrix.platform }}
         steps:
             - name: Checkout 🛎️
-              uses: actions/checkout@v3
+            - uses: actions/checkout@v4
 
             - name: Install Node 🧰
-              uses: dtolnay/rust-toolchain@stable
+              uses: actions/setup-node@v4
               with:
-                  node-version: 16
-                  cache: 'npm'
+                node-version: 16
 
             - name: Install Rust 🦀
-              uses: actions-rs/toolchain@v1
+              uses: dtolnay/rust-toolchain@stable
               with:
-                  toolchain: stable
+                  targets: ${{ matrix.platform == 'macos-latest' && 'aarch64-apple-darwin,x86_64-apple-darwin'
 
             - name: Install dependencies (ubuntu only) 📦
               if: matrix.platform == 'ubuntu-latest'
