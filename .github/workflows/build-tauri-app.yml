@@ -24,7 +24,7 @@ jobs:
             - name: Install Rust 🦀
               uses: dtolnay/rust-toolchain@stable
               with:
-                  targets: ${{ matrix.platform == 'macos-latest' && 'aarch64-apple-darwin,x86_64-apple-darwin'
+                toolchain: stable
 
             - name: Install dependencies (ubuntu only) 📦
               if: matrix.platform == 'ubuntu-latest'
