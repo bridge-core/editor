@@ -27,7 +27,7 @@ jobs:
                 toolchain: stable
 
             - name: Install dependencies (ubuntu only) 📦
-              if: matrix.platform == 'ubuntu-latest'
+              if: matrix.platform == 'ubuntu-22.04'
               run: |
                   sudo apt-get update
                   sudo apt-get install -y libwebkit2gtk-4.0-dev libappindicator3-dev librsvg2-dev patchelf
