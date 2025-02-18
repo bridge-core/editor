@@ -210,8 +210,8 @@ const isMobile = useIsMobile()
 
 <template>
 	<Window :name="t('windows.createProject.title')" @close="Windows.close(CreateProjectWindow)">
-		<div class="flex flex-col pb-8 grow" :class="{ 'h-[42rem]': !isMobile }">
-			<div class="overflow-y-scroll p-4 pt-2 m-4 mt-0 max-width overflow-x-auto basis-0 grow">
+		<div class="flex flex-col pb-8 grow" :class="{ 'h-[42.5rem] max-width': !isMobile }">
+			<div class="overflow-auto p-4 pt-0 m-4 mt-2 basis-0 grow">
 				<!-- Pack Types -->
 				<div class="flex justify-stretch flex-wrap gap-3 mb-4">
 					<InformativeToggle
@@ -267,9 +267,9 @@ const isMobile = useIsMobile()
 					</div>
 				</Expandable>
 
-				<div class="flex gap-4 w-full mt-4">
+				<div class="flex gap-4 w-full mt-4 mb-2">
 					<!-- Icon -->
-					<LabeledInput :label="t('windows.createProject.icon.label')" class="mb-4 flex bg-background h-min" v-slot="{ focus, blur }">
+					<LabeledInput :label="t('windows.createProject.icon.label')" class="flex bg-background h-min" v-slot="{ focus, blur }">
 						<input type="file" class="hidden" ref="projectIconInput" @:change="chooseProjectIcon" />
 
 						<button class="flex align-center gap-2 text-text-secondary font-theme" @mouseenter="focus" @mouseleave="blur" @click="projectIconInput?.click()">
@@ -281,7 +281,7 @@ const isMobile = useIsMobile()
 					<!-- Name -->
 					<LabeledTextInput
 						:label="t('windows.createProject.name.label')"
-						class="mb-4 flex-1 h-min"
+						class="flex-1 h-min"
 						v-model="projectName"
 						:placeholder="t('windows.createProject.name.placeholder')"
 						:rules="[validateProjectName]"
@@ -351,12 +351,14 @@ const isMobile = useIsMobile()
 				</div>
 			</div>
 
-			<div class="mt-4 mr-8 self-end flex flex-col items-end">
-				<TextButton :text="t('Create')" @click="create" class="transition-[color, opacity]" :enabled="validationError === null" />
+			<div class="mx-8 flex justify-between items-center">
+				<div class="flex items-center gap-2">
+					<Icon v-if="validationError !== null" icon="error" class="text-sm text-error" />
 
-				<div class="h-0">
-					<p class="text-error font-theme text-xs mt-1">{{ validationError !== null ? t(validationError) : '' }}</p>
+					<p class="text-error font-theme text-xs h-min">{{ validationError !== null ? t(validationError) : '' }}</p>
 				</div>
+
+				<TextButton :text="t('Create')" @click="create" class="transition-[color, opacity]" :enabled="validationError === null" />
 			</div>
 		</div>
 	</Window>
@@ -364,7 +366,7 @@ const isMobile = useIsMobile()
 
 <style scoped>
 .max-width {
-	max-width: min(90vw, 65.5rem);
+	max-width: min(90vw, 67rem);
 }
 
 .light-scroll::-webkit-scrollbar-thumb {

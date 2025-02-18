@@ -60,6 +60,6 @@ const error: Ref<string | null> = computed(() => {
 			</div>
 		</LabeledInput>
 
-		<p v-if="rules" class="text-error font-theme text-xs mt-1 ml-3 absolute">{{ error ? t(error) : '' }}</p>
+		<p v-if="rules" class="text-error font-theme text-xs mt-1 ml-3 min-h-[1rem]">{{ error ? t(error) : '' }}</p>
 	</div>
 </template>
