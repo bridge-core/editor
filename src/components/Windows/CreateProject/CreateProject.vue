@@ -267,12 +267,12 @@ const isMobile = useIsMobile()
 					</div>
 				</Expandable>
 
-				<div class="flex gap-4 w-full mt-4 mb-2">
+				<div class="flex flex-wrap justify-stretch gap-4 w-full mt-4 mb-2">
 					<!-- Icon -->
-					<LabeledInput :label="t('windows.createProject.icon.label')" class="flex bg-background h-min" v-slot="{ focus, blur }">
+					<LabeledInput :label="t('windows.createProject.icon.label')" class="bg-background h-min grow" v-slot="{ focus, blur }">
 						<input type="file" class="hidden" ref="projectIconInput" @:change="chooseProjectIcon" />
 
-						<button class="flex align-center gap-2 text-text-secondary font-theme" @mouseenter="focus" @mouseleave="blur" @click="projectIconInput?.click()">
+						<button class="flex align-center gap-2 text-text-secondary font-theme grow" @mouseenter="focus" @mouseleave="blur" @click="projectIconInput?.click()">
 							<Icon icon="image" class="no-fill" color="text-text-secondary" />
 							{{ t('windows.createProject.icon.placeholder') }}
 						</button>
@@ -281,7 +281,7 @@ const isMobile = useIsMobile()
 					<!-- Name -->
 					<LabeledTextInput
 						:label="t('windows.createProject.name.label')"
-						class="flex-1 h-min"
+						class="h-min grow-[7]"
 						v-model="projectName"
 						:placeholder="t('windows.createProject.name.placeholder')"
 						:rules="[validateProjectName]"
@@ -296,11 +296,11 @@ const isMobile = useIsMobile()
 					:placeholder="t('windows.createProject.description.placeholder')"
 				/>
 
-				<div class="flex gap-4">
+				<div class="flex flex-wrap gap-x-4 mb-4">
 					<!-- Namespace -->
 					<LabeledTextInput
 						:label="t('windows.createProject.namespace.label')"
-						class="mb-4 flex-1 h-min"
+						class="flex-1 h-min"
 						v-model="projectNamespace"
 						:placeholder="t('windows.createProject.namespace.placeholder')"
 						:rules="[validateProjectNamespace]"
@@ -309,13 +309,13 @@ const isMobile = useIsMobile()
 					<!-- Author -->
 					<LabeledTextInput
 						:label="t('windows.createProject.author.label')"
-						class="mb-4 flex-1 h-min"
+						class="flex-1 h-min mb-5"
 						v-model="projectAuthor"
 						:placeholder="t('windows.createProject.author.placeholder')"
 					/>
 
 					<!-- Target Version -->
-					<Dropdown class="mb-4 flex-1">
+					<Dropdown class="flex-1">
 						<template #main="{ expanded, toggle }">
 							<LabeledInput :label="t('windows.createProject.targetVersion.label')" :focused="expanded" class="bg-background">
 								<div class="flex items-center justify-between cursor-pointer" @click="toggle">
