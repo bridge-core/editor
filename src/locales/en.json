@@ -1392,5 +1392,8 @@
 				"mojang": "bridge. no longer supports opening projects directly withing the com.mojang folder! If you click continue, the project will be converted to a bridge. project and stored in the bridge. projects folder."
 			}
 		}
+	},
+	"projects": {
+		"loading": "Loading project..."
 	}
 }

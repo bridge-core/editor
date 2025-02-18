@@ -15,6 +15,8 @@ import { Event } from '@/libs/event/Event'
 import { Disposable } from '@/libs/disposeable/Disposeable'
 import { ConvertableProjectInfo } from './ConvertComMojangProject'
 import { packs } from './Packs'
+import { ProgressWindow } from '@/components/Windows/Progress/ProgressWindow'
+import { Windows } from '@/components/Windows/Windows'
 
 export interface ProjectInfo {
 	name: string
@@ -124,11 +126,16 @@ export class ProjectManager {
 	public static async loadProject(name: string) {
 		console.time('[App] Load Project')
 
+		const progressWindow = new ProgressWindow('projects.loading')
+		Windows.open(progressWindow)
+
 		this.currentProject = new BedrockProject(name)
 
 		await this.currentProject.load()
 
 		this.updatedCurrentProject.dispatch()
+
+		Windows.close(progressWindow)
 
 		console.timeEnd('[App] Load Project')
 	}
