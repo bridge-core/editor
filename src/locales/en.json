@@ -1146,6 +1146,9 @@
 		},
 		"alert": {
 			"title": "Alert"
+		},
+		"progress": {
+			"title": "Loading"
 		}
 	},
 	"taskManager": {

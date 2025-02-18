@@ -4,15 +4,18 @@ import Window from '@/components/Windows/Window.vue'
 import { useTranslate } from '@/libs/locales/Locales'
 import type { ProgressWindow } from './ProgressWindow'
 import { Windows } from '../Windows'
+import { useIsMobile } from '@/libs/Mobile'
 
 const t = useTranslate()
 
 const { window } = defineProps<{ window: ProgressWindow }>()
+
+const isMobile = useIsMobile()
 </script>
 
 <template>
 	<Window :name="t('windows.progress.title')" @close="Windows.close(window)">
-		<div class="w-72">
+		<div :class="{ 'w-72': !isMobile, 'w-full': isMobile }">
 			<div class="p-4">
 				<p class="max-w-sm font-theme">
 					{{ t(window.text) }}
