@@ -106,12 +106,14 @@ if (isUnsupportedBrowser() || typeof window.showOpenFilePicker !== 'function') {
 			window.addEventListener(
 				'focus',
 				() => {
-					if (input.value.length) return
+					setTimeout(() => {
+						if (input.value.length) return
 
-					reject('User aborted selecting file')
+						reject('User aborted selecting file')
 
-					if (document.body.contains(input))
-						document.body.removeChild(input)
+						if (document.body.contains(input))
+							document.body.removeChild(input)
+					}, 300)
 				},
 				{ once: true }
 			)
