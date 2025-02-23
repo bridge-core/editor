@@ -77,12 +77,10 @@ if (isUnsupportedBrowser() || typeof window.showOpenFilePicker !== 'function') {
 		input.style.display = 'none'
 		document.body.appendChild(input)
 
-		let isLocked = false
 		return new Promise((resolve, reject) => {
 			input.addEventListener(
 				'change',
 				async (event) => {
-					isLocked = true
 					const files = [...(input.files ?? [])]
 
 					if (document.body.contains(input))
@@ -108,13 +106,12 @@ if (isUnsupportedBrowser() || typeof window.showOpenFilePicker !== 'function') {
 			window.addEventListener(
 				'focus',
 				() => {
-					setTimeout(() => {
-						if (isLocked) return
+					if (input.value.length) return
 
-						reject('User aborted selecting file')
-						if (document.body.contains(input))
-							document.body.removeChild(input)
-					}, 300)
+					reject('User aborted selecting file')
+
+					if (document.body.contains(input))
+						document.body.removeChild(input)
 				},
 				{ once: true }
 			)
