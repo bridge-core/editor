@@ -8,6 +8,7 @@ import { fileSystem } from '@/libs/fileSystem/FileSystem'
 import { BaseEntry, StreamableLike } from '@/libs/fileSystem/BaseFileSystem'
 import { BedrockProject } from '@/libs/project/BedrockProject'
 import { parse } from 'json5'
+import { NotificationSystem } from '@/components/Notifications/NotificationSystem'
 
 export function setupModules() {
 	Extensions.registerModule('@bridge/sidebar', () => ({
@@ -183,8 +184,17 @@ export function setupModules() {
 	}))
 
 	Extensions.registerModule('@bridge/fflate', () => import('fflate'))
+
 	Extensions.registerModule('@bridge/json5', () => ({
 		parse: (str: string) => parse(str),
 		stringify: (obj: any, replacer?: ((this: any, key: string, value: any) => any) | undefined, space?: string | number | undefined) => JSON.stringify(obj, replacer, space),
+	}))
+
+	Extensions.registerModule('@bridge/notification', () => ({
+		addNotification: NotificationSystem.addNotification,
+		addProgressNotification: NotificationSystem.addProgressNotification,
+		clearNotifications: NotificationSystem.clearNotification,
+		setProgress: NotificationSystem.setProgress,
+		activateNotification: NotificationSystem.activateNotification,
 	}))
 }
