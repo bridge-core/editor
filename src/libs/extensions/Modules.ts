@@ -14,15 +14,21 @@ import { del, get, set, keys } from 'idb-keyval'
 
 export function setupModules() {
 	Extensions.registerModule('@bridge/sidebar', () => ({
-		create: function (item: { id: string; displayName: string; icon: string; component: any }) {
-			Sidebar.addButton(item.id, item.displayName, item.icon, () => {
+		addTabButton(id: string, displayName: string, icon: string, component: any) {
+			Sidebar.addButton(id, displayName, icon, () => {
 				const tab = new Tab()
-				tab.component = item.component
-				tab.name.value = item.displayName
-				tab.icon.value = item.icon
+				tab.component = component
+				tab.name.value = displayName
+				tab.icon.value = icon
 
 				TabManager.openTab(tab)
 			})
+		},
+		addButton(id: string, displayName: string, icon: string, component: any, callback: () => void) {
+			Sidebar.addButton(id, displayName, icon, callback)
+		},
+		addDivider() {
+			Sidebar.addDivider()
 		},
 	}))
 
@@ -59,6 +65,27 @@ export function setupModules() {
 		},
 		resolvePackPath(packId: string, filePath: string) {
 			return ProjectManager.currentProject?.resolvePackPath(packId, filePath) ?? null
+		},
+		hasPacks(packs: string[]) {
+			if (!ProjectManager.currentProject) return false
+
+			for (const pack of packs) {
+				if (ProjectManager.currentProject.packs[pack] === undefined) return false
+			}
+
+			return true
+		},
+		registerExporter() {
+			// TODO
+		},
+		async compile() {
+			if (ProjectManager.currentProject instanceof BedrockProject) await ProjectManager.currentProject.build()
+		},
+		async compileFiles() {
+			// TODO
+		},
+		onProjectChanged() {
+			// TODO
 		},
 	}))
 
@@ -215,6 +242,12 @@ export function setupModules() {
 		delete: del,
 		has: async (key: string) => {
 			return (await keys()).includes(key)
+		},
+	}))
+
+	Extensions.registerModule('@bridge/tab', () => ({
+		async openFile(path: string) {
+			await TabManager.openFile(path)
 		},
 	}))
 }
