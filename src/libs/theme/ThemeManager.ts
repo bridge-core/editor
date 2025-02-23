@@ -23,6 +23,7 @@ export class ThemeManager {
 	public static themeChanged: Event<void> = new Event()
 
 	private static previouslyUsedTheme: Theme = this.prefersDarkMode() ? dark : light
+	private static lastTheme: Theme | null = null
 
 	public static setup() {
 		Settings.addSetting(ThemeSettings.ColorScheme, {
@@ -126,9 +127,11 @@ export class ThemeManager {
 	private static applyTheme(themeId: string) {
 		const theme = this.themes.find((theme) => theme.id === themeId)
 
-		this.currentTheme = themeId
-
 		if (!theme) return
+
+		if (this.lastTheme === theme) return
+
+		this.currentTheme = themeId
 
 		const root = <HTMLElement>document.querySelector(':root')
 
@@ -141,6 +144,9 @@ export class ThemeManager {
 		root.style.setProperty('--theme-font-size-editor', Settings.get(ThemeSettings.EditorFontSize) + 'px')
 
 		set('lastUsedTheme', JSON.stringify(theme))
+		this.previouslyUsedTheme = theme
+
+		this.lastTheme = theme
 
 		this.themeChanged.dispatch()
 	}
