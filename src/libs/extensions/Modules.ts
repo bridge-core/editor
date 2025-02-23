@@ -28,7 +28,7 @@ import { disposeAll, Disposable } from '@/libs/disposeable/Disposeable'
 
 export function setupModules() {
 	Extensions.registerModule('@bridge/sidebar', () => ({
-		addTabButton(id: string, displayName: string, icon: string, component: any) {
+		addSidebarTabButton(id: string, displayName: string, icon: string, component: any) {
 			Sidebar.addButton(id, displayName, icon, () => {
 				const tab = new Tab()
 				tab.component = component
@@ -38,10 +38,10 @@ export function setupModules() {
 				TabManager.openTab(tab)
 			})
 		},
-		addButton(id: string, displayName: string, icon: string, component: any, callback: () => void) {
+		addSidebarButton(id: string, displayName: string, icon: string, callback: () => void) {
 			Sidebar.addButton(id, displayName, icon, callback)
 		},
-		addDivider() {
+		addSidebarDivider() {
 			Sidebar.addDivider()
 		},
 	}))
