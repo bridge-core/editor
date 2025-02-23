@@ -22,7 +22,7 @@ export class Windows {
 		Windows.openWindows.value = [...Windows.openWindows.value]
 	}
 
-	public static windowIsOpen(window: WindowProvider) {
+	public static isOpen(window: WindowProvider) {
 		return Windows.openWindows.value.includes(window)
 	}
 }

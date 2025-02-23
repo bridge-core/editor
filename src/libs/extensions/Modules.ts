@@ -17,6 +17,13 @@ import { openUrl } from '@/libs/OpenUrl'
 import json5 from 'json5'
 import * as fflate from 'fflate'
 import * as three from 'three'
+import { Windows } from '@/components/Windows/Windows'
+import { AlertWindow } from '@/components/Windows/Alert/AlertWindow'
+import { ConfirmWindow } from '@/components/Windows/Confirm/ConfirmWindow'
+import { DropdownWindow } from '@/components/Windows/Dropdown/DropdownWindow'
+import { InformedChoice, InformedChoiceWindow } from '@/components/Windows/InformedChoice/InformedChoiceWindow'
+import { PromptWindow } from '@/components/Windows/Prompt/PromptWindow'
+import { ProgressWindow } from '@/components/Windows/Progress/ProgressWindow'
 
 export function setupModules() {
 	Extensions.registerModule('@bridge/sidebar', () => ({
@@ -294,6 +301,18 @@ export function setupModules() {
 
 	Extensions.registerModule('@bridge/utils', () => ({
 		openUrl,
+	}))
+
+	Extensions.registerModule('@bridge/windows', () => ({
+		AlertWindow,
+		ConfirmWindow,
+		DropdownWindow,
+		InformedChoiceWindow,
+		PromptWindow,
+		ProgressWindow,
+		open: Windows.open,
+		close: Windows.close,
+		isOpen: Windows.isOpen,
 	}))
 
 	Extensions.registerModule('@bridge/fflate', () => fflate)
