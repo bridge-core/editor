@@ -215,8 +215,6 @@ export function setupModules() {
 		},
 	}))
 
-	Extensions.registerModule('@bridge/fflate', () => import('fflate'))
-
 	Extensions.registerModule('@bridge/json5', () => ({
 		parse: (str: string) => parse(str),
 		stringify: (obj: any, replacer?: ((this: any, key: string, value: any) => any) | undefined, space?: string | number | undefined) => JSON.stringify(obj, replacer, space),
@@ -282,4 +280,8 @@ export function setupModules() {
 			// TODO
 		},
 	}))
+
+	Extensions.registerModule('@bridge/fflate', () => import('fflate'))
+
+	Extensions.registerModule('@bridge/three', () => import('three'))
 }
