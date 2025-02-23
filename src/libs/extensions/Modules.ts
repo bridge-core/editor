@@ -180,4 +180,6 @@ export function setupModules() {
 			ProjectManager.currentProject.indexerService.getIndexedFiles()
 		},
 	}))
+
+	Extensions.registerModule('@bridge/fflate', () => import('fflate'))
 }
