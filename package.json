@@ -29,8 +29,7 @@
 		"pathe": "^1.1.2",
 		"three": "^0.173.0",
 		"uuid": "^9.0.1",
-		"vue": "^3.4.31",
-		"vue-template-compiler": "^2.7.16"
+		"vue": "^3.4.31"
 	},
 	"devDependencies": {
 		"@types/color-convert": "^2.0.3",

@@ -7,13 +7,14 @@ import { ProjectManager } from '@/libs/project/ProjectManager'
 import { fileSystem } from '@/libs/fileSystem/FileSystem'
 import { BaseEntry, StreamableLike } from '@/libs/fileSystem/BaseFileSystem'
 import { BedrockProject } from '@/libs/project/BedrockProject'
-import json5 from 'json5'
 import { NotificationSystem } from '@/components/Notifications/NotificationSystem'
 import { dirname, join, extname, basename, resolve, relative } from 'pathe'
 import { del, get, set, keys } from 'idb-keyval'
 import { FileTab } from '@/components/TabSystem/FileTab'
 import { ThemeManager, ThemeSettings } from '@/libs/theme/ThemeManager'
 import { Settings } from '@/libs/settings/Settings'
+import { openUrl } from '@/libs/OpenUrl'
+import json5 from 'json5'
 import * as fflate from 'fflate'
 import * as three from 'three'
 
@@ -289,6 +290,10 @@ export function setupModules() {
 		addAction() {
 			// TODO
 		},
+	}))
+
+	Extensions.registerModule('@bridge/utils', () => ({
+		openUrl,
 	}))
 
 	Extensions.registerModule('@bridge/fflate', () => fflate)
