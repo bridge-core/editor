@@ -21,9 +21,10 @@ import { Windows } from '@/components/Windows/Windows'
 import { AlertWindow } from '@/components/Windows/Alert/AlertWindow'
 import { ConfirmWindow } from '@/components/Windows/Confirm/ConfirmWindow'
 import { DropdownWindow } from '@/components/Windows/Dropdown/DropdownWindow'
-import { InformedChoice, InformedChoiceWindow } from '@/components/Windows/InformedChoice/InformedChoiceWindow'
+import { InformedChoiceWindow } from '@/components/Windows/InformedChoice/InformedChoiceWindow'
 import { PromptWindow } from '@/components/Windows/Prompt/PromptWindow'
 import { ProgressWindow } from '@/components/Windows/Progress/ProgressWindow'
+import { disposeAll, Disposable } from '@/libs/disposeable/Disposeable'
 
 export function setupModules() {
 	Extensions.registerModule('@bridge/sidebar', () => ({
@@ -56,50 +57,64 @@ export function setupModules() {
 		appVersion,
 	}))
 
-	Extensions.registerModule('@bridge/project', () => ({
-		getCurrentProject() {
-			return ProjectManager.currentProject
-		},
-		getBPPath() {
-			return ProjectManager.currentProject?.resolvePackPath('behaviorPack') ?? null
-		},
-		getRPPath() {
-			return ProjectManager.currentProject?.resolvePackPath('resourcePack') ?? null
-		},
-		getNamespace() {
-			return ProjectManager.currentProject?.config?.namespace ?? null
-		},
-		getTargetVersion() {
-			return ProjectManager.currentProject?.config?.targetVersion ?? null
-		},
-		getAuthors() {
-			return ProjectManager.currentProject?.config?.authors ?? null
-		},
-		resolvePackPath(packId: string, filePath: string) {
-			return ProjectManager.currentProject?.resolvePackPath(packId, filePath) ?? null
-		},
-		hasPacks(packs: string[]) {
-			if (!ProjectManager.currentProject) return false
+	Extensions.registerModule('@bridge/project', (extension) => {
+		let disposables: Disposable[] = []
 
-			for (const pack of packs) {
-				if (ProjectManager.currentProject.packs[pack] === undefined) return false
-			}
+		disposables.push(
+			extension.disposed.on(() => {
+				disposeAll(disposables)
+			})
+		)
 
-			return true
-		},
-		registerExporter() {
-			// TODO
-		},
-		async compile() {
-			if (ProjectManager.currentProject instanceof BedrockProject) await ProjectManager.currentProject.build()
-		},
-		async compileFiles() {
-			// TODO
-		},
-		onProjectChanged() {
-			// TODO
-		},
-	}))
+		return {
+			getCurrentProject() {
+				return ProjectManager.currentProject
+			},
+			getBPPath() {
+				return ProjectManager.currentProject?.resolvePackPath('behaviorPack') ?? null
+			},
+			getRPPath() {
+				return ProjectManager.currentProject?.resolvePackPath('resourcePack') ?? null
+			},
+			getNamespace() {
+				return ProjectManager.currentProject?.config?.namespace ?? null
+			},
+			getTargetVersion() {
+				return ProjectManager.currentProject?.config?.targetVersion ?? null
+			},
+			getAuthors() {
+				return ProjectManager.currentProject?.config?.authors ?? null
+			},
+			resolvePackPath(packId: string, filePath: string) {
+				return ProjectManager.currentProject?.resolvePackPath(packId, filePath) ?? null
+			},
+			hasPacks(packs: string[]) {
+				if (!ProjectManager.currentProject) return false
+
+				for (const pack of packs) {
+					if (ProjectManager.currentProject.packs[pack] === undefined) return false
+				}
+
+				return true
+			},
+			registerExporter() {
+				// TODO
+			},
+			async compile() {
+				if (ProjectManager.currentProject instanceof BedrockProject) await ProjectManager.currentProject.build()
+			},
+			async compileFiles() {
+				// TODO
+			},
+			onProjectChanged(callback: (projectName: string | null) => void) {
+				disposables.push(
+					ProjectManager.updatedCurrentProject.on(() => {
+						callback(ProjectManager.currentProject?.name ?? null)
+					})
+				)
+			},
+		}
+	})
 
 	Extensions.registerModule('@bridge/com-mojang', () => ({
 		async readFile(path: string) {
@@ -189,25 +204,42 @@ export function setupModules() {
 		},
 	}))
 
-	Extensions.registerModule('@bridge/fs', () => ({
-		readFile: fileSystem.readFile,
-		readFileText: fileSystem.readFileText,
-		readFileDataUrl: fileSystem.readFileDataUrl,
-		readFileJson: fileSystem.readFileJson,
-		writeFile: fileSystem.writeFile,
-		writeFileJson: fileSystem.writeFileJson,
-		writeFileStreaming: fileSystem.writeFileStreaming,
-		removeFile: fileSystem.removeFile,
-		copyFile: fileSystem.copyFile,
-		readDirectoryEntries: fileSystem.readDirectoryEntries,
-		getEntry: fileSystem.getEntry,
-		ensureDirectory: fileSystem.ensureDirectory,
-		makeDirectory: fileSystem.makeDirectory,
-		removeDirectory: fileSystem.removeDirectory,
-		move: fileSystem.move,
-		copyDirectory: fileSystem.copyDirectory,
-		exists: fileSystem.exists,
-	}))
+	Extensions.registerModule('@bridge/fs', (extension) => {
+		let disposables: Disposable[] = []
+
+		disposables.push(
+			extension.disposed.on(() => {
+				disposeAll(disposables)
+			})
+		)
+
+		return {
+			readFile: fileSystem.readFile,
+			readFileText: fileSystem.readFileText,
+			readFileDataUrl: fileSystem.readFileDataUrl,
+			readFileJson: fileSystem.readFileJson,
+			writeFile: fileSystem.writeFile,
+			writeFileJson: fileSystem.writeFileJson,
+			writeFileStreaming: fileSystem.writeFileStreaming,
+			removeFile: fileSystem.removeFile,
+			copyFile: fileSystem.copyFile,
+			readDirectoryEntries: fileSystem.readDirectoryEntries,
+			getEntry: fileSystem.getEntry,
+			ensureDirectory: fileSystem.ensureDirectory,
+			makeDirectory: fileSystem.makeDirectory,
+			removeDirectory: fileSystem.removeDirectory,
+			move: fileSystem.move,
+			copyDirectory: fileSystem.copyDirectory,
+			exists: fileSystem.exists,
+			onPathUpdated(callback: (path: string) => void) {
+				disposables.push(
+					fileSystem.pathUpdated.on((path) => {
+						callback(path!)
+					})
+				)
+			},
+		}
+	})
 
 	Extensions.registerModule('@bridge/indexer', () => ({
 		getCachedData(fileType: string, filePath?: string, cacheKey?: string) {
@@ -271,24 +303,38 @@ export function setupModules() {
 		},
 	}))
 
-	Extensions.registerModule('@bridge/theme', () => ({
-		getColor(id: string) {
-			return ThemeManager.get(ThemeManager.currentTheme).colors[id]
-		},
-		getCurrentTheme() {
-			return ThemeManager.get(ThemeManager.currentTheme)
-		},
-		getCurrentMode() {
-			const colorScheme = Settings.get(ThemeSettings.ColorScheme)
+	Extensions.registerModule('@bridge/theme', (extension) => {
+		let disposables: Disposable[] = []
 
-			if (colorScheme === 'light' || (colorScheme === 'auto' && !ThemeManager.prefersDarkMode())) return 'light'
+		disposables.push(
+			extension.disposed.on(() => {
+				disposeAll(disposables)
+			})
+		)
 
-			return 'dark'
-		},
-		onThemeChanged() {
-			// TODO
-		},
-	}))
+		return {
+			getColor(id: string) {
+				return ThemeManager.get(ThemeManager.currentTheme).colors[id]
+			},
+			getCurrentTheme() {
+				return ThemeManager.get(ThemeManager.currentTheme)
+			},
+			getCurrentMode() {
+				const colorScheme = Settings.get(ThemeSettings.ColorScheme)
+
+				if (colorScheme === 'light' || (colorScheme === 'auto' && !ThemeManager.prefersDarkMode())) return 'light'
+
+				return 'dark'
+			},
+			onThemeChanged(callback: () => void) {
+				disposables.push(
+					ThemeManager.themeChanged.on(() => {
+						callback()
+					})
+				)
+			},
+		}
+	})
 
 	Extensions.registerModule('@bridge/toolbar', () => ({
 		addCategory() {

@@ -19,8 +19,8 @@ export enum ThemeSettings {
 export class ThemeManager {
 	public static themes: Theme[] = []
 	public static currentTheme: string = dark.id
-	public static themesUpdated: Event<undefined> = new Event()
-	public static themeChanged: Event<undefined> = new Event()
+	public static themesUpdated: Event<void> = new Event()
+	public static themeChanged: Event<void> = new Event()
 
 	private static previouslyUsedTheme: Theme = this.prefersDarkMode() ? dark : light
 

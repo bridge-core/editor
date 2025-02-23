@@ -4,7 +4,8 @@ import { dark, light } from '@/libs/theme/DefaultThemes'
 import { Theme } from '@/libs/theme/Theme'
 import { Snippet, SnippetData } from '@/libs/snippets/Snippet'
 import { Runtime } from '@/libs/runtime/Runtime'
-import { Extensions } from './Extensions'
+import { TBaseModule } from '@bridge-editor/js-runtime/dist/Runtime'
+import { Event } from '@/libs/event/Event'
 
 export interface ExtensionManifest {
 	author: string
@@ -28,6 +29,8 @@ export class Extension {
 	public presets: any = {}
 	public snippets: Snippet[] = []
 	public ui: Record<string, any> = {}
+	public modules: [string, TBaseModule][] = []
+	public disposed: Event<void> = new Event()
 
 	constructor(public path: string) {}
 
@@ -62,9 +65,7 @@ export class Extension {
 		if (await fileSystem.exists(presetPath)) {
 			const presets = await fileSystem.readFileJson(presetPath)
 
-			this.presets = Object.fromEntries(
-				Object.entries(presets).map(([path, value]) => [join(this.path, path), value])
-			)
+			this.presets = Object.fromEntries(Object.entries(presets).map(([path, value]) => [join(this.path, path), value]))
 		}
 
 		const snippetsPath = join(this.path, 'snippets')
@@ -80,7 +81,7 @@ export class Extension {
 	}
 
 	public async runScripts() {
-		const runtime = new Runtime(fileSystem, Extensions.getModules())
+		const runtime = new Runtime(fileSystem, this.modules)
 
 		const promises: Promise<any>[] = []
 
@@ -95,7 +96,7 @@ export class Extension {
 	}
 
 	private async loadUI() {
-		const runtime = new Runtime(fileSystem, Extensions.getModules())
+		const runtime = new Runtime(fileSystem, this.modules)
 
 		const promises: Promise<any>[] = []
 

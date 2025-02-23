@@ -11,12 +11,14 @@ import { Theme } from '@/libs/theme/Theme'
 import { Snippet } from '@/libs/snippets/Snippet'
 import { TBaseModule } from '@bridge-editor/js-runtime/dist/Runtime'
 
+export type ExtensionModuleBuilder = (extension: Extension) => TBaseModule
+
 export class Extensions {
 	public static globalExtensions: Record<string, Extension> = {}
 	public static projectExtensions: Record<string, Extension> = {}
 	public static activeExtensions: Record<string, Extension> = {}
 
-	public static updated: Event<undefined> = new Event()
+	public static updated: Event<void> = new Event()
 
 	public static themes: Theme[] = []
 	public static snippets: Snippet[] = []
@@ -25,7 +27,7 @@ export class Extensions {
 
 	public static loaded: boolean = false
 
-	private static modules: Record<string, TBaseModule> = {}
+	private static modules: Record<string, ExtensionModuleBuilder> = {}
 
 	public static setup() {
 		if (fileSystem instanceof PWAFileSystem) fileSystem.reloaded.on(this.fileSystemReloaded.bind(this))
@@ -123,12 +125,12 @@ export class Extensions {
 		await this.updateExtensions()
 	}
 
-	public static registerModule(name: string, value: any) {
-		this.modules[name] = value
+	public static registerModule(name: string, module: ExtensionModuleBuilder) {
+		this.modules[name] = module
 	}
 
-	public static getModules(): [string, TBaseModule][] {
-		return Object.entries(this.modules)
+	public static buildModules(extension: Extension): [string, TBaseModule][] {
+		return Object.entries(this.modules).map(([id, moduleBuilder]) => [id, moduleBuilder(extension)])
 	}
 
 	private static async updateExtensions() {
@@ -192,9 +194,7 @@ export class Extensions {
 	}
 
 	private static async downloadExtension(extension: ExtensionManifest): Promise<Unzipped> {
-		const arrayBuffer = await (
-			await fetch('https://raw.githubusercontent.com/bridge-core/plugins/master' + extension.link)
-		).arrayBuffer()
+		const arrayBuffer = await (await fetch('https://raw.githubusercontent.com/bridge-core/plugins/master' + extension.link)).arrayBuffer()
 
 		return await new Promise<Unzipped>(async (resolve, reject) =>
 			unzip(new Uint8Array(arrayBuffer), (err, data) => {
@@ -210,6 +210,7 @@ export class Extensions {
 
 	private static async loadExtension(path: string): Promise<Extension> {
 		const extension = new Extension(path)
+		extension.modules = this.buildModules(extension)
 		await extension.load()
 
 		return extension
