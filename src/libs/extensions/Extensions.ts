@@ -51,10 +51,6 @@ export class Extensions {
 		}
 
 		await this.updateExtensions()
-
-		for (const extension of Object.values(this.globalExtensions)) {
-			await extension.runScripts()
-		}
 	}
 
 	public static async loadProjectExtensions() {
@@ -71,14 +67,12 @@ export class Extensions {
 		}
 
 		await this.updateExtensions()
-
-		for (const extension of Object.values(this.globalExtensions)) {
-			await extension.runScripts()
-		}
 	}
 
-	public static unloadProjectExtensions() {
+	public static async unloadProjectExtensions() {
 		this.projectExtensions = {}
+
+		await this.updateExtensions()
 	}
 
 	public static async installGlobal(extension: ExtensionManifest) {
@@ -89,8 +83,6 @@ export class Extensions {
 		this.globalExtensions[loadedExtension.id] = loadedExtension
 
 		await this.updateExtensions()
-
-		await loadedExtension.runScripts()
 	}
 
 	public static async installProject(extension: ExtensionManifest) {
@@ -103,8 +95,6 @@ export class Extensions {
 		this.projectExtensions[loadedExtension.id] = loadedExtension
 
 		await this.updateExtensions()
-
-		await loadedExtension.runScripts()
 	}
 
 	public static async uninstall(id: string) {
@@ -134,6 +124,8 @@ export class Extensions {
 	}
 
 	private static async updateExtensions() {
+		const oldActiveExtensions = Object.values(this.activeExtensions)
+
 		this.activeExtensions = { ...this.globalExtensions, ...this.projectExtensions }
 
 		this.themes = Object.values(this.activeExtensions)
@@ -150,6 +142,20 @@ export class Extensions {
 		this.ui = {}
 		for (const extension of Object.values(this.activeExtensions)) {
 			this.ui = { ...this.ui, ...extension.ui }
+		}
+
+		const newActiveExtensions = Object.values(this.activeExtensions)
+
+		for (const extension of oldActiveExtensions) {
+			if (newActiveExtensions.includes(extension)) continue
+
+			await extension.deactivate()
+		}
+
+		for (const extension of newActiveExtensions) {
+			if (oldActiveExtensions.includes(extension)) continue
+
+			await extension.activate()
 		}
 
 		this.updated.dispatch()

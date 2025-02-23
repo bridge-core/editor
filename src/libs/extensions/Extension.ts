@@ -30,7 +30,7 @@ export class Extension {
 	public snippets: Snippet[] = []
 	public ui: Record<string, any> = {}
 	public modules: [string, TBaseModule][] = []
-	public disposed: Event<void> = new Event()
+	public deactivated: Event<void> = new Event()
 
 	constructor(public path: string) {}
 
@@ -80,7 +80,19 @@ export class Extension {
 		console.log('[Extension] Loaded:', this.manifest.name)
 	}
 
-	public async runScripts() {
+	public async activate() {
+		await this.runScripts()
+
+		console.log('[Extension] Activated:', this.manifest?.name ?? `Invalid (${this.id})`)
+	}
+
+	public async deactivate() {
+		this.deactivated.dispatch()
+
+		console.log('[Extension] Deactivated:', this.manifest?.name ?? `Invalid (${this.id})`)
+	}
+
+	private async runScripts() {
 		const runtime = new Runtime(fileSystem, this.modules)
 
 		const promises: Promise<any>[] = []

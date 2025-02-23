@@ -61,8 +61,10 @@ export function setupModules() {
 		let disposables: Disposable[] = []
 
 		disposables.push(
-			extension.disposed.on(() => {
+			extension.deactivated.on(() => {
 				disposeAll(disposables)
+
+				disposables = []
 			})
 		)
 
@@ -208,8 +210,10 @@ export function setupModules() {
 		let disposables: Disposable[] = []
 
 		disposables.push(
-			extension.disposed.on(() => {
+			extension.deactivated.on(() => {
 				disposeAll(disposables)
+
+				disposables = []
 			})
 		)
 
@@ -307,8 +311,10 @@ export function setupModules() {
 		let disposables: Disposable[] = []
 
 		disposables.push(
-			extension.disposed.on(() => {
+			extension.deactivated.on(() => {
 				disposeAll(disposables)
+
+				disposables = []
 			})
 		)
 

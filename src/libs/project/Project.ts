@@ -70,7 +70,7 @@ export class Project implements AsyncDisposable {
 
 		disposeAll(this.disposables)
 
-		Extensions.unloadProjectExtensions()
+		await Extensions.unloadProjectExtensions()
 	}
 
 	public resolvePackPath(packId?: string, path?: string) {
