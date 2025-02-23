@@ -10,6 +10,7 @@ import { BedrockProject } from '@/libs/project/BedrockProject'
 import { parse } from 'json5'
 import { NotificationSystem } from '@/components/Notifications/NotificationSystem'
 import { dirname, join, extname, basename, resolve, relative } from 'pathe'
+import { del, get, set, keys } from 'idb-keyval'
 
 export function setupModules() {
 	Extensions.registerModule('@bridge/sidebar', () => ({
@@ -206,5 +207,14 @@ export function setupModules() {
 		basename,
 		resolve,
 		relative,
+	}))
+
+	Extensions.registerModule('@bridge/persistent-storage', () => ({
+		save: set,
+		load: get,
+		delete: del,
+		has: async (key: string) => {
+			return (await keys()).includes(key)
+		},
 	}))
 }
