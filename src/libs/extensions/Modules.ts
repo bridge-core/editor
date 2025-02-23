@@ -29,22 +29,25 @@ export function setupModules() {
 	Extensions.registerModule('@bridge/env', () => ({
 		appVersion,
 		isNightly,
+	}))
+
+	Extensions.registerModule('@bridge/project', () => ({
 		getCurrentProject() {
 			return ProjectManager.currentProject
 		},
-		getProjectBPPath() {
+		getBPPath() {
 			return ProjectManager.currentProject?.resolvePackPath('behaviorPack') ?? null
 		},
-		getProjectRPPath() {
+		getRPPath() {
 			return ProjectManager.currentProject?.resolvePackPath('resourcePack') ?? null
 		},
-		getProjectNamespace() {
+		getNamespace() {
 			return ProjectManager.currentProject?.config?.namespace ?? null
 		},
-		getProjectTargetVersion() {
+		getTargetVersion() {
 			return ProjectManager.currentProject?.config?.targetVersion ?? null
 		},
-		getProjectAuthors() {
+		getAuthors() {
 			return ProjectManager.currentProject?.config?.authors ?? null
 		},
 		resolvePackPath(packId: string, filePath: string) {
