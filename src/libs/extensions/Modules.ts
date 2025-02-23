@@ -6,6 +6,7 @@ import { appVersion, isNightly } from '@/libs/app/AppEnv'
 import { ProjectManager } from '@/libs/project/ProjectManager'
 import { fileSystem } from '@/libs/fileSystem/FileSystem'
 import { BaseEntry, StreamableLike } from '@/libs/fileSystem/BaseFileSystem'
+import { BedrockProject } from '@/libs/project/BedrockProject'
 
 export function setupModules() {
 	Extensions.registerModule('@bridge/sidebar', () => ({
@@ -163,5 +164,20 @@ export function setupModules() {
 		move: fileSystem.move,
 		copyDirectory: fileSystem.copyDirectory,
 		exists: fileSystem.exists,
+	}))
+
+	Extensions.registerModule('@bridge/indexer', () => ({
+		getCachedData(fileType: string, filePath?: string, cacheKey?: string) {
+			if (!ProjectManager.currentProject) return null
+			if (!(ProjectManager.currentProject instanceof BedrockProject)) return null
+
+			ProjectManager.currentProject.indexerService.getCachedData(fileType, filePath, cacheKey)
+		},
+		getIndexedFiles() {
+			if (!ProjectManager.currentProject) return null
+			if (!(ProjectManager.currentProject instanceof BedrockProject)) return null
+
+			ProjectManager.currentProject.indexerService.getIndexedFiles()
+		},
 	}))
 }
