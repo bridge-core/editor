@@ -11,6 +11,9 @@ import { parse } from 'json5'
 import { NotificationSystem } from '@/components/Notifications/NotificationSystem'
 import { dirname, join, extname, basename, resolve, relative } from 'pathe'
 import { del, get, set, keys } from 'idb-keyval'
+import { FileTab } from '@/components/TabSystem/FileTab'
+import { ThemeManager, ThemeSettings } from '@/libs/theme/ThemeManager'
+import { Settings } from '@/libs/settings/Settings'
 
 export function setupModules() {
 	Extensions.registerModule('@bridge/sidebar', () => ({
@@ -246,8 +249,37 @@ export function setupModules() {
 	}))
 
 	Extensions.registerModule('@bridge/tab', () => ({
-		async openFile(path: string) {
-			await TabManager.openFile(path)
+		Tab,
+		FileTab,
+		openFile: TabManager.openFile,
+		openTab: TabManager.openTab,
+		registerTabType(tabType: typeof Tab) {
+			// TODO
+		},
+		getFocusedTabSystem() {
+			return TabManager.focusedTabSystem.value
+		},
+		getTabSystems() {
+			return TabManager.tabSystems.value
+		},
+	}))
+
+	Extensions.registerModule('@bridge/theme', () => ({
+		getColor(id: string) {
+			return ThemeManager.get(ThemeManager.currentTheme).colors[id]
+		},
+		getCurrentTheme() {
+			return ThemeManager.get(ThemeManager.currentTheme)
+		},
+		getCurrentMode() {
+			const colorScheme = Settings.get(ThemeSettings.ColorScheme)
+
+			if (colorScheme === 'light' || (colorScheme === 'auto' && !ThemeManager.prefersDarkMode())) return 'light'
+
+			return 'dark'
+		},
+		onThemeChanged() {
+			// TODO
 		},
 	}))
 }

@@ -7,7 +7,7 @@ import { Event } from '@/libs/event/Event'
 import { Disposable } from '@/libs/disposeable/Disposeable'
 import { Extensions } from '@/libs/extensions/Extensions'
 
-enum ThemeSettings {
+export enum ThemeSettings {
 	ColorScheme = 'colorScheme',
 	DarkTheme = 'darkTheme',
 	LightTheme = 'lightTheme',
@@ -68,8 +68,7 @@ export class ThemeManager {
 
 			let themeId = Settings.get(ThemeSettings.DarkTheme)
 
-			if (colorScheme === 'light' || (colorScheme === 'auto' && !ThemeManager.prefersDarkMode()))
-				themeId = Settings.get(ThemeSettings.LightTheme)
+			if (colorScheme === 'light' || (colorScheme === 'auto' && !ThemeManager.prefersDarkMode())) themeId = Settings.get(ThemeSettings.LightTheme)
 
 			ThemeManager.applyTheme(themeId as string)
 		})

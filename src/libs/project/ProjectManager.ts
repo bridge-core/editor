@@ -168,7 +168,7 @@ export class ProjectManager {
 		let iconDataUrl = 'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw=='
 
 		for (const [packId, packPath] of Object.entries(config.packs)) {
-			const projectPackPath = join(path, packPath)
+			const projectPackPath = join(path, packPath as string)
 
 			if (await fileSystem.exists(join(projectPackPath, 'pack_icon.png'))) iconDataUrl = await fileSystem.readFileDataUrl(join(projectPackPath, 'pack_icon.png'))
 		}
