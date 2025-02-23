@@ -182,4 +182,5 @@ export function setupModules() {
 	}))
 
 	Extensions.registerModule('@bridge/fflate', () => import('fflate'))
+	Extensions.registerModule('@bridge/json5', () => import('json5'))
 }
