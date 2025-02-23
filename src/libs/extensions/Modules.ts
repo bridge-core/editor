@@ -9,6 +9,7 @@ import { BaseEntry, StreamableLike } from '@/libs/fileSystem/BaseFileSystem'
 import { BedrockProject } from '@/libs/project/BedrockProject'
 import { parse } from 'json5'
 import { NotificationSystem } from '@/components/Notifications/NotificationSystem'
+import { dirname, join, extname, basename, resolve, relative } from 'pathe'
 
 export function setupModules() {
 	Extensions.registerModule('@bridge/sidebar', () => ({
@@ -196,5 +197,14 @@ export function setupModules() {
 		clearNotifications: NotificationSystem.clearNotification,
 		setProgress: NotificationSystem.setProgress,
 		activateNotification: NotificationSystem.activateNotification,
+	}))
+
+	Extensions.registerModule('@bridge/path', () => ({
+		dirname,
+		join,
+		extname,
+		basename,
+		resolve,
+		relative,
 	}))
 }
