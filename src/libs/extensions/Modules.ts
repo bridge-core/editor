@@ -52,7 +52,11 @@ export function setupModules() {
 		},
 	}))
 
-	Extensions.registerModule('@bridge/com-mojang', () => ({}))
+	Extensions.registerModule('@bridge/com-mojang', () => ({
+		getOutputFileSystem() {
+			return ProjectManager.currentProject?.outputFileSystem ?? null
+		},
+	}))
 
 	Extensions.registerModule('@bridge/fs', () => ({}))
 }
