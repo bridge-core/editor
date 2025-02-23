@@ -110,6 +110,8 @@ async function compileFile(actionId: string, filePath: string, fileData: Uint8Ar
 		return
 	}
 
+	await dash.compileFile(filePath, fileData)
+
 	postMessage({
 		action: 'compileFileComplete',
 		id: actionId,
