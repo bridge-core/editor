@@ -1,5 +1,4 @@
 import packageConfig from '../../../package.json'
-import { isNightly as isNightlyBuild } from '../../../vite.config'
 
 export const appVersion = packageConfig.version
 
@@ -12,5 +11,3 @@ if (dashVersionTemp.startsWith('^') || dashVersionTemp.startsWith('~') || dashVe
 else if (dashVersionTemp.startsWith('>=') || dashVersionTemp.startsWith('<=')) dashVersionTemp = dashVersionTemp.substring(2)
 
 export const dashVersion = dashVersionTemp
-
-export const isNightly = isNightlyBuild

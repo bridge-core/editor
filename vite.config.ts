@@ -3,7 +3,7 @@ import { resolve, join } from 'path'
 import vue from '@vitejs/plugin-vue'
 import { VitePWA } from 'vite-plugin-pwa'
 
-export const isNightly = process.argv[2] === '--nightly'
+const isNightly = process.argv[2] === '--nightly'
 const iconPath = (filePath: string) => (isNightly ? `./img/icons/nightly/${filePath}` : `./img/icons/${filePath}`)
 
 // https://vitejs.dev/config/
