@@ -43,9 +43,6 @@ export async function compileSFC(path: string, runtime: Runtime): Promise<Compon
 
 	componentOptions.render = renderModule.render
 
-	console.log(compiledScript.content)
-	console.log(templateResult.code)
-
 	const component = defineComponent(componentOptions)
 
 	return component
