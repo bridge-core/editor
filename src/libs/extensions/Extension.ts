@@ -22,6 +22,18 @@ class ExtensionRuntime extends BridgeRuntime {
 		this.moduleLoaders.set('.vue', async (path: string) => {
 			return new Module(await compileSFC(path, this), {})
 		})
+
+		this.moduleLoaders.set('.png', async (path: string) => {
+			return new Module(await fileSystem.readFileDataUrl(path), {})
+		})
+
+		this.moduleLoaders.set('.jpg', async (path: string) => {
+			return new Module(await fileSystem.readFileDataUrl(path), {})
+		})
+
+		this.moduleLoaders.set('.gif', async (path: string) => {
+			return new Module(await fileSystem.readFileDataUrl(path), {})
+		})
 	}
 
 	async readFile(filePath: string): Promise<File> {
