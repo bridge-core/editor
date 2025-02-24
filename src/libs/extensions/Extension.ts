@@ -8,57 +8,27 @@ import { Event } from '@/libs/event/Event'
 import { Runtime as BridgeRuntime, initRuntimes, Module } from '@bridge-editor/js-runtime'
 import wasmUrl from '@swc/wasm-web/wasm-web_bg.wasm?url'
 import { BaseFileSystem } from '@/libs/fileSystem/BaseFileSystem'
-import { Component } from 'vue'
+import { compileSFC } from './CompileSFC'
+import * as vue from 'vue'
 
 export type ExtensionModuleBuilder = (extension: Extension) => TBaseModule
 
 class ExtensionRuntime extends BridgeRuntime {
-	private uiRegistry: { [key: string]: Component }
-
 	constructor(public fileSystem: BaseFileSystem, modules?: [string, TBaseModule][]) {
 		initRuntimes(wasmUrl)
 
-		let componentRegistry = {}
+		super(modules ? [...modules, ['vue', vue]] : undefined)
 
-		const uiProxy = new Proxy(componentRegistry, {
-			get(target, property, receiver) {
-				if (property === 'then') return Promise.resolve()
-
-				console.log('Reading component >', property)
-
-				console.trace()
-
-				return property
-			},
+		this.moduleLoaders.set('.vue', async (path: string) => {
+			return new Module(await compileSFC(path, this), {})
 		})
-
-		super(modules === undefined ? undefined : [...modules, ['__@bridge__/vue-components', uiProxy]])
-
-		this.uiRegistry = componentRegistry
 	}
 
 	async readFile(filePath: string): Promise<File> {
-		console.log(filePath)
-
 		// @ts-ignore
 		if (!(await this.fileSystem.exists(filePath))) return undefined
 
 		const file = await this.fileSystem.readFile(filePath)
-
-		if (filePath.endsWith('.vue'))
-			// @ts-ignore
-			return {
-				name: basename(filePath),
-				type: 'unkown',
-				size: file.byteLength,
-				lastModified: Date.now(),
-				webkitRelativePath: filePath,
-
-				text: async () => `
-					import * as components from "__@bridge__/vue-components"
-					export default components["${filePath}"]
-				`,
-			}
 
 		// @ts-ignore
 		return {

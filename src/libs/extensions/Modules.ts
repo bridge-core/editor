@@ -25,6 +25,7 @@ import { PromptWindow } from '@/components/Windows/Prompt/PromptWindow'
 import { ProgressWindow } from '@/components/Windows/Progress/ProgressWindow'
 import { disposeAll, Disposable } from '@/libs/disposeable/Disposeable'
 import { Extension } from './Extension'
+import { createApp } from 'vue'
 
 export function setupModules() {
 	Extension.registerModule('@bridge/sidebar', () => ({

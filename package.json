@@ -13,7 +13,7 @@
 	},
 	"dependencies": {
 		"@bridge-editor/dash-compiler": "^0.11.3",
-		"@bridge-editor/js-runtime": "^0.6.1",
+		"@bridge-editor/js-runtime": "^0.6.2",
 		"@bridge-editor/molang": "^2.0.2",
 		"@swc/wasm-web": "^1.6.5",
 		"@tauri-apps/api": "^1.5.3",
