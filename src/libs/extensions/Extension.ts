@@ -144,13 +144,13 @@ export class Extension {
 	}
 
 	private async runScripts() {
-		const runtime = new ExtensionRuntime(fileSystem, this.modules)
-
 		const promises: Promise<any>[] = []
 
 		const scriptsPath = join(this.path, 'scripts')
 		if (await fileSystem.exists(scriptsPath)) {
 			iterateDirectory(fileSystem, scriptsPath, (entry) => {
+				const runtime = new ExtensionRuntime(fileSystem, this.modules)
+
 				promises.push(runtime.run(entry.path))
 			})
 		}
