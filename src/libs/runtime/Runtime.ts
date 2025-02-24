@@ -14,6 +14,7 @@ export class Runtime extends BridgeRuntime {
 	async readFile(filePath: string): Promise<File> {
 		const file = await this.fileSystem.readFile(filePath)
 
+		// @ts-ignore
 		return {
 			name: basename(filePath),
 			type: 'unkown',

@@ -11,8 +11,6 @@ import { Theme } from '@/libs/theme/Theme'
 import { Snippet } from '@/libs/snippets/Snippet'
 import { TBaseModule } from '@bridge-editor/js-runtime/dist/Runtime'
 
-export type ExtensionModuleBuilder = (extension: Extension) => TBaseModule
-
 export class Extensions {
 	public static globalExtensions: Record<string, Extension> = {}
 	public static projectExtensions: Record<string, Extension> = {}
@@ -23,11 +21,8 @@ export class Extensions {
 	public static themes: Theme[] = []
 	public static snippets: Snippet[] = []
 	public static presets: Record<string, any> = {}
-	public static ui: Record<string, any> = {}
 
 	public static loaded: boolean = false
-
-	private static modules: Record<string, ExtensionModuleBuilder> = {}
 
 	public static setup() {
 		if (fileSystem instanceof PWAFileSystem) fileSystem.reloaded.on(this.fileSystemReloaded.bind(this))
@@ -115,14 +110,6 @@ export class Extensions {
 		await this.updateExtensions()
 	}
 
-	public static registerModule(name: string, module: ExtensionModuleBuilder) {
-		this.modules[name] = module
-	}
-
-	public static buildModules(extension: Extension): [string, TBaseModule][] {
-		return Object.entries(this.modules).map(([id, moduleBuilder]) => [id, moduleBuilder(extension)])
-	}
-
 	private static async updateExtensions() {
 		const oldActiveExtensions = Object.values(this.activeExtensions)
 
@@ -137,11 +124,6 @@ export class Extensions {
 		this.presets = {}
 		for (const extension of Object.values(this.activeExtensions)) {
 			this.presets = { ...this.presets, ...extension.presets }
-		}
-
-		this.ui = {}
-		for (const extension of Object.values(this.activeExtensions)) {
-			this.ui = { ...this.ui, ...extension.ui }
 		}
 
 		const newActiveExtensions = Object.values(this.activeExtensions)
@@ -216,7 +198,6 @@ export class Extensions {
 
 	private static async loadExtension(path: string): Promise<Extension> {
 		const extension = new Extension(path)
-		extension.modules = this.buildModules(extension)
 		await extension.load()
 
 		return extension

@@ -13,10 +13,11 @@
 	},
 	"dependencies": {
 		"@bridge-editor/dash-compiler": "^0.11.3",
-		"@bridge-editor/js-runtime": "^0.4.4",
+		"@bridge-editor/js-runtime": "^0.6.1",
 		"@bridge-editor/molang": "^2.0.2",
 		"@swc/wasm-web": "^1.6.5",
 		"@tauri-apps/api": "^1.5.3",
+		"@vue/compiler-sfc": "^3.5.13",
 		"bridge-common-utils": "^0.3.3",
 		"color-convert": "^2.0.1",
 		"escape-string-regexp": "^5.0.0",

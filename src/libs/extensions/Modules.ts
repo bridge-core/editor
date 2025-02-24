@@ -1,5 +1,4 @@
 import { Sidebar } from '@/components/Sidebar/Sidebar'
-import { Extensions } from './Extensions'
 import { TabManager } from '@/components/TabSystem/TabManager'
 import { Tab } from '@/components/TabSystem/Tab'
 import { appVersion } from '@/libs/app/AppEnv'
@@ -25,9 +24,10 @@ import { InformedChoiceWindow } from '@/components/Windows/InformedChoice/Inform
 import { PromptWindow } from '@/components/Windows/Prompt/PromptWindow'
 import { ProgressWindow } from '@/components/Windows/Progress/ProgressWindow'
 import { disposeAll, Disposable } from '@/libs/disposeable/Disposeable'
+import { Extension } from './Extension'
 
 export function setupModules() {
-	Extensions.registerModule('@bridge/sidebar', () => ({
+	Extension.registerModule('@bridge/sidebar', () => ({
 		addSidebarTabButton(id: string, displayName: string, icon: string, component: any) {
 			Sidebar.addButton(id, displayName, icon, () => {
 				const tab = new Tab()
@@ -46,18 +46,13 @@ export function setupModules() {
 		},
 	}))
 
-	Extensions.registerModule('@bridge/ui', () => {
-		return {
-			...Extensions.ui,
-			BuiltIn: {},
-		}
-	})
+	Extension.registerModule('@bridge/ui', () => ({}))
 
-	Extensions.registerModule('@bridge/env', () => ({
+	Extension.registerModule('@bridge/env', () => ({
 		appVersion,
 	}))
 
-	Extensions.registerModule('@bridge/project', (extension) => {
+	Extension.registerModule('@bridge/project', (extension) => {
 		let disposables: Disposable[] = []
 
 		disposables.push(
@@ -118,7 +113,7 @@ export function setupModules() {
 		}
 	})
 
-	Extensions.registerModule('@bridge/com-mojang', () => ({
+	Extension.registerModule('@bridge/com-mojang', () => ({
 		async readFile(path: string) {
 			if (!ProjectManager.currentProject) throw new Error('Can not access output filesystem. No project has been loaded yet!')
 
@@ -206,7 +201,7 @@ export function setupModules() {
 		},
 	}))
 
-	Extensions.registerModule('@bridge/fs', (extension) => {
+	Extension.registerModule('@bridge/fs', (extension) => {
 		let disposables: Disposable[] = []
 
 		disposables.push(
@@ -245,7 +240,7 @@ export function setupModules() {
 		}
 	})
 
-	Extensions.registerModule('@bridge/indexer', () => ({
+	Extension.registerModule('@bridge/indexer', () => ({
 		getCachedData(fileType: string, filePath?: string, cacheKey?: string) {
 			if (!ProjectManager.currentProject) return null
 			if (!(ProjectManager.currentProject instanceof BedrockProject)) return null
@@ -260,12 +255,12 @@ export function setupModules() {
 		},
 	}))
 
-	Extensions.registerModule('@bridge/json5', () => ({
+	Extension.registerModule('@bridge/json5', () => ({
 		parse: (str: string) => json5.parse(str),
 		stringify: (obj: any, replacer?: ((this: any, key: string, value: any) => any) | undefined, space?: string | number | undefined) => JSON.stringify(obj, replacer, space),
 	}))
 
-	Extensions.registerModule('@bridge/notification', () => ({
+	Extension.registerModule('@bridge/notification', () => ({
 		addNotification: NotificationSystem.addNotification,
 		addProgressNotification: NotificationSystem.addProgressNotification,
 		clearNotifications: NotificationSystem.clearNotification,
@@ -273,7 +268,7 @@ export function setupModules() {
 		activateNotification: NotificationSystem.activateNotification,
 	}))
 
-	Extensions.registerModule('@bridge/path', () => ({
+	Extension.registerModule('@bridge/path', () => ({
 		dirname,
 		join,
 		extname,
@@ -282,7 +277,7 @@ export function setupModules() {
 		relative,
 	}))
 
-	Extensions.registerModule('@bridge/persistent-storage', () => ({
+	Extension.registerModule('@bridge/persistent-storage', () => ({
 		save: set,
 		load: get,
 		delete: del,
@@ -291,7 +286,7 @@ export function setupModules() {
 		},
 	}))
 
-	Extensions.registerModule('@bridge/tab', () => ({
+	Extension.registerModule('@bridge/tab', () => ({
 		Tab,
 		FileTab,
 		openFile: TabManager.openFile,
@@ -307,7 +302,7 @@ export function setupModules() {
 		},
 	}))
 
-	Extensions.registerModule('@bridge/theme', (extension) => {
+	Extension.registerModule('@bridge/theme', (extension) => {
 		let disposables: Disposable[] = []
 
 		disposables.push(
@@ -342,7 +337,7 @@ export function setupModules() {
 		}
 	})
 
-	Extensions.registerModule('@bridge/toolbar', () => ({
+	Extension.registerModule('@bridge/toolbar', () => ({
 		addCategory() {
 			// TODO
 		},
@@ -351,11 +346,11 @@ export function setupModules() {
 		},
 	}))
 
-	Extensions.registerModule('@bridge/utils', () => ({
+	Extension.registerModule('@bridge/utils', () => ({
 		openUrl,
 	}))
 
-	Extensions.registerModule('@bridge/windows', () => ({
+	Extension.registerModule('@bridge/windows', () => ({
 		AlertWindow,
 		ConfirmWindow,
 		DropdownWindow,
@@ -367,7 +362,7 @@ export function setupModules() {
 		isOpen: Windows.isOpen,
 	}))
 
-	Extensions.registerModule('@bridge/fflate', () => fflate)
+	Extension.registerModule('@bridge/fflate', () => fflate)
 
-	Extensions.registerModule('@bridge/three', () => three)
+	Extension.registerModule('@bridge/three', () => three)
 }
