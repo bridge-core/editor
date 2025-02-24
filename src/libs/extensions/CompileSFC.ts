@@ -8,7 +8,18 @@ export async function compileSFC(path: string, runtime: Runtime): Promise<Compon
 
 	const parseResult = parse(source)
 
-	const compiledScript: any = compileScript(parseResult.descriptor, { id: path })
+	const compiledScript: any = compileScript(parseResult.descriptor, {
+		id: path,
+		isProd: true,
+		templateOptions: {
+			compilerOptions: {
+				hmr: false,
+				mode: 'module',
+				inline: true,
+			},
+		},
+		inlineTemplate: true,
+	})
 
 	const templateResult = compileTemplate({
 		source,
@@ -17,14 +28,8 @@ export async function compileSFC(path: string, runtime: Runtime): Promise<Compon
 		isProd: true,
 		compilerOptions: {
 			hmr: false,
-			nodeTransforms: [
-				(node, context) => {
-					if (node.type === 0) {
-						//@ts-ignore
-						node.children = node.children[0].children
-					}
-				},
-			],
+			mode: 'module',
+			inline: true,
 		},
 	})
 
