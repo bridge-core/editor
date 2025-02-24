@@ -25,7 +25,27 @@ import { PromptWindow } from '@/components/Windows/Prompt/PromptWindow'
 import { ProgressWindow } from '@/components/Windows/Progress/ProgressWindow'
 import { disposeAll, Disposable } from '@/libs/disposeable/Disposeable'
 import { Extension } from './Extension'
-import { createApp } from 'vue'
+
+import TextButton from '@/components/Common/TextButton.vue'
+import LabeledInput from '@/components/Common/LabeledInput.vue'
+import LabeledTextInput from '@/components/Common/LabeledTextInput.vue'
+import LabeledDropdown from '@/components/Common/LabeledDropdown.vue'
+import LabeledAutocompleteInput from '@/components/Common/LabeledAutocompleteInput.vue'
+import InformativeToggle from '@/components/Common/InformativeToggle.vue'
+import Icon from '@/components/Common/Icon.vue'
+import IconButton from '@/components/Common/IconButton.vue'
+import FreeContextMenu from '@/components/Common/FreeContextMenu.vue'
+import Expandable from '@/components/Common/Expandable.vue'
+import Dropdown from '@/components/Common/Dropdown.vue'
+import ContextMenuItem from '@/components/Common/ContextMenuItem.vue'
+import ContextMenu from '@/components/Common/ContextMenu.vue'
+import Button from '@/components/Common/Button.vue'
+import ActionContextMenuItem from '@/components/Common/ActionContextMenuItem.vue'
+import Action from '@/components/Common/Action.vue'
+import Info from '@/components/Common/Info.vue'
+import Warning from '@/components/Common/Warning.vue'
+import SubMenu from '@/components/Common/SubMenu.vue'
+import Switch from '@/components/Common/Switch.vue'
 
 export function setupModules() {
 	Extension.registerModule('@bridge/sidebar', () => ({
@@ -47,7 +67,28 @@ export function setupModules() {
 		},
 	}))
 
-	Extension.registerModule('@bridge/ui', () => ({}))
+	Extension.registerModule('@bridge/ui', () => ({
+		TextButton,
+		LabeledInput,
+		LabeledTextInput,
+		LabeledDropdown,
+		LabeledAutocompleteInput,
+		InformativeToggle,
+		Icon,
+		IconButton,
+		FreeContextMenu,
+		Expandable,
+		Dropdown,
+		ContextMenuItem,
+		ContextMenu,
+		Button,
+		ActionContextMenuItem,
+		Action,
+		Info,
+		Warning,
+		SubMenu,
+		Switch,
+	}))
 
 	Extension.registerModule('@bridge/env', () => ({
 		appVersion,
