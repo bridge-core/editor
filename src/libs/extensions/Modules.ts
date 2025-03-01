@@ -379,6 +379,18 @@ export function setupModules() {
 		}
 	})
 
+	Extension.registerModule('@bridge/action', () => ({
+		addAction() {
+			// TODO
+		},
+		removeAction() {
+			// TODO
+		},
+		trigger() {
+			// TODO
+		},
+	}))
+
 	Extension.registerModule('@bridge/toolbar', () => ({
 		addCategory() {
 			// TODO
