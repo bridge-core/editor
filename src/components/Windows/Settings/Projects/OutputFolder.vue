@@ -16,8 +16,6 @@ const get = Settings.useGet()
 const usingProjectOutputFolder = useUsingProjectOutputFolder()
 
 async function droppedOutputFolder(items: DataTransferItemList) {
-	console.log(items.length)
-
 	let directoryHandle = null
 
 	try {
