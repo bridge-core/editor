@@ -23,8 +23,6 @@ import { importFromMcPack } from '@/libs/import/McPack'
 import { openUrl } from '@/libs/OpenUrl'
 
 export function setupActions() {
-	ActionManager.actions = {}
-
 	ActionManager.addAction(
 		new Action({
 			id: 'undo',

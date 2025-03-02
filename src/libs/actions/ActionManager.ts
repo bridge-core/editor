@@ -9,8 +9,6 @@ export class ActionManager {
 	public static actionsUpdated: Event<void> = new Event()
 
 	public static addAction(action: Action): Action {
-		if (this.actions[action.id]) throw new Error(`An action with the id ${action.id} has already been registered!`)
-
 		this.actions[action.id] = action
 
 		action.updated.on(() => ActionManager.actionsUpdated.dispatch())
@@ -21,8 +19,6 @@ export class ActionManager {
 	}
 
 	public static removeAction(action: Action) {
-		if (!this.actions[action.id]) throw new Error(`No action with the id ${action.id} has been registered!`)
-
 		delete ActionManager.actions[action.id]
 
 		this.actionsUpdated.dispatch()

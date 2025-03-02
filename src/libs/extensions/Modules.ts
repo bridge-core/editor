@@ -446,17 +446,17 @@ export function setupModules() {
 		})
 
 		return {
-			addDropdown(id: string, name: string, items: ToolbarDropdownItem[]) {
+			addToolbarDropdown(id: string, name: string, items: ToolbarDropdownItem[]) {
 				const dropdown = Toolbar.addDropdown(id, name, items)
 
 				addedDropdowns.push(dropdown)
 			},
-			addDropdownItem(dropdown: string, item: ToolbarDropdownItem) {
+			addToolbarDropdownItem(dropdown: string, item: ToolbarDropdownItem) {
 				Toolbar.addDropdownItem(dropdown, item)
 
 				addedDropdownItems.push({ dropdown, item })
 			},
-			addButton(action: string) {
+			addToolbarButton(action: string) {
 				const button = Toolbar.addButton(action)
 
 				addedButtons.push(button)
