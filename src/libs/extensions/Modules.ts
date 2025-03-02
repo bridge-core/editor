@@ -41,11 +41,13 @@ import ContextMenuItem from '@/components/Common/ContextMenuItem.vue'
 import ContextMenu from '@/components/Common/ContextMenu.vue'
 import Button from '@/components/Common/Button.vue'
 import ActionContextMenuItem from '@/components/Common/ActionContextMenuItem.vue'
-import Action from '@/components/Common/Action.vue'
+import ActionComponent from '@/components/Common/Action.vue'
 import Info from '@/components/Common/Info.vue'
 import Warning from '@/components/Common/Warning.vue'
 import SubMenu from '@/components/Common/SubMenu.vue'
 import Switch from '@/components/Common/Switch.vue'
+import { Action } from '@/libs/actions/Action'
+import { ActionManager } from '../actions/ActionManager'
 
 export function setupModules() {
 	Extension.registerModule('@bridge/sidebar', () => ({
@@ -83,7 +85,7 @@ export function setupModules() {
 		ContextMenu,
 		Button,
 		ActionContextMenuItem,
-		Action,
+		Action: ActionComponent,
 		Info,
 		Warning,
 		SubMenu,
@@ -379,17 +381,28 @@ export function setupModules() {
 		}
 	})
 
-	Extension.registerModule('@bridge/action', () => ({
-		addAction() {
-			// TODO
-		},
-		removeAction() {
-			// TODO
-		},
-		trigger() {
-			// TODO
-		},
-	}))
+	Extension.registerModule('@bridge/action', () => {
+		let registeredActions: Record<string, Action> = {}
+
+		return {
+			Action,
+			addAction(action: Action) {
+				ActionManager.addAction(action)
+
+				registeredActions[action.id] = action
+			},
+			removeAction(action: Action) {
+				if (!registeredActions[action.id]) throw new Error('You can not remove an acton you have not registered!')
+
+				ActionManager.removeAction(action)
+
+				delete registeredActions[action.id]
+			},
+			trigger(action: string, data: any) {
+				ActionManager.trigger(action, data)
+			},
+		}
+	})
 
 	Extension.registerModule('@bridge/toolbar', () => ({
 		addCategory() {
