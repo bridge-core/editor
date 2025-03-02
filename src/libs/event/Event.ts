@@ -18,7 +18,9 @@ export class Event<T> {
 	}
 
 	public dispatch(value?: T) {
-		for (const listener of this.listeners) {
+		const listeners = [...this.listeners]
+
+		for (const listener of listeners) {
 			listener(value)
 		}
 	}
