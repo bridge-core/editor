@@ -16,7 +16,13 @@ const get = Settings.useGet()
 const usingProjectOutputFolder = useUsingProjectOutputFolder()
 
 async function droppedOutputFolder(items: DataTransferItemList) {
-	const directoryHandle = await items[0].getAsFileSystemHandle()
+	console.log(items.length)
+
+	let directoryHandle = null
+
+	try {
+		directoryHandle = await items[0].getAsFileSystemHandle()
+	} catch {}
 
 	if (!directoryHandle) return
 	if (!(directoryHandle instanceof FileSystemDirectoryHandle)) return
@@ -32,23 +38,11 @@ function clearOutputFolder() {
 <template>
 	<div class="w-full">
 		<div class="w-full">
-			<Warning
-				v-if="!get('outputFolder')"
-				text="You have no default output folder set!"
-				class="mt-4 mb-4 ml-auto mr-auto"
-			/>
+			<Warning v-if="!get('outputFolder')" text="You have no default output folder set!" class="mt-4 mb-4 ml-auto mr-auto" />
 
-			<Info
-				v-if="usingProjectOutputFolder"
-				text="The default output folder is being overwritten by a project ouput folder."
-				class="mt-4 mb-4 ml-auto mr-auto"
-			/>
+			<Info v-if="usingProjectOutputFolder" text="The default output folder is being overwritten by a project ouput folder." class="mt-4 mb-4 ml-auto mr-auto" />
 
-			<FileSystemDrop
-				class="mb-8 h-48"
-				:text="t('windows.settings.projects.outputFolder.description')"
-				@drop="droppedOutputFolder"
-			/>
+			<FileSystemDrop class="mb-8 h-48" :text="t('windows.settings.projects.outputFolder.description')" @drop="droppedOutputFolder" />
 		</div>
 
 		<TextButton @click="clearOutputFolder" :text="t('windows.settings.projects.clearOutputFolder.name')" />
