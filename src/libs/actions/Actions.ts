@@ -13,22 +13,18 @@ import { TreeEditorTab } from '@/components/Tabs/TreeEditor/TreeEditorTab'
 import { SettingsWindow } from '@/components/Windows/Settings/SettingsWindow'
 import { ExtensionLibraryWindow } from '@/components/Windows/ExtensionLibrary/ExtensionLibrary'
 import { ProjectManager } from '@/libs/project/ProjectManager'
-import {
-	ArrayElement,
-	DeleteElementEdit,
-	ObjectElement,
-	ReplaceEdit,
-	TreeElements,
-	ValueElement,
-} from '@/components/Tabs/TreeEditor/Tree'
+import { ArrayElement, DeleteElementEdit, ObjectElement, ReplaceEdit, TreeElements, ValueElement } from '@/components/Tabs/TreeEditor/Tree'
 import { exportAsBrProject } from '@/libs/export/BrProject'
 import { exportAsMcAddon } from '@/libs/export/McAddon'
 import { exportAsTemplate } from '@/libs/export/McTemplate'
 import { importFromBrProject } from '@/libs/import/BrProject'
 import { importFromMcAddon } from '@/libs/import/McAddon'
 import { importFromMcPack } from '@/libs/import/McPack'
+import { openUrl } from '@/libs/OpenUrl'
 
 export function setupActions() {
+	ActionManager.actions = {}
+
 	ActionManager.addAction(
 		new Action({
 			id: 'undo',
@@ -565,14 +561,24 @@ export function setupActions() {
 				} else if (file.name.endsWith('.mcpack')) {
 					await importFromMcPack(await (await file.getFile()).arrayBuffer(), basename(file.name, '.mcpack'))
 				} else {
-					await importFromBrProject(
-						await (await file.getFile()).arrayBuffer(),
-						basename(file.name, '.brproject')
-					)
+					await importFromBrProject(await (await file.getFile()).arrayBuffer(), basename(file.name, '.brproject'))
 				}
 			},
 			name: 'actions.importProject.name',
+			description: 'actions.importProject.description',
 			icon: 'package',
+		})
+	)
+
+	ActionManager.addAction(
+		new Action({
+			id: 'openDownloadGuide',
+			trigger() {
+				openUrl('https://bridge-core.app/guide/download/')
+			},
+			name: 'actions.download.name',
+			description: 'actions.download.description',
+			icon: 'download',
 		})
 	)
 }

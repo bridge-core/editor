@@ -36,7 +36,7 @@ import Icon from '@/components/Common/Icon.vue'
 import IconButton from '@/components/Common/IconButton.vue'
 import FreeContextMenu from '@/components/Common/FreeContextMenu.vue'
 import Expandable from '@/components/Common/Expandable.vue'
-import Dropdown from '@/components/Common/Dropdown.vue'
+import DropdownComponent from '@/components/Common/Dropdown.vue'
 import ContextMenuItem from '@/components/Common/ContextMenuItem.vue'
 import ContextMenu from '@/components/Common/ContextMenu.vue'
 import Button from '@/components/Common/Button.vue'
@@ -48,6 +48,7 @@ import SubMenu from '@/components/Common/SubMenu.vue'
 import Switch from '@/components/Common/Switch.vue'
 import { Action } from '@/libs/actions/Action'
 import { ActionManager } from '../actions/ActionManager'
+import { Dropdown as ToolbarDropdown, DropdownItem as ToolbarDropdownItem, Button as ToolbarButton, Toolbar } from '@/components/Toolbar/Toolbar'
 
 export function setupModules() {
 	Extension.registerModule('@bridge/sidebar', () => ({
@@ -80,7 +81,7 @@ export function setupModules() {
 		IconButton,
 		FreeContextMenu,
 		Expandable,
-		Dropdown,
+		Dropdown: DropdownComponent,
 		ContextMenuItem,
 		ContextMenu,
 		Button,
@@ -381,11 +382,24 @@ export function setupModules() {
 		}
 	})
 
-	Extension.registerModule('@bridge/action', () => {
+	Extension.registerModule('@bridge/action', (extension) => {
 		let registeredActions: Record<string, Action> = {}
+
+		const disposable = extension.deactivated.on(() => {
+			for (const action of Object.values(registeredActions)) {
+				ActionManager.removeAction(action)
+
+				delete registeredActions[action.id]
+			}
+
+			registeredActions = {}
+
+			disposable.dispose()
+		})
 
 		return {
 			Action,
+			actions: ActionManager.actions,
 			addAction(action: Action) {
 				ActionManager.addAction(action)
 
@@ -404,14 +418,51 @@ export function setupModules() {
 		}
 	})
 
-	Extension.registerModule('@bridge/toolbar', () => ({
-		addCategory() {
-			// TODO
-		},
-		addAction() {
-			// TODO
-		},
-	}))
+	Extension.registerModule('@bridge/toolbar', (extension) => {
+		let addedDropdowns: ToolbarDropdown[] = []
+		let addedButtons: ToolbarButton[] = []
+		let addedDropdownItems: { dropdown: string; item: ToolbarDropdownItem }[] = []
+
+		const disposable = extension.deactivated.on(() => {
+			for (const dropdown of addedDropdowns) {
+				Toolbar.removeDropdown(dropdown)
+			}
+
+			addedDropdowns = []
+
+			for (const button of addedButtons) {
+				Toolbar.removeButton(button)
+			}
+
+			addedButtons = []
+
+			for (const dropdownItem of addedDropdownItems) {
+				Toolbar.removeDropdownItem(dropdownItem.dropdown, dropdownItem.item)
+			}
+
+			addedDropdownItems = []
+
+			disposable.dispose()
+		})
+
+		return {
+			addDropdown(id: string, name: string, items: ToolbarDropdownItem[]) {
+				const dropdown = Toolbar.addDropdown(id, name, items)
+
+				addedDropdowns.push(dropdown)
+			},
+			addDropdownItem(dropdown: string, item: ToolbarDropdownItem) {
+				Toolbar.addDropdownItem(dropdown, item)
+
+				addedDropdownItems.push({ dropdown, item })
+			},
+			addButton(action: string) {
+				const button = Toolbar.addButton(action)
+
+				addedButtons.push(button)
+			},
+		}
+	})
 
 	Extension.registerModule('@bridge/utils', () => ({
 		openUrl,

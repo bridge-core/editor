@@ -1,21 +1,20 @@
-import { SettingsWindow } from '@/components/Windows/Settings/SettingsWindow'
-import { openUrl } from '@/libs/OpenUrl'
+import { Ref, ref } from 'vue'
 
 type ToolbarItem = Button | Dropdown
 
-interface Button {
+export interface Button {
 	type: 'button'
-	name: string
-	action: () => void
+	action: string
 }
 
-interface Dropdown {
+export interface Dropdown {
 	type: 'dropdown'
+	id: string
 	name: string
 	items: DropdownItem[]
 }
 
-type DropdownItem = DropdownButton | Seperator
+export type DropdownItem = DropdownButton | Seperator
 
 interface DropdownButton {
 	type: 'button'
@@ -27,12 +26,12 @@ interface Seperator {
 }
 
 export class Toolbar {
-	public static items: ToolbarItem[] = []
+	public static items: Ref<ToolbarItem[]> = ref([])
 
 	public static setup() {
-		this.items = []
+		this.items.value = []
 
-		this.addDropdown('toolbar.project.name', [
+		this.addDropdown('project', 'toolbar.project.name', [
 			{ type: 'button', action: 'goHome' },
 			{ type: 'button', action: 'chooseProject' },
 			{ type: 'button', action: 'launchMinecraft' },
@@ -50,9 +49,9 @@ export class Toolbar {
 			},
 		])
 
-		this.addButton('toolbar.settings.name', () => SettingsWindow.open())
+		this.addButton('openSettings')
 
-		this.addDropdown('toolbar.file.name', [
+		this.addDropdown('file', 'toolbar.file.name', [
 			{ type: 'button', action: 'newFile' },
 			{ type: 'button', action: 'openFile' },
 			{ type: 'button', action: 'openFolder' },
@@ -64,7 +63,7 @@ export class Toolbar {
 			{ type: 'button', action: 'saveAll' },
 		])
 
-		this.addDropdown('toolbar.tools.name', [
+		this.addDropdown('tools', 'toolbar.tools.name', [
 			{ type: 'button', action: 'openBedrockDev' },
 			{ type: 'button', action: 'openMinecraftDocumentation' },
 			{ type: 'button', action: 'openBlockbench' },
@@ -74,7 +73,7 @@ export class Toolbar {
 			{ type: 'button', action: 'clearNotifications' },
 		])
 
-		this.addDropdown('toolbar.help.name', [
+		this.addDropdown('help', 'toolbar.help.name', [
 			{ type: 'button', action: 'about' },
 			{ type: 'button', action: 'releases' },
 			{ type: 'button', action: 'bugReports' },
@@ -85,16 +84,46 @@ export class Toolbar {
 			{ type: 'button', action: 'faq' },
 		])
 
-		this.addButton('toolbar.download.name', () => {
-			openUrl('https://bridge-core.app/guide/download/')
-		})
+		this.addButton('openDownloadGuide')
 	}
 
-	public static addButton(name: string, action: () => void) {
-		this.items.push({ type: 'button', name, action } as Button)
+	public static addButton(action: string): Button {
+		const item: Button = { type: 'button', action }
+
+		this.items.value.push(item)
+
+		return item
 	}
 
-	public static addDropdown(name: string, items: DropdownItem[]) {
-		this.items.push({ type: 'dropdown', name, items } as Dropdown)
+	public static addDropdown(id: string, name: string, items: DropdownItem[]): Dropdown {
+		const item: Dropdown = { type: 'dropdown', id, name, items }
+
+		this.items.value.push(item)
+
+		return item
+	}
+
+	public static addDropdownItem(dropdownId: string, item: DropdownItem) {
+		const dropdown = this.items.value.find((item) => item.type === 'dropdown' && item.id === dropdownId) as Dropdown | undefined
+
+		if (!dropdown) return
+
+		dropdown.items.push(item)
+	}
+
+	public static removeButton(button: Button) {
+		this.items.value.splice(this.items.value.indexOf(button), 1)
+	}
+
+	public static removeDropdown(dropdown: Dropdown) {
+		this.items.value.splice(this.items.value.indexOf(dropdown), 1)
+	}
+
+	public static removeDropdownItem(dropdownId: string, item: DropdownItem) {
+		const dropdown = this.items.value.find((item) => item.type === 'dropdown' && item.id === dropdownId) as Dropdown | undefined
+
+		if (!dropdown) return
+
+		dropdown.items.splice(dropdown.items.indexOf(item), 1)
 	}
 }

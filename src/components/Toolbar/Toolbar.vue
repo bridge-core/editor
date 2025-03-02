@@ -26,21 +26,17 @@ const isMobile = useIsMobile()
 <template>
 	<div data-tauri-drag-region class="bg-toolbar h-toolbar flex justify-between items-center px-2">
 		<div class="flex gap-4">
-			<span v-for="item in Toolbar.items">
-				<button v-if="item.type === 'button'" class="flex items-center gap-1 group" @click="item.action">
-					<span
-						class="text-sm group-hover:text-primary transition-colors duration-100 ease-out font-theme select-none"
-						>{{ t(item.name) }}</span
-					>
+			<span v-for="item in Toolbar.items.value">
+				<button v-if="item.type === 'button'" class="flex items-center gap-1 group" @click="ActionManager.trigger(item.action)">
+					<span class="text-sm group-hover:text-primary transition-colors duration-100 ease-out font-theme select-none">{{
+						t(ActionManager.actions[item.action].name ?? 'actions.unknown.name')
+					}}</span>
 				</button>
 
 				<ContextMenu v-if="item.type === 'dropdown'">
 					<template #main="{ toggle }">
 						<button class="flex items-center gap-1 group" @click="toggle">
-							<span
-								class="text-sm group-hover:text-primary transition-colors duration-100 ease-out font-theme select-none"
-								>{{ t(item.name) }}</span
-							>
+							<span class="text-sm group-hover:text-primary transition-colors duration-100 ease-out font-theme select-none">{{ t(item.name) }}</span>
 						</button>
 					</template>
 
@@ -58,10 +54,7 @@ const isMobile = useIsMobile()
 									"
 								/>
 
-								<div
-									v-if="dropdownItem.type === 'seperator'"
-									class="bg-background-tertiary w-full h-[2px] my-1"
-								></div>
+								<div v-if="dropdownItem.type === 'seperator'" class="bg-background-tertiary w-full h-[2px] my-1"></div>
 							</span>
 						</div>
 					</template>
@@ -73,12 +66,7 @@ const isMobile = useIsMobile()
 			<div class="flex gap-2 items-center hover:cursor-pointer" @click="openChangelog">
 				<Logo class="w-4" />
 
-				<span
-					v-if="!isMobile"
-					class="text-sm text-text-secondary font-theme transition ease-out hover:text-accent duration-100"
-				>
-					v{{ appVersion }}
-				</span>
+				<span v-if="!isMobile" class="text-sm text-text-secondary font-theme transition ease-out hover:text-accent duration-100"> v{{ appVersion }} </span>
 			</div>
 
 			<div v-if="tauriBuild" class="flex gap-2 items-center">
