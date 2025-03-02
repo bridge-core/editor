@@ -103,19 +103,18 @@ async function build(actionId: string) {
 	})
 }
 
-async function compileFile(actionId: string, filePath: string, fileData: Uint8Array) {
+async function compileFiles(actionId: string, paths: string[]) {
 	if (!dash) {
-		console.warn('Tried compiling file but Dash is not setup yet!')
+		console.warn('Tried compiling files but Dash is not setup yet!')
 
 		return
 	}
 
-	await dash.compileFile(filePath, fileData)
+	await dash.updateFiles(paths)
 
 	postMessage({
-		action: 'compileFileComplete',
+		action: 'compileFilesComplete',
 		id: actionId,
-		result: await dash.compileFile(filePath, fileData),
 	})
 }
 
@@ -126,5 +125,5 @@ onmessage = (event: any) => {
 
 	if (event.data.action === 'build') build(event.data.id)
 
-	if (event.data.action === 'compileFile') compileFile(event.data.id, event.data.filePath, event.data.FileData)
+	if (event.data.action === 'compileFiles') compileFiles(event.data.id, event.data.paths)
 }

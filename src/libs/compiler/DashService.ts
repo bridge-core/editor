@@ -126,18 +126,18 @@ export class DashService implements AsyncDisposable {
 		}
 	}
 
-	public async compileFile(filePath: string, fileData: Uint8Array): Promise<[string[], any]> {
-		return (
-			await sendAndWait(
-				{
-					action: 'compileFile',
-					filePath,
-					fileData,
-				},
-				this.worker,
-				[fileData.buffer]
-			)
-		).result
+	public async compileFiles(paths: string[]) {
+		this.progressNotification = NotificationSystem.addProgressNotification('manufacturing', 0, 1, undefined, undefined)
+
+		await sendAndWait(
+			{
+				action: 'compileFiles',
+				paths,
+			},
+			this.worker
+		)
+
+		NotificationSystem.clearNotification(this.progressNotification)
 	}
 
 	private async setupCompileActions() {
@@ -207,6 +207,9 @@ export class DashService implements AsyncDisposable {
 		if (!path.startsWith(this.project.path)) return
 
 		if (path.startsWith(join(this.project.path, '.bridge'))) return
+		if (path.startsWith(join(this.project.path, '.git'))) return
+
+		console.warn(path)
 
 		const requestId = uuid()
 

@@ -142,12 +142,6 @@ export function setupModules() {
 			registerExporter() {
 				// TODO
 			},
-			async compile() {
-				if (ProjectManager.currentProject instanceof BedrockProject) await ProjectManager.currentProject.build()
-			},
-			async compileFiles() {
-				// TODO
-			},
 			onProjectChanged(callback: (projectName: string | null) => void) {
 				disposables.push(
 					ProjectManager.updatedCurrentProject.on(() => {
@@ -157,6 +151,15 @@ export function setupModules() {
 			},
 		}
 	})
+
+	Extension.registerModule('@bridge/compiler', () => ({
+		async compile() {
+			if (ProjectManager.currentProject instanceof BedrockProject) await ProjectManager.currentProject.build()
+		},
+		async compileFiles(paths: string[]) {
+			if (ProjectManager.currentProject instanceof BedrockProject) await ProjectManager.currentProject.dashService.compileFiles(paths)
+		},
+	}))
 
 	Extension.registerModule('@bridge/com-mojang', () => ({
 		async readFile(path: string) {
