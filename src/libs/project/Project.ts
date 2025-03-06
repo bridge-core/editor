@@ -18,6 +18,7 @@ export class Project implements AsyncDisposable {
 	public path: string
 	public icon: string | null = null
 	public config: IConfigJson | null = null
+	public globals: any = null
 
 	public outputFileSystem: BaseFileSystem = new LocalFileSystem()
 	public usingProjectOutputFolder: boolean = false
@@ -53,6 +54,14 @@ export class Project implements AsyncDisposable {
 			this.packs[packId] = join(this.path, packPath)
 
 			if (await fileSystem.exists(join(this.packs[packId], 'pack_icon.png'))) this.icon = await fileSystem.readFileDataUrl(join(this.packs[packId], 'pack_icon.png'))
+		}
+
+		if (await fileSystem.exists(join(this.path, 'globals.json'))) {
+			try {
+				this.globals = await fileSystem.readFileJson(join(this.path, 'globals.json'))
+			} catch {
+				throw new Error('Failed to loadp roject globals!')
+			}
 		}
 
 		this.disposables.push(Settings.updated.on(this.settingsChanged.bind(this)))

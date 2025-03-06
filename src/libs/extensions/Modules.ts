@@ -483,6 +483,21 @@ export function setupModules() {
 		isOpen: Windows.isOpen,
 	}))
 
+	Extension.registerModule('@bridge/globals', () => ({
+		getGlobals() {
+			if (!ProjectManager.currentProject) return
+
+			return ProjectManager.currentProject.globals
+		},
+		getGlobalValue(item: string) {
+			if (!ProjectManager.currentProject) return
+
+			if (!ProjectManager.currentProject.globals) return
+
+			return ProjectManager.currentProject.globals[item]
+		},
+	}))
+
 	Extension.registerModule('@bridge/fflate', () => fflate)
 
 	Extension.registerModule('@bridge/three', () => three)
