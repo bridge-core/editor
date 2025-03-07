@@ -4,8 +4,7 @@ import { nextTick, onMounted, onUnmounted, Ref, ref } from 'vue'
 const open = ref(false)
 const element: Ref<HTMLElement> = <any>ref(null)
 const menu: Ref<HTMLDivElement> = <any>ref(null)
-
-let menuTop = 0
+const basis: Ref<HTMLElement> = <any>ref(null)
 
 function show() {
 	open.value = true
@@ -26,6 +25,7 @@ const observer = new MutationObserver(
 async function updatePosition() {
 	if (!element.value) return
 	if (!menu.value) return
+	if (!basis.value) return
 
 	const elementRect = element.value.getBoundingClientRect()
 
@@ -35,9 +35,9 @@ async function updatePosition() {
 
 	await nextTick()
 
-	const menuRect = menu.value.getBoundingClientRect()
+	const basisRect = basis.value.getBoundingClientRect()
 
-	menuTop = elementRect.top - (menuRect.top - menuTop)
+	const menuTop = elementRect.top - basisRect.top
 
 	menu.value.style.top = `calc(${menuTop}px)`
 }
@@ -65,11 +65,38 @@ onUnmounted(() => {
 		<slot name="main" :show="show" :hide="hide" />
 	</span>
 
-	<div v-show="open" ref="menu" class="z-10 absolute top-0 flex" @mouseenter="show" @mouseleave="hide">
-		<div class="w-2 self-stretch" />
+	<div ref="basis" class="absolute top-0" />
 
-		<div class="bg-background-secondary rounded shadow-window">
-			<slot name="menu" />
+	<Transition>
+		<div v-show="open" ref="menu" class="z-10 absolute top-0 flex" @mouseenter="show" @mouseleave="hide">
+			<div class="w-2 self-stretch" />
+
+			<div class="bg-background-secondary rounded shadow-window">
+				<slot name="menu" />
+			</div>
 		</div>
-	</div>
+	</Transition>
 </template>
+
+<style scoped>
+.v-enter-active {
+	transition: opacity 0.15s ease, scale 0.2s ease, translate 0.2s ease;
+}
+
+.v-leave-active {
+	transition: opacity 0.15s ease, scale 0.2s ease, translate 0.2s ease;
+}
+
+.v-enter-to,
+.v-leave-from {
+	translate: 0px 0px;
+	scale: 1;
+}
+
+.v-enter-from,
+.v-leave-to {
+	opacity: 0;
+	translate: 0px -1rem;
+	scale: 0.95;
+}
+</style>
