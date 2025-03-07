@@ -1,19 +1,31 @@
 <script setup lang="ts">
 import { nextTick, onMounted, onUnmounted, Ref, ref } from 'vue'
+import { v4 as uuid } from 'uuid'
 
 const open = ref(false)
 const element: Ref<HTMLElement> = <any>ref(null)
 const menu: Ref<HTMLDivElement> = <any>ref(null)
 const basis: Ref<HTMLElement> = <any>ref(null)
 
+let lastOpenRequestId = ''
+
 function show() {
+	lastOpenRequestId = uuid()
+
 	open.value = true
 
 	updatePosition()
 }
 
 function hide() {
-	open.value = false
+	const requestId = uuid()
+	lastOpenRequestId = requestId
+
+	setTimeout(() => {
+		if (requestId !== lastOpenRequestId) return
+
+		open.value = false
+	}, 1)
 }
 
 const observer = new MutationObserver(
