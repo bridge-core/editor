@@ -3,28 +3,28 @@ import { onMounted, onUnmounted, shallowRef, ShallowRef } from 'vue'
 import { Disposable } from '@/libs/disposeable/Disposeable'
 
 export class ExportActionManager {
-	public static exportActions: string[] = []
+	public static actions: string[] = []
 
 	public static updated: Event<void> = new Event()
 
-	public static addExportAction(action: string) {
-		this.exportActions.push(action)
+	public static addAction(action: string) {
+		this.actions.push(action)
 
 		this.updated.dispatch()
 	}
 
-	public static removeExportAction(action: string) {
-		this.exportActions.splice(this.exportActions.indexOf(action), 1)
+	public static removeAction(action: string) {
+		this.actions.splice(this.actions.indexOf(action), 1)
 
 		this.updated.dispatch()
 	}
 }
 
 export function useExportActions(): ShallowRef<string[]> {
-	const current: ShallowRef<string[]> = shallowRef(ExportActionManager.exportActions)
+	const current: ShallowRef<string[]> = shallowRef(ExportActionManager.actions)
 
 	function update() {
-		current.value = [...ExportActionManager.exportActions]
+		current.value = [...ExportActionManager.actions]
 	}
 
 	let disposable: Disposable

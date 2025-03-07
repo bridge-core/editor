@@ -23,7 +23,7 @@ import { PresetsWindow } from '@/components/Windows/Presets/PresetsWindow'
 import { Disposable } from '@/libs/disposeable/Disposeable'
 import { Settings } from '@/libs/settings/Settings'
 import { useIsMobile } from '@/libs/Mobile'
-import { useExportActions } from '@/libs/export/ExportActionManager'
+import { useExportActions } from '@/libs/actions/export/ExportActionManager'
 
 const get = Settings.useGet()
 const isMobile = useIsMobile()

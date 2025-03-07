@@ -49,7 +49,7 @@ import { Dropdown as ToolbarDropdown, DropdownItem as ToolbarDropdownItem, Butto
 import { FileImporter } from '@/libs/import/FileImporter'
 import { DirectoryImporter } from '@/libs/import/DirectoryImporter'
 import { ImporterManager } from '@/libs/import/ImporterManager'
-import { ExportActionManager } from '@/libs/export/ExportActionManager'
+import { ExportActionManager } from '@/libs/actions/export/ExportActionManager'
 import { TabTypes } from '@/components/TabSystem/TabTypes'
 
 import json5 from 'json5'
@@ -195,7 +195,7 @@ export function setupModules() {
 
 		const disposable = extension.deactivated.on(() => {
 			for (const exportAction of registeredExportActions) {
-				ExportActionManager.removeExportAction(exportAction)
+				ExportActionManager.removeAction(exportAction)
 			}
 
 			registeredExportActions = []
@@ -207,12 +207,12 @@ export function setupModules() {
 			addExportAction(action: string) {
 				registeredExportActions.push(action)
 
-				ExportActionManager.addExportAction(action)
+				ExportActionManager.addAction(action)
 			},
 			removeExportAction(action: string) {
 				registeredExportActions.splice(registeredExportActions.indexOf(action))
 
-				ExportActionManager.removeExportAction(action)
+				ExportActionManager.removeAction(action)
 			},
 		}
 	})
