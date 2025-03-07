@@ -302,6 +302,9 @@ export class TreeEditorTab extends FileTab {
 		const schemaData = ProjectManager.currentProject.schemaData
 
 		const schemas = schemaData.getSchemasForFile(this.path)
+
+		if (!schemas) return []
+
 		const schema = schemas.localSchemas[schemas.main]
 
 		const filePath = this.path
@@ -328,6 +331,9 @@ export class TreeEditorTab extends FileTab {
 		const schemaData = ProjectManager.currentProject.schemaData
 
 		const schemas = schemaData.getSchemasForFile(this.path)
+
+		if (!schemas) return
+
 		const schema = schemas.localSchemas[schemas.main]
 
 		const filePath = this.path
@@ -354,6 +360,9 @@ export class TreeEditorTab extends FileTab {
 		const schemaData = ProjectManager.currentProject.schemaData
 
 		const schemas = schemaData.getSchemasForFile(this.path)
+
+		if (!schemas) return
+
 		const schema = schemas.localSchemas[schemas.main]
 
 		const filePath = this.path
