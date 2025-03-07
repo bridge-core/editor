@@ -51,6 +51,7 @@ import { DirectoryImporter } from '@/libs/import/DirectoryImporter'
 import { ImporterManager } from '@/libs/import/ImporterManager'
 import { ExportActionManager } from '@/libs/actions/export/ExportActionManager'
 import { TabTypes } from '@/components/TabSystem/TabTypes'
+import { FileActionManager } from '@/libs/actions/file/FileActionManager'
 
 import json5 from 'json5'
 import * as fflate from 'fflate'
@@ -213,6 +214,33 @@ export function setupModules() {
 				registeredExportActions.splice(registeredExportActions.indexOf(action))
 
 				ExportActionManager.removeAction(action)
+			},
+		}
+	})
+
+	Extension.registerModule('@bridge/fileAction', (extension) => {
+		let registeredFileActions: string[] = []
+
+		const disposable = extension.deactivated.on(() => {
+			for (const action of registeredFileActions) {
+				FileActionManager.removeAction(action)
+			}
+
+			registeredFileActions = []
+
+			disposable.dispose()
+		})
+
+		return {
+			addFileAction(action: string, fileTypes: string[]) {
+				registeredFileActions.push(action)
+
+				FileActionManager.addAction(action, fileTypes)
+			},
+			removeFileAction(action: string, fileTypes: string[]) {
+				registeredFileActions.splice(registeredFileActions.indexOf(action))
+
+				FileActionManager.removeAction(action)
 			},
 		}
 	})

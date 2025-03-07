@@ -30,14 +30,14 @@ export function useFileActions(fileType: string): ShallowRef<string[]> {
 		current.value = [...FileActionManager.actions.filter((item) => item.fileTypes.includes(fileType)).map((item) => item.action)]
 	}
 
-	let disposable: Disposable
+	let disposable: Disposable | undefined
 
 	onMounted(() => {
 		disposable = FileActionManager.updated.on(update)
 	})
 
 	onUnmounted(() => {
-		disposable.dispose()
+		disposable?.dispose()
 	})
 
 	return current
