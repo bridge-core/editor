@@ -19,7 +19,7 @@ import Warning from '@/components/Common/Warning.vue'
 import SubMenu from '@/components/Common/SubMenu.vue'
 import Switch from '@/components/Common/Switch.vue'
 
-import { Sidebar } from '@/components/Sidebar/Sidebar'
+import { Button as SidebarButton, Divider as SidebarDivider, Sidebar } from '@/components/Sidebar/Sidebar'
 import { TabManager } from '@/components/TabSystem/TabManager'
 import { Tab } from '@/components/TabSystem/Tab'
 import { appVersion } from '@/libs/app/AppEnv'
@@ -59,23 +59,39 @@ import * as three from 'three'
 import * as vue from 'vue'
 
 export function setupModules() {
-	Extension.registerModule('@bridge/sidebar', () => ({
-		addSidebarButton(id: string, displayName: string, icon: string, action: string) {
-			// TODO: Check if this gets duplicated
-			Sidebar.addButton(id, displayName, icon, () => {
-				ActionManager.trigger(action)
-			})
-		},
-		addSidebarDivider() {
-			Sidebar.addDivider()
-		},
-		addSidebarTabButton(id: string, displayName: string, icon: string, tab: Tab) {
-			// TODO: Check if this gets duplicated
-			Sidebar.addButton(id, displayName, icon, () => {
-				TabManager.openTab(tab)
-			})
-		},
-	}))
+	Extension.registerModule('@bridge/sidebar', (extension) => {
+		let sidebarItems: (SidebarButton | SidebarDivider)[] = []
+
+		const disposable = extension.deactivated.on(() => {
+			for (const item of sidebarItems) {
+				Sidebar.remove(item)
+			}
+
+			sidebarItems = []
+
+			disposable.dispose()
+		})
+
+		return {
+			addSidebarButton(id: string, displayName: string, icon: string, action: string) {
+				sidebarItems.push(
+					Sidebar.addButton(id, displayName, icon, () => {
+						ActionManager.trigger(action)
+					})
+				)
+			},
+			addSidebarDivider() {
+				sidebarItems.push(Sidebar.addDivider())
+			},
+			addSidebarTabButton(id: string, displayName: string, icon: string, tab: Tab) {
+				sidebarItems.push(
+					Sidebar.addButton(id, displayName, icon, () => {
+						TabManager.openTab(tab)
+					})
+				)
+			},
+		}
+	})
 
 	Extension.registerModule('@bridge/ui', () => ({
 		TextButton,

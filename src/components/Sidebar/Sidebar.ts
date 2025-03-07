@@ -33,19 +33,31 @@ export class Sidebar {
 		})
 	}
 
-	public static addButton(id: string, label: string, icon: string, callback: () => void) {
-		Sidebar.items.push({
+	public static addButton(id: string, label: string, icon: string, callback: () => void): Button {
+		const item: Button = {
 			type: 'button',
 			id,
 			label,
 			icon,
 			callback,
-		})
+		}
+
+		this.items.push(item)
+
+		return item
 	}
 
-	public static addDivider() {
-		Sidebar.items.push({
+	public static addDivider(): Divider {
+		const item: Divider = {
 			type: 'divider',
-		})
+		}
+
+		this.items.push(item)
+
+		return item
+	}
+
+	public static remove(item: Button | Divider) {
+		this.items.splice(this.items.indexOf(item))
 	}
 }
