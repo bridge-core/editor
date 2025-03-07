@@ -100,7 +100,7 @@ onMounted(() => {
 						:action="action"
 						@click="
 							() => {
-								ActionManager.trigger(action)
+								ActionManager.trigger(action, path)
 
 								close()
 							}
