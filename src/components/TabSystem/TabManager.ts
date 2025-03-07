@@ -107,7 +107,7 @@ export class TabManager {
 			}
 		}
 
-		for (const TabType of TabTypes.fileTabTypes) {
+		for (const TabType of TabTypes.fileTabTypes.toSorted((a, b) => b.editPriority(path) - a.editPriority(path))) {
 			if (TabType.canEdit(path)) {
 				await TabManager.openTab(new TabType(path))
 

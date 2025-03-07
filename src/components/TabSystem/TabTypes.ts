@@ -14,21 +14,27 @@ export class TabTypes {
 		Settings.addSetting('jsonEditor', {
 			default: 'text',
 		})
-
-		Settings.updated.on((event) => {
-			const { id, value } = event as { id: string; value: any }
-
-			if (id !== 'jsonEditor') return
-
-			if (value === 'text') {
-				this.fileTabTypes = [ImageTab, TextTab, TreeEditorTab]
-			} else {
-				this.fileTabTypes = [ImageTab, TreeEditorTab, TextTab]
-			}
-		})
 	}
 
 	public static getType(id: string): typeof Tab | typeof FileTab | null {
 		return this.tabTypes.find((tabType) => tabType.name === id) ?? null
+	}
+
+	public static addTabType(tabType: typeof Tab | typeof FileTab) {
+		this.tabTypes.push(tabType)
+	}
+
+	public static removeTabType(tabType: typeof Tab | typeof FileTab) {
+		this.tabTypes.splice(this.tabTypes.indexOf(tabType))
+	}
+
+	public static addFileTabType(tabType: typeof FileTab) {
+		this.tabTypes.push(tabType)
+		this.fileTabTypes.push(tabType)
+	}
+
+	public static removeFileTabType(tabType: typeof FileTab) {
+		this.tabTypes.splice(this.tabTypes.indexOf(tabType))
+		this.fileTabTypes.splice(this.fileTabTypes.indexOf(tabType))
 	}
 }

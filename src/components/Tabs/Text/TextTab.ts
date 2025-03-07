@@ -18,6 +18,7 @@ export class TextTab extends FileTab {
 	public icon = ref('loading')
 	public language = ref('plaintext')
 	public hasDocumentation = ref(false)
+	public static priority: number = -1
 
 	private fileTypeIcon: string = 'data_object'
 	private editor: monaco.IStandaloneCodeEditor | null = null
@@ -37,6 +38,12 @@ export class TextTab extends FileTab {
 
 	public static canEdit(path: string): boolean {
 		return true
+	}
+
+	public static editPriority(path: string): number {
+		if (path.endsWith('.json') || path.endsWith('.txt') || path.endsWith('.lang')) return 0
+
+		return -1
 	}
 
 	public is(path: string) {

@@ -49,29 +49,30 @@ import { Dropdown as ToolbarDropdown, DropdownItem as ToolbarDropdownItem, Butto
 import { FileImporter } from '@/libs/import/FileImporter'
 import { DirectoryImporter } from '@/libs/import/DirectoryImporter'
 import { ImporterManager } from '@/libs/import/ImporterManager'
+import { ExportActionManager } from '@/libs/export/ExportActionManager'
+import { TabTypes } from '@/components/TabSystem/TabTypes'
 
 import json5 from 'json5'
 import * as fflate from 'fflate'
 import * as three from 'three'
-import { ExportActionManager } from '../export/ExportActionManager'
+import * as vue from 'vue'
 
 export function setupModules() {
 	Extension.registerModule('@bridge/sidebar', () => ({
-		addSidebarTabButton(id: string, displayName: string, icon: string, component: any) {
+		addSidebarButton(id: string, displayName: string, icon: string, action: string) {
+			// TODO: Check if this gets duplicated
 			Sidebar.addButton(id, displayName, icon, () => {
-				const tab = new Tab()
-				tab.component = component
-				tab.name.value = displayName
-				tab.icon.value = icon
-
-				TabManager.openTab(tab)
+				ActionManager.trigger(action)
 			})
-		},
-		addSidebarButton(id: string, displayName: string, icon: string, callback: () => void) {
-			Sidebar.addButton(id, displayName, icon, callback)
 		},
 		addSidebarDivider() {
 			Sidebar.addDivider()
+		},
+		addSidebarTabButton(id: string, displayName: string, icon: string, tab: Tab) {
+			// TODO: Check if this gets duplicated
+			Sidebar.addButton(id, displayName, icon, () => {
+				TabManager.openTab(tab)
+			})
 		},
 	}))
 
@@ -398,21 +399,48 @@ export function setupModules() {
 		},
 	}))
 
-	Extension.registerModule('@bridge/tab', () => ({
-		Tab,
-		FileTab,
-		openFile: TabManager.openFile,
-		openTab: TabManager.openTab,
-		registerTabType(tabType: typeof Tab) {
-			// TODO
-		},
-		getFocusedTabSystem() {
-			return TabManager.focusedTabSystem.value
-		},
-		getTabSystems() {
-			return TabManager.tabSystems.value
-		},
-	}))
+	Extension.registerModule('@bridge/tab', (extension) => {
+		let registeredTabTypes: (typeof Tab | typeof FileTab)[] = []
+		let registeredFileTabTypes: (typeof FileTab)[] = []
+
+		const disposable = extension.deactivated.on(() => {
+			for (const tabType of registeredTabTypes) {
+				TabTypes.removeTabType(tabType)
+			}
+
+			for (const tabType of registeredFileTabTypes) {
+				TabTypes.removeFileTabType(tabType)
+			}
+
+			registeredTabTypes = []
+			registeredFileTabTypes = []
+
+			disposable.dispose()
+		})
+
+		return {
+			Tab,
+			FileTab,
+			openFile: TabManager.openFile,
+			openTab: TabManager.openTab,
+			registerTabType(tabType: typeof Tab | typeof FileTab) {
+				registeredTabTypes.push(tabType)
+
+				TabTypes.addTabType(tabType)
+			},
+			registerFileTabType(tabType: typeof FileTab) {
+				registeredFileTabTypes.push(tabType)
+
+				TabTypes.addFileTabType(tabType)
+			},
+			getFocusedTabSystem() {
+				return TabManager.focusedTabSystem.value
+			},
+			getTabSystems() {
+				return TabManager.tabSystems.value
+			},
+		}
+	})
 
 	Extension.registerModule('@bridge/theme', (extension) => {
 		let disposables: Disposable[] = []
@@ -565,4 +593,6 @@ export function setupModules() {
 	Extension.registerModule('@bridge/fflate', () => fflate)
 
 	Extension.registerModule('@bridge/three', () => three)
+
+	Extension.registerModule('@bridge/vue', () => vue)
 }

@@ -42,7 +42,13 @@ export class TreeEditorTab extends FileTab {
 	private disposables: Disposable[] = []
 
 	public static canEdit(path: string): boolean {
+		if (Settings.get('jsonEditor') !== 'tree') return false
+
 		return path.endsWith('.json')
+	}
+
+	public static editPriority(path: string): number {
+		return 1
 	}
 
 	public is(path: string) {
@@ -105,9 +111,7 @@ export class TreeEditorTab extends FileTab {
 
 		this.icon.value = this.fileTypeIcon
 
-		let keywords: string[] = ['minecraft', 'bridge', ProjectManager.currentProject?.config?.namespace].filter(
-			(item) => item !== undefined
-		) as string[]
+		let keywords: string[] = ['minecraft', 'bridge', ProjectManager.currentProject?.config?.namespace].filter((item) => item !== undefined) as string[]
 		let typeIdentifiers: string[] = []
 		let variables: string[] = []
 		let definitions: string[] = []
@@ -200,8 +204,7 @@ export class TreeEditorTab extends FileTab {
 	public edit(edit: TreeEdit) {
 		this.modified.value = true
 
-		if (this.currentEditIndex !== this.history.length - 1)
-			this.history = this.history.slice(0, this.currentEditIndex + 1)
+		if (this.currentEditIndex !== this.history.length - 1) this.history = this.history.slice(0, this.currentEditIndex + 1)
 
 		this.history.push(edit)
 		this.currentEditIndex++

@@ -15,6 +15,10 @@ export class FileTab extends Tab {
 		return false
 	}
 
+	public static editPriority(path: string): number {
+		return 0
+	}
+
 	public is(path: string): boolean {
 		return false
 	}
