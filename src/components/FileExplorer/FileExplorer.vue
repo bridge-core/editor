@@ -23,11 +23,14 @@ import { PresetsWindow } from '@/components/Windows/Presets/PresetsWindow'
 import { Disposable } from '@/libs/disposeable/Disposeable'
 import { Settings } from '@/libs/settings/Settings'
 import { useIsMobile } from '@/libs/Mobile'
+import { useExportActions } from '@/libs/export/ExportActionManager'
 
 const get = Settings.useGet()
 const isMobile = useIsMobile()
 
 const currentProject = useCurrentProject()
+
+const exportActions = useExportActions()
 
 const currentProjectPackDefinitions: Ref<IPackType[]> = computed(() => {
 	if (!currentProject.value) return []
@@ -230,42 +233,12 @@ function drop(event: DragEvent) {
 
 								<template #menu="">
 									<ActionContextMenuItem
-										class="pt-4"
-										action="exportBrProject"
+										v-for="(action, index) in exportActions"
+										:class="{ 'pt-4': index === 0, 'pb-4': index === exportActions.length - 1 }"
+										:action="action"
 										@click="
 											() => {
-												ActionManager.trigger('exportBrProject')
-												close()
-											}
-										"
-									/>
-
-									<ActionContextMenuItem
-										action="exportMcAddon"
-										@click="
-											() => {
-												ActionManager.trigger('exportMcAddon')
-												close()
-											}
-										"
-									/>
-
-									<ActionContextMenuItem
-										action="exportMcWorld"
-										@click="
-											() => {
-												ActionManager.trigger('exportMcWorld')
-												close()
-											}
-										"
-									/>
-
-									<ActionContextMenuItem
-										class="pb-4"
-										action="exportMcTemplate"
-										@click="
-											() => {
-												ActionManager.trigger('exportMcTemplate')
+												ActionManager.trigger(action)
 												close()
 											}
 										"

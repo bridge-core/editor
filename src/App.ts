@@ -30,6 +30,7 @@ import { TabManager } from '@/components/TabSystem/TabManager'
 import { FileExplorer } from '@/components/FileExplorer/FileExplorer'
 import { CreateProjectWindow } from '@/components/Windows/CreateProject/CreateProjectWindow'
 import { TabTypes } from '@/components/TabSystem/TabTypes'
+import { setupExportActions } from '@/libs/export/ExportActions'
 
 export function setupBeforeComponents() {
 	NotificationSystem.setup()
@@ -54,6 +55,8 @@ export function setupBeforeComponents() {
 	setupModules()
 
 	setupImporters()
+
+	setupExportActions()
 }
 
 export async function setup() {

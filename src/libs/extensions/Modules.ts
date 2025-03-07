@@ -53,6 +53,7 @@ import { ImporterManager } from '@/libs/import/ImporterManager'
 import json5 from 'json5'
 import * as fflate from 'fflate'
 import * as three from 'three'
+import { ExportActionManager } from '../export/ExportActionManager'
 
 export function setupModules() {
 	Extension.registerModule('@bridge/sidebar', () => ({
@@ -143,9 +144,6 @@ export function setupModules() {
 
 				return true
 			},
-			registerExporter() {
-				// TODO
-			},
 			onProjectChanged(callback: (projectName: string | null) => void) {
 				disposables.push(
 					ProjectManager.updatedCurrentProject.on(() => {
@@ -156,7 +154,7 @@ export function setupModules() {
 		}
 	})
 
-	Extension.registerModule('@bridge/importer', (extension) => {
+	Extension.registerModule('@bridge/import', (extension) => {
 		let registeredFileImporters: FileImporter[] = []
 		let registeredDirectoryImporters: DirectoryImporter[] = []
 
@@ -187,6 +185,33 @@ export function setupModules() {
 				registeredDirectoryImporters.push(importer)
 
 				ImporterManager.addDirectoryImporter(importer)
+			},
+		}
+	})
+
+	Extension.registerModule('@bridge/export', (extension) => {
+		let registeredExportActions: string[] = []
+
+		const disposable = extension.deactivated.on(() => {
+			for (const exportAction of registeredExportActions) {
+				ExportActionManager.removeExportAction(exportAction)
+			}
+
+			registeredExportActions = []
+
+			disposable.dispose()
+		})
+
+		return {
+			addExportAction(action: string) {
+				registeredExportActions.push(action)
+
+				ExportActionManager.addExportAction(action)
+			},
+			removeExportAction(action: string) {
+				registeredExportActions.splice(registeredExportActions.indexOf(action))
+
+				ExportActionManager.removeExportAction(action)
 			},
 		}
 	})

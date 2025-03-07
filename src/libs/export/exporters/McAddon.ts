@@ -2,7 +2,7 @@ import { ProjectManager } from '@/libs/project/ProjectManager'
 import { fileSystem } from '@/libs/fileSystem/FileSystem'
 import { zipDirectory } from '@/libs/zip/ZipDirectory'
 import { join } from 'pathe'
-import { saveOrDownload } from './Export'
+import { saveOrDownload } from '../Export'
 import { DashService } from '@/libs/compiler/DashService'
 import { BedrockProject } from '@/libs/project/BedrockProject'
 
