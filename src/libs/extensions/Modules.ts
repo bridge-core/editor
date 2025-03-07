@@ -46,6 +46,9 @@ import { Extension } from './Extension'
 import { Action } from '@/libs/actions/Action'
 import { ActionManager } from '@/libs/actions/ActionManager'
 import { Dropdown as ToolbarDropdown, DropdownItem as ToolbarDropdownItem, Button as ToolbarButton, Toolbar } from '@/components/Toolbar/Toolbar'
+import { FileImporter } from '@/libs/import/FileImporter'
+import { DirectoryImporter } from '@/libs/import/DirectoryImporter'
+import { ImporterManager } from '@/libs/import/ImporterManager'
 
 import json5 from 'json5'
 import * as fflate from 'fflate'
@@ -149,6 +152,41 @@ export function setupModules() {
 						callback(ProjectManager.currentProject?.name ?? null)
 					})
 				)
+			},
+		}
+	})
+
+	Extension.registerModule('@bridge/importer', (extension) => {
+		let registeredFileImporters: FileImporter[] = []
+		let registeredDirectoryImporters: DirectoryImporter[] = []
+
+		const disposable = extension.deactivated.on(() => {
+			for (const importer of Object.values(registeredFileImporters)) {
+				ImporterManager.removeFileImporter(importer)
+			}
+
+			for (const importer of Object.values(registeredDirectoryImporters)) {
+				ImporterManager.removeDirectoryImporter(importer)
+			}
+
+			registeredFileImporters = []
+			registeredDirectoryImporters = []
+
+			disposable.dispose()
+		})
+
+		return {
+			FileImporter,
+			DirectoryImporter,
+			addFileImporter(importer: FileImporter) {
+				registeredFileImporters.push(importer)
+
+				ImporterManager.addFileImporter(importer)
+			},
+			addDirectoryImporter(importer: DirectoryImporter) {
+				registeredDirectoryImporters.push(importer)
+
+				ImporterManager.addDirectoryImporter(importer)
 			},
 		}
 	})
