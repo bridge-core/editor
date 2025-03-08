@@ -2,10 +2,10 @@
 	"general": {
 		"yes": "Да",
 		"no": "Нет",
-		"okay": "Хорошо",
-		"setup": "Установка",
+		"okay": "Окей",
+		"setup": "Настройка",
 		"confirm": "Подтвердить",
-		"cancel": "Отменить",
+		"cancel": "Отмена",
 		"close": "Закрыть",
 		"reload": "Перезагрузить",
 		"refresh": "Обновить",
@@ -16,65 +16,65 @@
 		"skip": "Пропустить",
 		"save": "Сохранить",
 		"shareFile": "Поделиться файлом",
-		"more": "Больше...",
+		"more": "Еще...",
 		"selectFolder": "Выбрать папку",
-		"fileName": "Название файла",
-		"folderName": "Название папки",
-		"inactive": "Неактивен",
-		"active": "Активен",
+		"fileName": "Имя файла",
+		"folderName": "Имя папки",
+		"inactive": "Неактивно",
+		"active": "Активно",
 		"later": "Позже",
 		"clear": "Очистить",
-		"reset": "Сброс",
-		"readMore": "Читать больше",
+		"reset": "Сбросить",
+		"readMore": "Читать далее",
 		"search": "Поиск...",
-		"downloadNativeApp": "Скачать приложение",
-		"confirmOverwriteFile": "This action overwrites a file with the same name. Do you want to continue?",
-		"confirmOverwriteFolder": "This action overwrites a folder with the same name. Do you want to continue?",
+		"downloadNativeApp": "Скачать нативное приложение",
+		"confirmOverwriteFile": "Это действие перезапишет файл с таким же именем. Вы хотите продолжить?",
+		"confirmOverwriteFolder": "Это действие перезапишет папку с таким же именем. Вы хотите продолжить?",
 		"fileSystemPolyfill": {
-			"name": "Save Your Projects!",
-			"description": "Due to the browser you are using, you need to download your projects in order to actually save your progress. We recommend you use a browser where this is not necessary, such as Chrome or Edge on Desktop."
+			"name": "Сохраните свои проекты!",
+			"description": "Из-за используемого вами браузера вам нужно скачать свои проекты, чтобы сохранить прогресс. Мы рекомендуем использовать браузер, где это не требуется, например, Chrome или Edge на ПК."
 		},
 		"successfulExport": {
-			"title": "Успешный экспорт",
-			"description": "You can find the exported package here"
+			"title": "Экспорт успешен",
+			"description": "Вы можете найти экспортированный пакет здесь"
 		},
-		"experimentalGameplay": "Экспериментальный игровой процесс",
-		"textureLocation": "Локация текстуры",
+		"experimentalGameplay": "Экспериментальный геймплей",
+		"textureLocation": "Расположение текстуры",
 		"reloadBridge": {
-			"name": "Перезагрузка bridge.",
-			"description": "Перезагрузите bridge. Все не сохраненные изменение могут быть потеряны."
+			"name": "Перезагрузить bridge.",
+			"description": "Перезапустить bridge. Все несохраненные изменения будут потеряны."
 		},
 		"warnBeforeClosing": {
-			"title": "Не сохраненные изменения",
-			"description": "Вы уверены что хотите закрыть это окно? Все не сохранённые данные могут быть исчезнуты.."
+			"title": "Несохраненные изменения",
+			"description": "Вы уверены, что хотите закрыть это окно? Все несохраненные изменения будут потеряны."
 		},
 		"error": "Ошибка",
-		"reportBug": "Сообщите об ошибке",
+		"reportBug": "Сообщить об ошибке",
 		"installNow": "Установить сейчас"
 	},
 	"openWith": {
 		"snowstorm": "Snowstorm",
-		"textEditor": "Редактор текста",
-		"treeEditor": "Tree Editor",
+		"textEditor": "Текстовый редактор",
+		"treeEditor": "Редактор дерева",
 		"htmlPreviewer": "HTML Previewer",
 		"blockbench": "Blockbench"
 	},
 	"packType": {
 		"behaviorPack": {
-			"name": "Пакет поведений",
-			"description": "Create new game mechanics and change how Minecraft behaves"
+			"name": "Пакет поведения",
+			"description": "Создавайте новые игровые механики и изменяйте поведение Minecraft"
 		},
 		"resourcePack": {
-			"name": "Пакет ресурсов",
-			"description": "Used for changing Minecraft's look and sound"
+			"name": "Ресурсный пакет",
+			"description": "Используется для изменения внешнего вида и звуков Minecraft"
 		},
 		"skinPack": {
-			"name": "Пак скинов",
-			"description": "Provide new appearances a player can select for their character"
+			"name": "Пакет скинов",
+			"description": "Предоставляет новые внешние виды, которые игрок может выбрать для своего персонажа"
 		},
 		"worldTemplate": {
 			"name": "Шаблон мира",
-			"description": "Create a world that users can create to experience your project"
+			"description": "Создайте мир, который пользователи могут создать, чтобы испытать ваш проект"
 		}
 	},
 	"fileType": {
@@ -83,132 +83,136 @@
 		"animationController": "Контроллер анимации",
 		"biome": "Биом",
 		"block": "Блок",
-		"bridgeConfig": "Project Config",
+		"bridgeConfig": "Конфигурация проекта",
+		"cameraPreset": "Пресет камеры",
 		"dialogue": "Диалог",
+		"dimension": "Измерение",
 		"entity": "Сущность",
-		"feature": "Feature",
-		"featureRule": "Feature Rule",
-		"functionTick": "Function Tick",
+		"feature": "Особенность",
+		"featureRule": "Правило особенности",
+		"functionTick": "Функция Tick",
 		"function": "Функция",
-		"generatorScript": "Generator Script",
+		"generatorScript": "Скрипт генератора",
 		"item": "Предмет",
-		"lootTable": "Loot Table",
+		"lootTable": "Таблица добычи",
 		"recipe": "Рецепт",
 		"clientScript": "Клиентский скрипт",
 		"serverScript": "Серверный скрипт",
 		"script": "Скрипт",
-		"spawnRule": "Spawn Rule",
-		"mcstructure": "Structure",
-		"tradeTable": "Trade Table",
-		"clientManifest": "Client Manifest",
-		"skinManifest": "Skin Manifest",
-		"geometry": "Geometry",
-		"customCommand": "Command",
-		"customComponent": "Component",
-		"clientAnimation": "Client Animation",
-		"clientAnimationController": "Client Animation Controller",
-		"attachable": "Attachable",
-		"clientEntity": "Client Entity",
-		"clientItem": "Client Item",
+		"spawnRule": "Правило появления",
+		"splashes": "Заставки",
+		"mcstructure": "Структура",
+		"tradeTable": "Таблица торговли",
+		"clientManifest": "Клиентский манифест",
+		"skinManifest": "Манифест скинов",
+		"geometry": "Геометрия",
+		"customCommand": "Команда",
+		"customComponent": "Компонент",
+		"clientAnimation": "Клиентская анимация",
+		"clientAnimationController": "Клиентский контроллер анимации",
+		"attachable": "Прикрепляемое",
+		"clientEntity": "Клиентская сущность",
+		"clientItem": "Клиентский предмет",
 		"clientLang": "Язык",
 		"fog": "Туман",
-		"particle": "Партиклы",
-		"renderController": "Render Controller",
-		"texture": "Текстурав",
-		"textureSet": "Установить текстуры",
-		"itemTexture": "Текстуры предмета",
-		"clientBlock": "Client Block",
-		"terrainTexture": "Terrain Texture",
-		"flipbookTexture": "Flipbook Texture",
-		"clientBiome": "Client Biome",
-		"soundDefinition": "Sound Definition",
-		"musicDefinition": "Music Definition",
-		"clientSound": "Client Sound",
+		"particle": "Частица",
+		"renderController": "Контроллер рендеринга",
+		"texture": "Текстура",
+		"textureSet": "Набор текстур",
+		"itemTexture": "Текстура предмета",
+		"clientBlock": "Клиентский блок",
+		"terrainTexture": "Текстура местности",
+		"flipbookTexture": "Текстура флипбука",
+		"clientBiome": "Клиентский биом",
+		"biomesClient": "Клиентские биомы",
+		"soundDefinition": "Определение звука",
+		"musicDefinition": "Определение музыки",
+		"clientSound": "Клиентский звук",
 		"skins": "Скины",
-		"langDef": "Языковые определено",
+		"langDef": "Определения языка",
 		"lang": "Язык",
 		"molang": "Molang",
 		"gameTest": "Game Test",
 		"unknown": "Другое",
-		"simpleFile": "Простой файл",
+		"simpleFile": "Простые файлы",
 		"ui": "Интерфейс",
-		"volume": "Громкость",
-		"worldManifest": "World Manifest"
+		"volume": "Объем",
+		"worldManifest": "Манифест мира"
 	},
 	"actions": {
 		"name": "Действия",
 		"viewBridgeFolder": {
-			"name": "View bridge. Folder",
-			"description": "View the folder where bridge. stores your projects"
+			"name": "Просмотр папки bridge.",
+			"description": "Просмотр папки, где bridge. хранит ваши проекты"
 		},
 		"about": {
-			"name": "О",
-			"description": "О bridge."
+			"name": "О bridge.",
+			"description": "Информация о bridge."
 		},
 		"launchMinecraft": {
 			"name": "Запустить Minecraft",
-			"description": "Запустите Minecraft для теста своих проектов"
+			"description": "Запустите Minecraft, чтобы протестировать свои проекты"
 		},
 		"download": {
 			"name": "Скачать",
-			"description": "Скачать файл или папку"
+			"description": "Скачать этот файл или папку"
 		},
 		"fullscreen": {
-			"name": "Полный экран",
-			"description": "Включите режим полного экрана"
+			"name": "Полноэкранный режим",
+			"description": "Переключить полноэкранный режим"
 		},
 		"viewConnectedFiles": {
-			"name": "View Connected Files",
-			"description": "View all files connected to this file"
+			"name": "Просмотр связанных файлов",
+			"description": "Просмотр всех файлов, связанных с этим файлом"
 		},
 		"viewExtensionsFolder": {
-			"name": "View Extensions Folder",
-			"description": "View the folder where bridge. stores global extensions"
+			"name": "Просмотр папки расширений",
+			"description": "Просмотр папки, где bridge. хранит глобальные расширения"
 		},
 		"open": {
-			"name": "Открыть ",
+			"name": "Открыть",
 			"description": "Открыть файл в редакторе"
 		},
 		"openWith": {
 			"name": "Открыть с помощью",
-			"description": "Open the file in the editor"
+			"description": "Открыть файл в редакторе"
 		},
 		"openInSplitScreen": {
-			"name": "Open in Split Screen",
-			"description": "Open the file in split screen mode"
+			"name": "Открыть в разделенном экране",
+			"description": "Открыть файл в режиме разделенного экрана"
 		},
 		"edit": {
 			"name": "Редактировать",
-			"description": "Редактировании файла или папкт"
+			"description": "Редактировать файл или папку"
 		},
 		"delete": {
 			"name": "Удалить",
-			"description": "Удаляет файл или папку",
-			"confirmText": "Are you sure that you want to delete ",
-			"noRestoring": "You won't be able to restore it later!"
+			"description": "Удалить файл или папку",
+			"confirmText": "Вы уверены, что хотите удалить ",
+			"noRestoring": "Вы не сможете восстановить его позже!"
 		},
 		"rename": {
 			"name": "Переименовать",
 			"description": "Переименовать файл",
-			"sameName": "Your new file name only differs in capitalization. This is not allowed on Windows."
+			"sameName": "Ваше новое имя файла отличается только регистром. Это не разрешено в Windows."
 		},
 		"duplicate": {
-			"name": "Копировать",
-			"description": "Копировать файл"
+			"name": "Дублировать",
+			"description": "Дублировать файл"
 		},
 		"viewCompilerOutput": {
-			"name": "Compiler Output",
-			"view": "View Compiler Output",
-			"description": "View the current compiler output for this file",
-			"fileMissing": "It does not look like this file was compiled yet."
+			"name": "Вывод компилятора",
+			"view": "Просмотр вывода компилятора",
+			"description": "Просмотр текущего вывода компилятора для этого файла",
+			"fileMissing": "Похоже, этот файл еще не был скомпилирован."
 		},
 		"revealPath": {
-			"name": "Обнаружить путь",
-			"description": "Reveals the location of a file or folder"
+			"name": "Показать путь",
+			"description": "Показывает расположение файла или папки"
 		},
 		"revealInFileExplorer": {
-			"name": "Reveal in File Explorer",
-			"description": "Reveals the location of a file or folder in the file explorer"
+			"name": "Показать в проводнике",
+			"description": "Показывает расположение файла или папки в проводнике"
 		},
 		"createFile": {
 			"name": "Создать файл",
@@ -223,205 +227,205 @@
 		},
 		"findInFolder": {
 			"name": "Найти в папке",
-			"description": "Search the contents of a folder"
+			"description": "Поиск содержимого папки"
 		},
 		"goHome": {
-			"name": "Вернуться домой",
-			"description": "Go back to the home screen"
+			"name": "На главную",
+			"description": "Вернуться на главный экран"
 		},
 		"newProject": {
 			"name": "Новый проект",
-			"description": "Создать новый проект в bridge. "
+			"description": "Создать новый проект bridge."
 		},
 		"newFile": {
 			"name": "Новый файл",
-			"description": "Create a new Add-On feature"
+			"description": "Создать новую функцию Add-On"
 		},
 		"openFile": {
 			"name": "Открыть файл",
-			"description": "Open a file to edit it with bridge."
+			"description": "Открыть файл для редактирования с помощью bridge."
 		},
 		"openFolder": {
 			"name": "Открыть папку",
-			"description": "Open a folder to edit it, set it as an output folder or trigger other actions"
+			"description": "Открыть папку для редактирования, установить ее как выходную папку или выполнить другие действия"
 		},
 		"searchFile": {
-			"name": "Найти файл",
-			"description": "Search and open a file from the current project"
+			"name": "Поиск файла",
+			"description": "Поиск и открытие файла из текущего проекта"
 		},
 		"saveFile": {
 			"name": "Сохранить файл",
-			"description": "Save the currently opened file"
+			"description": "Сохранить текущий открытый файл"
 		},
 		"saveAs": {
 			"name": "Сохранить как",
-			"description": "Save the currently opened file under a different name"
+			"description": "Сохранить текущий открытый файл под другим именем"
 		},
 		"saveAll": {
 			"name": "Сохранить все",
-			"description": "Сохраняет текущие открытые файлы"
+			"description": "Сохранить все текущие открытые файлы"
 		},
 		"closeFile": {
 			"name": "Закрыть файл",
-			"description": "Закрывает текущие открытые папки"
+			"description": "Закрыть текущий открытый файл"
 		},
 		"settings": {
-			"name": "Настройки ",
-			"description": "Открыть настройки приложения bridge.'s "
+			"name": "Настройки",
+			"description": "Открыть настройки приложения bridge."
 		},
 		"extensions": {
-			"name": "Дополнения",
-			"description": "Install and manage your installed extensions"
+			"name": "Расширения",
+			"description": "Установить и управлять установленными расширениями"
 		},
 		"copy": {
 			"name": "Копировать",
-			"description": "Copy selected text to the clipboard"
+			"description": "Копировать выделенный текст в буфер обмена"
 		},
 		"cut": {
 			"name": "Вырезать",
-			"description": "Copy selected text to the clipboard and remove it from the original context"
+			"description": "Копировать выделенный текст в буфер обмена и удалить его из исходного контекста"
 		},
 		"paste": {
 			"name": "Вставить",
-			"description": "Paste clipboard content"
+			"description": "Вставить содержимое буфера обмена"
 		},
 		"docs": {
 			"name": "Открыть bedrock.dev",
-			"description": "Opens the Minecraft Add-On documentation"
+			"description": "Открыть документацию Minecraft Add-On"
 		},
 		"minecraftDocs": {
-			"name": "Открыть документацию майнкрафта",
-			"description": "Opens the Minecraft Bedrock Add-On documentation"
+			"name": "Открыть документацию Minecraft",
+			"description": "Открыть документацию Minecraft Bedrock Add-On"
 		},
 		"releases": {
 			"name": "Релизы",
-			"description": "Посмотреть последний релиз bridge"
+			"description": "Просмотр последних релизов bridge."
 		},
 		"bugReports": {
-			"name": "Баг репорты",
-			"description": "Report an issue with bridge."
+			"name": "Сообщения об ошибках",
+			"description": "Сообщить о проблеме с bridge."
 		},
 		"twitter": {
 			"name": "Twitter",
-			"description": "Подпишитесь на bridge. в Twitter"
+			"description": "Подписаться на bridge. в Twitter"
 		},
 		"extensionAPI": {
-			"name": "Дополнения API",
-			"description": "Read more about bridge.'s extension API"
+			"name": "API расширений",
+			"description": "Узнать больше о API расширений bridge."
 		},
 		"gettingStarted": {
 			"name": "Начало работы",
-			"description": "Read our guide on how to get started with bridge."
+			"description": "Прочитайте наше руководство по началу работы с bridge."
 		},
 		"faq": {
-			"name": "FAQ",
-			"description": "Read through frequently asked questions about developing Add-Ons with bridge."
+			"name": "Часто задаваемые вопросы",
+			"description": "Прочитайте часто задаваемые вопросы о разработке Add-Ons с помощью bridge."
 		},
 		"reloadAutoCompletions": {
-			"name": "Reload Auto-Completions",
-			"description": "Reloads all auto-completion data"
+			"name": "Перезагрузить автодополнения",
+			"description": "Перезагружает все данные автодополнения"
 		},
 		"reloadExtensions": {
 			"name": "Перезагрузить расширения",
 			"description": "Перезагружает все расширения"
 		},
 		"moveToSplitScreen": {
-			"name": "Move to Split Screen",
-			"description": "Opens a split screen view and moves this tab to it"
+			"name": "Переместить в разделенный экран",
+			"description": "Открывает вид с разделенным экраном и перемещает эту вкладку в него"
 		},
 		"closeTab": {
 			"name": "Закрыть вкладку",
-			"description": "Close this tab"
+			"description": "Закрыть эту вкладку"
 		},
 		"closeAll": {
 			"name": "Закрыть все",
-			"description": "Закрывает все вкладки"
+			"description": "Закрыть все вкладки"
 		},
 		"closeTabsToRight": {
-			"name": "Close Tabs to the Right",
-			"description": "Close all tabs to the right-hand side of this tab"
+			"name": "Закрыть вкладки справа",
+			"description": "Закрыть все вкладки справа от этой вкладки"
 		},
 		"closeAllSaved": {
-			"name": "Закрыть все сохранённые",
-			"description": "Закрывает все сохранённые вкладки"
+			"name": "Закрыть все сохраненные",
+			"description": "Закрыть все сохраненные вкладки"
 		},
 		"closeOtherTabs": {
-			"name": "Close other Tabs",
-			"description": "Close all tabs except this tab"
+			"name": "Закрыть другие вкладки",
+			"description": "Закрыть все вкладки, кроме этой"
 		},
 		"clearAllNotifications": {
 			"name": "Очистить все уведомления",
-			"description": "Clears all current notifications"
+			"description": "Очищает все текущие уведомления"
 		},
 		"pluginInstallLocation": {
 			"global": {
 				"name": "Установить глобально",
-				"description": "Global extensions are accessible in all of your projects"
+				"description": "Глобальные расширения доступны во всех ваших проектах"
 			},
 			"local": {
 				"name": "Установить локально",
-				"description": "Local extensions are only accessible inside of the projects you add them to"
+				"description": "Локальные расширения доступны только внутри проектов, в которые вы их добавляете"
 			}
 		},
 		"toObject": {
-			"name": "Трансформировать в обьект"
+			"name": "Преобразовать в объект"
 		},
 		"toArray": {
-			"name": "Трансформировать в Массив"
+			"name": "Преобразовать в массив"
 		},
 		"documentationLookup": {
-			"name": "Посмотреть документацию",
-			"noDocumentation": "No documentation available for"
+			"name": "Просмотр документации",
+			"noDocumentation": "Нет документации для"
 		},
 		"toggleReadOnly": {
-			"name": "Включить режим только чтения",
-			"description": "Toggle read-only mode for the currently opened file"
+			"name": "Переключить режим только для чтения",
+			"description": "Переключить режим только для чтения для текущего открытого файла"
 		},
 		"keepInTabSystem": {
-			"name": "Keep in Tab System",
-			"description": "Converts this tab to a permanent tab"
+			"name": "Оставить в системе вкладок",
+			"description": "Преобразует эту вкладку в постоянную вкладку"
 		},
 		"importBrproject": {
-			"name": "Импортировать проект",
-			"description": "Import a project from a .brproject file"
+			"name": "Импорт проекта",
+			"description": "Импортировать проект из файла .brproject"
 		},
 		"downloadFile": {
 			"name": "Скачать файл",
-			"description": "Download the currently opened file"
+			"description": "Скачать текущий открытый файл"
 		},
 		"undo": {
 			"name": "Отменить",
-			"description": "Undo the last action"
+			"description": "Отменить последнее действие"
 		},
 		"redo": {
-			"name": "Redo",
-			"description": "Redo the last action"
+			"name": "Повторить",
+			"description": "Повторить последнее действие"
 		},
 		"goToDefinition": {
-			"name": "Go to Definition",
-			"description": "Go to the definition of the selected symbol"
+			"name": "Перейти к определению",
+			"description": "Перейти к определению выбранного символа"
 		},
 		"goToSymbol": {
-			"name": "Go to Symbol",
-			"description": "Opens a dialog to select a symbol to go to"
+			"name": "Перейти к символу",
+			"description": "Открывает диалог для выбора символа для перехода"
 		},
 		"formatDocument": {
-			"name": "Формат документа",
-			"description": "Format the currently opened document"
+			"name": "Форматировать документ",
+			"description": "Форматировать текущий открытый документ"
 		},
 		"changeAllOccurrences": {
-			"name": "Change All Occurrences",
-			"description": "Change all occurrences of the selected text"
+			"name": "Изменить все вхождения",
+			"description": "Изменить все вхождения выбранного текста"
 		},
 		"tgaMaskToggle": {
-			"name": "Show/Hide Alpha Mask"
+			"name": "Показать/Скрыть альфа-маску"
 		},
 		"recompileChanges": {
-			"name": "Compile Changes",
-			"description": "Compile all files that were edited without bridge. This will not compile any changes made in the editor itself after disabling watch mode"
+			"name": "Компилировать изменения",
+			"description": "Компилировать все файлы, которые были отредактированы без bridge. Это не скомпилирует изменения, сделанные в редакторе после отключения режима наблюдения"
 		},
 		"more": {
-			"name": "Более"
+			"name": "Еще"
 		}
 	},
 	"toolbar": {
@@ -434,37 +438,37 @@
 		"file": {
 			"name": "Файл",
 			"preferences": {
-				"name": "Предпочтения"
+				"name": "Настройки"
 			}
 		},
 		"edit": {
 			"name": "Редактировать"
 		},
 		"view": {
-			"name": "Смотреть",
+			"name": "Вид",
 			"togglePackExplorer": {
-				"name": "Toggle Pack Explorer",
-				"description": "Toggle the pack explorer that appears inside of bridge.'s sidebar"
+				"name": "Переключить проводник пакетов",
+				"description": "Переключить проводник пакетов, который появляется внутри боковой панели bridge."
 			},
 			"openFileSearch": {
-				"name": "Открыть найти & Заменить ",
-				"description": "Opens a new Find & Replace tab"
+				"name": "Открыть поиск и замену",
+				"description": "Открывает новую вкладку поиска и замены"
 			},
 			"cursorUndo": {
-				"name": "Cursor Undo",
-				"description": "Undo the last cursor position change"
+				"name": "Отменить перемещение курсора",
+				"description": "Отменить последнее изменение позиции курсора"
 			},
 			"cursorRedo": {
-				"name": "Cursor Redo",
-				"description": "Redo the last cursor position change"
+				"name": "Повторить перемещение курсора",
+				"description": "Повторить последнее изменение позиции курсора"
 			},
 			"nextTab": {
-				"name": "Следуйщая вкладка",
-				"description": "Switch to the next tab"
+				"name": "Следующая вкладка",
+				"description": "Переключиться на следующую вкладку"
 			},
 			"previousTab": {
 				"name": "Предыдущая вкладка",
-				"description": "Switch to the previous tab"
+				"description": "Переключиться на предыдущую вкладку"
 			}
 		},
 		"tools": {
@@ -475,51 +479,51 @@
 		}
 	},
 	"packExplorer": {
-		"name": "Pack Explorer",
-		"searchFiles": "Искать файлы...",
+		"name": "Проводник пакетов",
+		"searchFiles": "Поиск файлов...",
 		"categories": "Категории",
 		"move": {
-			"toLocal": "Move to Local Folder",
-			"toBridgeFolder": "Move to bridge. Folder"
+			"toLocal": "Переместить в локальную папку",
+			"toBridgeFolder": "Переместить в папку bridge."
 		},
 		"refresh": {
 			"name": "Обновить проект",
-			"description": "Fetch the current project for newly added files"
+			"description": "Получить текущий проект для новых добавленных файлов"
 		},
 		"noProjectView": {
-			"noProjectsFound": "It does not look like you have any projects yet. Get started by creating a new project!",
+			"noProjectsFound": "Похоже, у вас еще нет проектов. Начните с создания нового проекта!",
 			"createLocalProject": "Создать локальный проект",
-			"chooseBridgeFolder": "Выберите папку bridge",
-			"accessBridgeFolder": "Access bridge. Folder",
+			"chooseBridgeFolder": "Выбрать папку bridge.",
+			"accessBridgeFolder": "Доступ к папке bridge.",
 			"importOldProjects": {
-				"name": "Импортировать проекты",
-				"confirmOverwrite": "Your bridge. folder already contains projects. Importing old projects may overwrite existing projects with the same name. Do you want to continue?",
-				"notABridgeProject": "It looks like this project is not a bridge. project as the folder does not contain a project config.json file. Please make sure that you have selected the correct folder."
+				"name": "Импорт проектов",
+				"confirmOverwrite": "Ваша папка bridge. уже содержит проекты. Импорт старых проектов может перезаписать существующие проекты с тем же именем. Вы хотите продолжить?",
+				"notABridgeProject": "Похоже, этот проект не является проектом bridge., так как папка не содержит файла конфигурации проекта config.json. Убедитесь, что вы выбрали правильную папку."
 			},
-			"projectNoLongerExists": "It looks like this project no longer exists!"
+			"projectNoLongerExists": "Похоже, этот проект больше не существует!"
 		},
 		"restartWatchMode": {
-			"name": "Restart Watch Mode",
-			"description": "Restart the compiler's watch mode to delete the current build output, rebuild the complete project and then start watching for further changes.",
-			"confirmDescription": "Are you sure that you want to restart the compiler's watch mode? This can take some time depending on the size of your project. Restarting the compiler deletes your add-on from the com.mojang folder and recompiles it based on your bridge. folder!"
+			"name": "Перезапустить режим наблюдения",
+			"description": "Перезапустить режим наблюдения компилятора, чтобы удалить текущий вывод сборки, пересобрать весь проект и затем начать наблюдение за дальнейшими изменениями.",
+			"confirmDescription": "Вы уверены, что хотите перезапустить режим наблюдения компилятора? Это может занять некоторое время в зависимости от размера вашего проекта. Перезапуск компилятора удаляет ваш аддон из папки com.mojang и перекомпилирует его на основе папки bridge.!"
 		},
 		"createPreset": "Новый файл",
 		"projectConfig": {
-			"name": "Открыть конфиг проекта",
-			"missing": "It looks like this project has no config.json file. Every project needs a project config in order to work correctly."
+			"name": "Открыть конфигурацию проекта",
+			"missing": "Похоже, у этого проекта нет файла config.json. Каждый проект нуждается в конфигурации проекта для правильной работы."
 		},
 		"openProjectFolder": {
 			"name": "Открыть папку проекта"
 		},
 		"exportAs": {
-			"name": "Export As",
+			"name": "Экспортировать как",
 			"mcaddon": ".mcaddon",
 			"brproject": ".brproject",
 			"mcworld": ".mcworld",
 			"mctemplate": ".mctemplate"
 		},
 		"fileDiagnostics": {
-			"fileUnused": "This file is not used within your project"
+			"fileUnused": "Этот файл не используется в вашем проекте"
 		}
 	},
 	"sidebar": {
@@ -528,41 +532,41 @@
 		},
 		"openedFolders": {
 			"name": "Открытые папки",
-			"removeFolder": "Remove From View"
+			"removeFolder": "Удалить из вида"
 		},
 		"compiler": {
-			"name": "Compiler",
+			"name": "Компилятор",
 			"categories": {
 				"watchMode": {
-					"name": "Watch Mode",
+					"name": "Режим наблюдения",
 					"settings": {
 						"watchModeActive": {
-							"name": "Watch Mode",
-							"description": "Enable or disable automatically recompiling files when you make changes with bridge."
+							"name": "Режим наблюдения",
+							"description": "Включить или отключить автоматическую перекомпиляцию файлов при внесении изменений с помощью bridge."
 						},
 						"autoFetchChangedFiles": {
-							"name": "Auto Fetch",
-							"description": "Automatically search the project for changed files upon starting bridge."
+							"name": "Автоматическое получение",
+							"description": "Автоматически искать измененные файлы в проекте при запуске bridge."
 						}
 					}
 				},
-				"profiles": "Build Profiles",
-				"outputFolders": "Output Folders",
+				"profiles": "Профили сборки",
+				"outputFolders": "Выходные папки",
 				"logs": {
 					"name": "Логи",
-					"noLogs": "Dash did not produce any logs to show yet."
+					"noLogs": "Dash еще не произвел логи для отображения."
 				}
 			},
 			"default": {
-				"name": "Конфиг по умолчанию",
-				"description": "Run bridge.'s compiler with the default compiler configuration that is part of your project's \"config.json\" file."
+				"name": "Конфигурация по умолчанию",
+				"description": "Запустить компилятор bridge. с конфигурацией по умолчанию, которая является частью файла \"config.json\" вашего проекта."
 			},
 			"actions": {
-				"runLastProfile": "Запустить последних профиль"
+				"runLastProfile": "Запустить последний профиль"
 			}
 		},
 		"extensions": {
-			"name": "Дополнения"
+			"name": "Расширения"
 		},
 		"notifications": {
 			"socials": {
@@ -579,350 +583,371 @@
 			},
 			"installingUpdate": {
 				"name": "Установка обновления",
-				"description": "bridge. is currently installing an update in the background."
+				"description": "bridge. в настоящее время устанавливает обновление в фоновом режиме."
 			},
 			"restartToApplyUpdate": {
-				"message": "Перезапустите для обновления"
+				"message": "Перезапустить для обновления"
 			},
-			"updateExtensions": "Обновить все дополнентя"
+			"updateExtensions": "Обновить все расширения"
 		}
 	},
 	"experimentalGameplay": {
+		"experimentDeprecation": {
+			"title": "Предстоящее устаревание эксперимента",
+			"hcfDescription": "Эксперимент Holiday Creator Features будет удален в версии 1.21.20, события блоков и предметов будут заменены на пользовательские компоненты."
+		},
 		"cavesAndCliffs": {
-			"name": "Caves and Cliffs",
-			"description": "Enables auto-completions for the new mountain generation inside of biomes."
+			"name": "Пещеры и утесы",
+			"description": "Включает автодополнения для новой генерации гор внутри биомов."
 		},
 		"holidayCreatorFeatures": {
-			"name": "Holiday Creator Features",
-			"description": "Enables auto-completions for the data driven item and block features."
+			"name": "Функции Holiday Creator",
+			"description": "Включает автодополнения для функций, управляемых данными, для предметов и блоков."
 		},
 		"creationOfCustomBiomes": {
-			"name": "Creation of Custom Biomes",
-			"description": "Enables the creation of custom biomes, features and feature rules."
+			"name": "Создание пользовательских биомов",
+			"description": "Включает создание пользовательских биомов."
 		},
 		"additionalModdingCapabilities": {
-			"name": "Additional Modding Capabilities",
-			"description": "Enables the Scripting API in the manifest and allows you to create scripts with auto-completions."
+			"name": "Дополнительные возможности моддинга",
+			"description": "Включает Scripting API в манифесте и позволяет создавать скрипты с автодополнениями."
 		},
 		"upcomingCreatorFeatures": {
-			"name": "Upcoming Creator Features",
-			"description": "Enables the creation of fog volume files and provides auto-completions for entity properties."
+			"name": "Предстоящие функции Creator",
+			"description": "Включает автодополнения для экспериментальных функций Creator."
 		},
 		"enableGameTestFramework": {
-			"name": "Бета APIs",
-			"description": "Enables the beta level script API related modules in the manifest and allows you to create scripts with auto-completions."
+			"name": "Бета-API",
+			"description": "Включает модули API скриптов бета-уровня в манифесте и позволяет создавать скрипты с автодополнениями."
 		},
 		"experimentalMolangFeatures": {
-			"name": "Experimental Molang Features",
-			"description": "Enables auto-completions for experimental Molang queries."
+			"name": "Экспериментальные функции Molang",
+			"description": "Включает автодополнения для экспериментальных запросов Molang."
+		},
+		"focusTargetCamera": {
+			"name": "Камеры Creator: Камера с фокусом на цели",
+			"description": "Включает автодополнения для нацеливания камеры на сущность."
+		},
+		"dataDrivenJigsawStructures": {
+			"name": "Структуры Jigsaw, управляемые данными",
+			"description": "Включает создание структур Jigsaw, пулов шаблонов, списков процессоров и наборов структур."
+		},
+		"aimAssist": {
+			"name": "Помощь при прицеливании",
+			"description": "Включает создание пресетов и категорий помощи при прицеливании."
 		},
 		"theWildUpdate": {
-			"name": "The Wild Update",
-			"description": "Enables auto-completions for new features introduced in the Wild Update, such as entity components."
+			"name": "Обновление The Wild",
+			"description": "Включает автодополнения для новых функций, представленных в обновлении The Wild, таких как компоненты сущностей."
 		},
 		"educationEdition": {
-			"name": "Enable Education Edition",
-			"description": "Enables auto-completions for education features such as material reducer recipes."
+			"name": "Включить Education Edition",
+			"description": "Включает автодополнения для образовательных функций, таких как рецепты материального редуктора."
 		}
 	},
 	"windows": {
 		"sidebar": {
-			"disabledItem": "Этот предмет выключен"
+			"disabledItem": "Этот элемент отключен"
 		},
 		"error": {
-			"explanation": "bridge. encountered the following error:"
+			"explanation": "bridge. столкнулся со следующей ошибкой:"
 		},
 		"changelogWindow": {
 			"title": "Что нового?"
 		},
 		"openFile": {
 			"title": "Открыть",
-			"search": "Найти файлы...",
-			"noData": "Нету результатов..."
+			"search": "Поиск файла...",
+			"noData": "Нет результатов..."
 		},
 		"assetPreview": {
-			"title": "Asset Preview",
-			"previewScale": "Preview Scale",
-			"assetName": "Asset Name",
-			"boneVisibility": "Bone Visibility",
-			"backgroundColor": "Background Color",
-			"outputResolution": "Output Resolution"
+			"title": "Предпросмотр ассета",
+			"previewScale": "Масштаб предпросмотра",
+			"assetName": "Имя ассета",
+			"boneVisibility": "Видимость костей",
+			"backgroundColor": "Цвет фона",
+			"outputResolution": "Разрешение вывода"
 		},
 		"createProject": {
-			"omitPack": "Omit",
+			"omitPack": "Пропустить",
 			"selectedPack": "Выбрано",
 			"title": "Создать проект",
-			"packIcon": "Иконка проекта (не обязательно)",
+			"packIcon": "Иконка проекта (опционально)",
 			"projectName": {
-				"name": "Название проекта",
-				"invalidLetters": "Project name must not contain the following characters: \"  \\ / : | < >  * ? ~",
-				"mustNotBeEmpty": "You must enter a project name",
-				"endsInPeriod": "Project name cannot end with a period"
+				"name": "Имя проекта",
+				"invalidLetters": "Имя проекта не должно содержать следующие символы: \"  \\ / : | < >  * ? ~",
+				"mustNotBeEmpty": "Вы должны ввести имя проекта",
+				"endsInPeriod": "Имя проекта не может заканчиваться точкой"
 			},
-			"projectDescription": "Описание проекта (не обязательно)",
+			"projectDescription": "Описание проекта (опционально)",
 			"projectPrefix": "Префикс проекта",
 			"projectAuthor": "Автор проекта",
-			"projectTargetVersion": "Выдедяемые версии проекта",
-			"rpAsBpDependency": "Register resource pack as behavior pack dependency",
-			"bpAsRpDependency": "Register behavior pack as a resource pack dependency",
-			"useLangForManifest": "Add pack name/description directly to the manifest",
-			"bdsProject": "Установить Боковач проект для использования на Bedrock Dedicated Servers",
+			"projectTargetVersion": "Целевая версия проекта",
+			"rpAsBpDependency": "Зарегистрировать ресурсный пакет как зависимость пакета поведения",
+			"bpAsRpDependency": "Зарегистрировать пакет поведения как зависимость ресурсного пакета",
+			"useLangForManifest": "Добавить имя/описание пакета непосредственно в манифест",
+			"bdsProject": "Установить проект для использования с Bedrock Dedicated Servers",
 			"create": "Создать",
-			"saveCurrentProject": "Do you want to save your current project before creating the new one? Any unsaved changes will get lost!",
+			"saveCurrentProject": "Вы хотите сохранить текущий проект перед созданием нового? Все несохраненные изменения будут потеряны!",
+			"replaceCurrentProject": "Если вы создадите новый проект, ваш старый проект будет ЗАМЕНЕН! Если вы подтвердите, вы все еще можете скачать экспорт старого проекта, пока новый открыт.",
 			"individualFiles": {
-				"name": "Индивидуальные файлы",
+				"name": "Отдельные файлы",
 				"file": {
 					"player": {
 						"name": "player.json",
-						"description": "Edit how the default player behaves"
+						"description": "Редактировать поведение игрока по умолчанию"
 					},
 					"tick": {
 						"name": "tick.json",
-						"description": "Define which functions to execute every tick"
+						"description": "Определить, какие функции выполнять каждый тик"
 					},
 					"skins": {
 						"name": "skins.json",
-						"description": "Register the skins you have created"
+						"description": "Зарегистрировать созданные скины"
 					},
 					"blocks": {
 						"name": "blocks.json",
-						"description": "Used to define how multiple block faces are combined to a single block"
+						"description": "Используется для определения того, как несколько граней блока объединяются в один блок"
 					},
 					"terrainTexture": {
 						"name": "terrain_texture.json",
-						"description": "Used to assign textures to block faces"
+						"description": "Используется для назначения текстур граням блоков"
 					},
 					"itemTexture": {
 						"name": "item_texture.json",
-						"description": "Used to assign textures to items"
+						"description": "Используется для назначения текстур предметам"
 					},
 					"flipbookTextures": {
 						"name": "flipbook_textures.json",
-						"description": "Used for animating block textures"
+						"description": "Используется для анимации текстур блоков"
 					},
 					"biomesClient": {
 						"name": "biomes_client.json",
-						"description": "Used to define how biome specific effects render"
+						"description": "Используется для определения того, как рендерятся эффекты, специфичные для биома"
 					},
 					"sounds": {
 						"name": "sounds.json",
-						"description": "Used to define sounds for specific game features"
+						"description": "Используется для определения звуков для конкретных игровых функций"
 					},
 					"soundDefinitions": {
 						"name": "sound_definitions.json",
-						"description": "Used to register ids for sound files to be used elsewhere in the project"
+						"description": "Используется для регистрации идентификаторов звуковых файлов для использования в других частях проекта"
+					},
+					"splashes": {
+						"name": "splashes.json",
+						"description": "Используется для определения заставок на экране заголовка"
 					}
 				}
 			}
 		},
 		"createPreset": {
-			"title": "Озадаченная пресет",
-			"searchPresets": "Найти пресеты...",
-			"overwriteFiles": "This preset overwrites one or more existing files. Do you want to continue?",
+			"title": "Создать пресет",
+			"searchPresets": "Поиск пресетов...",
+			"overwriteFiles": "Этот пресет перезаписывает один или несколько существующих файлов. Вы хотите продолжить?",
 			"overwriteFilesConfirm": "Продолжить",
-			"overwriteUnsavedChanges": "This preset overwrites one or more files with unsaved changes. Do you want to continue?",
-			"overwriteUnsavedChangesConfirm": "Continue",
+			"overwriteUnsavedChanges": "Этот пресет перезаписывает один или несколько файлов с несохраненными изменениями. Вы хотите продолжить?",
+			"overwriteUnsavedChangesConfirm": "Продолжить",
 			"validationRule": {
-				"alphanumeric": "You may only use alphanumeric characters and/or underscores",
-				"lowercase": "You may only use lowercase letters",
-				"required": "This field is required",
-				"noEmptyFolderNames": "Folder name may not be empty"
+				"alphanumeric": "Вы можете использовать только буквенно-цифровые символы и/или подчеркивания",
+				"lowercase": "Вы можете использовать только строчные буквы",
+				"required": "Это поле обязательно",
+				"noEmptyFolderNames": "Имя папки не может быть пустым"
 			},
-			"showAllPresets": "Show all presets",
+			"showAllPresets": "Показать все пресеты",
 			"disabledPreset": {
-				"experimentalGameplay": "Required experimental gameplay toggle condition(s) not met",
-				"packTypes": "Required pack condition(s) not met",
-				"targetVersion": "Required target version not met",
-				"manifestDependency": "Required BP manifest dependencies are missing"
+				"experimentalGameplay": "Не выполнены условия для включения экспериментального геймплея",
+				"packTypes": "Не выполнены условия для пакетов",
+				"targetVersion": "Не выполнены условия для целевой версии",
+				"manifestDependency": "Отсутствуют необходимые зависимости манифеста BP"
 			}
 		},
 		"deleteProject": {
 			"confirm": "Удалить",
-			"description": "Are you sure you want to delete this project?"
+			"description": "Вы уверены, что хотите удалить этот проект?"
 		},
 		"socials": {
-			"title": "Socials",
-			"content": "Check out our Twitter, Github and join the official bridge. Discord server!",
+			"title": "Социальные сети",
+			"content": "Посмотрите наш Twitter, Github и присоединяйтесь к официальному серверу Discord bridge.!",
 			"discord": "Discord",
 			"twitter": "Twitter",
 			"github": "Github"
 		},
 		"projectChooser": {
-			"title": "Выбрать проект",
-			"description": "Select the currently active project",
-			"searchProjects": "Найти проекты...",
+			"title": "Выбор проекта",
+			"description": "Выберите текущий активный проект",
+			"searchProjects": "Поиск проектов...",
 			"loadAllProjects": "Загрузить все",
-			"openPacks": "Открыть паки",
+			"openPacks": "Открыть пакеты",
 			"localProject": {
 				"name": "Локальный проект",
-				"description": "Local projects cannot be accessed outside of bridge."
+				"description": "Локальные проекты не могут быть доступны вне bridge."
 			},
 			"comMojangProject": {
-				"name": "com.mojang Project",
-				"description": "This project was loaded directly from your com.mojang folder",
-				"uninstallWarning": "This project will be deleted if you uninstall Minecraft."
+				"name": "Проект com.mojang",
+				"description": "Этот проект был загружен непосредственно из вашей папки com.mojang",
+				"uninstallWarning": "Этот проект будет удален, если вы удалите Minecraft."
 			},
 			"newProject": {
 				"name": "Новый проект",
-				"description": "Create a new bridge. project."
+				"description": "Создать новый проект bridge."
 			},
 			"saveCurrentProject": {
 				"name": "Сохранить проект",
-				"description": "Download your current project as a .brproject file to save changes that you have made."
+				"description": "Скачайте текущий проект как файл .brproject, чтобы сохранить изменения, которые вы сделали."
 			},
 			"openNewProject": {
 				"name": "Открыть проект",
-				"description": "Open a different project by selecting the corresponding .brproject file.",
-				"saveCurrentProject": "Do you want to save your current project before loading in the new one?"
+				"description": "Откройте другой проект, выбрав соответствующий файл .brproject.",
+				"saveCurrentProject": "Вы хотите сохранить текущий проект перед загрузкой нового?"
 			},
-			"wrongFileType": "Project must be a .brproject or .mcaddon file",
-			"addPack": "Добавить пак"
+			"wrongFileType": "Проект должен быть файлом .brproject или .mcaddon",
+			"addPack": "Добавить пакет"
 		},
 		"filePath": {
-			"title": "Choose File Path"
+			"title": "Выбор пути файла"
 		},
 		"lootSimulatorSettings": {
-			"title": "Симулятор настроек",
+			"title": "Настройки симулятора",
 			"repeat": {
-				"name": "Repeat Options",
+				"name": "Параметры повторения",
 				"amount": {
-					"name": "Repeat",
-					"description": "Repeat the loot table a set amount of times"
+					"name": "Повторить",
+					"description": "Повторить таблицу добычи заданное количество раз"
 				},
 				"itemFound": {
-					"name": "Item Identifier",
-					"description": "Run the loot table until an item stack with the specified identifier is found"
+					"name": "Идентификатор предмета",
+					"description": "Запустить таблицу добычи до тех пор, пока не будет найден предмет с указанным идентификатором"
 				},
 				"quantityFound": {
-					"name": "Quantity",
-					"description": "Run the loot table until an item stack with the specified quantity is found"
+					"name": "Количество",
+					"description": "Запустить таблицу добычи до тех пор, пока не будет найден предмет с указанным количеством"
 				}
 			},
 			"killConditions": {
 				"looting": {
-					"name": "Looting Enchant",
-					"description": "The level of looting used to run the table, 0 for no looting"
+					"name": "Зачарование добычи",
+					"description": "Уровень зачарования добычи, используемый для запуска таблицы, 0 для отсутствия зачарования"
 				}
 			}
 		},
 		"settings": {
 			"title": "Настройки",
 			"searchSettings": "Поиск настроек...",
-			"reloadRequired": "Вам требуется перезагрузить bridge. чтобы применительно изменения выбранных в настройках ",
+			"reloadRequired": "Вам нужно перезагрузить bridge., чтобы применить изменения, внесенные в настройки.",
 			"sidebar": {
 				"name": "Боковая панель",
 				"sidebarRight": {
 					"name": "Боковая панель справа",
-					"description": "Moves the sidebar to the right side of the screen"
+					"description": "Перемещает боковую панель на правую сторону экрана"
 				},
 				"sidebarSize": {
 					"name": "Размер боковой панели",
-					"description": "Changes the width of the expanded sidebar area."
+					"description": "Изменяет ширину расширенной области боковой панели."
 				},
 				"packExplorerFolderIndentation": {
-					"name": "Folder Indentation",
-					"description": "Changes the indentation of folders in the pack explorer."
+					"name": "Отступ папок",
+					"description": "Изменяет отступ папок в проводнике пакетов."
 				},
 				"shrinkSidebarElements": {
-					"name": "Shrink Sidebar Elements",
-					"description": "Shrink the size of bridge.'s sidebar elements"
+					"name": "Уменьшить элементы боковой панели",
+					"description": "Уменьшает размер элементов боковой панели bridge."
 				}
 			},
 			"appearance": {
-				"name": "Appearance",
+				"name": "Внешний вид",
 				"colorScheme": {
-					"name": "Color Scheme",
-					"description": "Choose the color scheme of bridge.'s UI"
+					"name": "Цветовая схема",
+					"description": "Выберите цветовую схему интерфейса bridge."
 				},
 				"highContrast": {
-					"name": "Высокий контраст",
-					"description": "Enable high contrast mode"
+					"name": "Высокая контрастность",
+					"description": "Включить режим высокой контрастности"
 				},
 				"darkTheme": {
 					"name": "Темная тема",
-					"description": "Select the default dark theme bridge. uses"
+					"description": "Выберите темную тему по умолчанию для bridge."
 				},
 				"lightTheme": {
 					"name": "Светлая тема",
-					"description": "Select the default light theme bridge. uses"
+					"description": "Выберите светлую тему по умолчанию для bridge."
 				},
 				"localDarkTheme": {
-					"name": "Локальная тема тема",
-					"description": "Choose a dark theme for the currently active project"
+					"name": "Локальная темная тема",
+					"description": "Выберите темную тему для текущего активного проекта"
 				},
 				"localLightTheme": {
 					"name": "Локальная светлая тема",
-					"description": "Choose a light theme for the currently active project"
+					"description": "Выберите светлую тему для текущего активного проекта"
 				},
 				"fontSize": {
 					"name": "Размер шрифта",
-					"description": "Change the font size of bridge.'s text"
+					"description": "Изменить размер шрифта текста bridge."
 				},
 				"editorFontSize": {
 					"name": "Размер шрифта кода",
-					"description": "Change the font size of bridge.'s code editor"
+					"description": "Изменить размер шрифта редактора кода bridge."
 				},
 				"editorFont": {
-					"name": "Шрифт кода",
-					"description": "Change the font of bridge.'s code editor"
+					"name": "Шрифт редактора кода",
+					"description": "Изменить шрифт редактора кода bridge."
 				},
 				"font": {
 					"name": "Шрифт",
-					"description": "Change the font that is used inside of bridge.'s user interface"
+					"description": "Изменить шрифт, используемый в интерфейсе bridge."
 				},
 				"hideToolbarItems": {
-					"name": "Hide Toolbar Items",
-					"description": "Make bridge. feel at home on MacOS: Move all toolbar items into a new menu button"
+					"name": "Скрыть элементы панели инструментов",
+					"description": "Сделать bridge. более похожим на MacOS: переместить все элементы панели инструментов в новую кнопку меню"
 				}
 			},
 			"general": {
-				"name": "Общее",
+				"name": "Общие",
 				"language": {
 					"name": "Язык",
-					"description": "Выберите язык для использования в bridge"
+					"description": "Выберите язык для bridge."
 				},
 				"collaborativeMode": {
-					"name": "Collaborative Mode",
-					"description": "Forces full refresh of the cache upon switching projects. Disable when you work alone and you only use bridge. to edit your project"
+					"name": "Режим совместной работы",
+					"description": "Принудительно обновляет кэш при переключении проектов. Отключите, если вы работаете в одиночку и используете bridge. только для редактирования проекта"
 				},
 				"packSpider": {
 					"name": "Pack Spider",
-					"description": "Pack Spider connects files inside of your projects and presents the connections to you in a virtual file system"
+					"description": "Pack Spider связывает файлы внутри ваших проектов и представляет связи в виртуальной файловой системе"
 				},
 				"formatOnSave": {
-					"name": "Format On Save",
-					"description": "Formats your text files upon saving them"
+					"name": "Форматировать при сохранении",
+					"description": "Форматирует ваши текстовые файлы при их сохранении"
 				},
 				"openLinksInBrowser": {
-					"name": "Open Links in Default Browser",
-					"description": "Open links inside of your default browser instead of a native app window"
+					"name": "Открывать ссылки в браузере по умолчанию",
+					"description": "Открывать ссылки в браузере по умолчанию вместо нативного окна приложения"
 				},
 				"restoreTabs": {
-					"name": "Восстоновить вкладки",
-					"description": "Restore your tabs from when you last used bridge. upon opening the app"
+					"name": "Восстановить вкладки",
+					"description": "Восстановить ваши вкладки с момента последнего использования bridge. при открытии приложения"
 				},
 				"selectBridgeFolder": {
-					"name": "Select Root Folder",
-					"description": "Choose the main folder bridge. operates on"
+					"name": "Выбрать корневую папку",
+					"description": "Выберите основную папку, с которой работает bridge."
 				},
 				"resetBridgeFolder": {
-					"name": "Reset Root Folder",
-					"description": "Reset the app to use bridge. v2's default root folder again"
+					"name": "Сбросить корневую папку",
+					"description": "Сбросить приложение для использования корневой папки по умолчанию bridge. v2"
 				}
 			},
 			"developer": {
-				"name": "Developer",
+				"name": "Разработчик",
 				"simulateOS": {
-					"name": "Simulate OS",
-					"description": "Simulate a different OS for testing platform specific behavior"
+					"name": "Симуляция ОС",
+					"description": "Симулировать другую ОС для тестирования поведения, специфичного для платформы"
 				},
 				"devMode": {
 					"name": "Режим разработчика",
 					"description": "Включить режим разработчика для этого приложения"
 				},
 				"forceDataDownload": {
-					"name": "Force Data Download",
-					"description": "Ignore the cached app data and instead download the latest data"
+					"name": "Принудительная загрузка данных",
+					"description": "Игнорировать кэшированные данные приложения и загружать последние данные"
 				}
 			},
 			"actions": {
@@ -932,122 +957,121 @@
 				"name": "Проекты",
 				"defaultAuthor": {
 					"name": "Автор по умолчанию",
-					"description": "Автор который будет стоять по умолчанию в новых проектах"
+					"description": "Автор по умолчанию для новых проектов"
 				},
 				"loadComMojangProjects": {
-					"name": "Load com.mojang Projects",
-					"description": "Automatically load projects from the com.mojang folder"
+					"name": "Загружать проекты com.mojang",
+					"description": "Автоматически загружать проекты из папки com.mojang"
 				},
 				"incrementVersionOnExport": {
-					"name": "Increment Version",
-					"description": "Automatically increment the version number inside of your pack manifests when exporting a project"
+					"name": "Увеличить версию",
+					"description": "Автоматически увеличивать номер версии в манифестах ваших пакетов при экспорте проекта"
 				},
 				"addGeneratedWith": {
-					"name": "Add \"generated_with\"",
-					"description": "Add the \"generated_with\" metadata to your projects' manifests"
+					"name": "Добавить \"generated_with\"",
+					"description": "Добавить метаданные \"generated_with\" в манифесты ваших проектов"
 				}
 			},
 			"editor": {
 				"jsonEditor": {
-					"name": "JSON Editor",
-					"description": "Choose how you want to edit JSON files"
+					"name": "Редактор JSON",
+					"description": "Выберите, как вы хотите редактировать файлы JSON"
 				},
-
 				"bracketPairColorization": {
-					"name": "Bracket Pair Colorization",
-					"description": "Give matching brackets an unique color"
+					"name": "Цветовое выделение пар скобок",
+					"description": "Придать соответствующим скобкам уникальный цвет"
 				},
 				"wordWrap": {
-					"name": "Word Wrap",
-					"description": "Wrap words to disable horizontal scrolling"
+					"name": "Перенос слов",
+					"description": "Переносить слова, чтобы отключить горизонтальную прокрутку"
 				},
 				"wordWrapColumns": {
-					"name": "Word Wrap Columns",
-					"description": "Defines after how many columns the editor should wrap words"
+					"name": "Колонки переноса слов",
+					"description": "Определяет, после скольких колонок редактор должен переносить слова"
 				},
 				"compactTabDesign": {
-					"name": "Compact Tab Design",
-					"description": "Display tabs inside of the tab system in a more compact way"
+					"name": "Компактный дизайн вкладок",
+					"description": "Отображать вкладки внутри системы вкладок более компактно"
 				},
 				"keepTabsOpen": {
-					"name": "Keep Tabs Open",
-					"description": "By default, opening a new tab closes the previously opened tab if it was not interacted with"
+					"name": "Оставлять вкладки открытыми",
+					"description": "По умолчанию открытие новой вкладки закрывает предыдущую вкладку, если с ней не взаимодействовали"
 				},
 				"autoSaveChanges": {
-					"name": "Auto Save Changes",
-					"description": "Automatically save changes to files after a short delay"
+					"name": "Автоматическое сохранение изменений",
+					"description": "Автоматически сохранять изменения в файлах после небольшой задержки"
 				},
 				"showTreeEditorLocationBar": {
-					"name": "Show Tree Editor Location Bar",
-					"description": "Allows you to quickly navigate your JSON file within the tree editor by displaying your current location above the editor."
+					"name": "Показывать панель расположения в редакторе дерева",
+					"description": "Позволяет быстро перемещаться по вашему JSON-файлу в редакторе дерева, отображая текущее расположение над редактором."
 				},
 				"inlineTreeEditorDiagnostics": {
-					"name": "Inline Diagnostics",
-					"description": "Show diagnostic messages above the affected tree editor node"
+					"name": "Встроенные диагностики",
+					"description": "Показывать диагностические сообщения над затронутым узлом редактора дерева"
 				},
 				"bridgePredictions": {
-					"name": "bridge. Predictions",
-					"description": "Enable bridge. predictions to let the app intelligently decide whether to add a value or object within bridge.'s tree editor. This simplifies editing JSON significantly"
+					"name": "Предсказания bridge.",
+					"description": "Включить предсказания bridge., чтобы приложение интеллектуально решало, добавлять ли значение или объект в редакторе дерева bridge. Это значительно упрощает редактирование JSON"
 				},
 				"automaticallyOpenTreeNodes": {
-					"name": "Automatically Open Tree Nodes",
-					"description": "Inside of bridge.'s tree editor, automatically open nodes when you select them"
+					"name": "Автоматически открывать узлы дерева",
+					"description": "Внутри редактора дерева bridge. автоматически открывать узлы при их выборе"
 				},
 				"dragAndDropTreeNodes": {
-					"name": "Drag and Drop Tree Nodes",
-					"description": "Disable/enable drag & drop for tree nodes inside of bridge.'s tree editor"
+					"name": "Перетаскивание узлов дерева",
+					"description": "Отключить/включить перетаскивание узлов дерева внутри редактора дерева bridge."
 				},
 				"showArrayIndices": {
-					"name": "Show Array Indices",
-					"description": "Show indices for array elements inside of bridge.'s tree editor"
+					"name": "Показывать индексы массива",
+					"description": "Показывать индексы для элементов массива внутри редактора дерева bridge."
 				},
 				"hideBracketsWithinTreeEditor": {
-					"name": "Hide Brackets",
-					"description": "Hide brackets within bridge.'s tree editor"
+					"name": "Скрывать скобки",
+					"description": "Скрывать скобки внутри редактора дерева bridge."
 				}
 			}
 		},
 		"projectFolder": {
 			"title": "Папка проекта",
-			"content": "bridge. needs access to its project folder in order to work correctly."
+			"content": "bridge. нужен доступ к папке проекта для правильной работы."
 		},
 		"extensionStore": {
-			"title": "Внутренний магазин",
+			"title": "Магазин расширений",
 			"searchExtensions": "Поиск расширений...",
 			"deleteExtension": "Удалить расширение",
 			"activateExtension": "Активировать расширение",
 			"deactivateExtension": "Деактивировать расширение",
 			"installLocal": "Установить локально",
 			"installGlobal": "Установить глобально",
-			"offlineError": "Failed to load extensions. Please confirm that your device has an active network connection.",
-			"incompatibleVersion": "Не подходящая версия bridge. ",
+			"offlineError": "Не удалось загрузить расширения. Убедитесь, что ваше устройство имеет активное сетевое подключение.",
+			"incompatibleVersion": "Несовместимая версия bridge.",
 			"compilerPluginDownload": {
-				"compilerPlugins": "Компилирование плагина",
-				"title": "Скачивание скомпилированогл плагина",
-				"description": "You have just downloaded a new compiler plugin. Make sure to add it to your compiler config file or otherwise it won't have an effect.",
-				"openConfig": "Открыть конфиг"
+				"compilerPlugins": "Плагины компилятора",
+				"title": "Загружен плагин компилятора",
+				"description": "Вы только что загрузили новый плагин компилятора. Убедитесь, что вы добавили его в файл конфигурации компилятора, иначе он не будет иметь эффекта.",
+				"openConfig": "Открыть конфигурацию"
 			},
 			"failedExtensionLoad": {
-				"title": "Ошибка загрузки",
-				"description1": "The extension manifest",
-				"description2": "is invalid. Please consider contacting the extension author to fix this issue."
+				"title": "не удалось загрузить",
+				"description1": "Манифест расширения",
+				"description2": "недействителен. Пожалуйста, свяжитесь с автором расширения, чтобы исправить эту проблему."
 			}
 		},
 		"pluginInstallLocation": {
-			"title": "Выбрать место установки"
+			"title": "Выбор места установки"
 		},
 		"unsavedFile": {
-			"description": "Do you want to save your changes to this file before closing it?",
-			"save": "Сохранить & Закрыть"
+			"description": "Вы хотите сохранить изменения в этом файле перед его закрытием?",
+			"save": "Сохранить и закрыть"
 		},
 		"browserUnsupported": {
-			"title": "Ошибка браузера",
-			"description": "In order to get the best experience with bridge., you need to use Chrome (excluding Chrome 93/94) or Edge (Chromium) on desktop. If you continue, you will not be able to save files directly and you will need to download your project in order to save it or test your changes in Minecraft.",
+			"title": "Предупреждение о браузере",
+			"description": "Для получения наилучшего опыта с bridge. вам нужно использовать Chrome (исключая Chrome 93/94) или Edge (Chromium) на ПК. Если вы продолжите, вы не сможете сохранять файлы напрямую, и вам нужно будет скачать ваш проект, чтобы сохранить его или протестировать изменения в Minecraft.",
 			"continue": "Продолжить в любом случае"
 		},
 		"invalidJson": {
-			"title": "Invalid JSON",
-			"description": "bridge.'s tree editor cannot open files that contain invalid JSON. You can switch to the \"Raw Text\" editor type inside of the settings to manually fix the issue."
+			"title": "Неверный JSON",
+			"description": "Редактор дерева bridge. не может открывать файлы, содержащие неверный JSON. Вы можете переключиться на тип редактора \"Сырой текст\" в настройках, чтобы вручную исправить проблему."
 		},
 		"loadingWindow": {
 			"titles": {
@@ -1056,157 +1080,157 @@
 		},
 		"upgradeFs": {
 			"title": "Обновить файловую систему?",
-			"description": "Your browser now supports saving files directly to your computer. Do you want to upgrade now?"
+			"description": "Ваш браузер теперь поддерживает сохранение файлов напрямую на ваш компьютер. Вы хотите обновить сейчас?"
 		}
 	},
 	"taskManager": {
 		"tasks": {
 			"packIndexing": {
-				"title": "Indexing Packs",
-				"description": "bridge. is collecting data about your pack that is needed for its intelligent features"
+				"title": "Индексация пакетов",
+				"description": "bridge. собирает данные о вашем пакете, необходимые для его интеллектуальных функций"
 			},
 			"compiler": {
-				"title": "Компилировать проект",
-				"description": "bridge. is compiling your project to make it ready for import into Minecraft"
+				"title": "Компиляция проекта",
+				"description": "bridge. компилирует ваш проект, чтобы сделать его готовым для импорта в Minecraft"
 			},
 			"unzipper": {
-				"name": "Распаковка ZIP архива",
-				"description": "bridge. is currently unpacking a ZIP file."
+				"name": "Распаковка ZIP",
+				"description": "bridge. в настоящее время распаковывает ZIP-файл."
 			},
 			"loadingSchemas": {
-				"name": "Loading Auto-Completions",
-				"description": "bridge. is currently loading its auto-completion data."
+				"name": "Загрузка автодополнений",
+				"description": "bridge. в настоящее время загружает данные автодополнений."
 			}
 		}
 	},
 	"fileDropper": {
-		"importFiles": "Drop files here to import them!",
-		"importFailed": "bridge. was unable to import the following files:",
-		"andMore": "...and more!",
+		"importFiles": "Перетащите файлы сюда, чтобы импортировать их!",
+		"importFailed": "bridge. не смог импортировать следующие файлы:",
+		"andMore": "...и еще!",
 		"importMethod": {
-			"name": "Импортировать метод",
+			"name": "Метод импорта",
 			"folder": {
 				"output": {
-					"name": "Вывод папки",
-					"description": "Sets this folder as a new output folder"
+					"name": "Выходная папка",
+					"description": "Устанавливает эту папку как новую выходную папку"
 				},
 				"open": {
 					"name": "Открыть папку",
-					"description": "Opens this folder in bridge.'s file explorer"
+					"description": "Открывает эту папку в проводнике bridge."
 				}
 			}
 		},
 		"mcaddon": {
-			"missingManifests": "bridge. was unable to load data from your .mcaddon or .mpack file because it wasn't able to find a pack manifest file inside of it."
+			"missingManifests": "bridge. не смог загрузить данные из вашего файла .mcaddon или .mpack, так как не смог найти файл манифеста пакета внутри него."
 		},
 		"saveToProject": {
-			"title": "Сохранить проект",
-			"description1": "Сохраните файл",
-			"description2": "внутри вашего проекта."
+			"title": "Сохранить в проект",
+			"description1": "Сохранить файл ",
+			"description2": " внутри вашего проекта."
 		},
 		"openFile": {
 			"title": "Открыть файл",
-			"description1": "Откройте файл ",
-			"description2": " и сохранитеedits to the original file."
+			"description1": "Открыть файл ",
+			"description2": " и сохранить изменения в оригинальный файл."
 		}
 	},
 	"comMojang": {
-		"title": "Access to folder \"com.mojang\"",
-		"permissionRequest": "bridge. needs access to your \"com.mojang\" folder in order to compile projects to it.",
-		"linkFolder": "Link Folder",
-		"linkedFolder": "Linked Folder",
+		"title": "Доступ к папке \"com.mojang\"",
+		"permissionRequest": "bridge. нужен доступ к вашей папке \"com.mojang\", чтобы компилировать проекты в нее.",
+		"linkFolder": "Связать папку",
+		"linkedFolder": "Связанная папка",
 		"status": {
-			"sucess": "Syncing your projects to your \"com.mojang\" folder is setup correctly.",
-			"deniedPermission": "You setup \"com.mojang\" syncing but you did not grant bridge. permission to the folder.",
-			"notSetup": "You have not setup \"com.mojang\" syncing yet. Drag your \"com.mojang\" folder onto bridge. to do so.",
-			"notSetupTauri": "You have not setup \"com.mojang\" syncing yet. Click the \"Link Folder\" button to do so.",
-			"notAvailable": "Syncing projects to the \"com.mojang\" folder is only available for Chrome and Edge users."
+			"sucess": "Синхронизация ваших проектов с папкой \"com.mojang\" настроена правильно.",
+			"deniedPermission": "Вы настроили синхронизацию с \"com.mojang\", но не предоставили bridge. доступ к папке.",
+			"notSetup": "Вы еще не настроили синхронизацию с \"com.mojang\". Перетащите папку \"com.mojang\" на bridge., чтобы сделать это.",
+			"notSetupTauri": "Вы еще не настроили синхронизацию с \"com.mojang\". Нажмите кнопку \"Связать папку\", чтобы сделать это.",
+			"notAvailable": "Синхронизация проектов с папкой \"com.mojang\" доступна только для пользователей Chrome и Edge."
 		}
 	},
 	"findAndReplace": {
-		"name": "Найти & Заменить",
-		"findOnly": "Находить",
-		"search": "Искать",
+		"name": "Найти и заменить",
+		"findOnly": "Найти",
+		"search": "Поиск",
 		"replace": "Заменить",
 		"replaceAll": "Заменить все",
-		"includeFiles": "Files to Include",
-		"excludeFiles": "Files to Exclude",
-		"noResults": "Результаты не найдены.",
-		"noSearch": "Once you start typing, results for your search query will appear here."
+		"includeFiles": "Файлы для включения",
+		"excludeFiles": "Файлы для исключения",
+		"noResults": "Результатов не найдено.",
+		"noSearch": "Как только вы начнете вводить, результаты для вашего запроса появятся здесь."
 	},
 	"preview": {
-		"name": "Предварительный просмотр",
-		"viewAnimation": "Посмотреть анимацию",
-		"viewModel": "Посмотреть модель",
-		"viewParticle": "Посмотреть партиклы",
-		"viewEntity": "Посмотреть сущность",
-		"viewBlock": "Посмотреть блок",
-		"simulateLoot": "Simulate Loot",
-		"failedClientEntityLoad": "Failed to load connected client entity",
-		"invalidEntity": "Cannot open preview for an entity with invalid JSON. Please fix JSON errors inside of the file and try again.",
-		"chooseGeometry": "Выберите геометрию",
-		"chooseTexture": "Выберите текстуру",
-		"noGeometry": "No valid geometry found inside of this file. Make sure that your JSON is valid, that the file structure is correct and that a geometry with the provided identifier exists.",
-		"noTextures": "No valid texture found for this file. Make sure that your JSON is valid, that the file structure is correct and that a texture is linked to this geometry.",
+		"name": "Предпросмотр",
+		"viewAnimation": "Просмотр анимации",
+		"viewModel": "Просмотр модели",
+		"viewParticle": "Просмотр частиц",
+		"viewEntity": "Просмотр сущности",
+		"viewBlock": "Просмотр блока",
+		"simulateLoot": "Симуляция добычи",
+		"failedClientEntityLoad": "Не удалось загрузить связанную клиентскую сущность",
+		"invalidEntity": "Невозможно открыть предпросмотр для сущности с неверным JSON. Исправьте ошибки JSON в файле и попробуйте снова.",
+		"chooseGeometry": "Выбрать геометрию",
+		"chooseTexture": "Выбрать текстуру",
+		"noGeometry": "Не найдено допустимой геометрии в этом файле. Убедитесь, что ваш JSON действителен, структура файла правильна и существует геометрия с указанным идентификатором.",
+		"noTextures": "Не найдено допустимой текстуры для этого файла. Убедитесь, что ваш JSON действителен, структура файла правильна и текстура связана с этой геометрией.",
 		"lootTableSimulator": {
-			"emptyLootOutput": "Output is empty, try running the loot table to collect results.",
+			"emptyLootOutput": "Вывод пуст, попробуйте запустить таблицу добычи, чтобы собрать результаты.",
 			"data": {
-				"value": "Дата числа",
+				"value": "Значение данных",
 				"enchantments": "Зачарования",
-				"blockStates": "Block States",
-				"itemAuxValue": "Aux Value",
-				"eggIdentifier": "Спавны сущностей",
+				"blockStates": "Состояния блоков",
+				"itemAuxValue": "Дополнительное значение",
+				"eggIdentifier": "Порождает сущность",
 				"bannerType": "Тип баннера",
 				"bookData": {
-					"view": "Посмотреть книгу",
-					"title": "Title",
+					"view": "Просмотр книги",
+					"title": "Название",
 					"author": "Автор"
 				},
 				"durability": "Прочность",
-				"lore": "Лор",
-				"displayName": "Отоброжаемое имя",
-				"mapDestination": "Map Destination"
+				"lore": "Описание",
+				"displayName": "Отображаемое имя",
+				"mapDestination": "Место назначения карты"
 			}
 		}
 	},
 	"initialSetup": {
 		"welcome": "Добро пожаловать в bridge. v2!",
-		"welcomeCaption": "Мощный IDE для Minecraft Аддонов",
+		"welcomeCaption": "Мощная IDE для Minecraft Add-Ons",
 		"step": {
 			"installApp": {
-				"name": "Установка bridge ",
-				"description": "Click here to install bridge. v2 as an app to your device."
+				"name": "Установить bridge.",
+				"description": "Нажмите здесь, чтобы установить bridge. v2 как приложение на ваше устройство."
 			},
 			"bridge": {
-				"name": "bridge. Папка",
-				"description": "Please create a folder where bridge. can save app related data and your add-on projects."
+				"name": "Папка bridge.",
+				"description": "Пожалуйста, создайте папку, где bridge. может сохранять данные приложения и ваши проекты аддонов."
 			},
 			"bridgeProject": {
-				"name": "bridge. Проект",
-				"description": "Do you want to create a new project or import an existing project from a .brproject file?",
+				"name": "Проект bridge.",
+				"description": "Вы хотите создать новый проект или импортировать существующий проект из файла .brproject?",
 				"createNew": {
 					"name": "Новый проект",
-					"description": "Создать новый проект ."
+					"description": "Создать новый проект."
 				},
 				"importExisting": {
-					"name": "Импортировать проект",
-					"description": "Import an existing project."
+					"name": "Импорт проекта",
+					"description": "Импортировать существующий проект."
 				}
 			},
 			"comMojang": {
-				"name": "com.mojang Folder",
-				"description": "In order to sync your projects to Minecraft automatically, please install our native app."
+				"name": "Папка com.mojang",
+				"description": "Для автоматической синхронизации ваших проектов с Minecraft, пожалуйста, установите наше нативное приложение."
 			},
 			"editorType": {
-				"name": "Выберите тип редактирования",
-				"description": "Choose how you want to edit your JSON files. You can change this later in the settings.",
+				"name": "Выбор типа редактора",
+				"description": "Выберите, как вы хотите редактировать ваши JSON-файлы. Вы можете изменить это позже в настройках.",
 				"rawText": {
-					"name": "Raw Text",
-					"description": "Edit JSON as raw text. Ideal for intermediate to advanced developers. Comes with advanced auto-completions and JSON validation."
+					"name": "Сырой текст",
+					"description": "Редактировать JSON как сырой текст. Идеально для разработчиков среднего и продвинутого уровня. Включает расширенные автодополнения и проверку JSON."
 				},
 				"treeEditor": {
-					"name": "Tree Editor",
-					"description": "Edit JSON as a tree-like structure that requires little to no JSON knowledge. Ideal for beginners and intermediate creators."
+					"name": "Редактор дерева",
+					"description": "Редактировать JSON как древовидную структуру, требующую минимальных знаний JSON. Идеально для начинающих и создателей среднего уровня."
 				}
 			}
 		}
@@ -1216,57 +1240,57 @@
 			"add": "Добавить",
 			"addObject": "Добавить объект",
 			"addArray": "Добавить массив",
-			"addValue": "Добавить число",
-			"forceValue": "Значение числа",
-			"edit": "Редактировать",
-			"childHasError": "One or more children have diagnostics"
+			"addValue": "Добавить значение",
+			"forceValue": "Принудительное значение",
+			"edit": "Изменить",
+			"childHasError": "Один или несколько дочерних элементов имеют ошибки"
 		},
 		"langValidation": {
 			"noValue": {
-				"errorMessage": "Language keys must be assigned a value",
-				"quickFix": "Add a value to this key"
+				"errorMessage": "Ключи языка должны иметь значение",
+				"quickFix": "Добавить значение к этому ключу"
 			}
 		}
 	},
 	"validation": {
 		"mcfunction": {
 			"invalidArgument": {
-				"name": "Argument {{$1}} is not valid here"
+				"name": "Аргумент {{$1}} недействителен здесь"
 			},
 			"unknownCommand": {
-				"name": "Command {{$1}} does not exist"
+				"name": "Команда {{$1}} не существует"
 			},
 			"missingArguments": {
-				"name": "Command {{$1}} requires more arguments"
+				"name": "Команда {{$1}} требует больше аргументов"
 			},
 			"unknownSchema": {
-				"name": "Unknown schema value {{$1}}"
+				"name": "Неизвестное значение схемы {{$1}}"
 			},
 			"unknownSchemaInArgument": {
-				"name": "Unknown schema value {{$1}} for argument {{$2}}"
+				"name": "Неизвестное значение схемы {{$1}} для аргумента {{$2}}"
 			},
 			"invalidSelectorBase": {
-				"name": "Invalid target selector base {{$1}}"
+				"name": "Недействительная база селектора {{$1}}"
 			},
 			"unexpectedSymbol": {
-				"name": "Unexpected symbol {{$1}}. Expected {{$2}}"
+				"name": "Неожиданный символ {{$1}}. Ожидалось {{$2}}"
 			},
 			"invalidSelectorArgument": {
-				"name": "Invalid selector argument {{$1}}"
+				"name": "Недействительный аргумент селектора {{$1}}"
 			},
 			"argumentNoSupport": {
-				"name": "Argument {{$1}} does not support {{$2}}",
-				"bothConditions": "Argument {{$1}} does not support multiple instances when not all negated"
+				"name": "Аргумент {{$1}} не поддерживает {{$2}}",
+				"bothConditions": "Аргумент {{$1}} не поддерживает несколько экземпляров, если не все отрицаются"
 			},
 			"invalidSelectorArgumentValue": {
-				"name": "Invalid selector argument value {{$1}} for argument {{$2}}"
+				"name": "Недействительное значение аргумента селектора {{$1}} для аргумента {{$2}}"
 			},
 			"conditions": {
-				"negation": "negation",
-				"multipleInstances": "multiple instances"
+				"negation": "отрицание",
+				"multipleInstances": "несколько экземпляров"
 			},
 			"tokens": {
-				"selectorArgument": "selector argument"
+				"selectorArgument": "аргумент селектора"
 			}
 		}
 	},
@@ -1280,7 +1304,7 @@
 		},
 		"compiler": {
 			"name": "Компилятор",
-			"noLogs": "Нету логов для показа..."
+			"noLogs": "Нет логов для отображения..."
 		}
 	},
 	"greet": {
