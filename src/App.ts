@@ -48,7 +48,6 @@ export function setupBeforeComponents() {
 	FileExplorer.setup()
 	CreateProjectWindow.setup()
 
-	setupActions()
 	setupSidebar()
 
 	setupEditorSettings()
@@ -87,6 +86,8 @@ export async function setup() {
 	console.time('[App] Settings')
 	await Settings.load()
 	console.timeEnd('[App] Settings')
+
+	setupActions()
 
 	console.time('[App] Data')
 	await Data.load()

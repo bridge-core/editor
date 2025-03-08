@@ -1,4 +1,6 @@
 import { Event } from '@/libs/event/Event'
+import { get, set } from 'idb-keyval'
+import { Settings } from '@/libs/settings/Settings'
 
 interface ActionConfig {
 	id: string
@@ -34,7 +36,12 @@ export class Action {
 	public constructor(config: ActionConfig) {
 		this.id = config.id
 		this.trigger = config.trigger
-		this.keyBinding = config.keyBinding
+
+		Settings.addSetting(`actionKeybind-${this.id}`, {
+			default: undefined,
+		})
+
+		this.keyBinding = Settings.get(`actionKeybind-${this.id}`) ?? config.keyBinding
 
 		this.icon = config.icon
 		this.name = config.name
@@ -92,6 +99,8 @@ export class Action {
 		this.keyBinding = [ctrlModifier ? 'Ctrl' : undefined, altModifier ? 'Alt' : undefined, shiftModifier ? 'Shift' : undefined, key.toUpperCase()]
 			.filter((item) => item !== undefined)
 			.join(' + ')
+
+		Settings.set(`actionKeybind-${this.id}`, this.keyBinding)
 
 		this.updated.dispatch()
 	}
