@@ -67,9 +67,7 @@ export class TabManager {
 	public static async loadedProject() {
 		if (!ProjectManager.currentProject) return
 
-		TabManager.tabSystems.value = []
-		TabManager.focusedTabSystem.value = null
-		TabManager.tabSystemSaveListenters = {}
+		await TabManager.clear()
 
 		await TabManager.addTabSystem()
 
