@@ -50,6 +50,7 @@ export function setupActions() {
 			name: 'actions.goHome.name',
 			description: 'actions.goHome.description',
 			icon: 'home',
+			enabled: false,
 		})
 	)
 

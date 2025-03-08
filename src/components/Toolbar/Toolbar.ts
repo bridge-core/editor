@@ -1,6 +1,6 @@
 import { Ref, ref } from 'vue'
 
-type ToolbarItem = Button | Dropdown
+export type ToolbarItem = Button | Dropdown
 
 export interface Button {
 	type: 'button'
@@ -52,7 +52,7 @@ export class Toolbar {
 		this.addButton('openSettings')
 
 		this.addDropdown('file', 'toolbar.file.name', [
-			{ type: 'button', action: 'newFile' },
+			{ type: 'button', action: 'createFile' },
 			{ type: 'button', action: 'openFile' },
 			{ type: 'button', action: 'openFolder' },
 			{ type: 'button', action: 'searchFile' },

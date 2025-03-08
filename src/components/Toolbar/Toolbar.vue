@@ -9,10 +9,11 @@ import { appVersion } from '@/libs/app/AppEnv'
 import { useTranslate } from '@/libs/locales/Locales'
 import { appWindow } from '@tauri-apps/api/window'
 import { tauriBuild } from '@/libs/tauri/Tauri'
-import { Toolbar } from './Toolbar'
+import { DropdownItem, Toolbar, ToolbarItem } from './Toolbar'
 import { ChangelogWindow } from '@/components/Windows/Changelog/ChangelogWindow'
-import { ActionManager } from '@/libs/actions/ActionManager'
+import { ActionManager, useAction } from '@/libs/actions/ActionManager'
 import { useIsMobile } from '@/libs/Mobile'
+import { onMounted, Ref, ref } from 'vue'
 
 const t = useTranslate()
 
@@ -21,15 +22,50 @@ function openChangelog() {
 }
 
 const isMobile = useIsMobile()
+
+const renderableToolbarItems: Ref<ToolbarItem[]> = ref([])
+
+onMounted(() => {
+	renderableToolbarItems.value = Toolbar.items.value.filter((item) => shouldRenderItem(item))
+
+	ActionManager.actionsUpdated.on(() => {
+		renderableToolbarItems.value = Toolbar.items.value.filter((item) => shouldRenderItem(item))
+	})
+})
+
+function shouldRenderItem(item: ToolbarItem): boolean {
+	if (item.type === 'button') return ActionManager.actions[item.action]?.enabled ?? false
+	if (item.type === 'dropdown') {
+		return item.items.some((item) => item.type === 'button' && (ActionManager.actions[item.action]?.enabled ?? false))
+	}
+
+	return true
+}
+
+function cleanupDropdownItems(items: DropdownItem[]): DropdownItem[] {
+	let cleanedItems: DropdownItem[] = []
+
+	for (const item of items) {
+		if (item.type === 'seperator' && cleanedItems.length === 0) continue
+		if (item.type === 'seperator' && cleanedItems[cleanedItems.length - 1].type === 'seperator') continue
+		if (item.type === 'button' && !ActionManager.actions[item.action]?.enabled) continue
+
+		cleanedItems.push(item)
+	}
+
+	if (cleanedItems.length > 0 && cleanedItems[cleanedItems.length - 1].type === 'seperator') cleanedItems.pop()
+
+	return cleanedItems
+}
 </script>
 
 <template>
 	<div data-tauri-drag-region class="bg-toolbar h-toolbar flex justify-between items-center px-2">
 		<div class="flex gap-4">
-			<span v-for="item in Toolbar.items.value">
+			<span v-for="item in renderableToolbarItems">
 				<button v-if="item.type === 'button'" class="flex items-center gap-1 group" @click="ActionManager.trigger(item.action)">
 					<span class="text-sm group-hover:text-primary transition-colors duration-100 ease-out font-theme select-none">{{
-						t(ActionManager.actions[item.action].name ?? 'actions.unknown.name')
+						t(ActionManager.actions[item.action]?.name ?? 'actions.unknown.name')
 					}}</span>
 				</button>
 
@@ -42,7 +78,7 @@ const isMobile = useIsMobile()
 
 					<template #menu="{ close }">
 						<div class="bg-background-secondary rounded mt-2 shadow-window overflow-hidden relative z-10">
-							<span v-for="dropdownItem in item.items">
+							<span v-for="dropdownItem in cleanupDropdownItems(item.items)">
 								<ActionContextMenuItem
 									v-if="dropdownItem.type === 'button'"
 									:action="dropdownItem.action"

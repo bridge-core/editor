@@ -52,3 +52,25 @@ export function useActions(): ShallowRef<Record<string, Action>> {
 
 	return current
 }
+
+export function useAction(action: string): ShallowRef<Action | null> {
+	const current: ShallowRef<Action | null> = shallowRef(ActionManager.actions[action])
+
+	function update() {
+		//@ts-ignore this value in't acutally read by any code, it just triggers an update
+		current.value = null
+		current.value = ActionManager.actions[action]
+	}
+
+	let disposable: Disposable
+
+	onMounted(() => {
+		disposable = ActionManager.actionsUpdated.on(update)
+	})
+
+	onUnmounted(() => {
+		disposable.dispose()
+	})
+
+	return current
+}
