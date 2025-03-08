@@ -59,8 +59,6 @@ function rebind(action: Action) {
 	}
 
 	cancelRebind = () => {
-		console.trace('Cancel')
-
 		window.removeEventListener('keydown', listener)
 
 		cancelRebind = null
@@ -87,7 +85,7 @@ onUnmounted(() => {
 
 				<div class="flex-1" />
 
-				<IconButton class="content-center" icon="play_arrow" @click="action.trigger" />
+				<IconButton class="content-center" icon="play_arrow" @click="action.trigger()" />
 			</div>
 
 			<div class="flex w-full">

@@ -2,7 +2,7 @@ import { Event } from '@/libs/event/Event'
 
 interface ActionConfig {
 	id: string
-	trigger: (data?: unknown) => void
+	execute: (data?: unknown) => void
 	keyBinding?: string
 	icon?: string
 	name?: string
@@ -17,11 +17,11 @@ export class Action {
 	public icon?: string
 	public name?: string
 	public description?: string
-
-	public trigger: (data?: unknown) => void
+	public enabled: boolean = true
 
 	public updated: Event<void> = new Event()
 
+	private execute: (data?: unknown) => void
 	private ctrlModifier: boolean = false
 	private shiftModifier: boolean = false
 	private altModifier: boolean = false
@@ -29,7 +29,7 @@ export class Action {
 
 	public constructor(config: ActionConfig) {
 		this.id = config.id
-		this.trigger = config.trigger
+		this.execute = config.execute
 		this.keyBinding = config.keyBinding
 
 		this.icon = config.icon
@@ -67,6 +67,28 @@ export class Action {
 
 	public static enableAll() {
 		Action.allDisabled = false
+	}
+
+	public trigger(data?: unknown) {
+		if (!this.enabled) return
+
+		this.execute(data)
+	}
+
+	public enable() {
+		if (this.enabled) return
+
+		this.enabled = true
+
+		this.updated.dispatch()
+	}
+
+	public disable() {
+		if (!this.enabled) return
+
+		this.enabled = false
+
+		this.updated.dispatch()
 	}
 
 	public rebind(key: string, ctrlModifier: boolean, shiftModifier: boolean, altModifier: boolean) {

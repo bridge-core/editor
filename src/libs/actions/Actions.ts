@@ -26,7 +26,7 @@ export function setupActions() {
 	ActionManager.addAction(
 		new Action({
 			id: 'undo',
-			trigger: () => {
+			execute: () => {
 				const focusedTab = TabManager.getFocusedTab()
 
 				if (focusedTab === null) return
@@ -45,7 +45,7 @@ export function setupActions() {
 	ActionManager.addAction(
 		new Action({
 			id: 'redo',
-			trigger: () => {
+			execute: () => {
 				const focusedTab = TabManager.getFocusedTab()
 
 				if (focusedTab === null) return
@@ -64,7 +64,7 @@ export function setupActions() {
 	ActionManager.addAction(
 		new Action({
 			id: 'save',
-			trigger: () => {
+			execute: () => {
 				const focusedTab = TabManager.getFocusedTab()
 
 				if (focusedTab === null) return
@@ -82,7 +82,7 @@ export function setupActions() {
 	ActionManager.addAction(
 		new Action({
 			id: 'copy',
-			trigger: () => {
+			execute: () => {
 				const focusedTab = TabManager.getFocusedTab()
 
 				if (focusedTab === null) return
@@ -101,7 +101,7 @@ export function setupActions() {
 	ActionManager.addAction(
 		new Action({
 			id: 'paste',
-			trigger: () => {
+			execute: () => {
 				const focusedTab = TabManager.getFocusedTab()
 
 				if (focusedTab === null) return
@@ -120,7 +120,7 @@ export function setupActions() {
 	ActionManager.addAction(
 		new Action({
 			id: 'cut',
-			trigger: () => {
+			execute: () => {
 				const focusedTab = TabManager.getFocusedTab()
 
 				if (focusedTab === null) return
@@ -139,7 +139,7 @@ export function setupActions() {
 	ActionManager.addAction(
 		new Action({
 			id: 'delete',
-			trigger: () => {
+			execute: () => {
 				const focusedTab = TabManager.getFocusedTab()
 
 				if (focusedTab === null) return
@@ -162,7 +162,7 @@ export function setupActions() {
 	ActionManager.addAction(
 		new Action({
 			id: 'deleteFileSystemEntry',
-			trigger: async (path: unknown) => {
+			execute: async (path: unknown) => {
 				if (typeof path !== 'string') return
 
 				if (!(await fileSystem.exists(path))) return
@@ -186,7 +186,7 @@ export function setupActions() {
 	ActionManager.addAction(
 		new Action({
 			id: 'createFile',
-			trigger: async (path: unknown) => {
+			execute: async (path: unknown) => {
 				if (typeof path !== 'string') return
 
 				Windows.open(
@@ -204,7 +204,7 @@ export function setupActions() {
 	ActionManager.addAction(
 		new Action({
 			id: 'createFolder',
-			trigger: async (path: unknown) => {
+			execute: async (path: unknown) => {
 				if (typeof path !== 'string') return
 
 				Windows.open(
@@ -222,7 +222,7 @@ export function setupActions() {
 	ActionManager.addAction(
 		new Action({
 			id: 'renameFileSystemEntry',
-			trigger: async (path: unknown) => {
+			execute: async (path: unknown) => {
 				if (typeof path !== 'string') return
 
 				if (!(await fileSystem.exists(path))) return
@@ -262,7 +262,7 @@ export function setupActions() {
 	ActionManager.addAction(
 		new Action({
 			id: 'duplicateFileSystemEntry',
-			trigger: async (path: unknown) => {
+			execute: async (path: unknown) => {
 				if (typeof path !== 'string') return
 
 				if (!(await fileSystem.exists(path))) return
@@ -298,7 +298,7 @@ export function setupActions() {
 	ActionManager.addAction(
 		new Action({
 			id: 'copyFileSystemEntry',
-			trigger: async (path: unknown) => {
+			execute: async (path: unknown) => {
 				if (typeof path !== 'string') return
 
 				if (!(await fileSystem.exists(path))) return
@@ -314,7 +314,7 @@ export function setupActions() {
 	ActionManager.addAction(
 		new Action({
 			id: 'pasteFileSystemEntry',
-			trigger: async (path: unknown) => {
+			execute: async (path: unknown) => {
 				if (typeof path !== 'string') return
 
 				const clipboardEntry = getClipboard()
@@ -352,7 +352,7 @@ export function setupActions() {
 	ActionManager.addAction(
 		new Action({
 			id: 'format',
-			trigger: () => {
+			execute: () => {
 				const focusedTab = TabManager.getFocusedTab()
 
 				if (focusedTab === null) return
@@ -370,7 +370,7 @@ export function setupActions() {
 	ActionManager.addAction(
 		new Action({
 			id: 'goToSymbol',
-			trigger: () => {
+			execute: () => {
 				const focusedTab = TabManager.getFocusedTab()
 
 				if (focusedTab === null) return
@@ -388,7 +388,7 @@ export function setupActions() {
 	ActionManager.addAction(
 		new Action({
 			id: 'changeAllOccurrences',
-			trigger: () => {
+			execute: () => {
 				const focusedTab = TabManager.getFocusedTab()
 
 				if (focusedTab === null) return
@@ -406,7 +406,7 @@ export function setupActions() {
 	ActionManager.addAction(
 		new Action({
 			id: 'goToDefinition',
-			trigger: () => {
+			execute: () => {
 				const focusedTab = TabManager.getFocusedTab()
 
 				if (focusedTab === null) return
@@ -424,7 +424,7 @@ export function setupActions() {
 	ActionManager.addAction(
 		new Action({
 			id: 'viewDocumentation',
-			trigger: () => {
+			execute: () => {
 				const focusedTab = TabManager.getFocusedTab()
 
 				if (focusedTab === null) return
@@ -442,7 +442,7 @@ export function setupActions() {
 	ActionManager.addAction(
 		new Action({
 			id: 'clearNotifications',
-			trigger: () => {
+			execute: () => {
 				NotificationSystem.clearNotifications()
 			},
 			name: 'actions.clearNotifications.name',
@@ -454,7 +454,7 @@ export function setupActions() {
 	ActionManager.addAction(
 		new Action({
 			id: 'goHome',
-			trigger: () => {
+			execute: () => {
 				ProjectManager.closeProject()
 			},
 			name: 'actions.goHome.name',
@@ -466,7 +466,7 @@ export function setupActions() {
 	ActionManager.addAction(
 		new Action({
 			id: 'openSettings',
-			trigger: () => {
+			execute: () => {
 				SettingsWindow.open()
 			},
 			keyBinding: 'Ctrl + ,',
@@ -479,7 +479,7 @@ export function setupActions() {
 	ActionManager.addAction(
 		new Action({
 			id: 'openExtensions',
-			trigger: () => {
+			execute: () => {
 				ExtensionLibraryWindow.open()
 			},
 			name: 'actions.extensions.name',
@@ -493,7 +493,7 @@ export function setupActions() {
 	ActionManager.addAction(
 		new Action({
 			id: 'exportBrProject',
-			trigger: () => {
+			execute: () => {
 				exportAsBrProject()
 			},
 			name: 'packExplorer.exportAs.brproject',
@@ -504,7 +504,7 @@ export function setupActions() {
 	ActionManager.addAction(
 		new Action({
 			id: 'exportMcAddon',
-			trigger: () => {
+			execute: () => {
 				exportAsMcAddon()
 			},
 			name: 'packExplorer.exportAs.mcaddon',
@@ -515,7 +515,7 @@ export function setupActions() {
 	ActionManager.addAction(
 		new Action({
 			id: 'exportMcWorld',
-			trigger: () => {
+			execute: () => {
 				exportAsTemplate(true)
 			},
 			name: 'packExplorer.exportAs.mcworld',
@@ -526,7 +526,7 @@ export function setupActions() {
 	ActionManager.addAction(
 		new Action({
 			id: 'exportMcTemplate',
-			trigger: () => {
+			execute: () => {
 				exportAsTemplate()
 			},
 			name: 'packExplorer.exportAs.mctemplate',
@@ -537,7 +537,7 @@ export function setupActions() {
 	ActionManager.addAction(
 		new Action({
 			id: 'importProject',
-			trigger: async () => {
+			execute: async () => {
 				const files = await window.showOpenFilePicker({
 					multiple: false,
 					types: [
@@ -571,7 +571,7 @@ export function setupActions() {
 	ActionManager.addAction(
 		new Action({
 			id: 'openDownloadGuide',
-			trigger() {
+			execute() {
 				openUrl('https://bridge-core.app/guide/download/')
 			},
 			name: 'actions.download.name',
@@ -585,7 +585,7 @@ function setupConvertActions() {
 	ActionManager.addAction(
 		new Action({
 			id: 'convertToObject',
-			trigger: () => {
+			execute: () => {
 				const focusedTab = TabManager.getFocusedTab()
 
 				if (focusedTab === null) return
@@ -627,7 +627,7 @@ function setupConvertActions() {
 	ActionManager.addAction(
 		new Action({
 			id: 'convertToArray',
-			trigger: () => {
+			execute: () => {
 				const focusedTab = TabManager.getFocusedTab()
 
 				if (focusedTab === null) return
@@ -672,7 +672,7 @@ function setupConvertActions() {
 	ActionManager.addAction(
 		new Action({
 			id: 'convertToNull',
-			trigger: () => {
+			execute: () => {
 				const focusedTab = TabManager.getFocusedTab()
 
 				if (focusedTab === null) return
@@ -704,7 +704,7 @@ function setupConvertActions() {
 	ActionManager.addAction(
 		new Action({
 			id: 'convertToNumber',
-			trigger: () => {
+			execute: () => {
 				const focusedTab = TabManager.getFocusedTab()
 
 				if (focusedTab === null) return
@@ -744,7 +744,7 @@ function setupConvertActions() {
 	ActionManager.addAction(
 		new Action({
 			id: 'convertToString',
-			trigger: () => {
+			execute: () => {
 				const focusedTab = TabManager.getFocusedTab()
 
 				if (focusedTab === null) return
@@ -780,7 +780,7 @@ function setupConvertActions() {
 	ActionManager.addAction(
 		new Action({
 			id: 'convertToBoolean',
-			trigger: () => {
+			execute: () => {
 				const focusedTab = TabManager.getFocusedTab()
 
 				if (focusedTab === null) return
