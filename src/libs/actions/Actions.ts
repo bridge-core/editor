@@ -23,7 +23,122 @@ import { importFromMcPack } from '@/libs/import/McPack'
 import { openUrl } from '@/libs/OpenUrl'
 
 export function setupActions() {
+	setupEditActions()
+
+	setupFileSystemActions()
+
+	setupCodeEditorActions()
+
 	ActionManager.addAction(
+		new Action({
+			id: 'clearNotifications',
+			execute: () => {
+				NotificationSystem.clearNotifications()
+			},
+			name: 'actions.clearNotifications.name',
+			description: 'actions.clearNotifications.description',
+			icon: 'delete_forever',
+		})
+	)
+
+	const goHome = ActionManager.addAction(
+		new Action({
+			id: 'goHome',
+			execute: () => {
+				ProjectManager.closeProject()
+			},
+			name: 'actions.goHome.name',
+			description: 'actions.goHome.description',
+			icon: 'home',
+		})
+	)
+
+	ProjectManager.updatedCurrentProject.on(() => {
+		if (ProjectManager.currentProject !== null) {
+			goHome.enable()
+		} else {
+			goHome.disable()
+		}
+	})
+
+	ActionManager.addAction(
+		new Action({
+			id: 'openSettings',
+			execute: () => {
+				SettingsWindow.open()
+			},
+			keyBinding: 'Ctrl + ,',
+			name: 'actions.settings.name',
+			description: 'actions.settings.description',
+			icon: 'settings',
+		})
+	)
+
+	ActionManager.addAction(
+		new Action({
+			id: 'openExtensions',
+			execute: () => {
+				ExtensionLibraryWindow.open()
+			},
+			name: 'actions.extensions.name',
+			description: 'actions.extensions.description',
+			icon: 'extension',
+		})
+	)
+
+	setupExportActions()
+
+	ActionManager.addAction(
+		new Action({
+			id: 'importProject',
+			execute: async () => {
+				const files = await window.showOpenFilePicker({
+					multiple: false,
+					types: [
+						{
+							description: 'Choose a Project',
+							accept: {
+								'application/zip': ['.brproject', '.mcaddon', '.mcpack'],
+							},
+						},
+					],
+				})
+
+				if (!files) return
+
+				const file = files[0]
+
+				if (file.name.endsWith('.mcaddon')) {
+					await importFromMcAddon(await (await file.getFile()).arrayBuffer(), basename(file.name, '.mcaddon'))
+				} else if (file.name.endsWith('.mcpack')) {
+					await importFromMcPack(await (await file.getFile()).arrayBuffer(), basename(file.name, '.mcpack'))
+				} else {
+					await importFromBrProject(await (await file.getFile()).arrayBuffer(), basename(file.name, '.brproject'))
+				}
+			},
+			name: 'actions.importProject.name',
+			description: 'actions.importProject.description',
+			icon: 'package',
+		})
+	)
+
+	setupConvertActions()
+
+	ActionManager.addAction(
+		new Action({
+			id: 'openDownloadGuide',
+			execute() {
+				openUrl('https://bridge-core.app/guide/download/')
+			},
+			name: 'actions.download.name',
+			description: 'actions.download.description',
+			icon: 'download',
+		})
+	)
+}
+
+function setupEditActions() {
+	const undo = ActionManager.addAction(
 		new Action({
 			id: 'undo',
 			execute: () => {
@@ -42,7 +157,7 @@ export function setupActions() {
 		})
 	)
 
-	ActionManager.addAction(
+	const redo = ActionManager.addAction(
 		new Action({
 			id: 'redo',
 			execute: () => {
@@ -61,7 +176,7 @@ export function setupActions() {
 		})
 	)
 
-	ActionManager.addAction(
+	const save = ActionManager.addAction(
 		new Action({
 			id: 'save',
 			execute: () => {
@@ -79,7 +194,7 @@ export function setupActions() {
 		})
 	)
 
-	ActionManager.addAction(
+	const copy = ActionManager.addAction(
 		new Action({
 			id: 'copy',
 			execute: () => {
@@ -98,7 +213,7 @@ export function setupActions() {
 		})
 	)
 
-	ActionManager.addAction(
+	const paste = ActionManager.addAction(
 		new Action({
 			id: 'paste',
 			execute: () => {
@@ -117,7 +232,7 @@ export function setupActions() {
 		})
 	)
 
-	ActionManager.addAction(
+	const cut = ActionManager.addAction(
 		new Action({
 			id: 'cut',
 			execute: () => {
@@ -136,7 +251,7 @@ export function setupActions() {
 		})
 	)
 
-	ActionManager.addAction(
+	const deleteAction = ActionManager.addAction(
 		new Action({
 			id: 'delete',
 			execute: () => {
@@ -159,7 +274,19 @@ export function setupActions() {
 		})
 	)
 
-	ActionManager.addAction(
+	for (const action of [undo, redo, save, copy, paste, cut, deleteAction]) {
+		TabManager.focusedTabSystemChanged.on(() => {
+			if (TabManager.focusedTabSystem.value === null) {
+				action.disable()
+			} else {
+				action.enable()
+			}
+		})
+	}
+}
+
+function setupFileSystemActions() {
+	const deleteFileSystemEntry = ActionManager.addAction(
 		new Action({
 			id: 'deleteFileSystemEntry',
 			execute: async (path: unknown) => {
@@ -183,7 +310,7 @@ export function setupActions() {
 		})
 	)
 
-	ActionManager.addAction(
+	const createFile = ActionManager.addAction(
 		new Action({
 			id: 'createFile',
 			execute: async (path: unknown) => {
@@ -201,7 +328,7 @@ export function setupActions() {
 		})
 	)
 
-	ActionManager.addAction(
+	const createFolder = ActionManager.addAction(
 		new Action({
 			id: 'createFolder',
 			execute: async (path: unknown) => {
@@ -219,7 +346,7 @@ export function setupActions() {
 		})
 	)
 
-	ActionManager.addAction(
+	const renameFileSystemEntry = ActionManager.addAction(
 		new Action({
 			id: 'renameFileSystemEntry',
 			execute: async (path: unknown) => {
@@ -259,7 +386,7 @@ export function setupActions() {
 		})
 	)
 
-	ActionManager.addAction(
+	const duplicateFileSystemEntry = ActionManager.addAction(
 		new Action({
 			id: 'duplicateFileSystemEntry',
 			execute: async (path: unknown) => {
@@ -295,7 +422,7 @@ export function setupActions() {
 		})
 	)
 
-	ActionManager.addAction(
+	const copyFileSystemEntry = ActionManager.addAction(
 		new Action({
 			id: 'copyFileSystemEntry',
 			execute: async (path: unknown) => {
@@ -311,7 +438,7 @@ export function setupActions() {
 		})
 	)
 
-	ActionManager.addAction(
+	const pasteFileSystemEntry = ActionManager.addAction(
 		new Action({
 			id: 'pasteFileSystemEntry',
 			execute: async (path: unknown) => {
@@ -349,7 +476,19 @@ export function setupActions() {
 		})
 	)
 
-	ActionManager.addAction(
+	for (const action of [deleteFileSystemEntry, createFile, createFolder, renameFileSystemEntry, duplicateFileSystemEntry, copyFileSystemEntry, pasteFileSystemEntry]) {
+		ProjectManager.updatedCurrentProject.on(() => {
+			if (ProjectManager.currentProject === null) {
+				action.disable()
+			} else {
+				action.enable()
+			}
+		})
+	}
+}
+
+function setupCodeEditorActions() {
+	const format = ActionManager.addAction(
 		new Action({
 			id: 'format',
 			execute: () => {
@@ -367,7 +506,7 @@ export function setupActions() {
 		})
 	)
 
-	ActionManager.addAction(
+	const goToSymbol = ActionManager.addAction(
 		new Action({
 			id: 'goToSymbol',
 			execute: () => {
@@ -385,7 +524,7 @@ export function setupActions() {
 		})
 	)
 
-	ActionManager.addAction(
+	const changeAllOccurrences = ActionManager.addAction(
 		new Action({
 			id: 'changeAllOccurrences',
 			execute: () => {
@@ -403,7 +542,7 @@ export function setupActions() {
 		})
 	)
 
-	ActionManager.addAction(
+	const goToDefinition = ActionManager.addAction(
 		new Action({
 			id: 'goToDefinition',
 			execute: () => {
@@ -421,7 +560,7 @@ export function setupActions() {
 		})
 	)
 
-	ActionManager.addAction(
+	const viewDocumentation = ActionManager.addAction(
 		new Action({
 			id: 'viewDocumentation',
 			execute: () => {
@@ -438,59 +577,10 @@ export function setupActions() {
 			icon: 'menu_book',
 		})
 	)
+}
 
-	ActionManager.addAction(
-		new Action({
-			id: 'clearNotifications',
-			execute: () => {
-				NotificationSystem.clearNotifications()
-			},
-			name: 'actions.clearNotifications.name',
-			description: 'actions.clearNotifications.description',
-			icon: 'delete_forever',
-		})
-	)
-
-	ActionManager.addAction(
-		new Action({
-			id: 'goHome',
-			execute: () => {
-				ProjectManager.closeProject()
-			},
-			name: 'actions.goHome.name',
-			description: 'actions.goHome.description',
-			icon: 'home',
-		})
-	)
-
-	ActionManager.addAction(
-		new Action({
-			id: 'openSettings',
-			execute: () => {
-				SettingsWindow.open()
-			},
-			keyBinding: 'Ctrl + ,',
-			name: 'actions.settings.name',
-			description: 'actions.settings.description',
-			icon: 'settings',
-		})
-	)
-
-	ActionManager.addAction(
-		new Action({
-			id: 'openExtensions',
-			execute: () => {
-				ExtensionLibraryWindow.open()
-			},
-			name: 'actions.extensions.name',
-			description: 'actions.extensions.description',
-			icon: 'extension',
-		})
-	)
-
-	setupConvertActions()
-
-	ActionManager.addAction(
+function setupExportActions() {
+	const exportBrProject = ActionManager.addAction(
 		new Action({
 			id: 'exportBrProject',
 			execute: () => {
@@ -501,7 +591,7 @@ export function setupActions() {
 		})
 	)
 
-	ActionManager.addAction(
+	const exportMcAddon = ActionManager.addAction(
 		new Action({
 			id: 'exportMcAddon',
 			execute: () => {
@@ -512,7 +602,7 @@ export function setupActions() {
 		})
 	)
 
-	ActionManager.addAction(
+	const exportMcWorld = ActionManager.addAction(
 		new Action({
 			id: 'exportMcWorld',
 			execute: () => {
@@ -523,7 +613,7 @@ export function setupActions() {
 		})
 	)
 
-	ActionManager.addAction(
+	const exportMcTemplate = ActionManager.addAction(
 		new Action({
 			id: 'exportMcTemplate',
 			execute: () => {
@@ -534,55 +624,19 @@ export function setupActions() {
 		})
 	)
 
-	ActionManager.addAction(
-		new Action({
-			id: 'importProject',
-			execute: async () => {
-				const files = await window.showOpenFilePicker({
-					multiple: false,
-					types: [
-						{
-							description: 'Choose a Project',
-							accept: {
-								'application/zip': ['.brproject', '.mcaddon', '.mcpack'],
-							},
-						},
-					],
-				})
-
-				if (!files) return
-
-				const file = files[0]
-
-				if (file.name.endsWith('.mcaddon')) {
-					await importFromMcAddon(await (await file.getFile()).arrayBuffer(), basename(file.name, '.mcaddon'))
-				} else if (file.name.endsWith('.mcpack')) {
-					await importFromMcPack(await (await file.getFile()).arrayBuffer(), basename(file.name, '.mcpack'))
-				} else {
-					await importFromBrProject(await (await file.getFile()).arrayBuffer(), basename(file.name, '.brproject'))
-				}
-			},
-			name: 'actions.importProject.name',
-			description: 'actions.importProject.description',
-			icon: 'package',
+	for (const action of [exportBrProject, exportMcAddon, exportMcAddon, exportMcTemplate]) {
+		ProjectManager.updatedCurrentProject.on(() => {
+			if (ProjectManager.currentProject === null) {
+				action.disable()
+			} else {
+				action.enable()
+			}
 		})
-	)
-
-	ActionManager.addAction(
-		new Action({
-			id: 'openDownloadGuide',
-			execute() {
-				openUrl('https://bridge-core.app/guide/download/')
-			},
-			name: 'actions.download.name',
-			description: 'actions.download.description',
-			icon: 'download',
-		})
-	)
+	}
 }
 
 function setupConvertActions() {
-	ActionManager.addAction(
+	const convertToObject = ActionManager.addAction(
 		new Action({
 			id: 'convertToObject',
 			execute: () => {
@@ -624,7 +678,7 @@ function setupConvertActions() {
 		})
 	)
 
-	ActionManager.addAction(
+	const convertToArray = ActionManager.addAction(
 		new Action({
 			id: 'convertToArray',
 			execute: () => {
@@ -669,7 +723,7 @@ function setupConvertActions() {
 		})
 	)
 
-	ActionManager.addAction(
+	const convertToNull = ActionManager.addAction(
 		new Action({
 			id: 'convertToNull',
 			execute: () => {
@@ -701,7 +755,7 @@ function setupConvertActions() {
 		})
 	)
 
-	ActionManager.addAction(
+	const convertToNumber = ActionManager.addAction(
 		new Action({
 			id: 'convertToNumber',
 			execute: () => {
@@ -741,7 +795,7 @@ function setupConvertActions() {
 		})
 	)
 
-	ActionManager.addAction(
+	const convertToString = ActionManager.addAction(
 		new Action({
 			id: 'convertToString',
 			execute: () => {
@@ -777,7 +831,7 @@ function setupConvertActions() {
 		})
 	)
 
-	ActionManager.addAction(
+	const convertToBoolean = ActionManager.addAction(
 		new Action({
 			id: 'convertToBoolean',
 			execute: () => {
@@ -812,4 +866,18 @@ function setupConvertActions() {
 			icon: 'swap_horiz',
 		})
 	)
+
+	for (const action of [convertToObject, convertToArray, convertToNull, convertToNumber, convertToString, convertToBoolean]) {
+		TabManager.focusedTabSystemChanged.on(() => {
+			if (
+				TabManager.focusedTabSystem.value === null ||
+				TabManager.focusedTabSystem.value.selectedTab.value === null ||
+				!(TabManager.focusedTabSystem.value.selectedTab.value instanceof TreeEditorTab)
+			) {
+				action.disable()
+			} else {
+				action.enable()
+			}
+		})
+	}
 }

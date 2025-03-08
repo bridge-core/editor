@@ -6,12 +6,15 @@ import { Settings } from '@/libs/settings/Settings'
 import { TabTypes } from './TabTypes'
 import { ProjectManager } from '@/libs/project/ProjectManager'
 import { Disposable } from '@/libs/disposeable/Disposeable'
+import { Event } from '@/libs/event/Event'
 
 type TabManagerRecoveryState = { tabSystems: TabSystemRecoveryState[]; focusedTabSystem: string }
 
 export class TabManager {
 	public static tabSystems: ShallowRef<TabSystem[]> = shallowRef([])
 	public static focusedTabSystem: ShallowRef<TabSystem | null> = shallowRef(null)
+
+	public static focusedTabSystemChanged: Event<void> = new Event()
 
 	private static tabSystemSaveListenters: Record<string, Disposable> = {}
 
@@ -46,7 +49,10 @@ export class TabManager {
 	public static async removeTabSystem(tabSystem: TabSystem) {
 		if (!TabManager.tabSystems.value.includes(tabSystem)) return
 
-		if (TabManager.focusedTabSystem.value?.id === tabSystem.id) TabManager.focusedTabSystem.value = null
+		if (TabManager.focusedTabSystem.value?.id === tabSystem.id) {
+			TabManager.focusedTabSystem.value = null
+			this.focusedTabSystemChanged.dispatch()
+		}
 
 		TabManager.tabSystems.value.splice(TabManager.tabSystems.value.indexOf(tabSystem), 1)
 
@@ -81,6 +87,7 @@ export class TabManager {
 					await tabSystem.selectTab(tab)
 
 					TabManager.focusedTabSystem.value = tabSystem
+					this.focusedTabSystemChanged.dispatch()
 
 					return
 				}
@@ -90,6 +97,7 @@ export class TabManager {
 		await TabManager.getDefaultTabSystem().addTab(tab)
 
 		TabManager.focusedTabSystem.value = TabManager.getDefaultTabSystem()
+		this.focusedTabSystemChanged.dispatch()
 	}
 
 	public static async openFile(path: string) {
@@ -99,6 +107,7 @@ export class TabManager {
 					await tabSystem.selectTab(tab)
 
 					TabManager.focusedTabSystem.value = tabSystem
+					this.focusedTabSystemChanged.dispatch()
 
 					return
 				}
@@ -163,5 +172,6 @@ export class TabManager {
 		TabManager.tabSystems.value = [...TabManager.tabSystems.value]
 
 		TabManager.focusedTabSystem.value = TabManager.tabSystems.value.find((tabSystem) => tabSystem.id === state.focusedTabSystem) ?? null
+		this.focusedTabSystemChanged.dispatch()
 	}
 }
