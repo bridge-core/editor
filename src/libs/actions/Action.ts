@@ -7,6 +7,8 @@ interface ActionConfig {
 	icon?: string
 	name?: string
 	description?: string
+	requiresContext?: boolean
+	enabled?: boolean
 }
 
 export class Action {
@@ -17,6 +19,8 @@ export class Action {
 	public icon?: string
 	public name?: string
 	public description?: string
+	public requiresContext: boolean
+
 	public enabled: boolean = true
 
 	public updated: Event<void> = new Event()
@@ -35,6 +39,8 @@ export class Action {
 		this.icon = config.icon
 		this.name = config.name
 		this.description = config.description
+		this.requiresContext = config.requiresContext ?? false
+		this.enabled = config.enabled ?? true
 
 		if (this.keyBinding) {
 			this.ctrlModifier = this.keyBinding.includes('Ctrl')

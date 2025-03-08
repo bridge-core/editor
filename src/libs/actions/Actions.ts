@@ -154,6 +154,7 @@ function setupEditActions() {
 			name: 'actions.undo.name',
 			description: 'actions.undo.description',
 			icon: 'undo',
+			enabled: false,
 		})
 	)
 
@@ -173,6 +174,7 @@ function setupEditActions() {
 			name: 'actions.redo.name',
 			description: 'actions.redo.description',
 			icon: 'redo',
+			enabled: false,
 		})
 	)
 
@@ -191,6 +193,7 @@ function setupEditActions() {
 			name: 'actions.saveFile.name',
 			description: 'actions.saveFile.description',
 			icon: 'save',
+			enabled: false,
 		})
 	)
 
@@ -210,6 +213,7 @@ function setupEditActions() {
 			name: 'actions.copy.name',
 			description: 'actions.copy.description',
 			icon: 'content_copy',
+			enabled: false,
 		})
 	)
 
@@ -229,6 +233,7 @@ function setupEditActions() {
 			name: 'actions.paste.name',
 			description: 'actions.paste.description',
 			icon: 'content_paste',
+			enabled: false,
 		})
 	)
 
@@ -248,6 +253,7 @@ function setupEditActions() {
 			name: 'actions.cut.name',
 			description: 'actions.cut.description',
 			icon: 'content_cut',
+			enabled: false,
 		})
 	)
 
@@ -271,6 +277,7 @@ function setupEditActions() {
 			name: 'actions.delete.name',
 			description: 'actions.delete.description',
 			icon: 'delete',
+			enabled: false,
 		})
 	)
 
@@ -307,6 +314,8 @@ function setupFileSystemActions() {
 			name: 'actions.delete.name',
 			description: 'actions.delete.description',
 			icon: 'delete',
+			requiresContext: true,
+			enabled: false,
 		})
 	)
 
@@ -325,6 +334,8 @@ function setupFileSystemActions() {
 			name: 'actions.createFile.name',
 			description: 'actions.createFile.description',
 			icon: 'note_add',
+			requiresContext: true,
+			enabled: false,
 		})
 	)
 
@@ -343,6 +354,8 @@ function setupFileSystemActions() {
 			name: 'actions.createFolder.name',
 			description: 'actions.createFolder.description',
 			icon: 'create_new_folder',
+			requiresContext: true,
+			enabled: false,
 		})
 	)
 
@@ -383,6 +396,8 @@ function setupFileSystemActions() {
 			name: 'actions.rename.name',
 			description: 'actions.rename.description',
 			icon: 'text_fields_alt',
+			requiresContext: true,
+			enabled: false,
 		})
 	)
 
@@ -419,6 +434,8 @@ function setupFileSystemActions() {
 			name: 'actions.duplicate.name',
 			description: 'actions.duplicate.description',
 			icon: 'file_copy',
+			requiresContext: true,
+			enabled: false,
 		})
 	)
 
@@ -435,6 +452,8 @@ function setupFileSystemActions() {
 			name: 'actions.copyFile.name',
 			description: 'actions.copyFile.description',
 			icon: 'file_copy',
+			requiresContext: true,
+			enabled: false,
 		})
 	)
 
@@ -473,6 +492,8 @@ function setupFileSystemActions() {
 			name: 'actions.pasteFile.name',
 			description: 'actions.pasteFile.description',
 			icon: 'content_paste',
+			requiresContext: true,
+			enabled: false,
 		})
 	)
 
@@ -588,6 +609,7 @@ function setupExportActions() {
 			},
 			name: 'packExplorer.exportAs.brproject',
 			icon: 'folder_zip',
+			enabled: false,
 		})
 	)
 
@@ -599,6 +621,7 @@ function setupExportActions() {
 			},
 			name: 'packExplorer.exportAs.mcaddon',
 			icon: 'deployed_code',
+			enabled: false,
 		})
 	)
 
@@ -610,6 +633,7 @@ function setupExportActions() {
 			},
 			name: 'packExplorer.exportAs.mcworld',
 			icon: 'globe',
+			enabled: false,
 		})
 	)
 
@@ -621,6 +645,7 @@ function setupExportActions() {
 			},
 			name: 'packExplorer.exportAs.mctemplate',
 			icon: 'package',
+			enabled: false,
 		})
 	)
 
@@ -675,6 +700,7 @@ function setupConvertActions() {
 			name: 'actions.convertToObject.name',
 			description: 'actions.convertToObject.description',
 			icon: 'swap_horiz',
+			enabled: false,
 		})
 	)
 
@@ -720,6 +746,7 @@ function setupConvertActions() {
 			name: 'actions.convertToArray.name',
 			description: 'actions.convertToArray.description',
 			icon: 'swap_horiz',
+			enabled: false,
 		})
 	)
 
@@ -752,6 +779,7 @@ function setupConvertActions() {
 			name: 'actions.convertToNull.name',
 			description: 'actions.convertToNull.description',
 			icon: 'swap_horiz',
+			enabled: false,
 		})
 	)
 
@@ -792,6 +820,7 @@ function setupConvertActions() {
 			name: 'actions.convertToNumber.name',
 			description: 'actions.convertToNumber.description',
 			icon: 'swap_horiz',
+			enabled: false,
 		})
 	)
 
@@ -828,6 +857,7 @@ function setupConvertActions() {
 			name: 'actions.convertToString.name',
 			description: 'actions.convertToString.description',
 			icon: 'swap_horiz',
+			enabled: false,
 		})
 	)
 
@@ -864,6 +894,7 @@ function setupConvertActions() {
 			name: 'actions.convertToBoolean.name',
 			description: 'actions.convertToBoolean.description',
 			icon: 'swap_horiz',
+			enabled: false,
 		})
 	)
 
