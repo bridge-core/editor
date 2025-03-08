@@ -1,6 +1,7 @@
 import { Event } from '@/libs/event/Event'
 import { onMounted, onUnmounted, shallowRef, ShallowRef } from 'vue'
-import { Disposable } from '@/libs/disposeable/Disposeable'
+import { Disposable, disposeAll } from '@/libs/disposeable/Disposeable'
+import { ActionManager } from '../ActionManager'
 
 export class FileActionManager {
 	public static actions: { action: string; fileTypes: string[] }[] = []
@@ -27,17 +28,18 @@ export function useFileActions(fileType: string): ShallowRef<string[]> {
 	const current: ShallowRef<string[]> = shallowRef(FileActionManager.actions.filter((item) => item.fileTypes.includes(fileType)).map((item) => item.action))
 
 	function update() {
-		current.value = [...FileActionManager.actions.filter((item) => item.fileTypes.includes(fileType)).map((item) => item.action)]
+		current.value = [...FileActionManager.actions.filter((item) => item.fileTypes.includes(fileType) && ActionManager.actions[item.action]?.enabled).map((item) => item.action)]
 	}
 
-	let disposable: Disposable | undefined
+	const disposables: Disposable[] = []
 
 	onMounted(() => {
-		disposable = FileActionManager.updated.on(update)
+		disposables.push(FileActionManager.updated.on(update))
+		disposables.push(ActionManager.actionsUpdated.on(update))
 	})
 
 	onUnmounted(() => {
-		disposable?.dispose()
+		disposeAll(disposables)
 	})
 
 	return current
