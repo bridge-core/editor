@@ -32,7 +32,7 @@ export function setupActions() {
 	ActionManager.addAction(
 		new Action({
 			id: 'clearNotifications',
-			execute: () => {
+			trigger: () => {
 				NotificationSystem.clearNotifications()
 			},
 			name: 'actions.clearNotifications.name',
@@ -44,28 +44,24 @@ export function setupActions() {
 	const goHome = ActionManager.addAction(
 		new Action({
 			id: 'goHome',
-			execute: () => {
+			trigger: () => {
 				ProjectManager.closeProject()
 			},
 			name: 'actions.goHome.name',
 			description: 'actions.goHome.description',
 			icon: 'home',
-			enabled: false,
+			visible: false,
 		})
 	)
 
 	ProjectManager.updatedCurrentProject.on(() => {
-		if (ProjectManager.currentProject !== null) {
-			goHome.enable()
-		} else {
-			goHome.disable()
-		}
+		goHome.setVisible(ProjectManager.currentProject !== null)
 	})
 
 	ActionManager.addAction(
 		new Action({
 			id: 'openSettings',
-			execute: () => {
+			trigger: () => {
 				SettingsWindow.open()
 			},
 			keyBinding: 'Ctrl + ,',
@@ -78,7 +74,7 @@ export function setupActions() {
 	ActionManager.addAction(
 		new Action({
 			id: 'openExtensions',
-			execute: () => {
+			trigger: () => {
 				ExtensionLibraryWindow.open()
 			},
 			name: 'actions.extensions.name',
@@ -92,7 +88,7 @@ export function setupActions() {
 	ActionManager.addAction(
 		new Action({
 			id: 'importProject',
-			execute: async () => {
+			trigger: async () => {
 				const files = await window.showOpenFilePicker({
 					multiple: false,
 					types: [
@@ -128,7 +124,7 @@ export function setupActions() {
 	ActionManager.addAction(
 		new Action({
 			id: 'openDownloadGuide',
-			execute() {
+			trigger() {
 				openUrl('https://bridge-core.app/guide/download/')
 			},
 			name: 'actions.download.name',
@@ -142,7 +138,7 @@ function setupEditActions() {
 	const undo = ActionManager.addAction(
 		new Action({
 			id: 'undo',
-			execute: () => {
+			trigger: () => {
 				const focusedTab = TabManager.getFocusedTab()
 
 				if (focusedTab === null) return
@@ -155,14 +151,14 @@ function setupEditActions() {
 			name: 'actions.undo.name',
 			description: 'actions.undo.description',
 			icon: 'undo',
-			enabled: false,
+			visible: false,
 		})
 	)
 
 	const redo = ActionManager.addAction(
 		new Action({
 			id: 'redo',
-			execute: () => {
+			trigger: () => {
 				const focusedTab = TabManager.getFocusedTab()
 
 				if (focusedTab === null) return
@@ -175,14 +171,14 @@ function setupEditActions() {
 			name: 'actions.redo.name',
 			description: 'actions.redo.description',
 			icon: 'redo',
-			enabled: false,
+			visible: false,
 		})
 	)
 
 	const save = ActionManager.addAction(
 		new Action({
 			id: 'save',
-			execute: () => {
+			trigger: () => {
 				const focusedTab = TabManager.getFocusedTab()
 
 				if (focusedTab === null) return
@@ -194,14 +190,14 @@ function setupEditActions() {
 			name: 'actions.saveFile.name',
 			description: 'actions.saveFile.description',
 			icon: 'save',
-			enabled: false,
+			visible: false,
 		})
 	)
 
 	const copy = ActionManager.addAction(
 		new Action({
 			id: 'copy',
-			execute: () => {
+			trigger: () => {
 				const focusedTab = TabManager.getFocusedTab()
 
 				if (focusedTab === null) return
@@ -214,14 +210,14 @@ function setupEditActions() {
 			name: 'actions.copy.name',
 			description: 'actions.copy.description',
 			icon: 'content_copy',
-			enabled: false,
+			visible: false,
 		})
 	)
 
 	const paste = ActionManager.addAction(
 		new Action({
 			id: 'paste',
-			execute: () => {
+			trigger: () => {
 				const focusedTab = TabManager.getFocusedTab()
 
 				if (focusedTab === null) return
@@ -234,14 +230,14 @@ function setupEditActions() {
 			name: 'actions.paste.name',
 			description: 'actions.paste.description',
 			icon: 'content_paste',
-			enabled: false,
+			visible: false,
 		})
 	)
 
 	const cut = ActionManager.addAction(
 		new Action({
 			id: 'cut',
-			execute: () => {
+			trigger: () => {
 				const focusedTab = TabManager.getFocusedTab()
 
 				if (focusedTab === null) return
@@ -254,14 +250,14 @@ function setupEditActions() {
 			name: 'actions.cut.name',
 			description: 'actions.cut.description',
 			icon: 'content_cut',
-			enabled: false,
+			visible: false,
 		})
 	)
 
 	const deleteAction = ActionManager.addAction(
 		new Action({
 			id: 'delete',
-			execute: () => {
+			trigger: () => {
 				const focusedTab = TabManager.getFocusedTab()
 
 				if (focusedTab === null) return
@@ -278,17 +274,13 @@ function setupEditActions() {
 			name: 'actions.delete.name',
 			description: 'actions.delete.description',
 			icon: 'delete',
-			enabled: false,
+			visible: false,
 		})
 	)
 
 	for (const action of [undo, redo, save, copy, paste, cut, deleteAction]) {
 		TabManager.focusedTabSystemChanged.on(() => {
-			if (TabManager.focusedTabSystem.value === null) {
-				action.disable()
-			} else {
-				action.enable()
-			}
+			action.setVisible(TabManager.focusedTabSystem.value !== null)
 		})
 	}
 }
@@ -297,7 +289,7 @@ function setupFileSystemActions() {
 	const deleteFileSystemEntry = ActionManager.addAction(
 		new Action({
 			id: 'deleteFileSystemEntry',
-			execute: async (path: unknown) => {
+			trigger: async (path: unknown) => {
 				if (typeof path !== 'string') return
 
 				if (!(await fileSystem.exists(path))) return
@@ -316,14 +308,14 @@ function setupFileSystemActions() {
 			description: 'actions.delete.description',
 			icon: 'delete',
 			requiresContext: true,
-			enabled: false,
+			visible: false,
 		})
 	)
 
 	const createFile = ActionManager.addAction(
 		new Action({
 			id: 'createFile',
-			execute: async (path: unknown) => {
+			trigger: async (path: unknown) => {
 				if (typeof path !== 'string') return
 
 				Windows.open(
@@ -336,14 +328,14 @@ function setupFileSystemActions() {
 			description: 'actions.createFile.description',
 			icon: 'note_add',
 			requiresContext: true,
-			enabled: false,
+			visible: false,
 		})
 	)
 
 	const createFolder = ActionManager.addAction(
 		new Action({
 			id: 'createFolder',
-			execute: async (path: unknown) => {
+			trigger: async (path: unknown) => {
 				if (typeof path !== 'string') return
 
 				Windows.open(
@@ -356,14 +348,14 @@ function setupFileSystemActions() {
 			description: 'actions.createFolder.description',
 			icon: 'create_new_folder',
 			requiresContext: true,
-			enabled: false,
+			visible: false,
 		})
 	)
 
 	const renameFileSystemEntry = ActionManager.addAction(
 		new Action({
 			id: 'renameFileSystemEntry',
-			execute: async (path: unknown) => {
+			trigger: async (path: unknown) => {
 				if (typeof path !== 'string') return
 
 				if (!(await fileSystem.exists(path))) return
@@ -398,14 +390,14 @@ function setupFileSystemActions() {
 			description: 'actions.rename.description',
 			icon: 'text_fields_alt',
 			requiresContext: true,
-			enabled: false,
+			visible: false,
 		})
 	)
 
 	const duplicateFileSystemEntry = ActionManager.addAction(
 		new Action({
 			id: 'duplicateFileSystemEntry',
-			execute: async (path: unknown) => {
+			trigger: async (path: unknown) => {
 				if (typeof path !== 'string') return
 
 				if (!(await fileSystem.exists(path))) return
@@ -436,14 +428,14 @@ function setupFileSystemActions() {
 			description: 'actions.duplicate.description',
 			icon: 'file_copy',
 			requiresContext: true,
-			enabled: false,
+			visible: false,
 		})
 	)
 
 	const copyFileSystemEntry = ActionManager.addAction(
 		new Action({
 			id: 'copyFileSystemEntry',
-			execute: async (path: unknown) => {
+			trigger: async (path: unknown) => {
 				if (typeof path !== 'string') return
 
 				if (!(await fileSystem.exists(path))) return
@@ -454,14 +446,14 @@ function setupFileSystemActions() {
 			description: 'actions.copyFile.description',
 			icon: 'file_copy',
 			requiresContext: true,
-			enabled: false,
+			visible: false,
 		})
 	)
 
 	const pasteFileSystemEntry = ActionManager.addAction(
 		new Action({
 			id: 'pasteFileSystemEntry',
-			execute: async (path: unknown) => {
+			trigger: async (path: unknown) => {
 				if (typeof path !== 'string') return
 
 				const clipboardEntry = getClipboard()
@@ -494,17 +486,13 @@ function setupFileSystemActions() {
 			description: 'actions.pasteFile.description',
 			icon: 'content_paste',
 			requiresContext: true,
-			enabled: false,
+			visible: false,
 		})
 	)
 
 	for (const action of [deleteFileSystemEntry, createFile, createFolder, renameFileSystemEntry, duplicateFileSystemEntry, copyFileSystemEntry, pasteFileSystemEntry]) {
 		ProjectManager.updatedCurrentProject.on(() => {
-			if (ProjectManager.currentProject === null) {
-				action.disable()
-			} else {
-				action.enable()
-			}
+			action.setVisible(ProjectManager.currentProject !== null)
 		})
 	}
 }
@@ -513,7 +501,7 @@ function setupCodeEditorActions() {
 	const format = ActionManager.addAction(
 		new Action({
 			id: 'format',
-			execute: () => {
+			trigger: () => {
 				const focusedTab = TabManager.getFocusedTab()
 
 				if (focusedTab === null) return
@@ -531,7 +519,7 @@ function setupCodeEditorActions() {
 	const goToSymbol = ActionManager.addAction(
 		new Action({
 			id: 'goToSymbol',
-			execute: () => {
+			trigger: () => {
 				const focusedTab = TabManager.getFocusedTab()
 
 				if (focusedTab === null) return
@@ -549,7 +537,7 @@ function setupCodeEditorActions() {
 	const changeAllOccurrences = ActionManager.addAction(
 		new Action({
 			id: 'changeAllOccurrences',
-			execute: () => {
+			trigger: () => {
 				const focusedTab = TabManager.getFocusedTab()
 
 				if (focusedTab === null) return
@@ -567,7 +555,7 @@ function setupCodeEditorActions() {
 	const goToDefinition = ActionManager.addAction(
 		new Action({
 			id: 'goToDefinition',
-			execute: () => {
+			trigger: () => {
 				const focusedTab = TabManager.getFocusedTab()
 
 				if (focusedTab === null) return
@@ -585,7 +573,7 @@ function setupCodeEditorActions() {
 	const viewDocumentation = ActionManager.addAction(
 		new Action({
 			id: 'viewDocumentation',
-			execute: () => {
+			trigger: () => {
 				const focusedTab = TabManager.getFocusedTab()
 
 				if (focusedTab === null) return
@@ -605,58 +593,54 @@ function setupExportActions() {
 	const exportBrProject = ActionManager.addAction(
 		new Action({
 			id: 'exportBrProject',
-			execute: () => {
+			trigger: () => {
 				exportAsBrProject()
 			},
 			name: 'packExplorer.exportAs.brproject',
 			icon: 'folder_zip',
-			enabled: false,
+			visible: false,
 		})
 	)
 
 	const exportMcAddon = ActionManager.addAction(
 		new Action({
 			id: 'exportMcAddon',
-			execute: () => {
+			trigger: () => {
 				exportAsMcAddon()
 			},
 			name: 'packExplorer.exportAs.mcaddon',
 			icon: 'deployed_code',
-			enabled: false,
+			visible: false,
 		})
 	)
 
 	const exportMcWorld = ActionManager.addAction(
 		new Action({
 			id: 'exportMcWorld',
-			execute: () => {
+			trigger: () => {
 				exportAsTemplate(true)
 			},
 			name: 'packExplorer.exportAs.mcworld',
 			icon: 'globe',
-			enabled: false,
+			visible: false,
 		})
 	)
 
 	const exportMcTemplate = ActionManager.addAction(
 		new Action({
 			id: 'exportMcTemplate',
-			execute: () => {
+			trigger: () => {
 				exportAsTemplate()
 			},
 			name: 'packExplorer.exportAs.mctemplate',
 			icon: 'package',
-			enabled: false,
+			visible: false,
 		})
 	)
 
 	for (const action of [exportBrProject, exportMcAddon, exportMcAddon, exportMcTemplate]) {
 		ProjectManager.updatedCurrentProject.on(() => {
-			if (ProjectManager.currentProject === null) {
-				action.disable()
-			} else {
-				action.enable()
-			}
+			action.setVisible(ProjectManager.currentProject !== null)
 		})
 	}
 }
@@ -665,7 +649,7 @@ function setupConvertActions() {
 	const convertToObject = ActionManager.addAction(
 		new Action({
 			id: 'convertToObject',
-			execute: () => {
+			trigger: () => {
 				const focusedTab = TabManager.getFocusedTab()
 
 				if (focusedTab === null) return
@@ -701,14 +685,14 @@ function setupConvertActions() {
 			name: 'actions.convertToObject.name',
 			description: 'actions.convertToObject.description',
 			icon: 'swap_horiz',
-			enabled: false,
+			visible: false,
 		})
 	)
 
 	const convertToArray = ActionManager.addAction(
 		new Action({
 			id: 'convertToArray',
-			execute: () => {
+			trigger: () => {
 				const focusedTab = TabManager.getFocusedTab()
 
 				if (focusedTab === null) return
@@ -747,14 +731,14 @@ function setupConvertActions() {
 			name: 'actions.convertToArray.name',
 			description: 'actions.convertToArray.description',
 			icon: 'swap_horiz',
-			enabled: false,
+			visible: false,
 		})
 	)
 
 	const convertToNull = ActionManager.addAction(
 		new Action({
 			id: 'convertToNull',
-			execute: () => {
+			trigger: () => {
 				const focusedTab = TabManager.getFocusedTab()
 
 				if (focusedTab === null) return
@@ -780,14 +764,14 @@ function setupConvertActions() {
 			name: 'actions.convertToNull.name',
 			description: 'actions.convertToNull.description',
 			icon: 'swap_horiz',
-			enabled: false,
+			visible: false,
 		})
 	)
 
 	const convertToNumber = ActionManager.addAction(
 		new Action({
 			id: 'convertToNumber',
-			execute: () => {
+			trigger: () => {
 				const focusedTab = TabManager.getFocusedTab()
 
 				if (focusedTab === null) return
@@ -821,14 +805,14 @@ function setupConvertActions() {
 			name: 'actions.convertToNumber.name',
 			description: 'actions.convertToNumber.description',
 			icon: 'swap_horiz',
-			enabled: false,
+			visible: false,
 		})
 	)
 
 	const convertToString = ActionManager.addAction(
 		new Action({
 			id: 'convertToString',
-			execute: () => {
+			trigger: () => {
 				const focusedTab = TabManager.getFocusedTab()
 
 				if (focusedTab === null) return
@@ -858,14 +842,14 @@ function setupConvertActions() {
 			name: 'actions.convertToString.name',
 			description: 'actions.convertToString.description',
 			icon: 'swap_horiz',
-			enabled: false,
+			visible: false,
 		})
 	)
 
 	const convertToBoolean = ActionManager.addAction(
 		new Action({
 			id: 'convertToBoolean',
-			execute: () => {
+			trigger: () => {
 				const focusedTab = TabManager.getFocusedTab()
 
 				if (focusedTab === null) return
@@ -895,7 +879,7 @@ function setupConvertActions() {
 			name: 'actions.convertToBoolean.name',
 			description: 'actions.convertToBoolean.description',
 			icon: 'swap_horiz',
-			enabled: false,
+			visible: false,
 		})
 	)
 
@@ -906,9 +890,9 @@ function setupConvertActions() {
 				TabManager.focusedTabSystem.value.selectedTab.value === null ||
 				!(TabManager.focusedTabSystem.value.selectedTab.value instanceof TreeEditorTab)
 			) {
-				action.disable()
+				action.setVisible(false)
 			} else {
-				action.enable()
+				action.setVisible(true)
 			}
 		})
 	}

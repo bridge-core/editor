@@ -34,9 +34,9 @@ onMounted(() => {
 })
 
 function shouldRenderItem(item: ToolbarItem): boolean {
-	if (item.type === 'button') return ActionManager.actions[item.action]?.enabled ?? false
+	if (item.type === 'button') return ActionManager.actions[item.action]?.visible ?? false
 	if (item.type === 'dropdown') {
-		return item.items.some((item) => item.type === 'button' && (ActionManager.actions[item.action]?.enabled ?? false))
+		return item.items.some((item) => item.type === 'button' && (ActionManager.actions[item.action]?.visible ?? false))
 	}
 
 	return true
@@ -48,7 +48,7 @@ function cleanupDropdownItems(items: DropdownItem[]): DropdownItem[] {
 	for (const item of items) {
 		if (item.type === 'seperator' && cleanedItems.length === 0) continue
 		if (item.type === 'seperator' && cleanedItems[cleanedItems.length - 1].type === 'seperator') continue
-		if (item.type === 'button' && !ActionManager.actions[item.action]?.enabled) continue
+		if (item.type === 'button' && !ActionManager.actions[item.action]?.visible) continue
 
 		cleanedItems.push(item)
 	}

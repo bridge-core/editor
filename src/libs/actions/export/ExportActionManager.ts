@@ -25,7 +25,7 @@ export function useExportActions(): ShallowRef<string[]> {
 	const current: ShallowRef<string[]> = shallowRef(ExportActionManager.actions)
 
 	function update() {
-		current.value = [...ExportActionManager.actions.filter((action) => ActionManager.actions[action]?.enabled)]
+		current.value = [...ExportActionManager.actions.filter((action) => ActionManager.actions[action]?.visible)]
 	}
 
 	const disposables: Disposable[] = []

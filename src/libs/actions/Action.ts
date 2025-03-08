@@ -2,13 +2,13 @@ import { Event } from '@/libs/event/Event'
 
 interface ActionConfig {
 	id: string
-	execute: (data?: unknown) => void
+	trigger: (data?: unknown) => void
 	keyBinding?: string
 	icon?: string
 	name?: string
 	description?: string
 	requiresContext?: boolean
-	enabled?: boolean
+	visible?: boolean
 }
 
 export class Action {
@@ -21,11 +21,11 @@ export class Action {
 	public description?: string
 	public requiresContext: boolean
 
-	public enabled: boolean = true
+	public visible: boolean = true
 
 	public updated: Event<void> = new Event()
 
-	private execute: (data?: unknown) => void
+	private trigger: (data?: unknown) => void
 	private ctrlModifier: boolean = false
 	private shiftModifier: boolean = false
 	private altModifier: boolean = false
@@ -33,14 +33,14 @@ export class Action {
 
 	public constructor(config: ActionConfig) {
 		this.id = config.id
-		this.execute = config.execute
+		this.trigger = config.trigger
 		this.keyBinding = config.keyBinding
 
 		this.icon = config.icon
 		this.name = config.name
 		this.description = config.description
 		this.requiresContext = config.requiresContext ?? false
-		this.enabled = config.enabled ?? true
+		this.visible = config.visible ?? true
 
 		if (this.keyBinding) {
 			this.ctrlModifier = this.keyBinding.includes('Ctrl')
@@ -75,24 +75,10 @@ export class Action {
 		Action.allDisabled = false
 	}
 
-	public trigger(data?: unknown) {
-		if (!this.enabled) return
+	public setVisible(visible: boolean) {
+		if (this.visible === visible) return
 
-		this.execute(data)
-	}
-
-	public enable() {
-		if (this.enabled) return
-
-		this.enabled = true
-
-		this.updated.dispatch()
-	}
-
-	public disable() {
-		if (!this.enabled) return
-
-		this.enabled = false
+		this.visible = visible
 
 		this.updated.dispatch()
 	}

@@ -85,7 +85,7 @@ onUnmounted(() => {
 
 				<div class="flex-1" />
 
-				<IconButton v-if="!action.requiresContext" class="content-center" icon="play_arrow" @click="action.trigger()" :enabled="action.enabled" />
+				<IconButton v-if="!action.requiresContext" class="content-center" icon="play_arrow" @click="action.trigger()" :enabled="action.visible" />
 			</div>
 
 			<div class="flex w-full">

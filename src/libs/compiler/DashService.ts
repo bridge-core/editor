@@ -145,7 +145,7 @@ export class DashService implements AsyncDisposable {
 			ActionManager.addAction(
 				new Action({
 					id: 'compileDefault',
-					execute: async () => {
+					trigger: async () => {
 						if (this.lastProfile !== null) await this.setup(this.mode)
 
 						this.lastProfile = null
@@ -179,7 +179,7 @@ export class DashService implements AsyncDisposable {
 				ActionManager.addAction(
 					new Action({
 						id: 'compileProfile-' + basename(entry.path),
-						execute: async () => {
+						trigger: async () => {
 							if (this.lastProfile !== entry.path) await this.setup(this.mode, entry.path)
 
 							this.lastProfile = entry.path
