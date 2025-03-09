@@ -4,11 +4,23 @@ import IconButton from '@/components/Common/IconButton.vue'
 import { useTranslate } from '@/libs/locales/Locales'
 import { useActions } from '@/libs/actions/ActionManager'
 import { Action } from '@/libs/actions/Action'
-import { onUnmounted, Ref, ref } from 'vue'
+import { computed, ComputedRef, onUnmounted, Ref, ref } from 'vue'
 
 const t = useTranslate()
 
 const actions = useActions()
+
+const categorizedActions: ComputedRef<Record<string, Action[]>> = computed(() => {
+	let categories: Record<string, Action[]> = {}
+
+	for (const [id, action] of Object.entries(actions.value)) {
+		if (!categories[action.category]) categories[action.category] = []
+
+		categories[action.category].push(action)
+	}
+
+	return categories
+})
 
 const currentlyRebindingAction: Ref<string | null> = ref(null)
 
@@ -76,26 +88,32 @@ onUnmounted(() => {
 })
 </script>
 <template>
-	<div class="flex flex-col gap-3 w-full">
-		<div v-for="action in Object.values(actions)" class="text-normal p-2 rounded bg-background-secondary w-full">
-			<div class="flex w-full mb-2">
-				<Icon v-if="action.icon" class="mr-1 content-center" style="color: var(--theme-color-primary)" :icon="action.icon" />
+	<div class="flex flex-col gap-8 w-full">
+		<div v-for="category in Object.keys(categorizedActions)" class="w-full">
+			<h2 class="font-theme text-xl font-bold mb-1">{{ t(category) }}</h2>
 
-				<h3 class="text-lg font-medium w-full font-theme">{{ action.name ? t(action.name) : action.id }}</h3>
+			<div class="flex flex-col gap-3 w-full">
+				<div v-for="action in categorizedActions[category]" class="text-normal p-2 rounded bg-background-secondary w-full">
+					<div class="flex w-full mb-2">
+						<Icon v-if="action.icon" class="mr-1 content-center" style="color: var(--theme-color-primary)" :icon="action.icon" />
 
-				<div class="flex-1" />
+						<h3 class="text-lg font-medium w-full font-theme">{{ action.name ? t(action.name) : action.id }}</h3>
 
-				<IconButton v-if="!action.requiresContext" class="content-center" icon="play_arrow" @click="action.trigger()" :enabled="action.visible" />
-			</div>
+						<div class="flex-1" />
 
-			<div class="flex w-full">
-				<p v-if="action.description" class="text-text-secondary font-theme">{{ t(action.description) }}</p>
+						<IconButton v-if="!action.requiresContext" class="content-center" icon="play_arrow" @click="action.trigger()" :enabled="action.visible" />
+					</div>
 
-				<div class="flex-1" />
+					<div class="flex w-full">
+						<p v-if="action.description" class="text-text-secondary font-theme">{{ t(action.description) }}</p>
 
-				<p class="text-text-secondary font-theme cursor-pointer min-w-max" @click="rebind(action)">
-					{{ currentlyRebindingAction === action.id ? t('actions.rebinding') : action.keyBinding ?? t('Unbound') }}
-				</p>
+						<div class="flex-1" />
+
+						<p class="text-text-secondary font-theme cursor-pointer min-w-max" @click="rebind(action)">
+							{{ currentlyRebindingAction === action.id ? t('actions.rebinding') : action.keyBinding ?? t('actions.unbound') }}
+						</p>
+					</div>
+				</div>
 			</div>
 		</div>
 	</div>

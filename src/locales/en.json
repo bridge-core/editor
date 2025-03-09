@@ -138,328 +138,193 @@
 	"actions": {
 		"name": "Actions",
 		"rebinding": "Rebinding",
+		"unbound": "Unbound",
+		"more": "More",
 		"unknown": {
 			"name": "Unkown Action",
 			"description": "This action is missing!"
 		},
-		"viewBridgeFolder": {
-			"name": "View bridge. Folder",
-			"description": "View the folder where bridge. stores your projects"
+		"misc": {
+			"name": "Misc"
 		},
-		"about": {
-			"name": "About",
-			"description": "About bridge."
-		},
-		"launchMinecraft": {
-			"name": "Launch Minecraft",
-			"description": "Launch Minecraft to test your projects"
-		},
-		"download": {
-			"name": "Download",
-			"description": "Download this file or folder"
-		},
-		"fullscreen": {
-			"name": "Fullscreen",
-			"description": "Toggle fullscreen mode"
-		},
-		"viewConnectedFiles": {
-			"name": "View Connected Files",
-			"description": "View all files connected to this file"
-		},
-		"viewExtensionsFolder": {
-			"name": "View Extensions Folder",
-			"description": "View the folder where bridge. stores global extensions"
-		},
-		"open": {
-			"name": "Open",
-			"description": "Open the file in the editor"
-		},
-		"openWith": {
-			"name": "Open With",
-			"description": "Open the file in the editor"
-		},
-		"openInSplitScreen": {
-			"name": "Open in Split Screen",
-			"description": "Open the file in split screen mode"
-		},
-		"edit": {
-			"name": "Edit",
-			"description": "Edit the file or folder"
-		},
-		"delete": {
-			"name": "Delete",
-			"description": "Delete a file or folder",
-			"confirmText": "Are you sure that you want to delete ",
-			"noRestoring": "You won't be able to restore it later!"
-		},
-		"rename": {
-			"name": "Rename",
-			"description": "Rename a file",
-			"sameName": "Your new file name only differs in capitalization. This is not allowed on Windows."
-		},
-		"duplicate": {
-			"name": "Duplicate",
-			"description": "Duplicate a file"
-		},
-		"viewCompilerOutput": {
-			"name": "Compiler Output",
-			"view": "View Compiler Output",
-			"description": "View the current compiler output for this file",
-			"fileMissing": "It does not look like this file was compiled yet."
-		},
-		"revealPath": {
-			"name": "Reveal Path",
-			"description": "Reveals the location of a file or folder"
-		},
-		"revealInFileExplorer": {
-			"name": "Reveal in File Explorer",
-			"description": "Reveals the location of a file or folder in the file explorer"
-		},
-		"createFile": {
-			"name": "Create File",
-			"description": "Create a new file"
-		},
-		"importFile": {
-			"name": "Import File"
-		},
-		"createFolder": {
-			"name": "Create Folder",
-			"description": "Create a new folder"
-		},
-		"findInFolder": {
-			"name": "Find in Folder",
-			"description": "Search the contents of a folder"
-		},
-		"goHome": {
-			"name": "Go Home",
-			"description": "Go back to the home screen"
-		},
-		"newProject": {
-			"name": "New Project",
-			"description": "Create a new bridge. project"
-		},
-		"newFile": {
-			"name": "New File",
-			"description": "Create a new Add-On feature"
-		},
-		"openFile": {
-			"name": "Open File",
-			"description": "Open a file to edit it with bridge."
-		},
-		"openFolder": {
-			"name": "Open Folder",
-			"description": "Open a folder to edit it, set it as an output folder or trigger other actions"
-		},
-		"searchFile": {
-			"name": "Search File",
-			"description": "Search and open a file from the current project"
-		},
-		"saveFile": {
-			"name": "Save File",
-			"description": "Save the currently opened file"
-		},
-		"saveAs": {
-			"name": "Save As",
-			"description": "Save the currently opened file under a different name"
-		},
-		"saveAll": {
-			"name": "Save All",
-			"description": "Save all currently opened files"
-		},
-		"closeFile": {
-			"name": "Close File",
-			"description": "Close the currently opened file"
-		},
-		"settings": {
-			"name": "Settings",
-			"description": "Open bridge.'s app settings"
-		},
-		"extensions": {
-			"name": "Extensions",
-			"description": "Install and manage your installed extensions"
-		},
-		"copy": {
-			"name": "Copy",
-			"description": "Copy selected text to the clipboard"
-		},
-		"cut": {
-			"name": "Cut",
-			"description": "Copy selected text to the clipboard and remove it from the original context"
-		},
-		"paste": {
-			"name": "Paste",
-			"description": "Paste clipboard content"
-		},
-		"docs": {
-			"name": "Open bedrock.dev",
-			"description": "Opens the Minecraft Add-On documentation"
-		},
-		"minecraftDocs": {
-			"name": "Open Minecraft Documentation",
-			"description": "Opens the Minecraft Bedrock Add-On documentation"
-		},
-		"releases": {
-			"name": "Releases",
-			"description": "View the latest bridge. releases"
-		},
-		"bugReports": {
-			"name": "Bug Reports",
-			"description": "Report an issue with bridge."
-		},
-		"twitter": {
-			"name": "Twitter",
-			"description": "Follow bridge. on Twitter"
-		},
-		"extensionAPI": {
-			"name": "Extension API",
-			"description": "Read more about bridge.'s extension API"
-		},
-		"gettingStarted": {
-			"name": "Getting Started",
-			"description": "Read our guide on how to get started with bridge."
-		},
-		"faq": {
-			"name": "FAQ",
-			"description": "Read through frequently asked questions about developing Add-Ons with bridge."
-		},
-		"reloadAutoCompletions": {
-			"name": "Reload Auto-Completions",
-			"description": "Reloads all auto-completion data"
-		},
-		"reloadExtensions": {
-			"name": "Reload Extensions",
-			"description": "Reloads all extensions"
-		},
-		"moveToSplitScreen": {
-			"name": "Move to Split Screen",
-			"description": "Opens a split screen view and moves this tab to it"
-		},
-		"closeTab": {
-			"name": "Close Tab",
-			"description": "Close this tab"
-		},
-		"closeAll": {
-			"name": "Close All",
-			"description": "Close all tabs"
-		},
-		"closeTabsToRight": {
-			"name": "Close Tabs to the Right",
-			"description": "Close all tabs to the right-hand side of this tab"
-		},
-		"closeAllSaved": {
-			"name": "Close All Saved",
-			"description": "Close all saved tabs"
-		},
-		"closeOtherTabs": {
-			"name": "Close other Tabs",
-			"description": "Close all tabs except this tab"
-		},
-		"clearAllNotifications": {
-			"name": "Clear All Notifications",
-			"description": "Clears all current notifications"
-		},
-		"pluginInstallLocation": {
-			"global": {
-				"name": "Install Globally",
-				"description": "Global extensions are accessible in all of your projects"
+		"editor": {
+			"name": "Editor",
+			"goHome": {
+				"name": "Go Home",
+				"description": "Close the active project and return home"
 			},
-			"local": {
-				"name": "Install Locally",
-				"description": "Local extensions are only accessible inside of the projects you add them to"
+			"clearNotifications": {
+				"name": "Clear Notifications",
+				"description": "Clears all notifications in the sidebar"
+			},
+			"settings": {
+				"name": "Settings",
+				"description": "Opens the settings window"
+			},
+			"extensions": {
+				"name": "Extension Library",
+				"description": "Opens the extension library window"
+			},
+			"importProject": {
+				"name": "Import Project",
+				"description": "Import a new project"
+			},
+			"download": {
+				"name": "Download",
+				"description": "Opens the guide to download bridge. native"
 			}
 		},
-		"toObject": {
-			"name": "Transform to Object"
+		"files": {
+			"name": "Files",
+			"save": {
+				"name": "Save",
+				"description": "Save the current file"
+			},
+			"createFile": {
+				"name": "Create File",
+				"description": "Create a new file"
+			},
+			"createFolder": {
+				"name": "Create Folder",
+				"description": "Create a new folder"
+			},
+			"delete": {
+				"name": "Delete",
+				"description": "Delete a file or folder"
+			},
+			"rename": {
+				"name": "Rename",
+				"description": "Rename a file or folder"
+			},
+			"duplicate": {
+				"name": "Duplicate",
+				"description": "Duplicate a file or folder"
+			},
+			"copy": {
+				"name": "Copy",
+				"description": "Copy a file or folder"
+			},
+			"paste": {
+				"name": "Paste",
+				"description": "Paste a file or folder"
+			}
 		},
-		"toArray": {
-			"name": "Transform to Array"
+		"textEditor": {
+			"name": "Text Editor",
+			"undo": {
+				"name": "Undo",
+				"description": "Undo the last action"
+			},
+			"redo": {
+				"name": "Redo",
+				"description": "Redo the last action"
+			},
+			"copy": {
+				"name": "Copy",
+				"description": "Copy selected text to the clipboard"
+			},
+			"cut": {
+				"name": "Cut",
+				"description": "Copy selected text to the clipboard and delete it"
+			},
+			"paste": {
+				"name": "Paste",
+				"description": "Paste clipboard content"
+			},
+			"goToDefinition": {
+				"name": "Go to Definition",
+				"description": "Go to the definition of the selected symbol"
+			},
+			"goToSymbol": {
+				"name": "Go to Symbol",
+				"description": "Opens a dialog to select a symbol to go to"
+			},
+			"formatDocument": {
+				"name": "Format Document",
+				"description": "Format the currently opened document"
+			},
+			"changeAllOccurrences": {
+				"name": "Change All Occurrences",
+				"description": "Change all occurrences of the selected text"
+			},
+			"documentationLookup": {
+				"name": "View Documentation",
+				"description": "Opens relevant documentation"
+			}
 		},
-		"documentationLookup": {
-			"name": "View Documentation",
-			"description": "Opens relevant documentation",
-			"noDocumentation": "No documentation available for"
+		"treeEditor": {
+			"name": "Tree Editor",
+			"undo": {
+				"name": "Undo",
+				"description": "Undo the last action"
+			},
+			"redo": {
+				"name": "Redo",
+				"description": "Redo the last action"
+			},
+			"copy": {
+				"name": "Copy",
+				"description": "Copy selected text to the clipboard"
+			},
+			"cut": {
+				"name": "Cut",
+				"description": "Copy selected text to the clipboard and delete it"
+			},
+			"paste": {
+				"name": "Paste",
+				"description": "Paste clipboard content"
+			},
+			"delete": {
+				"name": "Delete",
+				"description": "Delete selected text"
+			},
+			"convertToObject": {
+				"name": "Convert To Object",
+				"description": "Convert the selected value to an object"
+			},
+			"convertToArray": {
+				"name": "Convert To Array",
+				"description": "Convert the selected value to an array"
+			},
+			"convertToNull": {
+				"name": "Convert To Null",
+				"description": "Convert the selected value to null"
+			},
+			"convertToNumber": {
+				"name": "Convert To Number",
+				"description": "Convert the selected value to a number"
+			},
+			"convertToString": {
+				"name": "Convert To String",
+				"description": "Convert the selected value to a string"
+			},
+			"convertToBoolean": {
+				"name": "Convert To Boolean",
+				"description": "Convert the selected value to a boolean"
+			},
+			"documentationLookup": {
+				"name": "View Documentation",
+				"description": "Opens relevant documentation"
+			}
 		},
-		"toggleReadOnly": {
-			"name": "Toggle Read-Only Mode",
-			"description": "Toggle read-only mode for the currently opened file"
-		},
-		"keepInTabSystem": {
-			"name": "Keep in Tab System",
-			"description": "Converts this tab to a permanent tab"
-		},
-		"importBrproject": {
-			"name": "Import Project",
-			"description": "Import a project from a .brproject file"
-		},
-		"downloadFile": {
-			"name": "Download File",
-			"description": "Download the currently opened file"
-		},
-		"undo": {
-			"name": "Undo",
-			"description": "Undo the last action"
-		},
-		"redo": {
-			"name": "Redo",
-			"description": "Redo the last action"
-		},
-		"goToDefinition": {
-			"name": "Go to Definition",
-			"description": "Go to the definition of the selected symbol"
-		},
-		"goToSymbol": {
-			"name": "Go to Symbol",
-			"description": "Opens a dialog to select a symbol to go to"
-		},
-		"formatDocument": {
-			"name": "Format Document",
-			"description": "Format the currently opened document"
-		},
-		"changeAllOccurrences": {
-			"name": "Change All Occurrences",
-			"description": "Change all occurrences of the selected text"
-		},
-		"tgaMaskToggle": {
-			"name": "Show/Hide Alpha Mask"
-		},
-		"recompileChanges": {
-			"name": "Compile Changes",
-			"description": "Compile all files that were edited without bridge. This will not compile any changes made in the editor itself after disabling watch mode"
-		},
-		"more": {
-			"name": "More"
-		},
-		"clearNotifications": {
-			"name": "Clear Notifications",
-			"description": "Clears all notifications"
-		},
-		"convertToObject": {
-			"name": "Convert To Object",
-			"description": "Convert the selected value to an object"
-		},
-		"convertToArray": {
-			"name": "Convert To Array",
-			"description": "Convert the selected value to an array"
-		},
-		"convertToNull": {
-			"name": "Convert To Null",
-			"description": "Convert the selected value to null"
-		},
-		"convertToNumber": {
-			"name": "Convert To Number",
-			"description": "Convert the selected value to a number"
-		},
-		"convertToString": {
-			"name": "Convert To String",
-			"description": "Convert the selected value to a string"
-		},
-		"convertToBoolean": {
-			"name": "Convert To Boolean",
-			"description": "Convert the selected value to a boolean"
-		},
-		"importProject": {
-			"name": "Import Project",
-			"description": "Import a project from a .brproject or .mcaddon file"
+		"export": {
+			"name": "Export",
+			"brproject": {
+				"name": "Export As bridge. Project",
+				"description": "Export the current project as a .brproject"
+			},
+			"mcaddon": {
+				"name": "Export As Add-On",
+				"description": "Export the current project as a .mcaddon"
+			},
+			"mcworld": {
+				"name": "Export As World",
+				"description": "Export the current project as a .mcworld"
+			},
+			"mctemplate": {
+				"name": "Export As Template",
+				"description": "Export the current project as a .mctemplate"
+			}
 		}
 	},
 	"toolbar": {

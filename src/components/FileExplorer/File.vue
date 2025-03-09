@@ -90,7 +90,7 @@ onMounted(() => {
 
 			<SubMenu v-if="fileActions.length > 0">
 				<template #main="slotProps">
-					<ContextMenuItem icon="more_horiz" text="general.more" @mouseenter="slotProps.show" @mouseleave="slotProps.hide" />
+					<ContextMenuItem icon="more_horiz" text="actions.more" @mouseenter="slotProps.show" @mouseleave="slotProps.hide" />
 				</template>
 
 				<template #menu="">

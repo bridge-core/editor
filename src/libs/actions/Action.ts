@@ -11,6 +11,7 @@ interface ActionConfig {
 	description?: string
 	requiresContext?: boolean
 	visible?: boolean
+	category?: string
 }
 
 export class Action {
@@ -22,12 +23,14 @@ export class Action {
 	public name?: string
 	public description?: string
 	public requiresContext: boolean
+	public category: string
 
 	public visible: boolean = true
 
 	public updated: Event<void> = new Event()
 
-	private trigger: (data?: unknown) => void
+	public trigger: (data?: unknown) => void
+
 	private ctrlModifier: boolean = false
 	private shiftModifier: boolean = false
 	private altModifier: boolean = false
@@ -47,6 +50,7 @@ export class Action {
 		this.name = config.name
 		this.description = config.description
 		this.requiresContext = config.requiresContext ?? false
+		this.category = config.category ?? 'actions.categories.misc'
 		this.visible = config.visible ?? true
 
 		if (this.keyBinding) {

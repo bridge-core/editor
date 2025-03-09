@@ -32,59 +32,27 @@ export class Toolbar {
 		this.items.value = []
 
 		this.addDropdown('project', 'toolbar.project.name', [
-			{ type: 'button', action: 'goHome' },
-			{ type: 'button', action: 'chooseProject' },
-			{ type: 'button', action: 'launchMinecraft' },
+			{ type: 'button', action: 'editor.goHome' },
 			{ type: 'seperator' },
-			{ type: 'button', action: 'newProject' },
-			{ type: 'button', action: 'importProject' },
+			{ type: 'button', action: 'editor.importProject' },
 			{ type: 'seperator' },
 			{
 				type: 'button',
-				action: 'openExtensions',
+				action: 'editor.openExtensions',
 			},
 			{
 				type: 'button',
-				action: 'openSettings',
+				action: 'editor.openSettings',
 			},
 		])
 
 		this.addButton('openSettings')
 
-		this.addDropdown('file', 'toolbar.file.name', [
-			{ type: 'button', action: 'createFile' },
-			{ type: 'button', action: 'openFile' },
-			{ type: 'button', action: 'openFolder' },
-			{ type: 'button', action: 'searchFile' },
-			{ type: 'button', action: 'closeFile' },
-			{ type: 'seperator' },
-			{ type: 'button', action: 'save' },
-			{ type: 'button', action: 'saveAs' },
-			{ type: 'button', action: 'saveAll' },
-		])
+		this.addDropdown('file', 'toolbar.file.name', [{ type: 'button', action: 'files.createFile' }, { type: 'seperator' }, { type: 'button', action: 'filessave' }])
 
-		this.addDropdown('tools', 'toolbar.tools.name', [
-			{ type: 'button', action: 'openBedrockDev' },
-			{ type: 'button', action: 'openMinecraftDocumentation' },
-			{ type: 'button', action: 'openBlockbench' },
-			{ type: 'button', action: 'openSnowstorm' },
-			{ type: 'button', action: 'reload' },
-			{ type: 'seperator' },
-			{ type: 'button', action: 'clearNotifications' },
-		])
+		this.addDropdown('tools', 'toolbar.tools.name', [{ type: 'button', action: 'editor.clearNotifications' }])
 
-		this.addDropdown('help', 'toolbar.help.name', [
-			{ type: 'button', action: 'about' },
-			{ type: 'button', action: 'releases' },
-			{ type: 'button', action: 'bugReports' },
-			{ type: 'button', action: 'twitter' },
-			{ type: 'seperator' },
-			{ type: 'button', action: 'extensionAPI' },
-			{ type: 'button', action: 'gettingStarted' },
-			{ type: 'button', action: 'faq' },
-		])
-
-		this.addButton('openDownloadGuide')
+		this.addButton('editor.openDownloadGuide')
 	}
 
 	public static addButton(action: string): Button {
