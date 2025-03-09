@@ -10,16 +10,7 @@ import { computed, nextTick, onMounted, Ref, ref } from 'vue'
 import { type TreeEditorTab } from './TreeEditorTab'
 import { ActionManager } from '@/libs/actions/ActionManager'
 import { useTranslate } from '@/libs/locales/Locales'
-import {
-	AddElementEdit,
-	AddPropertyEdit,
-	ArrayElement,
-	ModifyPropertyKeyEdit,
-	ModifyValueEdit,
-	ObjectElement,
-	TreeElements,
-	ValueElement,
-} from './Tree'
+import { AddElementEdit, AddPropertyEdit, ArrayElement, ModifyPropertyKeyEdit, ModifyValueEdit, ObjectElement, TreeElements, ValueElement } from './Tree'
 import { CompletionItem } from '@/libs/jsonSchema/Schema'
 import { Settings } from '@/libs/settings/Settings'
 
@@ -86,12 +77,7 @@ async function addCompletion(completion: CompletionItem) {
 			value = convertToMatchingType(completion.value as string, types)
 		}
 
-		props.instance.edit(
-			new AddElementEdit(
-				selectedTree.tree,
-				new ValueElement(selectedTree.tree, selectedTree.tree.children.length, value)
-			)
-		)
+		props.instance.edit(new AddElementEdit(selectedTree.tree, new ValueElement(selectedTree.tree, selectedTree.tree.children.length, value)))
 	}
 
 	await nextTick()
@@ -139,12 +125,7 @@ async function addSubmit(value: string) {
 			elementValue = convertToMatchingType(value, types)
 		}
 
-		props.instance.edit(
-			new AddElementEdit(
-				selectedTree.tree,
-				new ValueElement(selectedTree.tree, selectedTree.tree.children.length, elementValue)
-			)
-		)
+		props.instance.edit(new AddElementEdit(selectedTree.tree, new ValueElement(selectedTree.tree, selectedTree.tree.children.length, elementValue)))
 	}
 
 	await nextTick()
@@ -162,13 +143,7 @@ async function editCompletion(completion: CompletionItem) {
 	if (!selectedTree) return
 
 	if (selectedTree.type === 'property') {
-		props.instance.edit(
-			new ModifyPropertyKeyEdit(
-				selectedTree.tree.parent as ObjectElement,
-				selectedTree.tree.key as string,
-				completion.value as string
-			)
-		)
+		props.instance.edit(new ModifyPropertyKeyEdit(selectedTree.tree.parent as ObjectElement, selectedTree.tree.key as string, completion.value as string))
 
 		return
 	} else {
@@ -186,9 +161,7 @@ async function editSubmit(value: string) {
 	if (!selectedTree) return
 
 	if (selectedTree.type === 'property') {
-		props.instance.edit(
-			new ModifyPropertyKeyEdit(selectedTree.tree.parent as ObjectElement, selectedTree.tree.key as string, value)
-		)
+		props.instance.edit(new ModifyPropertyKeyEdit(selectedTree.tree.parent as ObjectElement, selectedTree.tree.key as string, value))
 
 		return
 	} else {
@@ -273,9 +246,7 @@ onMounted(() => {
 			<div class="border-background-secondary border-t-2 w-full h-56 p-2">
 				<div class="flex items-center gap-4 mt-3">
 					<LabeledAutocompleteInput
-						v-if="
-							instance.selectedTree.value && !(instance.selectedTree.value.tree instanceof ValueElement)
-						"
+						v-if="instance.selectedTree.value && !(instance.selectedTree.value.tree instanceof ValueElement)"
 						label="editors.treeEditor.add"
 						:completions="instance.completions.value"
 						v-model="addValue"
@@ -285,17 +256,9 @@ onMounted(() => {
 					/>
 
 					<LabeledAutocompleteInput
-						v-if="
-							instance.selectedTree.value &&
-							(instance.selectedTree.value.type === 'property' ||
-								instance.selectedTree.value.tree instanceof ValueElement)
-						"
+						v-if="instance.selectedTree.value && (instance.selectedTree.value.type === 'property' || instance.selectedTree.value.tree instanceof ValueElement)"
 						label="editors.treeEditor.edit"
-						:completions="
-							instance.selectedTree.value?.type === 'property'
-								? instance.parentCompletions.value
-								: instance.completions.value
-						"
+						:completions="instance.selectedTree.value?.type === 'property' ? instance.parentCompletions.value : instance.completions.value"
 						v-model="editValue"
 						class="flex-1 !mt-0"
 						@complete="editCompletion"
@@ -309,10 +272,10 @@ onMounted(() => {
 		<FreeContextMenu class="w-56" ref="contextMenu" #default="{ close }" @close="instance.contextTree.value = null">
 			<ActionContextMenuItem
 				v-if="instance.contextTree.value"
-				action="copy"
+				action="treeEditor.copy"
 				@click="
 					() => {
-						ActionManager.trigger('copy', undefined)
+						ActionManager.trigger('treeEditor.copy', undefined)
 						close()
 					}
 				"
@@ -320,10 +283,10 @@ onMounted(() => {
 
 			<ActionContextMenuItem
 				v-if="instance.contextTree.value"
-				action="cut"
+				action="treeEditor.cut"
 				@click="
 					() => {
-						ActionManager.trigger('cut', undefined)
+						ActionManager.trigger('treeEditor.cut', undefined)
 						close()
 					}
 				"
@@ -331,10 +294,10 @@ onMounted(() => {
 
 			<ActionContextMenuItem
 				v-if="instance.contextTree.value"
-				action="paste"
+				action="treeEditor.paste"
 				@click="
 					() => {
-						ActionManager.trigger('paste', undefined)
+						ActionManager.trigger('treeEditor.paste', undefined)
 						close()
 					}
 				"
@@ -344,10 +307,10 @@ onMounted(() => {
 
 			<ActionContextMenuItem
 				v-if="instance.contextTree.value"
-				action="delete"
+				action="treeEditor.delete"
 				@click="
 					() => {
-						ActionManager.trigger('delete', undefined)
+						ActionManager.trigger('treeEditor.delete', undefined)
 						close()
 					}
 				"
@@ -355,10 +318,10 @@ onMounted(() => {
 
 			<ActionContextMenuItem
 				v-if="instance.contextTree.value"
-				action="convert"
+				action="treeEditor.convert"
 				@click="
 					() => {
-						ActionManager.trigger('convert', undefined)
+						ActionManager.trigger('treeEditor.convert', undefined)
 						close()
 					}
 				"
@@ -366,70 +329,65 @@ onMounted(() => {
 
 			<SubMenu>
 				<template #main="slotProps">
-					<ContextMenuItem
-						icon="swap_horiz"
-						text="Convert"
-						@mouseenter="slotProps.show"
-						@mouseleave="slotProps.hide"
-					/>
+					<ContextMenuItem icon="swap_horiz" text="Convert" @mouseenter="slotProps.show" @mouseleave="slotProps.hide" />
 				</template>
 
 				<template #menu="">
 					<ActionContextMenuItem
-						action="convertToObject"
+						action="treeEditor.convertToObject"
 						@click="
 							() => {
-								ActionManager.trigger('convertToObject')
+								ActionManager.trigger('treeEditor.convertToObject')
 								close()
 							}
 						"
 					/>
 
 					<ActionContextMenuItem
-						action="convertToArray"
+						action="treeEditor.convertToArray"
 						@click="
 							() => {
-								ActionManager.trigger('convertToArray')
+								ActionManager.trigger('treeEditor.convertToArray')
 								close()
 							}
 						"
 					/>
 
 					<ActionContextMenuItem
-						action="convertToNull"
+						action="treeEditor.convertToNull"
 						@click="
 							() => {
-								ActionManager.trigger('convertToNull')
+								ActionManager.trigger('treeEditor.convertToNull')
 								close()
 							}
 						"
 					/>
 
 					<ActionContextMenuItem
-						action="convertToNumber"
+						action="treeEditor.convertToNumber"
 						@click="
 							() => {
-								ActionManager.trigger('convertToNumber')
+								ActionManager.trigger('treeEditor.convertToNumber')
 								close()
 							}
 						"
 					/>
 
 					<ActionContextMenuItem
-						action="convertToString"
+						action="treeEditor.convertToString"
 						@click="
 							() => {
-								ActionManager.trigger('convertToString')
+								ActionManager.trigger('treeEditor.convertToString')
 								close()
 							}
 						"
 					/>
 
 					<ActionContextMenuItem
-						action="convertToBoolean"
+						action="treeEditor.convertToBoolean"
 						@click="
 							() => {
-								ActionManager.trigger('convertToBoolean')
+								ActionManager.trigger('treeEditor.convertToBoolean')
 								close()
 							}
 						"
@@ -440,10 +398,10 @@ onMounted(() => {
 			<div v-if="instance.contextTree.value" class="bg-background-tertiary h-px m-2 my-0" />
 
 			<ActionContextMenuItem
-				action="save"
+				action="treeEditor.save"
 				@click="
 					() => {
-						ActionManager.trigger('save', undefined)
+						ActionManager.trigger('treeEditor.save', undefined)
 						close()
 					}
 				"
@@ -452,10 +410,10 @@ onMounted(() => {
 			<div class="bg-background-tertiary h-px m-2 my-0" />
 
 			<ActionContextMenuItem
-				action="viewDocumentation"
+				action="treeEditor.viewDocumentation"
 				@click="
 					() => {
-						ActionManager.trigger('viewDocumentation', undefined)
+						ActionManager.trigger('treeEditor.viewDocumentation', undefined)
 						close()
 					}
 				"

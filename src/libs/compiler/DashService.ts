@@ -144,7 +144,7 @@ export class DashService implements AsyncDisposable {
 		this.profiles.push(
 			ActionManager.addAction(
 				new Action({
-					id: 'compileDefault',
+					id: 'dash.compileDefault',
 					trigger: async () => {
 						if (this.lastProfile !== null) await this.setup(this.mode)
 
@@ -153,9 +153,10 @@ export class DashService implements AsyncDisposable {
 						this.build()
 					},
 					keyBinding: 'Ctrl + B',
-					name: 'sidebar.compiler.default.name',
-					description: 'sidebar.compiler.default.description',
+					name: 'actions.dash.compileDefault.name',
+					description: 'actions.dash.compileDefault.description',
 					icon: 'manufacturing',
+					category: 'dash',
 				})
 			)
 		)
@@ -178,7 +179,7 @@ export class DashService implements AsyncDisposable {
 			this.profiles.push(
 				ActionManager.addAction(
 					new Action({
-						id: 'compileProfile-' + basename(entry.path),
+						id: 'dash.compileProfile-' + basename(entry.path),
 						trigger: async () => {
 							if (this.lastProfile !== entry.path) await this.setup(this.mode, entry.path)
 
@@ -189,6 +190,7 @@ export class DashService implements AsyncDisposable {
 						name: profile.name,
 						description: profile.description ?? undefined,
 						icon: profile.icon ?? 'manufacturing',
+						category: 'dash',
 					})
 				)
 			)

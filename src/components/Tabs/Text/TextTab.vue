@@ -55,18 +55,13 @@ function triggerActionAndCloseContextMenu(action: string) {
 		</div>
 
 		<FreeContextMenu class="w-56" ref="contextMenu">
-			<ContextMenuItem
-				text="Copy"
-				icon="content_copy"
-				class="pt-4"
-				@click="triggerActionAndCloseContextMenu('copy')"
-			/>
-			<ContextMenuItem text="Cut" icon="content_cut" @click="triggerActionAndCloseContextMenu('cut')" />
-			<ContextMenuItem text="Paste" icon="content_paste" @click="triggerActionAndCloseContextMenu('paste')" />
+			<ContextMenuItem text="Copy" icon="content_copy" class="pt-4" @click="triggerActionAndCloseContextMenu('textEditor.copy')" />
+			<ContextMenuItem text="Cut" icon="content_cut" @click="triggerActionAndCloseContextMenu('textEditor.cut')" />
+			<ContextMenuItem text="Paste" icon="content_paste" @click="triggerActionAndCloseContextMenu('textEditor.paste')" />
 
 			<div class="bg-background-tertiary h-px m-2 my-0" />
 
-			<ContextMenuItem text="Save" icon="save" @click="triggerActionAndCloseContextMenu('save')" />
+			<ContextMenuItem text="Save" icon="save" @click="triggerActionAndCloseContextMenu('textEditor.save')" />
 
 			<div class="bg-background-tertiary h-px m-2 my-0" />
 
@@ -74,27 +69,22 @@ function triggerActionAndCloseContextMenu(action: string) {
 				v-if="instance.hasDocumentation.value"
 				text="View Documentation"
 				icon="menu_book"
-				@click="triggerActionAndCloseContextMenu('viewDocumentation')"
+				@click="triggerActionAndCloseContextMenu('textEditor.viewDocumentation')"
 			/>
-			<ContextMenuItem text="Format" icon="edit_note" @click="triggerActionAndCloseContextMenu('format')" />
+			<ContextMenuItem text="Format" icon="edit_note" @click="triggerActionAndCloseContextMenu('textEditor.format')" />
 			<ContextMenuItem
 				v-if="instance.language.value !== 'json'"
 				text="Change All Occurences"
 				icon="edit"
-				@click="triggerActionAndCloseContextMenu('changeAllOccurrences')"
+				@click="triggerActionAndCloseContextMenu('textEditor.changeAllOccurrences')"
 			/>
 			<ContextMenuItem
 				v-if="instance.language.value !== 'json'"
 				text="Go to Definition"
 				icon="search"
-				@click="triggerActionAndCloseContextMenu('goToDefinition')"
+				@click="triggerActionAndCloseContextMenu('textEditor.goToDefinition')"
 			/>
-			<ContextMenuItem
-				text="Go to Symbol"
-				icon="arrow_forward"
-				class="pb-4"
-				@click="triggerActionAndCloseContextMenu('goToSymbol')"
-			/>
+			<ContextMenuItem text="Go to Symbol" icon="arrow_forward" class="pb-4" @click="triggerActionAndCloseContextMenu('textEditor.goToSymbol')" />
 		</FreeContextMenu>
 	</div>
 </template>

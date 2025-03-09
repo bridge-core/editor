@@ -244,13 +244,13 @@ function drop(event: DragEvent) {
 		/>
 
 		<FreeContextMenu ref="contextMenu">
-			<ContextMenuItem icon="note_add" text="Create File" class="pt-4" @click.stop="executeContextMenuAction('createFile', path)" />
-			<ContextMenuItem icon="folder" text="Create Folder" @click.stop="executeContextMenuAction('createFolder', path)" />
-			<ContextMenuItem icon="edit" text="Rename" @click.stop="executeContextMenuAction('renameFileSystemEntry', path)" />
-			<ContextMenuItem icon="delete" text="Delete" @click.stop="executeContextMenuAction('deleteFileSystemEntry', path)" />
-			<ContextMenuItem icon="folder_copy" text="Duplicate" @click.stop="executeContextMenuAction('duplicateFileSystemEntry', path)" />
-			<ContextMenuItem icon="content_copy" text="Copy" @click.stop="executeContextMenuAction('copyFileSystemEntry', path)" />
-			<ContextMenuItem icon="content_paste" text="Paste" class="pb-4" @click.stop="executeContextMenuAction('pasteFileSystemEntry', path)" />
+			<ContextMenuItem icon="note_add" text="Create File" class="pt-4" @click.stop="executeContextMenuAction('files.createFile', path)" />
+			<ContextMenuItem icon="folder" text="Create Folder" @click.stop="executeContextMenuAction('files.createFolder', path)" />
+			<ContextMenuItem icon="edit" text="Rename" @click.stop="executeContextMenuAction('files.renameFileSystemEntry', path)" />
+			<ContextMenuItem icon="delete" text="Delete" @click.stop="executeContextMenuAction('files.deleteFileSystemEntry', path)" />
+			<ContextMenuItem icon="folder_copy" text="Duplicate" @click.stop="executeContextMenuAction('files.duplicateFileSystemEntry', path)" />
+			<ContextMenuItem icon="content_copy" text="Copy" @click.stop="executeContextMenuAction('files.copyFileSystemEntry', path)" />
+			<ContextMenuItem icon="content_paste" text="Paste" class="pb-4" @click.stop="executeContextMenuAction('files.pasteFileSystemEntry', path)" />
 		</FreeContextMenu>
 	</div>
 </template>

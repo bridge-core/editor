@@ -270,9 +270,8 @@ function drop(event: DragEvent) {
 	</div>
 
 	<FreeContextMenu ref="contextMenu">
-		<ContextMenuItem icon="note_add" text="Create File" class="pt-4" @click.stop="executeContextMenuAction('createFile', selectedPackPath)" />
-		<ContextMenuItem icon="folder" text="Create Folder" @click.stop="executeContextMenuAction('createFolder', selectedPackPath)" />
-
-		<ContextMenuItem icon="content_paste" text="Paste" class="pb-4" @click.stop="executeContextMenuAction('pasteFileSystemEntry', selectedPackPath)" />
+		<ContextMenuItem icon="note_add" text="Create File" class="pt-4" @click.stop="executeContextMenuAction('files.createFile', selectedPackPath)" />
+		<ContextMenuItem icon="folder" text="Create Folder" @click.stop="executeContextMenuAction('files.createFolder', selectedPackPath)" />
+		<ContextMenuItem icon="content_paste" text="Paste" class="pb-4" @click.stop="executeContextMenuAction('files.pasteFileSystemEntry', selectedPackPath)" />
 	</FreeContextMenu>
 </template>
