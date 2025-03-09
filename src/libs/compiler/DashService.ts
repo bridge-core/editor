@@ -156,7 +156,7 @@ export class DashService implements AsyncDisposable {
 					name: 'actions.dash.compileDefault.name',
 					description: 'actions.dash.compileDefault.description',
 					icon: 'manufacturing',
-					category: 'dash',
+					category: 'actions.dash',
 				})
 			)
 		)
@@ -190,7 +190,7 @@ export class DashService implements AsyncDisposable {
 						name: profile.name,
 						description: profile.description ?? undefined,
 						icon: profile.icon ?? 'manufacturing',
-						category: 'dash',
+						category: 'actions.dash',
 					})
 				)
 			)
