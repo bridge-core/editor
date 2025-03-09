@@ -50,7 +50,7 @@ export class Action {
 		this.name = config.name
 		this.description = config.description
 		this.requiresContext = config.requiresContext ?? false
-		this.category = config.category ?? 'actions.categories.misc'
+		this.category = config.category ?? 'actions.misc.name'
 		this.visible = config.visible ?? true
 
 		if (this.keyBinding) {
