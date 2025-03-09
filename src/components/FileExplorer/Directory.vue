@@ -3,6 +3,7 @@ import Icon from '@/components/Common/Icon.vue'
 import File from './File.vue'
 import FreeContextMenu from '@/components/Common/FreeContextMenu.vue'
 import ContextMenuItem from '@/components/Common/ContextMenuItem.vue'
+import ActionContextMenuItem from '@/components/Common/ActionContextMenuItem.vue'
 
 import { Ref, computed, onMounted, onUnmounted, ref, watch } from 'vue'
 import { basename, dirname, join } from 'pathe'
@@ -71,14 +72,6 @@ onUnmounted(() => {
 })
 
 const contextMenu: Ref<typeof FreeContextMenu | null> = ref(null)
-
-function executeContextMenuAction(action: string, data: any) {
-	if (!contextMenu.value) return
-
-	ActionManager.trigger(action, data)
-
-	contextMenu.value.close()
-}
 
 const dragOverElement: Ref<HTMLDivElement> = <any>ref(null)
 const dragOverElementContainer: Ref<HTMLDivElement> = <any>ref(null)
@@ -243,14 +236,14 @@ function drop(event: DragEvent) {
 			:preview="true"
 		/>
 
-		<FreeContextMenu ref="contextMenu">
-			<ContextMenuItem icon="note_add" text="Create File" class="pt-4" @click.stop="executeContextMenuAction('files.createFile', path)" />
-			<ContextMenuItem icon="folder" text="Create Folder" @click.stop="executeContextMenuAction('files.createFolder', path)" />
-			<ContextMenuItem icon="edit" text="Rename" @click.stop="executeContextMenuAction('files.renameFileSystemEntry', path)" />
-			<ContextMenuItem icon="delete" text="Delete" @click.stop="executeContextMenuAction('files.deleteFileSystemEntry', path)" />
-			<ContextMenuItem icon="folder_copy" text="Duplicate" @click.stop="executeContextMenuAction('files.duplicateFileSystemEntry', path)" />
-			<ContextMenuItem icon="content_copy" text="Copy" @click.stop="executeContextMenuAction('files.copyFileSystemEntry', path)" />
-			<ContextMenuItem icon="content_paste" text="Paste" class="pb-4" @click.stop="executeContextMenuAction('files.pasteFileSystemEntry', path)" />
+		<FreeContextMenu ref="contextMenu" v-slot="{ close }">
+			<ActionContextMenuItem action="files.createFile" :data="() => path" @click.stop="close" />
+			<ActionContextMenuItem action="files.createFolder" :data="() => path" @click.stop="close" />
+			<ActionContextMenuItem action="files.renameFileSystemEntry" :data="() => path" @click.stop="close" />
+			<ActionContextMenuItem action="files.deleteFileSystemEntry" :data="() => path" @click.stop="close" />
+			<ActionContextMenuItem action="files.duplicateFilesystemEntry" :data="() => path" @click.stop="close" />
+			<ActionContextMenuItem action="files.copyFileSystemEntry" :data="() => path" @click.stop="close" />
+			<ActionContextMenuItem action="files.pasteFileSystemEntry" :data="() => path" @click.stop="close" />
 		</FreeContextMenu>
 	</div>
 </template>

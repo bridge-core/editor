@@ -221,7 +221,7 @@ function drop(event: DragEvent) {
 
 					<template #menu="{ close }">
 						<div class="bg-background-secondary rounded mt-2 shadow-window relative z-10">
-							<ContextMenuItem text="New File" icon="add" @click="() => contextMenuNewFile(close)" class="pt-4" />
+							<ContextMenuItem text="New File" icon="add" @click="() => contextMenuNewFile(close)" />
 							<ContextMenuItem text="Build" icon="manufacturing" @click="() => contextMenuBuild(close)" />
 
 							<div class="bg-background-tertiary w-full h-[2px] my-1"></div>
@@ -233,8 +233,7 @@ function drop(event: DragEvent) {
 
 								<template #menu="">
 									<ActionContextMenuItem
-										v-for="(action, index) in exportActions"
-										:class="{ 'pt-4': index === 0, 'pb-4': index === exportActions.length - 1 }"
+										v-for="action in exportActions"
 										:action="action"
 										@click="
 											() => {
@@ -248,7 +247,7 @@ function drop(event: DragEvent) {
 
 							<div class="bg-background-tertiary w-full h-[2px] my-1"></div>
 
-							<ContextMenuItem text="Open Project Config" icon="settings" @click="() => contextMenuOpenProjectConfig(close)" class="pb-4" />
+							<ContextMenuItem text="Open Project Config" icon="settings" @click="() => contextMenuOpenProjectConfig(close)" />
 						</div>
 					</template>
 				</ContextMenu>
@@ -269,9 +268,9 @@ function drop(event: DragEvent) {
 		</div>
 	</div>
 
-	<FreeContextMenu ref="contextMenu">
-		<ContextMenuItem icon="note_add" text="Create File" class="pt-4" @click.stop="executeContextMenuAction('files.createFile', selectedPackPath)" />
-		<ContextMenuItem icon="folder" text="Create Folder" @click.stop="executeContextMenuAction('files.createFolder', selectedPackPath)" />
-		<ContextMenuItem icon="content_paste" text="Paste" class="pb-4" @click.stop="executeContextMenuAction('files.pasteFileSystemEntry', selectedPackPath)" />
+	<FreeContextMenu ref="contextMenu" v-slot="{ close }">
+		<ActionContextMenuItem action="files.createFile" :data="() => selectedPackPath" @click="close" />
+		<ActionContextMenuItem action="files.createFolder" :data="() => selectedPackPath" @click="close" />
+		<ActionContextMenuItem action="files.pasteFileSystemEntry" :data="() => selectedPackPath" @click="close" />
 	</FreeContextMenu>
 </template>

@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import ContextMenuItem from '@/components/Common/ContextMenuItem.vue'
+import ActionContextMenuItem from '@/components/Common/ActionContextMenuItem.vue'
+import ContextMenuDivider from '@/components/Common/ContextMenuDivider.vue'
 
 import { Ref, onMounted, onUnmounted, ref } from 'vue'
 import { type TextTab } from './TextTab'
@@ -40,12 +42,6 @@ onMounted(async () => {
 onUnmounted(() => {
 	instance.unmountEditor()
 })
-
-function triggerActionAndCloseContextMenu(action: string) {
-	ActionManager.trigger(action)
-
-	contextMenu.value?.close()
-}
 </script>
 
 <template>
@@ -54,37 +50,22 @@ function triggerActionAndCloseContextMenu(action: string) {
 			<div class="h-full" ref="editorElement" @contextmenu.prevent="contextMenu?.open" />
 		</div>
 
-		<FreeContextMenu class="w-56" ref="contextMenu">
-			<ContextMenuItem text="Copy" icon="content_copy" class="pt-4" @click="triggerActionAndCloseContextMenu('textEditor.copy')" />
-			<ContextMenuItem text="Cut" icon="content_cut" @click="triggerActionAndCloseContextMenu('textEditor.cut')" />
-			<ContextMenuItem text="Paste" icon="content_paste" @click="triggerActionAndCloseContextMenu('textEditor.paste')" />
+		<FreeContextMenu class="w-56" ref="contextMenu" v-slot="{ close }">
+			<ActionContextMenuItem action="textEditor.copy" @click="close" />
+			<ActionContextMenuItem action="textEditor.cut" @click="close" />
+			<ActionContextMenuItem action="textEditor.paste" @click="close" />
 
-			<div class="bg-background-tertiary h-px m-2 my-0" />
+			<ContextMenuDivider />
 
-			<ContextMenuItem text="Save" icon="save" @click="triggerActionAndCloseContextMenu('textEditor.save')" />
+			<ActionContextMenuItem action="textEditor.save" @click="close" />
 
-			<div class="bg-background-tertiary h-px m-2 my-0" />
+			<ContextMenuDivider />
 
-			<ContextMenuItem
-				v-if="instance.hasDocumentation.value"
-				text="View Documentation"
-				icon="menu_book"
-				@click="triggerActionAndCloseContextMenu('textEditor.viewDocumentation')"
-			/>
-			<ContextMenuItem text="Format" icon="edit_note" @click="triggerActionAndCloseContextMenu('textEditor.format')" />
-			<ContextMenuItem
-				v-if="instance.language.value !== 'json'"
-				text="Change All Occurences"
-				icon="edit"
-				@click="triggerActionAndCloseContextMenu('textEditor.changeAllOccurrences')"
-			/>
-			<ContextMenuItem
-				v-if="instance.language.value !== 'json'"
-				text="Go to Definition"
-				icon="search"
-				@click="triggerActionAndCloseContextMenu('textEditor.goToDefinition')"
-			/>
-			<ContextMenuItem text="Go to Symbol" icon="arrow_forward" class="pb-4" @click="triggerActionAndCloseContextMenu('textEditor.goToSymbol')" />
+			<ActionContextMenuItem action="textEditor.viewDocumentation" @click="close" />
+			<ActionContextMenuItem action="textEditor.format" @click="close" />
+			<ActionContextMenuItem action="textEditor.changeAllOccurrences" @click="close" />
+			<ActionContextMenuItem action="textEditor.goToDefinition" @click="close" />
+			<ActionContextMenuItem action="textEditor.goToSymbol" @click="close" />
 		</FreeContextMenu>
 	</div>
 </template>

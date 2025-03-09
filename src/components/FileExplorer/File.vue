@@ -4,6 +4,7 @@ import ContextMenuItem from '@/components/Common/ContextMenuItem.vue'
 import ActionContextMenuItem from '@/components/Common/ActionContextMenuItem.vue'
 import Icon from '@/components/Common/Icon.vue'
 import SubMenu from '@/components/Common/SubMenu.vue'
+import ContextMenuDivider from '@/components/Common/ContextMenuDivider.vue'
 
 import { TabManager } from '@/components/TabSystem/TabManager'
 import { basename } from 'pathe'
@@ -34,14 +35,6 @@ const props = defineProps({
 		default: false,
 	},
 })
-
-function executeContextMenuAction(action: string, data: any) {
-	if (!contextMenu.value) return
-
-	ActionManager.trigger(action, data)
-
-	contextMenu.value.close()
-}
 
 function dragStart() {
 	requestAnimationFrame(() => {
@@ -80,13 +73,13 @@ onMounted(() => {
 		<span class="select-none font-theme text-ellipsis overflow-hidden"> {{ basename(path) }} </span>
 
 		<FreeContextMenu ref="contextMenu" v-slot="{ close }">
-			<ContextMenuItem icon="edit" text="Rename" @click.stop="executeContextMenuAction('files.renameFileSystemEntry', path)" />
-			<ContextMenuItem icon="delete" text="Delete" @click.stop="executeContextMenuAction('files.deleteFileSystemEntry', path)" />
-			<ContextMenuItem icon="folder_copy" text="Duplicate" @click.stop="executeContextMenuAction('files.duplicateFileSystemEntry', path)" />
-			<ContextMenuItem icon="content_copy" text="Copy" @click.stop="executeContextMenuAction('files.copyFileSystemEntry', path)" />
-			<ContextMenuItem icon="content_paste" text="Paste" class="pb-4" @click.stop="executeContextMenuAction('files.pasteFileSystemEntry', path)" />
+			<ActionContextMenuItem action="files.renameFileSystemEntry" :data="() => path" @click="close" />
+			<ActionContextMenuItem action="files.deleteFileSystemEntry" :data="() => path" @click="close" />
+			<ActionContextMenuItem action="files.duplicateFileSystemEntry" :data="() => path" @click="close" />
+			<ActionContextMenuItem action="files.copyFileSystemEntry" :data="() => path" @click="close" />
+			<ActionContextMenuItem action="files.pasteFileSystemEntry" :data="() => path" @click="close" />
 
-			<div v-if="fileActions.length > 0" class="bg-background-tertiary w-full h-[2px] my-1"></div>
+			<ContextMenuDivider v-if="fileActions.length > 0" />
 
 			<SubMenu v-if="fileActions.length > 0">
 				<template #main="slotProps">
@@ -95,8 +88,7 @@ onMounted(() => {
 
 				<template #menu="">
 					<ActionContextMenuItem
-						v-for="(action, index) in fileActions"
-						:class="{ 'pt-4': index === 0, 'pb-4': index === fileActions.length - 1 }"
+						v-for="action in fileActions"
 						:action="action"
 						@click="
 							() => {

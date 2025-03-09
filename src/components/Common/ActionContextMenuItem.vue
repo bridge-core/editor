@@ -4,7 +4,7 @@ import Icon from './Icon.vue'
 import { ActionManager } from '@/libs/actions/ActionManager'
 import { useTranslate } from '@/libs/locales/Locales'
 
-defineProps<{ action: string }>()
+defineProps<{ action: string; data?: () => any }>()
 
 const t = useTranslate()
 </script>
@@ -12,14 +12,10 @@ const t = useTranslate()
 <template>
 	<div
 		class="flex item-center group hover:bg-background-tertiary p-2 px-4 cursor-pointer transition-colors duration-100 ease-out rounded"
+		@click="ActionManager.trigger(action, data ? data() : undefined)"
 	>
-		<Icon
-			:icon="ActionManager.actions[action]?.icon ?? 'help'"
-			class="text-base text-primary transition-colors duration-100 ease-out"
-		/>
-		<span class="ml-2 font-theme select-none min-w-max mr-2">{{
-			t(ActionManager.actions[action]?.name ?? 'actions.unknown.name')
-		}}</span>
+		<Icon :icon="ActionManager.actions[action]?.icon ?? 'help'" class="text-base text-primary transition-colors duration-100 ease-out" />
+		<span class="ml-2 font-theme select-none min-w-max mr-2">{{ t(ActionManager.actions[action]?.name ?? 'actions.unknown.name') }}</span>
 
 		<span v-if="ActionManager.actions[action]?.keyBinding" class="min-w-max text-text-secondary ml-auto font-theme">
 			{{ ActionManager.actions[action].keyBinding }}
