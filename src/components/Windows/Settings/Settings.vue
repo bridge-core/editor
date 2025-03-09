@@ -160,6 +160,10 @@ const isMobile = useIsMobile()
 						</div>
 					</div>
 
+					<div v-if="item.type === 'label'" class="mt-4 mb-2">
+						<h2 class="font-theme text-xl font-bold">{{ t(item.label) }}</h2>
+					</div>
+
 					<!--<Button v-if="item.type === 'button'" @click="item.trigger" :text="t(item.text)" />
 
 					<p v-if="item.type !== 'custom'" class="text-text-secondary mr-6">
