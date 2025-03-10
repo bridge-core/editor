@@ -1029,7 +1029,7 @@ function setupJsonTreeActions() {
 		})
 	)
 
-	for (const action of [deleteAction, convertToObject, convertToArray, convertToNull, convertToNumber, convertToString, convertToBoolean]) {
+	for (const action of [undo, redo, deleteAction, convertToObject, convertToArray, convertToNull, convertToNumber, convertToString, convertToBoolean]) {
 		TabManager.focusedTabSystemChanged.on(() => {
 			action.setVisible(
 				TabManager.focusedTabSystem.value !== null &&
