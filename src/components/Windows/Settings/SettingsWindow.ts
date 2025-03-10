@@ -17,7 +17,6 @@ interface Category {
 
 type Item = CustomItem | DropdownItem | AutocompleteItem | ToggleItem | TabItem | TextItem | LabelItem
 
-//Can these interfaces have events when something is changed? e.g. onValueUpdated: callback(before, after)
 export interface CustomItem {
 	type: 'custom'
 	label?: string
@@ -152,7 +151,6 @@ function setupAppearanceCategory() {
 		icon: 'palette',
 	})
 
-	//Label
 	SettingsWindow.addItem('appearance', 'themeLabel', {
 		type: 'label',
 		label: 'Theme Settings',
@@ -185,7 +183,6 @@ function setupAppearanceCategory() {
 		labels: computed(() => lightThemes.value.map((theme) => theme.name)),
 	})
 
-	//Label
 	SettingsWindow.addItem('appearance', 'fontLabel', {
 		type: 'label',
 		label: 'Font Settings',
@@ -222,13 +219,10 @@ function setupAppearanceCategory() {
 		label: 'windows.settings.editor.compactTabDesign.name',
 	})
 
-	//Label
 	SettingsWindow.addItem('appearance', 'sideBarLabel', {
 		type: 'label',
 		label: 'Sidebar Settings',
 	})
-
-	//Should make sidebar be able to set on top, left, right or bottom (might actually be useful for mobile specifically.)
 
 	SettingsWindow.addItem('appearance', 'sidebarRight', {
 		type: 'toggle',
@@ -249,7 +243,6 @@ function setupAppearanceCategory() {
 		component: SidebarElementVisibility,
 	})
 
-	//Label
 	SettingsWindow.addItem('appearance', 'otherAppearanceLabel', {
 		type: 'label',
 		label: 'Other Settings',
