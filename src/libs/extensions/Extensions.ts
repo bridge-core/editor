@@ -70,6 +70,16 @@ export class Extensions {
 		await this.updateExtensions()
 	}
 
+	public static async reload() {
+		for (const extension of Object.values(this.activeExtensions)) {
+			await extension.deactivate()
+		}
+
+		for (const extension of Object.values(this.activeExtensions)) {
+			await extension.activate()
+		}
+	}
+
 	public static async installGlobal(extension: ExtensionManifest) {
 		const path = join('extensions', extension.name.replace(/\s+/g, ''))
 

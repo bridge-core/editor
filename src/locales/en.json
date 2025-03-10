@@ -338,6 +338,10 @@
 			"reload": {
 				"name": "Reload Project",
 				"description": "Reloads the currently loaded project"
+			},
+			"reloadExtensions": {
+				"name": "Reload Extensions",
+				"description": "Reloads all extensions"
 			}
 		}
 	},

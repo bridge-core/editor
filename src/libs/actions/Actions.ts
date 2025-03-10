@@ -22,6 +22,7 @@ import { importFromMcAddon } from '@/libs/import/McAddon'
 import { importFromMcPack } from '@/libs/import/McPack'
 import { openUrl } from '@/libs/OpenUrl'
 import { FileTab } from '@/components/TabSystem/FileTab'
+import { Extensions } from '@/libs/extensions/Extensions'
 
 export function setupActions() {
 	setupFileTabActions()
@@ -199,6 +200,21 @@ function setupProjectActions() {
 				name: 'actions.project.reload.name',
 				description: 'actions.project.reload.description',
 				icon: 'refresh',
+				category: 'actions.project.name',
+			})
+		)
+	)
+
+	projectActions.push(
+		ActionManager.addAction(
+			new Action({
+				id: 'project.reloadExtensions',
+				async trigger() {
+					await Extensions.reload()
+				},
+				name: 'actions.project.reloadExtensions.name',
+				description: 'actions.project.reloadExtensions.description',
+				icon: 'frame_reload',
 				category: 'actions.project.name',
 			})
 		)

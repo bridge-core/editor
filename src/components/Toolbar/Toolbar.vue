@@ -13,7 +13,7 @@ import { DropdownItem, Toolbar, ToolbarItem } from './Toolbar'
 import { ChangelogWindow } from '@/components/Windows/Changelog/ChangelogWindow'
 import { ActionManager, useAction } from '@/libs/actions/ActionManager'
 import { useIsMobile } from '@/libs/Mobile'
-import { onMounted, Ref, ref } from 'vue'
+import { onMounted, Ref, ref, watch } from 'vue'
 
 const t = useTranslate()
 
@@ -31,6 +31,10 @@ onMounted(() => {
 	ActionManager.actionsUpdated.on(() => {
 		renderableToolbarItems.value = Toolbar.items.value.filter((item) => shouldRenderItem(item))
 	})
+})
+
+watch(Toolbar.items, () => {
+	renderableToolbarItems.value = Toolbar.items.value.filter((item) => shouldRenderItem(item))
 })
 
 function shouldRenderItem(item: ToolbarItem): boolean {

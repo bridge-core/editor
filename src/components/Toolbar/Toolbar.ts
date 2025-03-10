@@ -59,6 +59,7 @@ export class Toolbar {
 		const item: Button = { type: 'button', action }
 
 		this.items.value.push(item)
+		this.items.value = [...this.items.value]
 
 		return item
 	}
@@ -67,6 +68,7 @@ export class Toolbar {
 		const item: Dropdown = { type: 'dropdown', id, name, items }
 
 		this.items.value.push(item)
+		this.items.value = [...this.items.value]
 
 		return item
 	}
@@ -77,14 +79,17 @@ export class Toolbar {
 		if (!dropdown) return
 
 		dropdown.items.push(item)
+		this.items.value = [...this.items.value]
 	}
 
 	public static removeButton(button: Button) {
 		this.items.value.splice(this.items.value.indexOf(button), 1)
+		this.items.value = [...this.items.value]
 	}
 
 	public static removeDropdown(dropdown: Dropdown) {
 		this.items.value.splice(this.items.value.indexOf(dropdown), 1)
+		this.items.value = [...this.items.value]
 	}
 
 	public static removeDropdownItem(dropdownId: string, item: DropdownItem) {
@@ -93,5 +98,6 @@ export class Toolbar {
 		if (!dropdown) return
 
 		dropdown.items.splice(dropdown.items.indexOf(item), 1)
+		this.items.value = [...this.items.value]
 	}
 }
