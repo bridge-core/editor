@@ -28,6 +28,8 @@ export function setupActions() {
 
 	setupEditorActions()
 
+	setupProjectActions()
+
 	setupTextEditorActions()
 
 	setupFileSystemActions()
@@ -176,6 +178,37 @@ function setupEditorActions() {
 			category: 'actions.editor.name',
 		})
 	)
+}
+
+function setupProjectActions() {
+	const projectActions: Action[] = []
+
+	projectActions.push(
+		ActionManager.addAction(
+			new Action({
+				id: 'project.reload',
+				async trigger() {
+					if (!ProjectManager.currentProject) return
+
+					const currentProjectName = ProjectManager.currentProject.name
+
+					await ProjectManager.closeProject()
+
+					await ProjectManager.loadProject(currentProjectName)
+				},
+				name: 'actions.project.reload.name',
+				description: 'actions.project.reload.description',
+				icon: 'refresh',
+				category: 'actions.project.name',
+			})
+		)
+	)
+
+	ProjectManager.updatedCurrentProject.on(() => {
+		for (const action of projectActions) {
+			action.setVisible(ProjectManager.currentProject !== null)
+		}
+	})
 }
 
 function setupTextEditorActions() {
