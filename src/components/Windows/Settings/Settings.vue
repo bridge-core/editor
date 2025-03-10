@@ -126,12 +126,12 @@ const isMobile = useIsMobile()
 							:completions="item.completions.value"
 							:label="item.label"
 							:model-value="get(id).toString()"
-							@update:model-value="(value: string) => Settings.set(id, value)"
+							@update:model-value="(value: string | undefined) => Settings.set(id, value)"
 						/>
 					</div>
 
 					<div v-if="item.type === 'text'" class="w-full">
-						<LabeledTextInput :label="item.label" :model-value="get(id).toString()" @update:model-value="(value: string) => Settings.set(id, value)" />
+						<LabeledTextInput :label="item.label" :model-value="get(id).toString()" @update:model-value="(value: string | undefined) => Settings.set(id, value)" />
 					</div>
 
 					<div v-if="item.type === 'tab'">
@@ -163,12 +163,6 @@ const isMobile = useIsMobile()
 					<div v-if="item.type === 'label'" class="mt-4">
 						<h2 class="font-theme text-xl font-bold">{{ t(item.label) }}</h2>
 					</div>
-
-					<!--<Button v-if="item.type === 'button'" @click="item.trigger" :text="t(item.text)" />
-
-					<p v-if="item.type !== 'custom'" class="text-text-secondary mr-6">
-						{{ t(item.description) }}
-					</p> -->
 				</div>
 			</div>
 		</template>
