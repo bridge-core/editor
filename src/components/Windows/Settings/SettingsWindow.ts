@@ -15,7 +15,7 @@ interface Category {
 	icon: string
 }
 
-type Item = CustomItem | DropdownItem | AutocompleteItem | ToggleItem | TabItem | TextItem
+type Item = CustomItem | DropdownItem | AutocompleteItem | ToggleItem | TabItem | TextItem | LabelItem
 
 export interface CustomItem {
 	type: 'custom'
@@ -54,6 +54,12 @@ export interface TabItem {
 	labels: string[]
 }
 
+export interface LabelItem {
+	type: 'label'
+	label: string
+	description?: string
+}
+
 export class SettingsWindow extends Window {
 	public static id = 'settings'
 	public static component = Settings
@@ -86,8 +92,8 @@ export class SettingsWindow extends Window {
 		SettingsWindow.items[id] = {}
 	}
 
-	public static addItem<T extends Item>(categroy: string, id: string, item: T) {
-		SettingsWindow.items[categroy][id] = item
+	public static addItem<T extends Item>(category: string, id: string, item: T) {
+		SettingsWindow.items[category][id] = item
 	}
 }
 
@@ -120,6 +126,11 @@ function setupGeneralCategory() {
 		type: 'text',
 		label: 'windows.settings.projects.defaultAuthor.name',
 	})
+
+	SettingsWindow.addItem('general', 'defaultNamespace', {
+		type: 'text',
+		label: 'windows.settings.projects.defaultNamespace.name',
+	})
 }
 
 function setupActionsCategory() {
@@ -138,6 +149,11 @@ function setupAppearanceCategory() {
 	SettingsWindow.addCategory('appearance', {
 		label: 'windows.settings.appearance.name',
 		icon: 'palette',
+	})
+
+	SettingsWindow.addItem('appearance', 'themeLabel', {
+		type: 'label',
+		label: 'Theme Settings',
 	})
 
 	SettingsWindow.addItem('appearance', 'colorScheme', {
@@ -165,6 +181,11 @@ function setupAppearanceCategory() {
 		label: 'windows.settings.appearance.lightTheme.name',
 		values: computed(() => lightThemes.value.map((theme) => theme.id)),
 		labels: computed(() => lightThemes.value.map((theme) => theme.name)),
+	})
+
+	SettingsWindow.addItem('appearance', 'fontLabel', {
+		type: 'label',
+		label: 'Font Settings',
 	})
 
 	SettingsWindow.addItem('appearance', 'font', {
@@ -198,6 +219,11 @@ function setupAppearanceCategory() {
 		label: 'windows.settings.editor.compactTabDesign.name',
 	})
 
+	SettingsWindow.addItem('appearance', 'sideBarLabel', {
+		type: 'label',
+		label: 'Sidebar Settings',
+	})
+
 	SettingsWindow.addItem('appearance', 'sidebarRight', {
 		type: 'toggle',
 		label: 'windows.settings.sidebar.sidebarRight.name',
@@ -211,18 +237,23 @@ function setupAppearanceCategory() {
 		values: ['small', 'normal', 'large', 'x-large'],
 	})
 
+	SettingsWindow.addItem('appearance', 'sidebarItemVisibility', {
+		type: 'custom',
+		label: 'windows.settings.appearance.sidebarElementVisibility.name',
+		component: SidebarElementVisibility,
+	})
+
+	SettingsWindow.addItem('appearance', 'otherAppearanceLabel', {
+		type: 'label',
+		label: 'Other Settings',
+	})
+
 	SettingsWindow.addItem('appearance', 'fileExplorerIndentation', {
 		type: 'tab',
 		label: 'windows.settings.appearance.fileExplorerIndentation.name',
 		description: 'windows.settings.appearance.fileExplorerIndentation.description',
 		labels: ['Small', 'Normal', 'Large', 'X-Large'],
 		values: ['small', 'normal', 'large', 'x-large'],
-	})
-
-	SettingsWindow.addItem('appearance', 'sidebarItemVisibility', {
-		type: 'custom',
-		label: 'windows.settings.appearance.sidebarElementVisibility.name',
-		component: SidebarElementVisibility,
 	})
 }
 

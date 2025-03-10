@@ -61,6 +61,8 @@ const selectedExperimentalToggles: Ref<ExperimentalToggle[]> = ref([])
 async function setup() {
 	projectAuthor.value = Settings.get('defaultAuthor')
 
+	projectNamespace.value = Settings.get('defaultNamespace')
+
 	packTypes.value = (await getData.value('packages/minecraftBedrock/packDefinitions.json')) || []
 
 	experimentalToggles.value = (await getData.value('packages/minecraftBedrock/experimentalGameplay.json')) || []

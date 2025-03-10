@@ -884,6 +884,10 @@
 					"name": "Default Author",
 					"description": "The default author for new projects"
 				},
+				"defaultNamespace": {
+					"name": "Default Namespace",
+					"description": "The default namespace for new projects"
+				},
 				"loadComMojangProjects": {
 					"name": "Load com.mojang Projects",
 					"description": "Automatically load projects from the com.mojang folder"

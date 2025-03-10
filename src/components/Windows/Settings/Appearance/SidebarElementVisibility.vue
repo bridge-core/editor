@@ -21,7 +21,7 @@ function toggle(id: string) {
 </script>
 
 <template>
-	<div class="flex flex-col gap-2">
+	<div class="flex flex-col gap-2 mb-4">
 		<button
 			v-for="item in Sidebar.items.filter((item) => item.type !== 'divider')"
 			class="flex w-full bg-background-secondary p-2 rounded gap-2 font-theme border-2 border-background-secondary transition-border transition-colors duration-100 ease-out"

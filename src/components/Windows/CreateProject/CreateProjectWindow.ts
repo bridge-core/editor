@@ -10,5 +10,9 @@ export class CreateProjectWindow extends Window {
 		Settings.addSetting('defaultAuthor', {
 			default: '',
 		})
+
+		Settings.addSetting('defaultNamespace', {
+			default: 'bridge',
+		})
 	}
 }
