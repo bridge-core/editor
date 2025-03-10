@@ -8,10 +8,11 @@ import { CompilerWindow } from '@/components/Windows/Compiler/CompilerWindow'
 import { NotificationSystem } from '@/components/Notifications/NotificationSystem'
 import { SocialsWindow } from '@/components/Windows/Socials/SocialsWindow'
 import { openUrl } from '@/libs/OpenUrl'
+import { ActionManager } from '@/libs/actions/ActionManager'
 
 export function setupSidebar() {
 	Sidebar.addButton('fileExplorer', 'sidebar.fileExplorer.name', 'folder', () => {
-		FileExplorer.toggle()
+		ActionManager.trigger('project.toggleFileExplorer')
 	})
 
 	Sidebar.addButton('findAndReplace', 'sidebar.findAndReplace.name', 'quick_reference_all', () => {

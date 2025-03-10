@@ -342,6 +342,10 @@
 			"reloadExtensions": {
 				"name": "Reload Extensions",
 				"description": "Reloads all extensions"
+			},
+			"toggleFileExplorer": {
+				"name": "Toggle File Explorer",
+				"description": "Toggles the file explorer open or closed"
 			}
 		}
 	},

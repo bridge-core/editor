@@ -23,6 +23,7 @@ import { importFromMcPack } from '@/libs/import/McPack'
 import { openUrl } from '@/libs/OpenUrl'
 import { FileTab } from '@/components/TabSystem/FileTab'
 import { Extensions } from '@/libs/extensions/Extensions'
+import { FileExplorer } from '@/components/FileExplorer/FileExplorer'
 
 export function setupActions() {
 	setupFileTabActions()
@@ -215,6 +216,21 @@ function setupProjectActions() {
 				name: 'actions.project.reloadExtensions.name',
 				description: 'actions.project.reloadExtensions.description',
 				icon: 'frame_reload',
+				category: 'actions.project.name',
+			})
+		)
+	)
+
+	projectActions.push(
+		ActionManager.addAction(
+			new Action({
+				id: 'project.toggleFileExplorer',
+				async trigger() {
+					FileExplorer.toggle()
+				},
+				name: 'actions.project.toggleFileExplorer.name',
+				description: 'actions.project.toggleFileExplorer.description',
+				icon: 'folder_open',
 				category: 'actions.project.name',
 			})
 		)
