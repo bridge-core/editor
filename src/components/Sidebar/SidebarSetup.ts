@@ -1,5 +1,4 @@
 import { Sidebar } from './Sidebar'
-import { FileExplorer } from '@/components/FileExplorer/FileExplorer'
 import { FindAndReplaceTab } from '@/components/Tabs/FindAnReplace/FindAndReplaceTab'
 import { ExtensionLibraryWindow } from '@/components/Windows/ExtensionLibrary/ExtensionLibrary'
 import { TabManager } from '@/components/TabSystem/TabManager'
