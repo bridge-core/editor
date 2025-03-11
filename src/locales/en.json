@@ -169,10 +169,6 @@
 				"name": "Import Project",
 				"description": "Import a new project"
 			},
-			"download": {
-				"name": "Download",
-				"description": "Opens the guide to download bridge. native"
-			},
 			"reloadEditor": {
 				"name": "Reload Editor",
 				"description": "Completely reloads the editor"
@@ -350,6 +346,25 @@
 			"toggleFileExplorer": {
 				"name": "Toggle File Explorer",
 				"description": "Toggles the file explorer open or closed"
+			}
+		},
+		"help": {
+			"name": "Help",
+			"download": {
+				"name": "Download",
+				"description": "Opens the guide to download bridge. native"
+			},
+			"bedrockDevDocs": {
+				"name": "Open bedrock.dev Docs",
+				"description": "Opens the bedrock.dev docs in a new browser tab"
+			},
+			"creatorDocs": {
+				"name": "Open Minecraft Creator Docs",
+				"description": "Opens the Minecraft creator docs in a new browser tab"
+			},
+			"scriptingDocs": {
+				"name": "Open Scripting API Docs",
+				"description": "Opens the Minecraft creator docs for the scripting API in a new browser tab"
 			}
 		}
 	},

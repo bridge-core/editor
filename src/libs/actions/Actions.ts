@@ -41,6 +41,8 @@ export function setupActions() {
 	setupExportActions()
 
 	setupJsonTreeActions()
+
+	setupHelpActions()
 }
 
 function setupFileTabActions() {
@@ -164,19 +166,6 @@ function setupEditorActions() {
 			name: 'actions.editor.importProject.name',
 			description: 'actions.editor.importProject.description',
 			icon: 'package',
-			category: 'actions.editor.name',
-		})
-	)
-
-	ActionManager.addAction(
-		new Action({
-			id: 'editor.openDownloadGuide',
-			trigger() {
-				openUrl('https://bridge-core.app/guide/download/')
-			},
-			name: 'actions.editor.download.name',
-			description: 'actions.editor.download.description',
-			icon: 'download',
 			category: 'actions.editor.name',
 		})
 	)
@@ -1117,4 +1106,58 @@ function setupJsonTreeActions() {
 			)
 		})
 	}
+}
+
+function setupHelpActions() {
+	ActionManager.addAction(
+		new Action({
+			id: 'editor.openDownloadGuide',
+			trigger() {
+				openUrl('https://bridge-core.app/guide/download/')
+			},
+			name: 'actions.help.download.name',
+			description: 'actions.help.download.description',
+			icon: 'download',
+			category: 'actions.help.name',
+		})
+	)
+
+	ActionManager.addAction(
+		new Action({
+			id: 'editor.bedrockDevDocs',
+			trigger() {
+				openUrl('https://bedrock.dev/')
+			},
+			name: 'actions.help.bedrockDevDocs.name',
+			description: 'actions.help.bedrockDevDocs.description',
+			icon: 'info',
+			category: 'actions.help.name',
+		})
+	)
+
+	ActionManager.addAction(
+		new Action({
+			id: 'editor.creatorDocs',
+			trigger() {
+				openUrl('https://learn.microsoft.com/en-us/minecraft/creator/')
+			},
+			name: 'actions.help.creatorDocs.name',
+			description: 'actions.help.creatorDocs.description',
+			icon: 'help',
+			category: 'actions.help.name',
+		})
+	)
+
+	ActionManager.addAction(
+		new Action({
+			id: 'editor.scriptingDocs',
+			trigger() {
+				openUrl('https://learn.microsoft.com/en-us/minecraft/creator/scriptapi/')
+			},
+			name: 'actions.help.scriptingDocs.name',
+			description: 'actions.help.scriptingDocs.description',
+			icon: 'code',
+			category: 'actions.help.name',
+		})
+	)
 }
