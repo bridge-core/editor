@@ -172,6 +172,10 @@
 			"download": {
 				"name": "Download",
 				"description": "Opens the guide to download bridge. native"
+			},
+			"reloadEditor": {
+				"name": "Reload Editor",
+				"description": "Completely reloads the editor"
 			}
 		},
 		"files": {

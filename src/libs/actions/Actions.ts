@@ -180,6 +180,20 @@ function setupEditorActions() {
 			category: 'actions.editor.name',
 		})
 	)
+
+	ActionManager.addAction(
+		new Action({
+			id: 'editor.reloadEditor',
+			trigger() {
+				location.reload()
+			},
+			keyBinding: 'Ctrl + R',
+			name: 'actions.editor.reloadEditor.name',
+			description: 'actions.editor.reloadEditor.description',
+			icon: 'refresh',
+			category: 'actions.editor.name',
+		})
+	)
 }
 
 function setupProjectActions() {
