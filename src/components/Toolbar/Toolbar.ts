@@ -52,7 +52,7 @@ export class Toolbar {
 
 		this.addDropdown('tools', 'toolbar.tools.name', [{ type: 'button', action: 'editor.clearNotifications' }])
 
-		this.addButton('editor.openDownloadGuide')
+		this.addButton('help.openDownloadGuide')
 	}
 
 	public static addButton(action: string): Button {

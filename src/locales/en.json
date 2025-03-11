@@ -355,16 +355,28 @@
 				"description": "Opens the guide to download bridge. native"
 			},
 			"bedrockDevDocs": {
-				"name": "Open bedrock.dev Docs",
+				"name": "bedrock.dev Docs",
 				"description": "Opens the bedrock.dev docs in a new browser tab"
 			},
 			"creatorDocs": {
-				"name": "Open Minecraft Creator Docs",
+				"name": "Minecraft Creator Docs",
 				"description": "Opens the Minecraft creator docs in a new browser tab"
 			},
 			"scriptingDocs": {
-				"name": "Open Scripting API Docs",
+				"name": "Scripting API Docs",
 				"description": "Opens the Minecraft creator docs for the scripting API in a new browser tab"
+			},
+			"gettingStarted": {
+				"name": "Getting Started",
+				"description": "Opens the bridge. getting started guide in a new browser tab"
+			},
+			"extensions": {
+				"name": "Extensions",
+				"description": "Opens the bridge. extensions guide in a new browser tab"
+			},
+			"faq": {
+				"name": "FAQ",
+				"description": "Opens the bridge. FAQ in a new browser tab"
 			}
 		}
 	},

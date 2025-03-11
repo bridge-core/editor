@@ -1111,7 +1111,33 @@ function setupJsonTreeActions() {
 function setupHelpActions() {
 	ActionManager.addAction(
 		new Action({
-			id: 'editor.openDownloadGuide',
+			id: 'help.gettingStarted',
+			trigger() {
+				openUrl('https://bridge-core.app/guide/')
+			},
+			name: 'actions.help.gettingStarted.name',
+			description: 'actions.help.gettingStarted.description',
+			icon: 'flag',
+			category: 'actions.help.name',
+		})
+	)
+
+	ActionManager.addAction(
+		new Action({
+			id: 'help.faq',
+			trigger() {
+				openUrl('https://bridge-core.app/guide/faq/')
+			},
+			name: 'actions.help.faq.name',
+			description: 'actions.help.faq.description',
+			icon: 'info',
+			category: 'actions.help.name',
+		})
+	)
+
+	ActionManager.addAction(
+		new Action({
+			id: 'help.openDownloadGuide',
 			trigger() {
 				openUrl('https://bridge-core.app/guide/download/')
 			},
@@ -1124,7 +1150,34 @@ function setupHelpActions() {
 
 	ActionManager.addAction(
 		new Action({
-			id: 'editor.bedrockDevDocs',
+			id: 'help.extensions',
+			trigger() {
+				openUrl('https://bridge-core.app/extensions/')
+			},
+			name: 'actions.help.extensions.name',
+			description: 'actions.help.extensions.description',
+			icon: 'code',
+			category: 'actions.help.name',
+		})
+	)
+
+	ActionManager.addAction(
+		new Action({
+			id: 'help.scriptingDocs',
+			trigger() {
+				openUrl('https://learn.microsoft.com/en-us/minecraft/creator/scriptapi/')
+			},
+			name: 'actions.help.scriptingDocs.name',
+			description: 'actions.help.scriptingDocs.description',
+			icon: 'data_array',
+			category: 'actions.help.name',
+			keyBinding: 'Ctrl + Alt + S',
+		})
+	)
+
+	ActionManager.addAction(
+		new Action({
+			id: 'help.bedrockDevDocs',
 			trigger() {
 				openUrl('https://bedrock.dev/')
 			},
@@ -1137,26 +1190,13 @@ function setupHelpActions() {
 
 	ActionManager.addAction(
 		new Action({
-			id: 'editor.creatorDocs',
+			id: 'help.creatorDocs',
 			trigger() {
 				openUrl('https://learn.microsoft.com/en-us/minecraft/creator/')
 			},
 			name: 'actions.help.creatorDocs.name',
 			description: 'actions.help.creatorDocs.description',
 			icon: 'help',
-			category: 'actions.help.name',
-		})
-	)
-
-	ActionManager.addAction(
-		new Action({
-			id: 'editor.scriptingDocs',
-			trigger() {
-				openUrl('https://learn.microsoft.com/en-us/minecraft/creator/scriptapi/')
-			},
-			name: 'actions.help.scriptingDocs.name',
-			description: 'actions.help.scriptingDocs.description',
-			icon: 'code',
 			category: 'actions.help.name',
 		})
 	)
