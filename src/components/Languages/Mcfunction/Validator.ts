@@ -1,9 +1,5 @@
-import {
-	tokenizeCommand,
-	tokenizeTargetSelector,
-	castType,
-} from 'bridge-common-utils'
-import { CommandData, ICommandArgument } from './Data'
+import { tokenizeCommand } from 'bridge-common-utils'
+import { CommandData } from './Data'
 import type { editor } from 'monaco-editor'
 import { useMonaco } from '/@/utils/libs/useMonaco'
 import { RefSchema } from '/@/components/JSONSchema/Schema/Ref'
