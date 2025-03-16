@@ -1,12 +1,12 @@
 <template>
 	<span
 		v-if="icon !== 'loading'"
-		class="material-symbols-rounded select-none max-w-[1em] overflow-x-hidden"
+		class="material-symbols-rounded select-none max-w-[1em]"
 		ref="element"
 		:style="{ color: color ? `var(--theme-color-${color})` : undefined }"
 		v-bind="$attrs"
 	>
-		{{ mdiMap[icon] ?? icon }}
+		{{ resolveLegacyIcons(icon) }}
 	</span>
 
 	<div v-bind="$attrs" v-if="icon === 'loading'" class="spinner" />
@@ -42,6 +42,14 @@ defineProps({
 		type: String,
 	},
 })
+
+function resolveLegacyIcons(icon: string) {
+	if (mdiMap[icon]) return mdiMap[icon]
+
+	if (icon.startsWith('mdi-')) return 'help'
+
+	return icon
+}
 </script>
 
 <style scoped>
