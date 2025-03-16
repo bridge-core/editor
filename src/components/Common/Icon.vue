@@ -1,7 +1,7 @@
 <template>
 	<span
 		v-if="icon !== 'loading'"
-		class="material-symbols-rounded select-none"
+		class="material-symbols-rounded select-none max-w-[1em] overflow-x-hidden"
 		ref="element"
 		:style="{ color: color ? `var(--theme-color-${color})` : undefined }"
 		v-bind="$attrs"

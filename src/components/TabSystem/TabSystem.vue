@@ -34,7 +34,10 @@ const get = Settings.useGet()
 						v-if="tab instanceof FileTab && tab.modified.value"
 						class="bg-behaviorPack border-2 border-[var(--border-color)] w-3 h-3 rounded-full absolute right-[-0.25rem] top-1"
 						:style="{
-							'--border-color': instance.selectedTab.value == tab ? 'var(--theme-color-backgroundSecondary)' : 'var(--theme-color-background)',
+							'--border-color':
+								instance.selectedTab.value == tab
+									? 'var(--theme-color-backgroundSecondary)'
+									: 'var(--theme-color-background)',
 						}"
 					></div>
 
@@ -42,7 +45,7 @@ const get = Settings.useGet()
 				</div>
 
 				<p
-					class="font-theme select-none overflow-hidden text-ellipsis h-6 transition-colors duration-100 ease-out"
+					class="font-theme select-none overflow-hidden text-ellipsis whitespace-nowrap h-6 transition-colors duration-100 ease-out basis-0 grow"
 					:class="{
 						'text-text': instance.selectedTab.value === tab,
 						'text-text-secondary group-hover:text-text': instance.selectedTab.value !== tab,
@@ -56,7 +59,12 @@ const get = Settings.useGet()
 		</div>
 
 		<div class="w-full tab-content">
-			<component v-if="instance.selectedTab.value" :instance="instance.selectedTab.value" :is="instance.selectedTab.value.component" :key="instance.selectedTab.value.id" />
+			<component
+				v-if="instance.selectedTab.value"
+				:instance="instance.selectedTab.value"
+				:is="instance.selectedTab.value.component"
+				:key="instance.selectedTab.value.id"
+			/>
 		</div>
 	</div>
 </template>
