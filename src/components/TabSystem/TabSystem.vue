@@ -23,7 +23,7 @@ const get = Settings.useGet()
 				v-for="tab in instance.tabs.value"
 				class="flex items-center gap-1 px-2 py-1 rounded cursor-pointer transition-colors duration-100 ease-out group"
 				:class="{
-					'max-w-[10rem]': get('compactTabDesign'),
+					'max-w-[12rem]': get('compactTabDesign'),
 					'bg-background-secondary': instance.selectedTab.value === tab,
 					'bg-background-transparent hover:bg-background-secondary': instance.selectedTab.value !== tab,
 				}"
