@@ -45,7 +45,12 @@ import { disposeAll, Disposable } from '@/libs/disposeable/Disposeable'
 import { Extension } from './Extension'
 import { Action } from '@/libs/actions/Action'
 import { ActionManager } from '@/libs/actions/ActionManager'
-import { Dropdown as ToolbarDropdown, DropdownItem as ToolbarDropdownItem, Button as ToolbarButton, Toolbar } from '@/components/Toolbar/Toolbar'
+import {
+	Dropdown as ToolbarDropdown,
+	DropdownItem as ToolbarDropdownItem,
+	Button as ToolbarButton,
+	Toolbar,
+} from '@/components/Toolbar/Toolbar'
 import { FileImporter } from '@/libs/import/FileImporter'
 import { DirectoryImporter } from '@/libs/import/DirectoryImporter'
 import { ImporterManager } from '@/libs/import/ImporterManager'
@@ -62,14 +67,12 @@ export function setupModules() {
 	Extension.registerModule('@bridge/sidebar', (extension) => {
 		let sidebarItems: (SidebarButton | SidebarDivider)[] = []
 
-		const disposable = extension.deactivated.on(() => {
+		extension.deactivated.once(() => {
 			for (const item of sidebarItems) {
 				Sidebar.remove(item)
 			}
 
 			sidebarItems = []
-
-			disposable.dispose()
 		})
 
 		return {
@@ -123,13 +126,11 @@ export function setupModules() {
 	Extension.registerModule('@bridge/project', (extension) => {
 		let disposables: Disposable[] = []
 
-		disposables.push(
-			extension.deactivated.on(() => {
-				disposeAll(disposables)
+		extension.deactivated.once(() => {
+			disposeAll(disposables)
 
-				disposables = []
-			})
-		)
+			disposables = []
+		})
 
 		return {
 			getCurrentProject() {
@@ -176,7 +177,7 @@ export function setupModules() {
 		let registeredFileImporters: FileImporter[] = []
 		let registeredDirectoryImporters: DirectoryImporter[] = []
 
-		const disposable = extension.deactivated.on(() => {
+		extension.deactivated.once(() => {
 			for (const importer of Object.values(registeredFileImporters)) {
 				ImporterManager.removeFileImporter(importer)
 			}
@@ -187,8 +188,6 @@ export function setupModules() {
 
 			registeredFileImporters = []
 			registeredDirectoryImporters = []
-
-			disposable.dispose()
 		})
 
 		return {
@@ -210,14 +209,12 @@ export function setupModules() {
 	Extension.registerModule('@bridge/export', (extension) => {
 		let registeredExportActions: string[] = []
 
-		const disposable = extension.deactivated.on(() => {
+		extension.deactivated.once(() => {
 			for (const exportAction of registeredExportActions) {
 				ExportActionManager.removeAction(exportAction)
 			}
 
 			registeredExportActions = []
-
-			disposable.dispose()
 		})
 
 		return {
@@ -237,14 +234,12 @@ export function setupModules() {
 	Extension.registerModule('@bridge/fileAction', (extension) => {
 		let registeredFileActions: string[] = []
 
-		const disposable = extension.deactivated.on(() => {
+		extension.deactivated.once(() => {
 			for (const action of registeredFileActions) {
 				FileActionManager.removeAction(action)
 			}
 
 			registeredFileActions = []
-
-			disposable.dispose()
 		})
 
 		return {
@@ -361,13 +356,11 @@ export function setupModules() {
 	Extension.registerModule('@bridge/fs', (extension) => {
 		let disposables: Disposable[] = []
 
-		disposables.push(
-			extension.deactivated.on(() => {
-				disposeAll(disposables)
+		extension.deactivated.once(() => {
+			disposeAll(disposables)
 
-				disposables = []
-			})
-		)
+			disposables = []
+		})
 
 		return {
 			readFile: fileSystem.readFile.bind(fileSystem),
@@ -414,7 +407,8 @@ export function setupModules() {
 
 	Extension.registerModule('@bridge/json5', () => ({
 		parse: (str: string) => json5.parse(str),
-		stringify: (obj: any, replacer?: ((this: any, key: string, value: any) => any) | undefined, space?: string | number | undefined) => JSON.stringify(obj, replacer, space),
+		stringify: (obj: any, replacer?: ((this: any, key: string, value: any) => any) | undefined, space?: string | number | undefined) =>
+			JSON.stringify(obj, replacer, space),
 	}))
 
 	Extension.registerModule('@bridge/notification', () => ({
@@ -447,7 +441,7 @@ export function setupModules() {
 		let registeredTabTypes: (typeof Tab | typeof FileTab)[] = []
 		let registeredFileTabTypes: (typeof FileTab)[] = []
 
-		const disposable = extension.deactivated.on(() => {
+		extension.deactivated.once(() => {
 			for (const tabType of registeredTabTypes) {
 				TabTypes.removeTabType(tabType)
 			}
@@ -458,8 +452,6 @@ export function setupModules() {
 
 			registeredTabTypes = []
 			registeredFileTabTypes = []
-
-			disposable.dispose()
 		})
 
 		return {
@@ -489,13 +481,11 @@ export function setupModules() {
 	Extension.registerModule('@bridge/theme', (extension) => {
 		let disposables: Disposable[] = []
 
-		disposables.push(
-			extension.deactivated.on(() => {
-				disposeAll(disposables)
+		extension.deactivated.once(() => {
+			disposeAll(disposables)
 
-				disposables = []
-			})
-		)
+			disposables = []
+		})
 
 		return {
 			getColor(id: string) {
@@ -524,7 +514,7 @@ export function setupModules() {
 	Extension.registerModule('@bridge/action', (extension) => {
 		let registeredActions: Record<string, Action> = {}
 
-		const disposable = extension.deactivated.on(() => {
+		extension.deactivated.once(() => {
 			for (const action of Object.values(registeredActions)) {
 				ActionManager.removeAction(action)
 
@@ -532,8 +522,6 @@ export function setupModules() {
 			}
 
 			registeredActions = {}
-
-			disposable.dispose()
 		})
 
 		return {
@@ -562,7 +550,7 @@ export function setupModules() {
 		let addedButtons: ToolbarButton[] = []
 		let addedDropdownItems: { dropdown: string; item: ToolbarDropdownItem }[] = []
 
-		const disposable = extension.deactivated.on(() => {
+		extension.deactivated.once(() => {
 			for (const dropdown of addedDropdowns) {
 				Toolbar.removeDropdown(dropdown)
 			}
@@ -580,8 +568,6 @@ export function setupModules() {
 			}
 
 			addedDropdownItems = []
-
-			disposable.dispose()
 		})
 
 		return {
