@@ -143,8 +143,12 @@ function drop(event: DragEvent) {
 	if (draggingInside.value) {
 		if (!(props.tree instanceof ObjectElement) && !(props.tree instanceof ArrayElement)) return
 
+		if (props.tree.id === draggedTree.tree.parent?.id) return
+
 		props.editor.edit(new MoveEdit(draggedTree.tree, props.tree, 0))
 	} else {
+		if (props.tree.parent?.id === draggedTree.tree.parent?.id) return
+
 		if (props.tree.parent instanceof ObjectElement) {
 			let keys = Object.keys(props.tree.parent.children)
 
