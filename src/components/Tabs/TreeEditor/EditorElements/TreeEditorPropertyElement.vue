@@ -35,9 +35,7 @@ const valueSelected = computed(
 		props.editor.selectedTree.value.tree.id === props.tree.id
 )
 
-const dragging = computed(
-	() => props.editor.draggedTree.value && props.editor.draggedTree.value.tree.id === props.tree.id
-)
+const dragging = computed(() => props.editor.draggedTree.value && props.editor.draggedTree.value.tree.id === props.tree.id)
 
 function clickProperty() {
 	props.editor.selectProperty(props.tree)
@@ -150,21 +148,15 @@ function drop(event: DragEvent) {
 		if (props.tree.parent instanceof ObjectElement) {
 			let keys = Object.keys(props.tree.parent.children)
 
-			if (draggedTree.tree.parent!.id === props.tree.parent.id)
-				keys = keys.filter((key) => key !== draggedTree.tree.key)
+			if (draggedTree.tree.parent!.id === props.tree.parent.id) keys = keys.filter((key) => key !== draggedTree.tree.key)
 
 			props.editor.edit(
-				new MoveEdit(
-					draggedTree.tree,
-					props.tree.parent,
-					keys.indexOf(props.elementKey as string) + (draggingAbove.value ? 0 : 1)
-				)
+				new MoveEdit(draggedTree.tree, props.tree.parent, keys.indexOf(props.elementKey as string) + (draggingAbove.value ? 0 : 1))
 			)
 		} else if (props.tree.parent instanceof ArrayElement) {
 			let values = props.tree.parent.children
 
-			if (draggedTree.tree.parent === props.tree.parent)
-				values = values.filter((value) => value.id !== draggedTree.tree.id)
+			if (draggedTree.tree.parent === props.tree.parent) values = values.filter((value) => value.id !== draggedTree.tree.id)
 
 			props.editor.edit(
 				new MoveEdit(
@@ -184,9 +176,7 @@ function drop(event: DragEvent) {
 const diagnostic = computed(() => props.editor.diagnostics.value.find((diagnostic) => diagnostic.path === props.path))
 
 const hasChildDiagnostic = computed(() =>
-	props.editor.diagnostics.value.find(
-		(diagnostic) => diagnostic.path.startsWith(props.path) && diagnostic.path !== props.path
-	)
+	props.editor.diagnostics.value.find((diagnostic) => diagnostic.path.startsWith(props.path) && diagnostic.path !== props.path)
 )
 
 function open() {
@@ -225,7 +215,7 @@ defineExpose({ open })
 			<Icon icon="arrow_downward" color="warning" class="text-xs" /> {{ diagnostic.message }}
 		</p>
 
-		<span class="flex items-end">
+		<span class="flex">
 			<span
 				class="flex items-center gap-1 bg-[var(--color)] px-1 rounded transition-colors ease-out duration-100 cursor-pointer"
 				:class="{ 'hover:bg-background-secondary': !editor.draggedTree.value || dragging }"
@@ -246,11 +236,7 @@ defineExpose({ open })
 				/>
 
 				<span v-if="typeof elementKey === 'string'" class="select-none font-theme-editor text-theme-editor">
-					"<HighlightedText
-						:known-words="(editor as TreeEditorTab).knownWords"
-						:value="elementKey"
-						type="string"
-					/>":
+					"<HighlightedText :known-words="(editor as TreeEditorTab).knownWords" :value="elementKey" type="string" />":
 				</span>
 			</span>
 
@@ -289,21 +275,16 @@ defineExpose({ open })
 					:path
 				/>
 
-				<TreeEditorObjectElement
-					:editor="editor"
-					:tree="tree"
-					@opencontextmenu="(event) => emit('opencontextmenu', event)"
-					:path
-				/>
+				<TreeEditorObjectElement :editor="editor" :tree="tree" @opencontextmenu="(event) => emit('opencontextmenu', event)" :path />
 			</div>
 
 			<span
-				class="select-none px-1 bg-[var(--color)] hover:bg-background-secondary rounded transition-colors ease-out duration-100 cursor-pointer font-theme-editor text-theme-editor"
+				class="select-none px-1 bg-[var(--color)] hover:bg-background-secondary rounded transition-colors ease-out duration-100 cursor-pointer font-theme-editor text-theme-editor inline-block min-h-[1.5rem]"
 				:style="{
 					'--color': valueSelected ? 'var(--theme-color-backgroundSecondary)' : 'none',
 				}"
 				@click="editor.select(tree)"
-				@contextmenu.stop.prevent="(event: MouseEvent) => emit('opencontextmenu', {selection: { type: 'value', tree }, event})"
+				@contextmenu.stop="(event: MouseEvent) => emit('opencontextmenu', {selection: { type: 'value', tree }, event})"
 				>{{ tree instanceof ObjectElement ? '}' : ']' }}</span
 			>
 		</div>
