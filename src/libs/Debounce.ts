@@ -1,5 +1,12 @@
 import { Disposable } from '@/libs/disposeable/Disposeable'
 
+/**
+ * Limit an action from being triggered too often
+ * @param action The function to limit
+ * @param delay A delay in seconds between calls
+ * @param triggerOnDispose Trigger when the debounce is disposed
+ * @returns A disposable that disposes the timeout
+ */
 export function debounce(action: () => void, delay: number, triggerOnDispose: boolean = true): Disposable & { invoke: () => void } {
 	let ready = true
 	let inFlight = false
