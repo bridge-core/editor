@@ -21,6 +21,11 @@ export interface ExperimentalToggle {
 	icon: string
 }
 
+/**
+ * Handles loading the dynamic data.
+ * Will attempt to check for updated data on the remote repository and update the data if necessary, otherwise the built in fallback data will attempt to be loaded.
+ * Hashes are used to track wether the remote data is updated. If the current hash doesn't match the remote data hash, we assume we need to update the data.
+ */
 export class Data {
 	public static loaded: Event<undefined> = new Event()
 
@@ -114,14 +119,29 @@ export class Data {
 		Data.loaded.dispatch()
 	}
 
+	/**
+	 * Gets JSON formatted data from the data path
+	 * @param path
+	 * @returns JSON object data
+	 */
 	public static async get(path: string): Promise<any> {
 		return await Data.fileSystem.readFileJson(path)
 	}
 
+	/**
+	 * Gets string data from the data path
+	 * @param path
+	 * @returns
+	 */
 	public static async getText(path: string): Promise<string> {
 		return await Data.fileSystem.readFileText(path)
 	}
 
+	/**
+	 * Gets raw array buffer data from the data path
+	 * @param path
+	 * @returns
+	 */
 	public static async getRaw(path: string): Promise<ArrayBuffer> {
 		return await Data.fileSystem.readFile(path)
 	}
