@@ -1,6 +1,15 @@
 import { basename, dirname, extname, join } from 'pathe'
 import { Event } from '@/libs/event/Event'
 
+/**
+ * The Base File Systems acts as a fascade covering the platform specific implementations of the different file systems. New file systems methods should extends BaseFileSystem.
+ *
+ * The file system works in terms of paths, relative to a root folder, usually the bridge folder.
+ *
+ * Get read entry in order to determine wether a path is a file or directory.
+ *
+ * All of these functions may throw errors!
+ */
 export class BaseFileSystem {
 	public pathUpdated: Event<string> = new Event()
 

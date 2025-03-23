@@ -5,6 +5,9 @@ import { Data } from '@/libs/data/Data'
 import { TPackTypeId } from 'mc-project-core'
 import * as JSONC from 'jsonc-parser'
 
+/**
+ * Handles determining the file types of a files and providing the file definition data associated with those file types
+ */
 export class FileTypeData {
 	public fileTypes: any[] = []
 
