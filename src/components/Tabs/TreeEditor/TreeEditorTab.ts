@@ -8,7 +8,7 @@ import { Disposable, disposeAll } from '@/libs/disposeable/Disposeable'
 import { buildTree, ObjectElement, ParentElements, TreeEdit, TreeElements, TreeSelection } from './Tree'
 import { CompletionItem, createSchema, Diagnostic } from '@/libs/jsonSchema/Schema'
 import { Settings } from '@/libs/settings/Settings'
-import JSONC from 'jsonc-parser'
+import * as JSONC from 'jsonc-parser'
 
 export class TreeEditorTab extends FileTab {
 	public component: Component | null = TreeEditorTabComponent

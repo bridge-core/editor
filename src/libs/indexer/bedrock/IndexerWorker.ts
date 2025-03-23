@@ -6,7 +6,7 @@ import { walkObject } from 'bridge-common-utils'
 import { IConfigJson } from 'mc-project-core'
 import wasmUrl from '@swc/wasm-web/wasm-web_bg.wasm?url'
 import { initRuntimes } from '@bridge-editor/js-runtime'
-import JSONC from 'jsonc-parser'
+import * as JSONC from 'jsonc-parser'
 
 initRuntimes(wasmUrl)
 

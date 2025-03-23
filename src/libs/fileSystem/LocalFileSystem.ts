@@ -1,7 +1,7 @@
 import { basename, parse, resolve, sep } from 'pathe'
 import { BaseEntry, BaseFileSystem } from './BaseFileSystem'
 import { del, get, keys, set } from 'idb-keyval'
-import JSONC from 'jsonc-parser'
+import * as JSONC from 'jsonc-parser'
 
 export class LocalFileSystem extends BaseFileSystem {
 	private textEncoder = new TextEncoder()

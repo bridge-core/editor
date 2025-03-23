@@ -3,7 +3,7 @@ import { ProjectManager } from '@/libs/project/ProjectManager'
 import { Position, editor, languages } from 'monaco-editor'
 import { getLocation } from './languages/Language'
 import { getLatestStableFormatVersion } from '../data/bedrock/FormatVersion'
-import JSONC from 'jsonc-parser'
+import * as JSONC from 'jsonc-parser'
 
 export function setupSnippetCompletions() {
 	languages.registerCompletionItemProvider('json', {

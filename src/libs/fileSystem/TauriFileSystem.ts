@@ -4,7 +4,7 @@ import { join, resolve } from 'pathe'
 import { sep } from '@tauri-apps/api/path'
 import { listen } from '@tauri-apps/api/event'
 import { invoke } from '@tauri-apps/api'
-import JSONC from 'jsonc-parser'
+import * as JSONC from 'jsonc-parser'
 
 export class TauriFileSystem extends BaseFileSystem {
 	private basePath: string | null = null

@@ -4,7 +4,7 @@ import { Ref, onMounted, onUnmounted, ref } from 'vue'
 import { md5 } from 'js-md5'
 import { Event } from '@/libs/event/Event'
 import { Disposable } from '@/libs/disposeable/Disposeable'
-import JSONC from 'jsonc-parser'
+import * as JSONC from 'jsonc-parser'
 
 export class PWAFileSystem extends BaseFileSystem {
 	public baseHandle: FileSystemDirectoryHandle | null = null

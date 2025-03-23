@@ -3,7 +3,7 @@ import { hasAnyPath, isMatch } from 'bridge-common-utils'
 import { ProjectManager } from '@/libs/project/ProjectManager'
 import { Data } from '@/libs/data/Data'
 import { TPackTypeId } from 'mc-project-core'
-import JSONC from 'jsonc-parser'
+import * as JSONC from 'jsonc-parser'
 
 export class FileTypeData {
 	public fileTypes: any[] = []
