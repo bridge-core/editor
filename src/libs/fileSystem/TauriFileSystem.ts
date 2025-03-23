@@ -1,18 +1,10 @@
-import {
-	createDir,
-	exists,
-	readBinaryFile,
-	readDir,
-	readTextFile,
-	removeDir,
-	removeFile,
-	writeBinaryFile,
-} from '@tauri-apps/api/fs'
+import { createDir, exists, readBinaryFile, readDir, readTextFile, removeDir, removeFile, writeBinaryFile } from '@tauri-apps/api/fs'
 import { BaseEntry, BaseFileSystem } from './BaseFileSystem'
 import { join, resolve } from 'pathe'
 import { sep } from '@tauri-apps/api/path'
 import { listen } from '@tauri-apps/api/event'
 import { invoke } from '@tauri-apps/api'
+import JSONC from 'jsonc-parser'
 
 export class TauriFileSystem extends BaseFileSystem {
 	private basePath: string | null = null
@@ -86,7 +78,7 @@ export class TauriFileSystem extends BaseFileSystem {
 		try {
 			const content = await readTextFile(join(this.basePath, path))
 
-			return JSON.parse(content)
+			return JSONC.parse(content)
 		} catch (error) {
 			console.error(`Failed to read "${path}"`)
 

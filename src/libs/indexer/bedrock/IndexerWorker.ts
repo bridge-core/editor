@@ -6,6 +6,7 @@ import { walkObject } from 'bridge-common-utils'
 import { IConfigJson } from 'mc-project-core'
 import wasmUrl from '@swc/wasm-web/wasm-web_bg.wasm?url'
 import { initRuntimes } from '@bridge-editor/js-runtime'
+import JSONC from 'jsonc-parser'
 
 initRuntimes(wasmUrl)
 
@@ -76,12 +77,7 @@ async function runLightningCacheScript(script: string, path: string, value: stri
 	return await scriptResult.execute()
 }
 
-async function handleJsonInstructions(
-	filePath: string,
-	fileType: any,
-	json: any,
-	fileInstructions: IndexInstruction[]
-) {
+async function handleJsonInstructions(filePath: string, fileType: any, json: any, fileInstructions: IndexInstruction[]) {
 	let data: { [key: string]: any } = {}
 
 	for (const instruction of fileInstructions) {
@@ -187,8 +183,7 @@ async function indexFile(path: string) {
 	let fileInstructions: IndexInstruction[] | string | undefined = undefined
 
 	if (fileType && fileType.lightningCache)
-		fileInstructions =
-			instructions['file:///data/packages/minecraftBedrock/lightningCache/' + fileType.lightningCache]
+		fileInstructions = instructions['file:///data/packages/minecraftBedrock/lightningCache/' + fileType.lightningCache]
 
 	let data: { [key: string]: any } = {}
 
@@ -200,7 +195,7 @@ async function indexFile(path: string) {
 			const content = await fileSystem.readFile(path)
 
 			text = textDecoder.decode(new Uint8Array(content))
-			json = JSON.parse(text)
+			json = JSONC.parse(text)
 		} catch {}
 
 		if (text !== undefined) {

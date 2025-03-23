@@ -1,6 +1,7 @@
 import { basename, parse, resolve, sep } from 'pathe'
 import { BaseEntry, BaseFileSystem } from './BaseFileSystem'
 import { del, get, keys, set } from 'idb-keyval'
+import JSONC from 'jsonc-parser'
 
 export class LocalFileSystem extends BaseFileSystem {
 	private textEncoder = new TextEncoder()
@@ -47,7 +48,7 @@ export class LocalFileSystem extends BaseFileSystem {
 	public async readFileJson(path: string): Promise<any> {
 		path = resolve('/', path)
 
-		return JSON.parse(await this.readFileText(path))
+		return JSONC.parse(await this.readFileText(path))
 	}
 
 	public async readFileDataUrl(path: string): Promise<string> {
@@ -88,8 +89,7 @@ export class LocalFileSystem extends BaseFileSystem {
 			content,
 		})
 
-		if (this.pathsToWatch.find((watchPath) => path.startsWith(watchPath)) !== undefined)
-			this.pathUpdated.dispatch(path)
+		if (this.pathsToWatch.find((watchPath) => path.startsWith(watchPath)) !== undefined) this.pathUpdated.dispatch(path)
 	}
 
 	public async removeFile(path: string) {
@@ -99,8 +99,7 @@ export class LocalFileSystem extends BaseFileSystem {
 
 		await del(`localFileSystem/${this.rootName}${path}`)
 
-		if (this.pathsToWatch.find((watchPath) => path.startsWith(watchPath)) !== undefined)
-			this.pathUpdated.dispatch(path)
+		if (this.pathsToWatch.find((watchPath) => path.startsWith(watchPath)) !== undefined) this.pathUpdated.dispatch(path)
 	}
 
 	public async makeDirectory(path: string) {
@@ -112,8 +111,7 @@ export class LocalFileSystem extends BaseFileSystem {
 			kind: 'directory',
 		})
 
-		if (this.pathsToWatch.find((watchPath) => path.startsWith(watchPath)) !== undefined)
-			this.pathUpdated.dispatch(path)
+		if (this.pathsToWatch.find((watchPath) => path.startsWith(watchPath)) !== undefined) this.pathUpdated.dispatch(path)
 	}
 
 	public async removeDirectory(path: string) {
@@ -123,8 +121,7 @@ export class LocalFileSystem extends BaseFileSystem {
 
 		await del(`localFileSystem/${this.rootName}${path}`)
 
-		if (this.pathsToWatch.find((watchPath) => path.startsWith(watchPath)) !== undefined)
-			this.pathUpdated.dispatch(path)
+		if (this.pathsToWatch.find((watchPath) => path.startsWith(watchPath)) !== undefined) this.pathUpdated.dispatch(path)
 	}
 
 	public async ensureDirectory(path: string): Promise<void> {

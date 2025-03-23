@@ -3,6 +3,7 @@ import { ProjectManager } from '@/libs/project/ProjectManager'
 import { Position, editor, languages } from 'monaco-editor'
 import { getLocation } from './languages/Language'
 import { getLatestStableFormatVersion } from '../data/bedrock/FormatVersion'
+import JSONC from 'jsonc-parser'
 
 export function setupSnippetCompletions() {
 	languages.registerCompletionItemProvider('json', {
@@ -14,7 +15,7 @@ export function setupSnippetCompletions() {
 
 			let json: any
 			try {
-				json = JSON.parse(model.getValue())
+				json = JSONC.parse(model.getValue())
 			} catch {
 				json = {}
 			}
@@ -22,13 +23,9 @@ export function setupSnippetCompletions() {
 			const location = await getLocation(model, position)
 
 			const formatVersion: string =
-				(<any>json).format_version ??
-				ProjectManager.currentProject.config?.targetVersion ??
-				(await getLatestStableFormatVersion())
+				(<any>json).format_version ?? ProjectManager.currentProject.config?.targetVersion ?? (await getLatestStableFormatVersion())
 
-			const snippets = ProjectManager.currentProject.snippetLoader.getSnippets(formatVersion, fileType.id, [
-				location,
-			])
+			const snippets = ProjectManager.currentProject.snippetLoader.getSnippets(formatVersion, fileType.id, [location])
 
 			return {
 				suggestions: snippets.map((snippet) => ({
@@ -48,14 +45,9 @@ export function setupSnippetCompletions() {
 
 			const fileType = ProjectManager.currentProject.fileTypeData.get(model.uri.path)
 
-			const formatVersion =
-				ProjectManager.currentProject.config?.targetVersion ?? (await getLatestStableFormatVersion())
+			const formatVersion = ProjectManager.currentProject.config?.targetVersion ?? (await getLatestStableFormatVersion())
 
-			const snippets = ProjectManager.currentProject.snippetLoader.getSnippets(
-				formatVersion ?? '',
-				fileType.id,
-				[]
-			)
+			const snippets = ProjectManager.currentProject.snippetLoader.getSnippets(formatVersion ?? '', fileType.id, [])
 
 			return {
 				suggestions: snippets.map((snippet) => ({

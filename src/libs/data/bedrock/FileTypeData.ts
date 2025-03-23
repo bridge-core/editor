@@ -3,6 +3,7 @@ import { hasAnyPath, isMatch } from 'bridge-common-utils'
 import { ProjectManager } from '@/libs/project/ProjectManager'
 import { Data } from '@/libs/data/Data'
 import { TPackTypeId } from 'mc-project-core'
+import JSONC from 'jsonc-parser'
 
 export class FileTypeData {
 	public fileTypes: any[] = []
@@ -14,8 +15,7 @@ export class FileTypeData {
 	private generateMatchers(packTypes: string[], matchers: string[]) {
 		if (ProjectManager.currentProject === null) return []
 
-		if (packTypes.length === 0)
-			return matchers.map((matcher) => ProjectManager.currentProject!.resolvePackPath(undefined, matcher))
+		if (packTypes.length === 0) return matchers.map((matcher) => ProjectManager.currentProject!.resolvePackPath(undefined, matcher))
 
 		const paths: string[] = []
 
@@ -60,9 +60,7 @@ export class FileTypeData {
 			const hasPathMatchers = fileType.detect !== undefined && fileType.detect.matcher !== undefined
 
 			if (hasPathMatchers) {
-				const pathMatchers = Array.isArray(fileType.detect.matcher)
-					? fileType.detect.matcher
-					: [fileType.detect.matcher]
+				const pathMatchers = Array.isArray(fileType.detect.matcher) ? fileType.detect.matcher : [fileType.detect.matcher]
 
 				const mustNotMatch = this.generateMatchers(
 					packTypes,
@@ -109,10 +107,7 @@ export class FileTypeData {
 		if (onlyOneExtensionMatch || notAJsonFileButMatch) {
 			const { detect } = validTypes[0]
 
-			return getStartPath(
-				detect!.scope!,
-				Array.isArray(detect!.packType) ? detect!.packType[0] : detect!.packType ?? 'behaviorPack'
-			)
+			return getStartPath(detect!.scope!, Array.isArray(detect!.packType) ? detect!.packType[0] : detect!.packType ?? 'behaviorPack')
 		}
 
 		if (extension !== '.json') return null
@@ -121,7 +116,7 @@ export class FileTypeData {
 		const file = await fileHandle.getFile()
 		let json: any
 		try {
-			json = JSON.parse(await file.text())
+			json = JSONC.parse(await file.text())
 		} catch {
 			return null
 		}

@@ -8,6 +8,7 @@ import { Disposable, disposeAll } from '@/libs/disposeable/Disposeable'
 import { buildTree, ObjectElement, ParentElements, TreeEdit, TreeElements, TreeSelection } from './Tree'
 import { CompletionItem, createSchema, Diagnostic } from '@/libs/jsonSchema/Schema'
 import { Settings } from '@/libs/settings/Settings'
+import JSONC from 'jsonc-parser'
 
 export class TreeEditorTab extends FileTab {
 	public component: Component | null = TreeEditorTabComponent
@@ -102,7 +103,7 @@ export class TreeEditorTab extends FileTab {
 		const fileContent = await fileSystem.readFileText(this.path)
 
 		try {
-			this.tree.value = buildTree(JSON.parse(fileContent))
+			this.tree.value = buildTree(JSONC.parse(fileContent))
 		} catch {}
 
 		const schemaData = ProjectManager.currentProject.schemaData
@@ -111,7 +112,9 @@ export class TreeEditorTab extends FileTab {
 
 		this.icon.value = this.fileTypeIcon
 
-		let keywords: string[] = ['minecraft', 'bridge', ProjectManager.currentProject?.config?.namespace].filter((item) => item !== undefined) as string[]
+		let keywords: string[] = ['minecraft', 'bridge', ProjectManager.currentProject?.config?.namespace].filter(
+			(item) => item !== undefined
+		) as string[]
 		let typeIdentifiers: string[] = []
 		let variables: string[] = []
 		let definitions: string[] = []
