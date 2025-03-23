@@ -12,24 +12,25 @@ import { join, basename, dirname, resolve } from 'pathe'
 import { DashData } from './DashData'
 import { Event } from '@/libs/event/Event'
 
-/*
-Building the schema for a file is a little complicated.
-We can't use simple references because different files need to "reuse" generated schemas with different values.
-We need some way to swap out the references to these dynamically generated schemas
-
-The idea here is to walk the dependency tree of the schema and replace all of the references with a modified path relative to a custom folder based on the path of the file
-and then supply the referenced schema under the new path.
-Before compiling we'll also generate the dynamic schemas which will be supplied when referenced durring the compile step.
-
-Optimizations:
-- pregenerate generated schemas for all the non dynamic schema scripts when the project loads to save time.
-*/
-
 interface SchemaScriptResult {
 	data: any
 	result: any
 }
 
+/**
+ * This handles loading and updating JSON schemas for different file types. Schemas may update as files are updated. Dynamic schema scripts may have to be run to generate updated schemas.
+ *
+ * Building the schema for a file is a little complicated.
+ * We can't use simple references because different files need to "reuse" generated schemas with different values.
+ * We need some way to swap out the references to these dynamically generated schemas
+ *
+ * The idea here is to walk the dependency tree of the schema and replace all of the references with a modified path relative to a custom folder based on the path of the file
+ * and then supply the referenced schema under the new path.
+ * Before compiling we'll also generate the dynamic schemas which will be supplied when referenced durring the compile step.
+ *
+ * Potential Future Optimizations:
+ * - pregenerate generated schemas for all the non dynamic schema scripts when the project loads to save time.
+ */
 export class SchemaData implements Disposable {
 	public updated: Event<string> = new Event()
 
@@ -63,11 +64,12 @@ export class SchemaData implements Disposable {
 	}
 
 	private fixPaths(schemas: { [key: string]: any }) {
-		return Object.fromEntries(
-			Object.entries(schemas).map(([path, schema]) => [path.substring('file://'.length), schema])
-		)
+		return Object.fromEntries(Object.entries(schemas).map(([path, schema]) => [path.substring('file://'.length), schema]))
 	}
 
+	/**
+	 * Loads all the required data and runs schema scripts
+	 */
 	public async load() {
 		await this.dashComponentsData.setup()
 
@@ -155,11 +157,7 @@ export class SchemaData implements Disposable {
 		}
 	}
 
-	private rebaseReferences(
-		schemaPart: any,
-		schemaPath: string,
-		basePath: string
-	): { references: string[]; rebasedSchemaPart: any } {
+	private rebaseReferences(schemaPart: any, schemaPath: string, basePath: string): { references: string[]; rebasedSchemaPart: any } {
 		let references: string[] = []
 
 		if (Array.isArray(schemaPart)) {
@@ -178,10 +176,7 @@ export class SchemaData implements Disposable {
 
 					references.push(this.resolveSchemaPath(schemaPath, reference).split('#')[0])
 
-					reference = join(
-						resolve('/', basePath),
-						this.resolveSchemaPath(schemaPath, reference.split('#')[0])
-					)
+					reference = join(resolve('/', basePath), this.resolveSchemaPath(schemaPath, reference.split('#')[0]))
 
 					schemaPart[key] = reference
 
@@ -201,6 +196,12 @@ export class SchemaData implements Disposable {
 		}
 	}
 
+	/**
+	 * Updates the schema for a file at a schema path. Should be used when a file is opened as this generates all the necessary schema.
+	 * @param path Path of the file
+	 * @param fileType
+	 * @param schemaUri Path of the schema
+	 */
 	public async updateSchemaForFile(path: string, fileType?: string, schemaUri?: string) {
 		if (!(await fileSystem.exists(path))) {
 			if (this.fileSchemas[path]) delete this.fileSchemas[path]
@@ -223,8 +224,7 @@ export class SchemaData implements Disposable {
 		const generatedGlobalSchemas: Record<string, any> = {}
 
 		for (const [scriptPath, result] of Object.entries(this.globalSchemaScriptResults)) {
-			generatedGlobalSchemas[join('/data/packages/minecraftBedrock/schema/', result.data.generateFile)] =
-				result.result
+			generatedGlobalSchemas[join('/data/packages/minecraftBedrock/schema/', result.data.generateFile)] = result.result
 		}
 
 		const generatedDynamicSchemas: Record<string, any> = {}
@@ -234,8 +234,7 @@ export class SchemaData implements Disposable {
 
 			if (result === null) continue
 
-			generatedDynamicSchemas[join('/data/packages/minecraftBedrock/schema/', result.data.generateFile)] =
-				result.result
+			generatedDynamicSchemas[join('/data/packages/minecraftBedrock/schema/', result.data.generateFile)] = result.result
 		}
 
 		const contextLightningCacheSchemas: Record<string, any> = {}
@@ -300,6 +299,12 @@ export class SchemaData implements Disposable {
 		this.updated.dispatch(path)
 	}
 
+	/**
+	 * Allows changes that the schema depends on to be detected and reacted to by this system
+	 * @param path Path of the file
+	 * @param fileType
+	 * @param schemaUri Path of the schema
+	 */
 	public addFileForUpdate(path: string, fileType?: string, schemaUri?: string) {
 		this.filesToUpdate.push({ path, fileType, schemaUri })
 	}
@@ -311,6 +316,12 @@ export class SchemaData implements Disposable {
 		)
 	}
 
+	/**
+	 * Gets a fully resolved schema from the schema path
+	 * @param path
+	 * @param schemaBase The original schema used to support definition references
+	 * @returns The resolved schema
+	 */
 	public getAndResolve(path: string, schemaBase?: any): any {
 		if (path.startsWith('#')) {
 			const objectPath = path.substring(1)
@@ -368,6 +379,11 @@ export class SchemaData implements Disposable {
 		return this.resolveReferences(path, data, data)
 	}
 
+	/**
+	 * Generate simple value completions from a schema value
+	 * @param schema
+	 * @returns The list of string completions
+	 */
 	public getAutocompletions(schema: any): string[] {
 		if (typeof schema !== 'object') return []
 
@@ -384,10 +400,21 @@ export class SchemaData implements Disposable {
 		return completions
 	}
 
+	/**
+	 * Get all the schema data and locally related schemas for a file
+	 * @param path The file path
+	 * @returns The main schema and any locally related schemas
+	 */
 	public getSchemasForFile(path: string): { main: string; localSchemas: Record<string, any> } {
 		return this.fileSchemas[path]
 	}
 
+	/**
+	 * Gets the specified schema for the file
+	 * @param filePath
+	 * @param schemaPath
+	 * @returns The schema JSON object
+	 */
 	public getSchemaForFile(filePath: string, schemaPath: string): any {
 		return this.fileSchemas[filePath].localSchemas[schemaPath]
 	}
@@ -414,8 +441,7 @@ export class SchemaData implements Disposable {
 				continue
 			}
 
-			if (typeof schemaPart[key] === 'object')
-				schemaPart[key] = this.resolveReferences(path, schemaPart[key], schemaBase)
+			if (typeof schemaPart[key] === 'object') schemaPart[key] = this.resolveReferences(path, schemaPart[key], schemaBase)
 		}
 
 		return schemaPart
@@ -447,11 +473,7 @@ export class SchemaData implements Disposable {
 		}
 	}
 
-	private async runScript(
-		scriptPath: string,
-		scriptData: any,
-		filePath?: string
-	): Promise<SchemaScriptResult | null> {
+	private async runScript(scriptPath: string, scriptData: any, filePath?: string): Promise<SchemaScriptResult | null> {
 		const script: string = typeof scriptData === 'string' ? scriptData : scriptData.script
 
 		const compatabilityFileSystem = new CompatabilityFileSystem(fileSystem)
@@ -476,8 +498,7 @@ export class SchemaData implements Disposable {
 					scriptPath,
 					{
 						readdir: (path: string) => {
-							if (!me.fileSystemSchemaScripts.includes(scriptPath))
-								me.fileSystemSchemaScripts.push(scriptPath)
+							if (!me.fileSystemSchemaScripts.includes(scriptPath)) me.fileSystemSchemaScripts.push(scriptPath)
 
 							return compatabilityFileSystem.readdir.call(compatabilityFileSystem, path)
 						},
@@ -493,11 +514,7 @@ export class SchemaData implements Disposable {
 							if (!me.indexerSchemaScripts.includes(scriptPath)) me.indexerSchemaScripts.push(scriptPath)
 
 							return Promise.resolve(
-								(ProjectManager.currentProject as BedrockProject).indexerService.getCachedData(
-									fileType,
-									filePath,
-									cacheKey
-								)
+								(ProjectManager.currentProject as BedrockProject).indexerService.getCachedData(fileType, filePath, cacheKey)
 							)
 						},
 						getProjectConfig() {
@@ -515,8 +532,7 @@ export class SchemaData implements Disposable {
 						},
 						uuid,
 						get(path: string) {
-							if (!me.fileSystemSchemaScripts.includes(scriptPath))
-								me.fileSystemSchemaScripts.push(scriptPath)
+							if (!me.fileSystemSchemaScripts.includes(scriptPath)) me.fileSystemSchemaScripts.push(scriptPath)
 
 							if (!me.localSchemaScripts.includes(scriptPath)) me.localSchemaScripts.push(scriptPath)
 

@@ -4,6 +4,9 @@ import { Data } from '@/libs/data/Data'
 import { fileSystem } from '@/libs/fileSystem/FileSystem'
 import { Disposable, disposeAll } from '@/libs/disposeable/Disposeable'
 
+/**
+ * Attempts to detect the valid scripting types for the project and apply them to the monaco completions.
+ */
 export class ScriptTypeData implements Disposable {
 	constructor(public project: BedrockProject) {}
 
@@ -73,13 +76,9 @@ export class ScriptTypeData implements Disposable {
 		for (const builtType of builtTypes) {
 			const uri = Uri.file(builtType.location)
 
-			this.typeDisposables.push(
-				languages.typescript.javascriptDefaults.addExtraLib(builtType.content, uri.toString())
-			)
+			this.typeDisposables.push(languages.typescript.javascriptDefaults.addExtraLib(builtType.content, uri.toString()))
 
-			this.typeDisposables.push(
-				languages.typescript.typescriptDefaults.addExtraLib(builtType.content, uri.toString())
-			)
+			this.typeDisposables.push(languages.typescript.typescriptDefaults.addExtraLib(builtType.content, uri.toString()))
 		}
 	}
 
