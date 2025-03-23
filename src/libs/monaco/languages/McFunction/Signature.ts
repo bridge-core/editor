@@ -1,5 +1,5 @@
 import { CancellationToken, Position, editor, languages } from 'monaco-editor'
-import { ArgumentContext, getContext } from './Parser'
+import { ArgumentContext, parseCommand } from './Parser'
 import { Command } from '@/libs/data/bedrock/CommandData'
 
 export async function provideSignatureHelp(
@@ -12,7 +12,7 @@ export async function provideSignatureHelp(
 
 	const cursor = position.column - 1
 
-	const contexts = await getContext(line, cursor)
+	const contexts = await parseCommand(line, cursor)
 
 	let signatures: languages.SignatureInformation[] = []
 
@@ -40,6 +40,12 @@ export async function provideSignatureHelp(
 	}
 }
 
+/**
+ * Creates the signature string for a given command variation
+ * @example fill <from: coordinates> <to: coordinates> <tileName: string> [tileData: number] [oldBlockHandling: destroy | hollow | keep | outline | replace]
+ * @param command
+ * @returns the signature as a string
+ */
 function buildSignature(command: Command): string {
 	let signature = command.commandName
 

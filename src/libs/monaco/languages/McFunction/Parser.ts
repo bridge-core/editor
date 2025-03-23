@@ -12,13 +12,26 @@ export interface Context {
 	token: Token | undefined
 }
 
-export async function getContext(line: string, cursor: number, tokenCursor: number = 0): Promise<Context[]> {
+/**
+ * Parses a single line command up to a cursor postiion
+ * @param line A string of the full command
+ * @param cursor The position of user cursor
+ * @param tokenCursor The position of the first token
+ * @returns A list of parsed tokens
+ */
+export async function parseCommand(line: string, cursor: number, tokenCursor: number = 0): Promise<Context[]> {
 	return getCommandContext(line, cursor, tokenCursor)
 }
 
+/**
+ * Gets the full context tokens for a command
+ * @param line A string of the full command
+ * @param cursor The position of user cursor
+ * @param tokenCursor The position of the first token
+ * @returns A list of parsed tokens
+ */
 async function getCommandContext(line: string, cursor: number, tokenCursor: number): Promise<Context[]> {
-	if (!(ProjectManager.currentProject instanceof BedrockProject))
-		throw new Error('The current project must be a bedrock project!')
+	if (!(ProjectManager.currentProject instanceof BedrockProject)) throw new Error('The current project must be a bedrock project!')
 
 	const commandData = ProjectManager.currentProject.commandData
 
@@ -62,6 +75,16 @@ async function getCommandContext(line: string, cursor: number, tokenCursor: numb
 	return await getArgumentContext(line, cursor, tokenCursor, possibleVariations, 0, token.word)
 }
 
+/**
+ * Gets the context tokens starting at an argument and everything after
+ * @param line A string of the full command
+ * @param cursor The position of user cursor
+ * @param tokenCursor The position of the first token
+ * @param variations A list of the variations of the current command
+ * @param argumentIndex The index of the argument being parsed
+ * @param command A string of the command name
+ * @returns A list of parsed tokens
+ */
 async function getArgumentContext(
 	line: string,
 	cursor: number,
@@ -70,8 +93,7 @@ async function getArgumentContext(
 	argumentIndex: number,
 	command: string
 ): Promise<Context[]> {
-	if (!(ProjectManager.currentProject instanceof BedrockProject))
-		throw new Error('The current project must be a bedrock project!')
+	if (!(ProjectManager.currentProject instanceof BedrockProject)) throw new Error('The current project must be a bedrock project!')
 
 	const commandData = ProjectManager.currentProject.commandData
 
@@ -125,22 +147,17 @@ async function getArgumentContext(
 	const basicVariations = variations.filter((variation) => variation.arguments[argumentIndex].type !== 'selector')
 	const selectorVariations = variations.filter((variation) => variation.arguments[argumentIndex].type === 'selector')
 	const commandVariations = variations.filter((variation) => variation.arguments[argumentIndex].type === 'command')
-	const blockStateVariations = variations.filter(
-		(variation) => variation.arguments[argumentIndex].type === 'blockState'
-	)
+	const blockStateVariations = variations.filter((variation) => variation.arguments[argumentIndex].type === 'blockState')
 
 	const basicCompletions =
-		basicVariations.length === 0
-			? undefined
-			: await getBasicContext(line, cursor, tokenCursor, basicVariations, argumentIndex, command)
+		basicVariations.length === 0 ? undefined : await getBasicContext(line, cursor, tokenCursor, basicVariations, argumentIndex, command)
 
 	const selectorCompletions =
 		selectorVariations.length === 0
 			? undefined
 			: await getSelectorContext(line, cursor, tokenCursor, selectorVariations, argumentIndex, command)
 
-	const commandCompletions =
-		commandVariations.length === 0 ? undefined : await getCommandContext(line, cursor, tokenCursor)
+	const commandCompletions = commandVariations.length === 0 ? undefined : await getCommandContext(line, cursor, tokenCursor)
 
 	const blockStateCompletions =
 		blockStateVariations.length === 0
@@ -184,6 +201,16 @@ export interface ArgumentContext extends Context {
 	argumentIndex: number
 }
 
+/**
+ * Gets the context tokens starting at a basic value and everything after
+ * @param line A string of the full command
+ * @param cursor The position of user cursor
+ * @param tokenCursor The position of the first token
+ * @param variations A list of the variations of the current command
+ * @param argumentIndex The index of the argument being parsed
+ * @param command A string of the command name
+ * @returns A list of parsed tokens
+ */
 async function getBasicContext(
 	line: string,
 	cursor: number,
@@ -192,8 +219,7 @@ async function getBasicContext(
 	argumentIndex: number,
 	command: string
 ): Promise<Context[]> {
-	if (!(ProjectManager.currentProject instanceof BedrockProject))
-		throw new Error('The current project must be a bedrock project!')
+	if (!(ProjectManager.currentProject instanceof BedrockProject)) throw new Error('The current project must be a bedrock project!')
 
 	tokenCursor = skipSpaces(line, tokenCursor)
 	const token = getNextWord(line, tokenCursor)
@@ -212,8 +238,7 @@ async function getBasicContext(
 	tokenCursor = token.start + token.word.length
 
 	variations = variations.filter(
-		(variation) =>
-			matchArgument(token, variation.arguments[argumentIndex]) && variation.arguments.length > argumentIndex + 1
+		(variation) => matchArgument(token, variation.arguments[argumentIndex]) && variation.arguments.length > argumentIndex + 1
 	)
 
 	if (variations.length === 0)
@@ -227,6 +252,18 @@ async function getBasicContext(
 	return await getArgumentContext(line, cursor, tokenCursor, variations, argumentIndex + 1, command)
 }
 
+/**
+ * Gets the context tokens starting at a selector and everything after
+ *
+ * Will skip over tokenizing withing the selector if the cursor is not within the selector
+ * @param line A string of the full command
+ * @param cursor The position of user cursor
+ * @param tokenCursor The position of the first token
+ * @param variations A list of the variations of the current command
+ * @param argumentIndex The index of the argument being parsed
+ * @param command A string of the command name
+ * @returns A list of parsed tokens
+ */
 async function getSelectorContext(
 	line: string,
 	cursor: number,
@@ -235,8 +272,7 @@ async function getSelectorContext(
 	argumentIndex: number,
 	command: string
 ): Promise<Context[]> {
-	if (!(ProjectManager.currentProject instanceof BedrockProject))
-		throw new Error('The current project must be a bedrock project!')
+	if (!(ProjectManager.currentProject instanceof BedrockProject)) throw new Error('The current project must be a bedrock project!')
 
 	tokenCursor = skipSpaces(line, tokenCursor)
 	const token = getNextSelector(line, tokenCursor)
@@ -292,8 +328,7 @@ async function getSelectorContext(
 	tokenCursor = token.start + token.word.length
 
 	variations = variations.filter(
-		(variation) =>
-			matchArgument(token, variation.arguments[argumentIndex]) && variation.arguments.length > argumentIndex + 1
+		(variation) => matchArgument(token, variation.arguments[argumentIndex]) && variation.arguments.length > argumentIndex + 1
 	)
 
 	if (variations.length === 0)
@@ -315,14 +350,25 @@ export interface SelectorValueContext extends SelectorContext {
 	argument: SelectorArgument
 }
 
+/**
+ * Gets the context tokens starting at a selector argument and everything after within selector
+ *
+ * Will only be readched if the cursor is within a selector
+ * @param line A string of the full command
+ * @param cursor The position of user cursor
+ * @param tokenCursor The position of the first token
+ * @param variations A list of the variations of the current command
+ * @param argumentIndex The index of the argument being parsed
+ * @param command A string of the command name
+ * @returns A list of parsed tokens
+ */
 async function getSelectorArgumentContext(
 	line: string,
 	cursor: number,
 	tokenCursor: number,
 	previousArguments: string[] = []
 ): Promise<Context[]> {
-	if (!(ProjectManager.currentProject instanceof BedrockProject))
-		throw new Error('The current project must be a bedrock project!')
+	if (!(ProjectManager.currentProject instanceof BedrockProject)) throw new Error('The current project must be a bedrock project!')
 
 	tokenCursor = skipSpaces(line, tokenCursor)
 	let token = getNextSelectorArgumentWord(line, tokenCursor)
@@ -339,9 +385,7 @@ async function getSelectorArgumentContext(
 
 	let selectorArgument = token.word
 
-	const argumentData = ProjectManager.currentProject.commandData
-		.getSelectorArguments()
-		.find((data) => data.argumentName === token!.word)
+	const argumentData = ProjectManager.currentProject.commandData.getSelectorArguments().find((data) => data.argumentName === token!.word)
 
 	tokenCursor = token.start + token.word.length
 
@@ -390,6 +434,18 @@ async function getSelectorArgumentContext(
 	return await getSelectorArgumentContext(line, cursor, tokenCursor, [...previousArguments, selectorArgument])
 }
 
+/**
+ * Gets the context tokens starting at a block state and everything after
+ *
+ * Will only be readched if the cursor is within a selector
+ * @param line A string of the full command
+ * @param cursor The position of user cursor
+ * @param tokenCursor The position of the first token
+ * @param variations A list of the variations of the current command
+ * @param argumentIndex The index of the argument being parsed
+ * @param command A string of the command name
+ * @returns A list of parsed tokens
+ */
 async function getBlockStateContext(
 	line: string,
 	cursor: number,
@@ -398,8 +454,7 @@ async function getBlockStateContext(
 	argumentIndex: number,
 	command: string
 ): Promise<Context[]> {
-	if (!(ProjectManager.currentProject instanceof BedrockProject))
-		throw new Error('The current project must be a bedrock project!')
+	if (!(ProjectManager.currentProject instanceof BedrockProject)) throw new Error('The current project must be a bedrock project!')
 
 	tokenCursor = skipSpaces(line, tokenCursor)
 	const token = getNextBlockState(line, tokenCursor)
@@ -415,8 +470,7 @@ async function getBlockStateContext(
 	tokenCursor = token.start + token.word.length
 
 	variations = variations.filter(
-		(variation) =>
-			matchArgument(token, variation.arguments[argumentIndex]) && variation.arguments.length > argumentIndex + 1
+		(variation) => matchArgument(token, variation.arguments[argumentIndex]) && variation.arguments.length > argumentIndex + 1
 	)
 
 	if (variations.length === 0)
@@ -430,32 +484,44 @@ async function getBlockStateContext(
 	return await getArgumentContext(line, cursor, tokenCursor, variations, argumentIndex + 1, command)
 }
 
-function matchArgument(argument: Token, type: any): boolean {
-	if (type === undefined) return false
+/**
+ * Checks if a token matches a argument definition
+ * @param argument An argument token
+ * @param definition A definition object
+ * @returns If the argument matches
+ */
+function matchArgument(argument: Token, definition: any): boolean {
+	if (definition === undefined) return false
 
-	if (type.type === 'string') {
-		if (type.additionalData?.values && !type.additionalData.values.includes(argument.word)) return false
+	if (definition.type === 'string') {
+		if (definition.additionalData?.values && !definition.additionalData.values.includes(argument.word)) return false
 
 		return true
 	}
 
-	if (type.type === 'boolean' && /^(true|false)$/) return true
+	if (definition.type === 'boolean' && /^(true|false)$/) return true
 
-	if (type.type === 'selector' && /^@(a|e|r|s|p|(initiator))/.test(argument.word)) return true
+	if (definition.type === 'selector' && /^@(a|e|r|s|p|(initiator))/.test(argument.word)) return true
 
-	if (type.type === 'coordinate' && /^[~^]?(-?(([0-9]*\.[0-9]+)|[0-9]+))?$/.test(argument.word)) return true
+	if (definition.type === 'coordinate' && /^[~^]?(-?(([0-9]*\.[0-9]+)|[0-9]+))?$/.test(argument.word)) return true
 
-	if (type.type === 'number' && /^-?(([0-9]*\.[0-9]+)|[0-9]+)$/.test(argument.word)) return true
+	if (definition.type === 'number' && /^-?(([0-9]*\.[0-9]+)|[0-9]+)$/.test(argument.word)) return true
 
-	if (type.type === 'blockState' && /^(\[|[0-9]+)/.test(argument.word)) return true
+	if (definition.type === 'blockState' && /^(\[|[0-9]+)/.test(argument.word)) return true
 
-	if (type.type === 'jsonData' && /^(\{|\[)/.test(argument.word)) return true
+	if (definition.type === 'jsonData' && /^(\{|\[)/.test(argument.word)) return true
 
-	console.warn('Failed to match', argument, type)
+	console.warn('Failed to match', argument, definition)
 
 	return false
 }
 
+/**
+ * Skips the cursor passed spaces
+ * @param line A string of the command
+ * @param cursor The location of the cursor
+ * @returns A new location passed any spaces immedietly after the original cursor position
+ */
 function skipSpaces(line: string, cursor: number): number {
 	let startCharacter = cursor
 
@@ -464,6 +530,12 @@ function skipSpaces(line: string, cursor: number): number {
 	return startCharacter
 }
 
+/**
+ * Gets the next word token. Will capture {} and "" as words.
+ * @param line A string of the command
+ * @param cursor The location of the cursor
+ * @returns The next token or null if at the end of the line
+ */
 function getNextWord(line: string, cursor: number): Token | null {
 	if (line[cursor] === '{') {
 		let endCharacter = cursor + 1
@@ -531,6 +603,12 @@ function getNextWord(line: string, cursor: number): Token | null {
 	}
 }
 
+/**
+ * Gets the next selector token
+ * @param line A string of the command
+ * @param cursor The location of the cursor
+ * @returns The next token or null if at the end of the line
+ */
 function getNextSelector(line: string, cursor: number): Token | null {
 	if (line[cursor] !== '@') return null
 
@@ -702,6 +780,12 @@ function getNextSelectorValueWord(line: string, cursor: number): Token | null {
 	}
 }
 
+/**
+ * Gets the next block state token
+ * @param line A string of the command
+ * @param cursor The location of the cursor
+ * @returns The next token or null if at the end of the line
+ */
 function getNextBlockState(line: string, cursor: number): Token | null {
 	if (line[cursor] !== '[') {
 		let endCharacter = cursor + 1

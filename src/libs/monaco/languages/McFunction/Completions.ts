@@ -1,5 +1,5 @@
 import { Position, languages, Range, editor, CancellationToken } from 'monaco-editor'
-import { ArgumentContext, SelectorContext, SelectorValueContext, Token, getContext } from './Parser'
+import { ArgumentContext, SelectorContext, SelectorValueContext, Token, parseCommand } from './Parser'
 import { ProjectManager } from '@/libs/project/ProjectManager'
 import { BedrockProject } from '@/libs/project/BedrockProject'
 import { Data } from '@/libs/data/Data'
@@ -61,7 +61,7 @@ export async function provideInlineJsonCompletionItems(
 
 	line = line.substring(0, stringEnd)
 
-	const contexts = await getContext(line, cursor, stringStart)
+	const contexts = await parseCommand(line, cursor, stringStart)
 
 	let completions: languages.CompletionItem[] = []
 
@@ -90,33 +90,19 @@ export async function provideInlineJsonCompletionItems(
 					}
 
 					if (argumentType.additionalData?.schemaReference) {
-						const schema = ProjectManager.currentProject.schemaData.getAndResolve(
-							argumentType.additionalData.schemaReference
-						)
+						const schema = ProjectManager.currentProject.schemaData.getAndResolve(argumentType.additionalData.schemaReference)
 
 						const values = ProjectManager.currentProject.schemaData.getAutocompletions(schema)
 
 						completions = completions.concat(
-							makeCompletions(
-								values,
-								undefined,
-								languages.CompletionItemKind.Enum,
-								position,
-								context.token
-							)
+							makeCompletions(values, undefined, languages.CompletionItemKind.Enum, position, context.token)
 						)
 					}
 				}
 
 				if (argumentType.type === 'boolean') {
 					completions = completions.concat(
-						makeCompletions(
-							['true', 'false'],
-							undefined,
-							languages.CompletionItemKind.Enum,
-							position,
-							context.token
-						)
+						makeCompletions(['true', 'false'], undefined, languages.CompletionItemKind.Enum, position, context.token)
 					)
 				}
 
@@ -141,9 +127,7 @@ export async function provideInlineJsonCompletionItems(
 				.getSelectorArguments()
 				.filter(
 					(argument, index, selectorArguments) =>
-						selectorArguments.findIndex(
-							(otherArgument) => argument.argumentName === otherArgument.argumentName
-						) === index
+						selectorArguments.findIndex((otherArgument) => argument.argumentName === otherArgument.argumentName) === index
 				)
 
 			completions = completions.concat(
@@ -170,13 +154,7 @@ export async function provideInlineJsonCompletionItems(
 
 			if (selectorContext.argument.additionalData?.supportsNegation) {
 				completions = completions.concat(
-					makeCompletions(
-						['=', '=!'],
-						undefined,
-						languages.CompletionItemKind.Keyword,
-						position,
-						context.token
-					)
+					makeCompletions(['=', '=!'], undefined, languages.CompletionItemKind.Keyword, position, context.token)
 				)
 			} else {
 				completions = completions.concat(
@@ -216,21 +194,14 @@ export async function provideInlineJsonCompletionItems(
 
 			if (selectorValueContext.argument.type === 'boolean') {
 				completions = completions.concat(
-					makeCompletions(
-						['true', 'false'],
-						undefined,
-						languages.CompletionItemKind.Enum,
-						position,
-						context.token
-					)
+					makeCompletions(['true', 'false'], undefined, languages.CompletionItemKind.Enum, position, context.token)
 				)
 			}
 		}
 	}
 
 	completions = completions.filter(
-		(completion, index, completions) =>
-			completions.findIndex((otherCompletion) => otherCompletion.label === completion.label) === index
+		(completion, index, completions) => completions.findIndex((otherCompletion) => otherCompletion.label === completion.label) === index
 	)
 
 	return {
@@ -250,7 +221,7 @@ export async function provideCompletionItems(
 
 	const cursor = position.column - 1
 
-	const contexts = await getContext(line, cursor)
+	const contexts = await parseCommand(line, cursor)
 
 	let completions: languages.CompletionItem[] = []
 
@@ -296,33 +267,19 @@ export async function provideCompletionItems(
 					}
 
 					if (argumentType.additionalData?.schemaReference) {
-						const schema = ProjectManager.currentProject.schemaData.getAndResolve(
-							argumentType.additionalData.schemaReference
-						)
+						const schema = ProjectManager.currentProject.schemaData.getAndResolve(argumentType.additionalData.schemaReference)
 
 						const values = ProjectManager.currentProject.schemaData.getAutocompletions(schema)
 
 						completions = completions.concat(
-							makeCompletions(
-								values,
-								undefined,
-								languages.CompletionItemKind.Enum,
-								position,
-								context.token
-							)
+							makeCompletions(values, undefined, languages.CompletionItemKind.Enum, position, context.token)
 						)
 					}
 				}
 
 				if (argumentType.type === 'boolean') {
 					completions = completions.concat(
-						makeCompletions(
-							['true', 'false'],
-							undefined,
-							languages.CompletionItemKind.Enum,
-							position,
-							context.token
-						)
+						makeCompletions(['true', 'false'], undefined, languages.CompletionItemKind.Enum, position, context.token)
 					)
 				}
 
@@ -347,9 +304,7 @@ export async function provideCompletionItems(
 				.getSelectorArguments()
 				.filter(
 					(argument, index, selectorArguments) =>
-						selectorArguments.findIndex(
-							(otherArgument) => argument.argumentName === otherArgument.argumentName
-						) === index
+						selectorArguments.findIndex((otherArgument) => argument.argumentName === otherArgument.argumentName) === index
 				)
 
 			completions = completions.concat(
@@ -376,13 +331,7 @@ export async function provideCompletionItems(
 
 			if (selectorContext.argument.additionalData?.supportsNegation) {
 				completions = completions.concat(
-					makeCompletions(
-						['=', '=!'],
-						undefined,
-						languages.CompletionItemKind.Keyword,
-						position,
-						context.token
-					)
+					makeCompletions(['=', '=!'], undefined, languages.CompletionItemKind.Keyword, position, context.token)
 				)
 			} else {
 				completions = completions.concat(
@@ -422,21 +371,14 @@ export async function provideCompletionItems(
 
 			if (selectorValueContext.argument.type === 'boolean') {
 				completions = completions.concat(
-					makeCompletions(
-						['true', 'false'],
-						undefined,
-						languages.CompletionItemKind.Enum,
-						position,
-						context.token
-					)
+					makeCompletions(['true', 'false'], undefined, languages.CompletionItemKind.Enum, position, context.token)
 				)
 			}
 		}
 	}
 
 	completions = completions.filter(
-		(completion, index, completions) =>
-			completions.findIndex((otherCompletion) => otherCompletion.label === completion.label) === index
+		(completion, index, completions) => completions.findIndex((otherCompletion) => otherCompletion.label === completion.label) === index
 	)
 
 	return {
@@ -468,11 +410,6 @@ function makeCompletions(
 			insertText: option,
 			detail: detail ? detail[index] : undefined,
 			kind,
-			range: new Range(
-				position.lineNumber,
-				token.start + 1,
-				position.lineNumber,
-				token.start + token.word.length + 1
-			),
+			range: new Range(position.lineNumber, token.start + 1, position.lineNumber, token.start + token.word.length + 1),
 		}))
 }
