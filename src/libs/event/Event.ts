@@ -2,6 +2,9 @@ import { Disposable } from '@/libs/disposeable/Disposeable'
 
 type Listener<T> = (value?: T) => void | Promise<void>
 
+/**
+ * An event which can have listeners registered to it that will respond to dispatches that can contain arbitrary data
+ */
 export class Event<T> {
 	private listeners: Listener<T>[] = []
 

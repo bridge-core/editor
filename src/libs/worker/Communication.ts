@@ -1,5 +1,12 @@
 import { v4 as uuid } from 'uuid'
 
+/**
+ * Sends a message to a web worker and waits untill the web worker responds with the same message id
+ * @param message An object of message data
+ * @param worker The web worker to send the message to
+ * @param transfer An optional list of items to be transfered to the web worker
+ * @returns The response data of the worker
+ */
 export async function sendAndWait(
 	message: {
 		[key: string]: any
