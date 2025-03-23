@@ -2,11 +2,7 @@ import { BaseFileSystem } from '@/libs/fileSystem/BaseFileSystem'
 import { CreateProjectConfig } from '../../CreateProjectConfig'
 import { defaultPackPaths } from 'mc-project-core'
 
-export async function createConfig(
-	fileSystem: BaseFileSystem,
-	path: string,
-	config: CreateProjectConfig
-) {
+export async function createConfig(fileSystem: BaseFileSystem, path: string, config: CreateProjectConfig) {
 	const configOutput = {
 		type: 'minecraftBedrock',
 		name: config.name,
@@ -14,12 +10,7 @@ export async function createConfig(
 		targetVersion: config.targetVersion,
 		experimentalGameplay: config.experiments,
 		namespace: config.namespace,
-		packs: Object.fromEntries(
-			config.packs.map((packId) => [
-				packId,
-				defaultPackPaths[packId as keyof typeof defaultPackPaths],
-			])
-		),
+		packs: Object.fromEntries(config.packs.map((packId) => [packId, defaultPackPaths[packId as keyof typeof defaultPackPaths]])),
 		worlds: ['./worlds/*'],
 		packDefinitions: {},
 		compiler: {
@@ -33,6 +24,7 @@ export async function createConfig(
 				'customCommands',
 				'moLang',
 				'formatVersionCorrection',
+				'floatPropertyTruncationFix',
 				[
 					'simpleRewrite',
 					{
