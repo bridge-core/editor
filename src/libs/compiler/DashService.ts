@@ -12,6 +12,11 @@ import { NotificationSystem, Notification } from '@/components/Notifications/Not
 import { ActionManager } from '@/libs/actions/ActionManager'
 import { Action } from '@/libs/actions/Action'
 
+/**
+ * This is the front facing interface for the Dash Compiler.
+ * It also handles automatic recompilation when a file change has been detected.
+ * The Dash Service interacts with the Dash Worker to offload compilation tasks onto a new thread.
+ */
 export class DashService implements AsyncDisposable {
 	public logs: string[] = []
 	public isSetup: boolean = false
@@ -34,7 +39,7 @@ export class DashService implements AsyncDisposable {
 		this.outputFileSystem = new WorkerFileSystemEntryPoint(this.worker, fileSystem ?? project.outputFileSystem, 'outputFileSystem')
 	}
 
-	public async onWorkerMessage(event: MessageEvent) {
+	private async onWorkerMessage(event: MessageEvent) {
 		if (!event.data) return
 
 		if (event.data.action === 'getJsonData') {
@@ -55,6 +60,11 @@ export class DashService implements AsyncDisposable {
 		}
 	}
 
+	/**
+	 * Sets up the dash compiler to be configured in a specific build mode and option alcompiler config. This should be called before attempting to build.
+	 * @param mode
+	 * @param compilerConfigPath
+	 */
 	public async setup(mode: 'development' | 'production', compilerConfigPath?: string) {
 		this.mode = mode
 
@@ -72,6 +82,9 @@ export class DashService implements AsyncDisposable {
 		this.isSetup = true
 	}
 
+	/**
+	 * Initially sets up Dash for devlopment projects and creates the compiler profile actions.
+	 */
 	public async setupForDevelopmentProject() {
 		await this.setupCompileActions()
 
@@ -97,6 +110,10 @@ export class DashService implements AsyncDisposable {
 		this.outputFileSystem = new WorkerFileSystemEntryPoint(this.worker, fileSystem, 'outputFileSystem')
 	}
 
+	/**
+	 * Triggers a compilation. If a compilation is already in progress it will be queued up and triggered once the current compilation is completed.
+	 * @returns
+	 */
 	public async build() {
 		if (this.building) {
 			this.inFlightBuildRequest = true
