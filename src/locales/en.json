@@ -594,8 +594,12 @@
 		"sidebar": {
 			"disabledItem": "This item is disabled"
 		},
-		"error": {
-			"explanation": "bridge. encountered the following error:"
+		"reportError": {
+			"title": "Report Error",
+			"explanation": "bridge. encountered the following error:",
+			"discord": "Discord",
+			"github": "GitHub",
+			"copy": "Copy"
 		},
 		"changelogWindow": {
 			"title": "What's new?"

@@ -32,6 +32,7 @@ import { CreateProjectWindow } from '@/components/Windows/CreateProject/CreatePr
 import { TabTypes } from '@/components/TabSystem/TabTypes'
 import { setupExportActions } from '@/libs/actions/export/ExportActions'
 import { setupFileActions } from '@/libs/actions/file/FileActions'
+import { ReportErrorWindow } from '@/components/Windows/ReportError/ReportErrorWindow'
 
 export function setupBeforeComponents() {
 	NotificationSystem.setup()
@@ -62,6 +63,8 @@ export function setupBeforeComponents() {
 
 export async function setup() {
 	console.time('[App] Setup')
+
+	ReportErrorWindow.setup()
 
 	ThemeManager.load()
 	LocaleManager.applyDefaultLanguage()
