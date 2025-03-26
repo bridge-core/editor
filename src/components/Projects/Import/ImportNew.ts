@@ -9,14 +9,6 @@ export async function importNewProject() {
 	try {
 		;[projectHandle] = await window.showOpenFilePicker({
 			multiple: false,
-			types: [
-				{
-					description: 'Choose a Project',
-					accept: {
-						'application/zip': ['.brproject', '.mcaddon'],
-					},
-				},
-			],
 		})
 	} catch {
 		// User aborted selecting new project
