@@ -620,6 +620,10 @@
 			"name": "Beta APIs",
 			"description": "Enables the beta level script API related modules in the manifest and allows you to create scripts with auto-completions."
 		},
+		"experimentalCreatorCameraFeatures": {
+			"name": "Experimental Creator Camera Features",
+			"description": "Enables auto-completions for experimental camera preset features."
+		},
 		"experimentalMolangFeatures": {
 			"name": "Experimental Molang Features",
 			"description": "Enables auto-completions for experimental Molang queries."
@@ -635,6 +639,10 @@
 		"aimAssist": {
 			"name": "Aim Assist",
 			"description": "Enables the creation of aim assist presets and categories."
+		},
+		"customComponentsV2": {
+			"name": "Custom Components V2",
+			"description": "Enables custom components with parameters."
 		},
 		"theWildUpdate": {
 			"name": "The Wild Update",
