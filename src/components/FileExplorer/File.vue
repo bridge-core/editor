@@ -48,10 +48,17 @@ function dragEnd() {
 
 let fileActions: ShallowRef<string[]> = shallowRef([])
 
+const icon = ref('draft')
+
 onMounted(() => {
 	if (!(ProjectManager.currentProject instanceof BedrockProject)) return
 
 	fileActions = useFileActions(ProjectManager.currentProject.fileTypeData.get(props.path)?.id)
+
+	const fileTypeData = ProjectManager.currentProject.fileTypeData
+	const fileType = fileTypeData.get(props.path)
+
+	if (fileType !== null) icon.value = fileType.icon ?? 'draft'
 })
 </script>
 
@@ -68,7 +75,7 @@ onMounted(() => {
 		@dragend="dragEnd"
 		draggable="true"
 	>
-		<Icon icon="draft" :color="color" class="text-sm" />
+		<Icon :icon="icon" :color="color" class="text-sm" />
 
 		<span class="select-none font-theme text-ellipsis overflow-hidden"> {{ basename(path) }} </span>
 
