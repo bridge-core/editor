@@ -48,9 +48,24 @@ export class Toolbar {
 
 		this.addButton('openSettings')
 
-		this.addDropdown('file', 'toolbar.file.name', [{ type: 'button', action: 'files.createFile' }, { type: 'seperator' }, { type: 'button', action: 'filessave' }])
+		this.addDropdown('file', 'toolbar.file.name', [
+			{ type: 'button', action: 'files.createFile' },
+			{ type: 'seperator' },
+			{ type: 'button', action: 'filessave' },
+		])
 
 		this.addDropdown('tools', 'toolbar.tools.name', [{ type: 'button', action: 'editor.clearNotifications' }])
+
+		this.addDropdown('tools', 'toolbar.help.name', [
+			{ type: 'button', action: 'help.gettingStarted' },
+			{ type: 'button', action: 'help.faq' },
+			{ type: 'button', action: 'help.extensions' },
+			{ type: 'seperator' },
+			{ type: 'button', action: 'help.scriptingDocs' },
+			{ type: 'button', action: 'help.bedrockDevDocs' },
+			{ type: 'button', action: 'help.creatorDocs' },
+			{ type: 'seperator' },
+		])
 
 		this.addButton('help.openDownloadGuide')
 	}
