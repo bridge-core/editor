@@ -346,6 +346,10 @@
 			"toggleFileExplorer": {
 				"name": "Toggle File Explorer",
 				"description": "Toggles the file explorer open or closed"
+			},
+			"newProject": {
+				"name": "New Project",
+				"description": "Opens the create project dialogue"
 			}
 		},
 		"help": {

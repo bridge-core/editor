@@ -24,6 +24,7 @@ import { openUrl } from '@/libs/OpenUrl'
 import { FileTab } from '@/components/TabSystem/FileTab'
 import { Extensions } from '@/libs/extensions/Extensions'
 import { FileExplorer } from '@/components/FileExplorer/FileExplorer'
+import { CreateProjectWindow } from '@/components/Windows/CreateProject/CreateProjectWindow'
 
 export function setupActions() {
 	setupFileTabActions()
@@ -237,6 +238,19 @@ function setupProjectActions() {
 				category: 'actions.project.name',
 			})
 		)
+	)
+
+	ActionManager.addAction(
+		new Action({
+			id: 'project.newProject',
+			trigger() {
+				Windows.open(CreateProjectWindow)
+			},
+			name: 'actions.project.newProject.name',
+			description: 'actions.project.newProject.description',
+			icon: 'add',
+			category: 'actions.project.name',
+		})
 	)
 
 	ProjectManager.updatedCurrentProject.on(() => {
@@ -633,7 +647,15 @@ function setupFileSystemActions() {
 		})
 	)
 
-	for (const action of [deleteFileSystemEntry, createFile, createFolder, renameFileSystemEntry, duplicateFileSystemEntry, copyFileSystemEntry, pasteFileSystemEntry]) {
+	for (const action of [
+		deleteFileSystemEntry,
+		createFile,
+		createFolder,
+		renameFileSystemEntry,
+		duplicateFileSystemEntry,
+		copyFileSystemEntry,
+		pasteFileSystemEntry,
+	]) {
 		ProjectManager.updatedCurrentProject.on(() => {
 			action.setVisible(ProjectManager.currentProject !== null)
 		})
@@ -1097,7 +1119,17 @@ function setupJsonTreeActions() {
 		})
 	)
 
-	for (const action of [undo, redo, deleteAction, convertToObject, convertToArray, convertToNull, convertToNumber, convertToString, convertToBoolean]) {
+	for (const action of [
+		undo,
+		redo,
+		deleteAction,
+		convertToObject,
+		convertToArray,
+		convertToNull,
+		convertToNumber,
+		convertToString,
+		convertToBoolean,
+	]) {
 		TabManager.focusedTabSystemChanged.on(() => {
 			action.setVisible(
 				TabManager.focusedTabSystem.value !== null &&
