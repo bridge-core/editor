@@ -170,7 +170,9 @@ export class ProjectManager {
 		for (const [packId, packPath] of Object.entries(config.packs)) {
 			const projectPackPath = join(path, packPath as string)
 
-			if (await fileSystem.exists(join(projectPackPath, 'pack_icon.png'))) iconDataUrl = await fileSystem.readFileDataUrl(join(projectPackPath, 'pack_icon.png'))
+			if (await fileSystem.exists(join(projectPackPath, 'pack_icon.png'))) {
+				iconDataUrl = await fileSystem.readFileDataUrl(join(projectPackPath, 'pack_icon.png'))
+			}
 		}
 
 		let favorites: string[] = []
@@ -184,9 +186,11 @@ export class ProjectManager {
 				Object.entries(config.packs as Record<string, string>).map(async ([id, packPath]) => {
 					let manifest: any | null = null
 
-					try {
-						manifest = await fileSystem.readFileJson(join(path, packPath, 'manifest.json'))
-					} catch {}
+					if (await fileSystem.exists(join(path, packPath, 'manifest.json'))) {
+						try {
+							manifest = await fileSystem.readFileJson(join(path, packPath, 'manifest.json'))
+						} catch {}
+					}
 
 					if (!manifest) return null
 
