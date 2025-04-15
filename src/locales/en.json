@@ -381,6 +381,10 @@
 			"faq": {
 				"name": "FAQ",
 				"description": "Opens the bridge. FAQ in a new browser tab"
+			},
+			"feedback": {
+				"name": "Feedback and Bug Reports",
+				"description": "Opens the editor issues on github"
 			}
 		}
 	},

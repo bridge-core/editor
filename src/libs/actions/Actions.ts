@@ -1232,4 +1232,17 @@ function setupHelpActions() {
 			category: 'actions.help.name',
 		})
 	)
+
+	ActionManager.addAction(
+		new Action({
+			id: 'help.feedback',
+			trigger() {
+				openUrl('https://github.com/bridge-core/editor/issues')
+			},
+			name: 'actions.help.feedback.name',
+			description: 'actions.help.feedback.description',
+			icon: 'chat_bubble',
+			category: 'actions.help.name',
+		})
+	)
 }
