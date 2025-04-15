@@ -76,23 +76,16 @@ function cleanupDropdownItems(items: DropdownItem[]): DropdownItem[] {
 				<ContextMenu v-if="item.type === 'dropdown'">
 					<template #main="{ toggle }">
 						<button class="flex items-center gap-1 group" @click="toggle">
-							<span class="text-sm group-hover:text-primary transition-colors duration-100 ease-out font-theme select-none">{{ t(item.name) }}</span>
+							<span class="text-sm group-hover:text-primary transition-colors duration-100 ease-out font-theme select-none">{{
+								t(item.name)
+							}}</span>
 						</button>
 					</template>
 
 					<template #menu="{ close }">
 						<div class="bg-background-secondary rounded mt-2 shadow-window overflow-hidden relative z-10">
 							<span v-for="dropdownItem in cleanupDropdownItems(item.items)">
-								<ActionContextMenuItem
-									v-if="dropdownItem.type === 'button'"
-									:action="dropdownItem.action"
-									@click="
-										() => {
-											ActionManager.trigger(dropdownItem.action, undefined)
-											close()
-										}
-									"
-								/>
+								<ActionContextMenuItem v-if="dropdownItem.type === 'button'" :action="dropdownItem.action" @click="close" />
 
 								<div v-if="dropdownItem.type === 'seperator'" class="bg-background-tertiary w-full h-[2px] my-1"></div>
 							</span>
@@ -106,7 +99,9 @@ function cleanupDropdownItems(items: DropdownItem[]): DropdownItem[] {
 			<div class="flex gap-2 items-center hover:cursor-pointer" @click="openChangelog">
 				<Logo class="w-4" />
 
-				<span v-if="!isMobile" class="text-sm text-text-secondary font-theme transition ease-out hover:text-accent duration-100"> v{{ appVersion }} </span>
+				<span v-if="!isMobile" class="text-sm text-text-secondary font-theme transition ease-out hover:text-accent duration-100">
+					v{{ appVersion }}
+				</span>
 			</div>
 
 			<div v-if="tauriBuild" class="flex gap-2 items-center">
