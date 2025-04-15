@@ -385,6 +385,10 @@
 			"feedback": {
 				"name": "Feedback and Bug Reports",
 				"description": "Opens the editor issues on github"
+			},
+			"releases": {
+				"name": "Releases",
+				"description": "Opens the editor releases page on github"
 			}
 		}
 	},

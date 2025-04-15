@@ -65,6 +65,8 @@ export class Toolbar {
 			{ type: 'button', action: 'help.scriptingDocs' },
 			{ type: 'button', action: 'help.bedrockDevDocs' },
 			{ type: 'button', action: 'help.creatorDocs' },
+			{ type: 'seperator' },
+			{ type: 'button', action: 'help.releases' },
 		])
 
 		this.addButton('help.openDownloadGuide')

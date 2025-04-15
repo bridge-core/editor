@@ -1245,4 +1245,17 @@ function setupHelpActions() {
 			category: 'actions.help.name',
 		})
 	)
+
+	ActionManager.addAction(
+		new Action({
+			id: 'help.releases',
+			trigger() {
+				openUrl('https://github.com/bridge-core/editor/releases')
+			},
+			name: 'actions.help.releases.name',
+			description: 'actions.help.releases.description',
+			icon: 'publish',
+			category: 'actions.help.name',
+		})
+	)
 }
