@@ -18,6 +18,11 @@
 					"allow": ["**/*"],
 					"requireLiteralLeadingDot": false
 				}
+			},
+			"clipboard": {
+				"all": true,
+				"readText": true,
+				"writeText": true
 			}
 		},
 		"bundle": {

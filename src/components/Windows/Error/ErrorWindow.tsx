@@ -5,6 +5,7 @@ import { SolidButton } from '../../Solid/Inputs/Button/SolidButton'
 import { SolidSpacer } from '../../Solid/SolidSpacer'
 import { SolidWindow } from '../../Solid/Window/Window'
 import { App } from '/@/App'
+import { writeText as tauriWriteText } from '@tauri-apps/api/clipboard'
 
 const ErrorWindow: Component<{
 	error: Error
@@ -15,7 +16,7 @@ const ErrorWindow: Component<{
 		`Error: ${props.error.message}\n${props.error.stack ?? ''}`
 
 	const onCopyError = () => {
-		navigator.clipboard.writeText(prettyError())
+		tauriWriteText(prettyError())
 	}
 	const onReportBug = () => {
 		App.openUrl(

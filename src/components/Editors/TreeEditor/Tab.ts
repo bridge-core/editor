@@ -11,6 +11,10 @@ import { TreeValueSelection } from './TreeSelection'
 import { PrimitiveTree } from './Tree/PrimitiveTree'
 import { AnyFileHandle } from '../../FileSystem/Types'
 import { HistoryEntry } from './History/HistoryEntry'
+import {
+	readText as tauriReadText,
+	writeText as tauriWriteText,
+} from '@tauri-apps/api/clipboard'
 
 const throttledCacheUpdate = debounce<(tab: TreeTab) => Promise<void> | void>(
 	async (tab) => {
@@ -125,17 +129,17 @@ export class TreeTab extends FileTab {
 	async paste() {
 		if (this.isReadOnly) return
 
-		const text = await navigator.clipboard.readText()
+		const text = await tauriReadText()
 
 		let data: any = undefined
 		// Try parsing clipboard text
 		try {
-			data = json5.parse(text)
+			data = json5.parse(String(text))
 		} catch {
 			// Parsing fails, now try again with brackets around text
 			// -> To support pasting text like this: "minecraft:can_fly": {}
 			try {
-				data = json5.parse(`{${text}}`)
+				data = json5.parse(`{${String(text)}}`)
 			} catch {
 				return
 			}
@@ -164,7 +168,8 @@ export class TreeTab extends FileTab {
 			}
 		})
 
-		if (copyText !== '') await navigator.clipboard.writeText(copyText)
+		if (copyText !== '' && copyText != null)
+			await tauriWriteText(String(copyText))
 	}
 
 	async cut() {
