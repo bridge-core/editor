@@ -42,13 +42,13 @@ jobs:
                   NODE_OPTIONS=--max_old_space_size=4096 npm run build
 
             - name: Upload artifact ⬆️
-              uses: actions/upload-pages-artifact@v1
+              uses: actions/upload-pages-artifact@v3
               with:
                   path: './dist'
 
             - name: Deploy to GitHub Pages 🚀
               id: deployment
-              uses: actions/deploy-pages@v1
+              uses: actions/deploy-pages@v4
 
             # - name: Build & Publish Compiler Plugin Types 📝
             #   env:
