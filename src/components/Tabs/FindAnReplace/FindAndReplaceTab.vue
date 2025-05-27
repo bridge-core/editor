@@ -30,13 +30,18 @@ function startSearch() {
 
 <template>
 	<div class="w-full h-full flex gap-4 items-stretch">
-		<div class="mt-2">
-			<LabeledTextInput label="Search" v-model="instance.searchValue.value" icon="search" class="!mt-1" />
+		<div>
+			<LabeledTextInput label="findAndReplace.search" v-model="instance.searchValue.value" icon="search" class="!mt-1" />
 
-			<LabeledTextInput label="Replace" v-model="instance.replaceValue.value" icon="content_paste_search" class="mt-4" />
+			<LabeledTextInput
+				label="findAndReplace.replace"
+				v-model="instance.replaceValue.value"
+				icon="content_paste_search"
+				class="mt-4"
+			/>
 
 			<div class="flex mt-3">
-				<Button :text="t('Replace')" @click="() => instance.replace(instance.replaceValue.value)" />
+				<Button :text="t('findAndReplace.replace')" @click="() => instance.replace(instance.replaceValue.value)" />
 
 				<button
 					class="p-1 rounded transition-colors duration-100 ease-out select-none group hover:bg-text flex items-center ml-2"
