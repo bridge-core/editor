@@ -27,12 +27,18 @@ const isMobile = useIsMobile()
 
 <template>
 	<SidebarWindow
-		:name="`${t('windows.settings.title')} - ${t(SettingsWindow.selectedCategory.value ? SettingsWindow.categories[SettingsWindow.selectedCategory.value].label : '')}`"
+		:name="`${t('windows.settings.title')} - ${t(
+			SettingsWindow.selectedCategory.value ? SettingsWindow.categories[SettingsWindow.selectedCategory.value].label : ''
+		)}`"
 		@close="Windows.close(SettingsWindow)"
 	>
 		<template #sidebar="{ hide }">
 			<div class="p-4">
-				<LabeledInput v-slot="{ focus, blur }" :label="t('windows.settings.searchSettings')" class="bg-background-secondary !mt-1">
+				<LabeledInput
+					v-slot="{ focus, blur }"
+					:label="t('windows.settings.searchSettings')"
+					class="bg-background-secondary !mt-1 border-background-tertiary"
+				>
 					<div class="flex gap-1">
 						<Icon icon="search" class="transition-colors duration-100 ease-out" />
 						<input @focus="focus" @blur="blur" class="outline-none border-none bg-transparent font-theme" v-model="search" />
@@ -53,7 +59,11 @@ const isMobile = useIsMobile()
 							}
 						"
 					>
-						<Icon :icon="category.icon" :color="SettingsWindow.selectedCategory.value === id ? 'accent' : 'primary'" class="text-base" />
+						<Icon
+							:icon="category.icon"
+							:color="SettingsWindow.selectedCategory.value === id ? 'accent' : 'primary'"
+							class="text-base"
+						/>
 						<span
 							class="font-theme"
 							:class="{
@@ -68,7 +78,10 @@ const isMobile = useIsMobile()
 		</template>
 
 		<template #content>
-			<div class="max-w-[64rem] w-[50vw] h-[38rem] flex flex-col overflow-y-auto p-4 pt-0" :class="{ 'w-full': isMobile, 'h-full': isMobile }">
+			<div
+				class="max-w-[64rem] w-[50vw] h-[38rem] flex flex-col overflow-y-auto p-4 pt-0"
+				:class="{ 'w-full': isMobile, 'h-full': isMobile }"
+			>
 				<div
 					v-if="SettingsWindow.selectedCategory.value !== null"
 					v-for="[id, item] in Object.entries(SettingsWindow.items[SettingsWindow.selectedCategory.value])"
@@ -87,7 +100,11 @@ const isMobile = useIsMobile()
 								<div class="flex items-center justify-between cursor-pointer" @click="toggle">
 									<span class="font-theme">{{ item.labels.value[item.values.value.indexOf(get(id))] }}</span>
 
-									<Icon icon="arrow_drop_down" class="transition-transform duration-200 ease-out" :class="{ '-rotate-180': expanded }" />
+									<Icon
+										icon="arrow_drop_down"
+										class="transition-transform duration-200 ease-out"
+										:class="{ '-rotate-180': expanded }"
+									/>
 								</div>
 							</LabeledInput>
 						</template>
@@ -131,7 +148,11 @@ const isMobile = useIsMobile()
 					</div>
 
 					<div v-if="item.type === 'text'" class="w-full">
-						<LabeledTextInput :label="item.label" :model-value="get(id).toString()" @update:model-value="(value: string | undefined) => Settings.set(id, value)" />
+						<LabeledTextInput
+							:label="item.label"
+							:model-value="get(id).toString()"
+							@update:model-value="(value: string | undefined) => Settings.set(id, value)"
+						/>
 					</div>
 
 					<div v-if="item.type === 'tab'">
