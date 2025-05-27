@@ -28,6 +28,12 @@ export class FindAndReplaceTab extends Tab {
 		>
 	> = ref({})
 
+	public searchValue: Ref<string> = ref('')
+	public replaceValue: Ref<string> = ref('')
+	public matchWord: Ref<boolean> = ref(false)
+	public matchCase: Ref<boolean> = ref(false)
+	public useRegex: Ref<boolean> = ref(false)
+
 	private currentQueryId: string | null = null
 	private currentSearch: Promise<void> | null = null
 	private currentRegex: RegExp | null = null
@@ -48,6 +54,8 @@ export class FindAndReplaceTab extends Tab {
 
 		this.currentRegex = regex
 		this.currentSearch = this.searchDirectory(ProjectManager.currentProject.path, regex, searchId)
+
+		this.saveState()
 	}
 
 	private async searchDirectory(path: string, regex: RegExp, searchId: string) {
@@ -66,15 +74,11 @@ export class FindAndReplaceTab extends Tab {
 
 					const value = match[0]
 
-					let previousContext =
-						match.index !== 0 ? content.slice(Math.max(0, match.index - 50), match.index) : null
+					let previousContext = match.index !== 0 ? content.slice(Math.max(0, match.index - 50), match.index) : null
 
 					let nextContext =
 						match.index !== content.length - 1
-							? content.slice(
-									match.index + value.length,
-									Math.min(content.length, match.index + value.length + 50)
-							  )
+							? content.slice(match.index + value.length, Math.min(content.length, match.index + value.length + 50))
 							: null
 
 					if (ProjectManager.currentProject === null) return
@@ -153,5 +157,25 @@ export class FindAndReplaceTab extends Tab {
 		}
 
 		return regExp
+	}
+
+	public async getState(): Promise<any> {
+		return {
+			searchValue: this.searchValue.value,
+			replaceValue: this.replaceValue.value,
+			matchWord: this.matchWord.value,
+			matchCase: this.matchCase.value,
+			useRegex: this.useRegex.value,
+		}
+	}
+
+	public async recover(state: any): Promise<void> {
+		this.searchValue.value = state.searchValue
+		this.replaceValue.value = state.replaceValue
+		this.matchWord.value = state.matchWord
+		this.matchCase.value = state.matchCase
+		this.useRegex.value = state.useRegex
+
+		this.startSearch(this.searchValue.value, this.matchCase.value, this.useRegex.value)
 	}
 }

@@ -17,64 +17,64 @@ const { instance }: { instance: FindAndReplaceTab } = <any>defineProps({
 	},
 })
 
-const search = ref('')
-const replace = ref('')
-const matchWord = ref(false)
-const matchCase = ref(false)
-const useRegex = ref(false)
-
-watch(search, startSearch)
-watch(replace, startSearch)
-watch(matchWord, startSearch)
-watch(matchCase, startSearch)
-watch(useRegex, startSearch)
+watch(instance.searchValue, startSearch)
+watch(instance.replaceValue, startSearch)
+watch(instance.matchWord, startSearch)
+watch(instance.matchCase, startSearch)
+watch(instance.useRegex, startSearch)
 
 function startSearch() {
-	instance.startSearch(search.value, matchCase.value, useRegex.value)
+	instance.startSearch(instance.searchValue.value, instance.matchCase.value, instance.useRegex.value)
 }
 </script>
 
 <template>
 	<div class="w-full h-full flex gap-4 items-stretch">
 		<div class="mt-2">
-			<LabeledTextInput label="Search" v-model="search" icon="search" class="!mt-1" />
+			<LabeledTextInput label="Search" v-model="instance.searchValue.value" icon="search" class="!mt-1" />
 
-			<LabeledTextInput label="Replace" v-model="replace" icon="content_paste_search" class="mt-4" />
+			<LabeledTextInput label="Replace" v-model="instance.replaceValue.value" icon="content_paste_search" class="mt-4" />
 
 			<div class="flex mt-3">
-				<Button :text="t('Replace')" @click="() => instance.replace(replace)" />
+				<Button :text="t('Replace')" @click="() => instance.replace(instance.replaceValue.value)" />
 
 				<button
 					class="p-1 rounded transition-colors duration-100 ease-out select-none group hover:bg-text flex items-center ml-2"
 					:class="{
-						'bg-primary': matchWord,
-						'bg-background-secondary': !matchWord,
+						'bg-primary': instance.matchWord.value,
+						'bg-background-secondary': !instance.matchWord.value,
 					}"
-					@click="matchWord = !matchWord"
+					@click="instance.matchWord.value = !instance.matchWord.value"
 				>
-					<span class="material-symbols-rounded group-hover:text-background transition-colors duration-100 ease-out">text_format</span>
+					<span class="material-symbols-rounded group-hover:text-background transition-colors duration-100 ease-out"
+						>text_format</span
+					>
 				</button>
 
 				<button
 					class="p-1 rounded transition-colors duration-100 ease-out select-none group hover:bg-text flex items-center ml-2"
 					:class="{
-						'bg-primary': matchCase,
-						'bg-background-secondary': !matchCase,
+						'bg-primary': instance.matchCase.value,
+						'bg-background-secondary': !instance.matchCase.value,
 					}"
-					@click="matchCase = !matchCase"
+					@click="instance.matchCase.value = !instance.matchCase.value"
 				>
-					<span class="material-symbols-rounded group-hover:text-background transition-colors duration-100 ease-out">match_case</span>
+					<span class="material-symbols-rounded group-hover:text-background transition-colors duration-100 ease-out"
+						>match_case</span
+					>
 				</button>
 
 				<button
 					class="p-1 rounded transition-colors duration-100 ease-out select-none group hover:bg-text flex items-center ml-2"
 					:class="{
-						'bg-primary': useRegex,
-						'bg-background-secondary': !useRegex,
+						'bg-primary': instance.useRegex.value,
+						'bg-background-secondary': !instance.useRegex.value,
 					}"
-					@click="useRegex = !useRegex"
+					@click="instance.useRegex.value = !instance.useRegex.value"
 				>
-					<span class="material-symbols-rounded group-hover:text-background transition-colors duration-100 ease-out">asterisk</span>
+					<span class="material-symbols-rounded group-hover:text-background transition-colors duration-100 ease-out"
+						>asterisk</span
+					>
 				</button>
 			</div>
 		</div>
@@ -96,12 +96,16 @@ function startSearch() {
 				<div v-for="result of instance.queryResult.value[path].results" class="cursor-pointer" @click="TabManager.openFile(path)">
 					<span class="text-text-secondary">{{ result.previousContext ?? '' }}</span>
 
-					<span v-if="replace === '' || replace === search" class="text-primary font-bold">{{ result.value }}</span>
+					<span
+						v-if="instance.replaceValue.value === '' || instance.replaceValue.value === instance.searchValue.value"
+						class="text-primary font-bold"
+						>{{ result.value }}</span
+					>
 
 					<span v-else>
 						<span class="text-text-secondary line-through">{{ result.value }}</span>
 
-						<span class="text-primary font-bold">{{ replace }}</span>
+						<span class="text-primary font-bold">{{ instance.replaceValue.value }}</span>
 					</span>
 
 					<span class="text-text-secondary">{{ result.nextContext ?? '' }}</span>
