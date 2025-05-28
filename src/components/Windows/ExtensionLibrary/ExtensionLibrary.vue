@@ -135,7 +135,16 @@ const filteredExtensions = computed(() => {
 
 					<div class="mb-4 flex flex-wrap gap-4">
 						<span
-							class="font-theme text-sm py-1 px-2 bg-primary hover:bg-accent rounded-full flex items-center gap-1 group hover:text-background transition-colors duration-100 ease-out cursor-pointer"
+							class="font-theme text-sm py-1 px-2 bg-primary hover:bg-accent rounded-full flex items-center gap-1 group hover:text-background transition-colors duration-100 ease-out cursor-pointer select-none"
+							@click="
+								() => {
+									if (search === extension.author) {
+										search = ''
+									} else {
+										search = extension.author
+									}
+								}
+							"
 						>
 							<span
 								class="material-symbols-rounded text-sm group-hover:text-background transition-colors duration-100 ease-out"
@@ -145,16 +154,25 @@ const filteredExtensions = computed(() => {
 							{{ extension.author }}
 						</span>
 
-						<span class="font-theme text-sm py-1 px-2 bg-background rounded-full">
+						<span class="font-theme text-sm py-1 px-2 bg-background rounded-full select-none">
 							{{ extension.version }}
 						</span>
 
 						<span
 							v-for="tag in extension.tags"
-							class="font-theme text-sm py-1 px-2 bg-[var(--color)] hover:bg-accent rounded-full flex items-center gap-1 group hover:text-background transition-colors duration-100 ease-out cursor-pointer"
+							class="font-theme text-sm py-1 px-2 bg-[var(--color)] hover:bg-accent rounded-full flex items-center gap-1 group hover:text-background transition-colors duration-100 ease-out cursor-pointer select-none"
 							:style="{
 								'--color': `var(--theme-color-${ExtensionLibraryWindow.tags[tag].color ?? 'primary'})`,
 							}"
+							@click="
+								() => {
+									if (ExtensionLibraryWindow.selectedTag.value === tag) {
+										ExtensionLibraryWindow.selectedTag.value = 'All'
+									} else {
+										ExtensionLibraryWindow.selectedTag.value = tag
+									}
+								}
+							"
 						>
 							<span
 								class="material-symbols-rounded text-sm group-hover:text-background transition-colors duration-100 ease-out"
