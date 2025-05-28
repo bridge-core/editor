@@ -7,7 +7,7 @@ import Switch from '@/components/Common/Switch.vue'
 import LabeledTextInput from '@/components/Common/LabeledTextInput.vue'
 import LabeledAutocompleteInput from '@/components/Common/LabeledAutocompleteInput.vue'
 
-import { ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { useTranslate } from '@/libs/locales/Locales'
 import { Settings } from '@/libs/settings/Settings'
 import { SettingsWindow } from './SettingsWindow'
@@ -19,6 +19,34 @@ const t = useTranslate()
 const get = Settings.useGet()
 
 const search = ref('')
+
+const filteredCategories = computed(() => {
+	if (search.value === '') return SettingsWindow.categories
+
+	return Object.fromEntries(
+		Object.entries(SettingsWindow.categories).filter(([id, category]) => {
+			return (
+				id.toLowerCase().includes(search.value.toLowerCase()) ||
+				t.value(category.label).toLowerCase().includes(search.value.toLowerCase()) ||
+				Object.entries(SettingsWindow.items[id]).some(([id, item]) => {
+					if (id.toLowerCase().includes(search.value.toLowerCase())) return true
+
+					if (item.label && t.value(item.label).toLowerCase().includes(search.value.toLowerCase())) return true
+
+					return false
+				})
+			)
+		})
+	)
+})
+
+watch(filteredCategories, () => {
+	if (filteredCategories.value[SettingsWindow.selectedCategory.value]) return
+
+	if (Object.keys(filteredCategories.value).length === 0) return
+
+	SettingsWindow.selectedCategory.value = Object.keys(filteredCategories.value)[0]
+})
 
 SettingsWindow.setup()
 
@@ -47,7 +75,7 @@ const isMobile = useIsMobile()
 
 				<div class="mt-4">
 					<button
-						v-for="[id, category] in Object.entries(SettingsWindow.categories)"
+						v-for="[id, category] in Object.entries(filteredCategories)"
 						class="w-full flex gap-1 p-1 mt-1 border-2 border-transparent hover:border-accent rounded transition-colors duration-100 ease-out"
 						:class="{
 							'bg-primary': SettingsWindow.selectedCategory.value === id,

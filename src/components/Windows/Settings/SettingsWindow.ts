@@ -67,7 +67,7 @@ export class SettingsWindow extends Window {
 	public static categories: Record<string, Category> = {}
 	public static items: Record<string, Record<string, Item>> = {}
 
-	public static selectedCategory: Ref<string | null> = ref('projects')
+	public static selectedCategory: Ref<string> = ref('projects')
 
 	public static setup() {
 		setupProjectsCategory()
@@ -191,8 +191,32 @@ function setupAppearanceCategory() {
 	SettingsWindow.addItem('appearance', 'font', {
 		type: 'dropdown',
 		label: 'windows.settings.appearance.font.name',
-		values: computed(() => ['Inter', 'Roboto', 'Arial', 'Verdana', 'Helvetica', 'Tahome', 'Trebuchet MS', 'Menlo', 'Monaco', 'Courier New', 'monospace']),
-		labels: computed(() => ['Inter', 'Roboto', 'Arial', 'Verdana', 'Helvetica', 'Tahome', 'Trebuchet MS', 'Menlo', 'Monaco', 'Courier New', 'Monospace']),
+		values: computed(() => [
+			'Inter',
+			'Roboto',
+			'Arial',
+			'Verdana',
+			'Helvetica',
+			'Tahome',
+			'Trebuchet MS',
+			'Menlo',
+			'Monaco',
+			'Courier New',
+			'monospace',
+		]),
+		labels: computed(() => [
+			'Inter',
+			'Roboto',
+			'Arial',
+			'Verdana',
+			'Helvetica',
+			'Tahome',
+			'Trebuchet MS',
+			'Menlo',
+			'Monaco',
+			'Courier New',
+			'Monospace',
+		]),
 	})
 
 	SettingsWindow.addItem('appearance', 'editorFont', {
