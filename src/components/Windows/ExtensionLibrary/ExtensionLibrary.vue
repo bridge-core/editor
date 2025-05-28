@@ -12,6 +12,7 @@ import ContextMenu from '@/components/Common/ContextMenu.vue'
 import ContextMenuItem from '@/components/Common/ContextMenuItem.vue'
 import { Windows } from '../Windows'
 import { useIsMobile } from '@/libs/Mobile'
+import { computed, ref } from 'vue'
 
 const t = useTranslate()
 
@@ -20,16 +21,35 @@ const isInstalledProject = Extensions.useIsInstalledProject()
 const isInstalled = Extensions.useIsInstalled()
 
 const isMobile = useIsMobile()
+
+const search = ref('')
+
+const filteredExtensions = computed(() => {
+	if (search.value === '') return ExtensionLibraryWindow.extensions
+
+	return ExtensionLibraryWindow.extensions.filter((extension) => {
+		if (extension.author.toLowerCase().includes(search.value.toLowerCase())) return true
+		if (extension.description.toLowerCase().includes(search.value.toLowerCase())) return true
+		if (extension.name.toLowerCase().includes(search.value.toLowerCase())) return true
+
+		return false
+	})
+})
 </script>
 
 <template>
 	<SidebarWindow :name="t('windows.extensionLibrary.title')" @close="Windows.close(ExtensionLibraryWindow)">
 		<template #sidebar="{ hide }">
 			<div class="p-4">
-				<LabeledInput v-slot="{ focus, blur }" :label="t('Search Extensions')" class="bg-background-secondary !mt-1" border-color="backgroundTertiary">
+				<LabeledInput
+					v-slot="{ focus, blur }"
+					:label="t('Search Extensions')"
+					class="bg-background-secondary !mt-1"
+					border-color="backgroundTertiary"
+				>
 					<div class="flex gap-1">
 						<Icon icon="search" class="transition-colors duration-100 ease-out" />
-						<input @focus="focus" @blur="blur" class="outline-none border-none bg-transparent font-theme" />
+						<input @focus="focus" @blur="blur" v-model="search" class="outline-none border-none bg-transparent font-theme" />
 					</div>
 				</LabeledInput>
 
@@ -52,7 +72,11 @@ const isMobile = useIsMobile()
 					>
 						<Icon
 							:icon="ExtensionLibraryWindow.tags[tag].icon"
-							:color="ExtensionLibraryWindow.selectedTag.value === tag ? 'accent' : ExtensionLibraryWindow.tags[tag].color ?? 'primary'"
+							:color="
+								ExtensionLibraryWindow.selectedTag.value === tag
+									? 'accent'
+									: ExtensionLibraryWindow.tags[tag].color ?? 'primary'
+							"
 							class="text-base"
 						/>
 						<span class="font-theme">{{ t(tag) }}</span>
@@ -60,11 +84,17 @@ const isMobile = useIsMobile()
 				</div>
 			</div>
 		</template>
+
 		<template #content>
-			<div class="max-w-[64rem] w-[50vw] h-[38rem] flex flex-col overflow-y-auto p-4 pt-0 mr-2" :class="{ 'w-full': isMobile, 'h-full': isMobile }">
+			<div
+				class="max-w-[64rem] w-[50vw] h-[38rem] flex flex-col overflow-y-auto p-4 pt-0 mr-2"
+				:class="{ 'w-full': isMobile, 'h-full': isMobile }"
+			>
 				<div
-					v-for="extension in ExtensionLibraryWindow.extensions.filter(
-						(extension) => ExtensionLibraryWindow.selectedTag.value === 'All' || extension.tags.includes(ExtensionLibraryWindow.selectedTag.value)
+					v-for="extension in filteredExtensions.filter(
+						(extension) =>
+							ExtensionLibraryWindow.selectedTag.value === 'All' ||
+							extension.tags.includes(ExtensionLibraryWindow.selectedTag.value)
 					)"
 					:key="extension.id"
 					class="bg-background-secondary rounded mb-4 p-2"
@@ -78,7 +108,12 @@ const isMobile = useIsMobile()
 						<div class="flex gap-2 items-center">
 							<IconButton icon="share" class="text-base" />
 
-							<Button v-if="!isInstalled(extension.id)" icon="vertical_align_bottom" :text="t('Install')" @click="ExtensionLibraryWindow.requestInstall(extension)" />
+							<Button
+								v-if="!isInstalled(extension.id)"
+								icon="vertical_align_bottom"
+								:text="t('Install')"
+								@click="ExtensionLibraryWindow.requestInstall(extension)"
+							/>
 
 							<ContextMenu v-else>
 								<template #main="{ toggle }">
@@ -86,7 +121,9 @@ const isMobile = useIsMobile()
 								</template>
 
 								<template #menu="{ close }">
-									<div class="w-56 bg-background-secondary rounded mt-2 shadow-window overflow-hidden relative z-10 -ml-52">
+									<div
+										class="w-56 bg-background-secondary rounded mt-2 shadow-window overflow-hidden relative z-10 -ml-52"
+									>
 										<ContextMenuItem text="Uninstall" icon="delete" @click="Extensions.uninstall(extension.id)" />
 										<ContextMenuItem text="Install in Project" icon="add" v-if="isInstalledGlobal(extension.id)" />
 										<ContextMenuItem text="Install Globally" icon="add" v-if="isInstalledProject(extension.id)" />
@@ -100,7 +137,10 @@ const isMobile = useIsMobile()
 						<span
 							class="font-theme text-sm py-1 px-2 bg-primary hover:bg-accent rounded-full flex items-center gap-1 group hover:text-background transition-colors duration-100 ease-out cursor-pointer"
 						>
-							<span class="material-symbols-rounded text-sm group-hover:text-background transition-colors duration-100 ease-out">person</span>
+							<span
+								class="material-symbols-rounded text-sm group-hover:text-background transition-colors duration-100 ease-out"
+								>person</span
+							>
 
 							{{ extension.author }}
 						</span>
@@ -116,9 +156,10 @@ const isMobile = useIsMobile()
 								'--color': `var(--theme-color-${ExtensionLibraryWindow.tags[tag].color ?? 'primary'})`,
 							}"
 						>
-							<span class="material-symbols-rounded text-sm group-hover:text-background transition-colors duration-100 ease-out">{{
-								ExtensionLibraryWindow.tags[tag].icon
-							}}</span>
+							<span
+								class="material-symbols-rounded text-sm group-hover:text-background transition-colors duration-100 ease-out"
+								>{{ ExtensionLibraryWindow.tags[tag].icon }}</span
+							>
 
 							{{ tag }}
 						</span>
