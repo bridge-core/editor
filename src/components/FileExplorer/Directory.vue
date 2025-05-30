@@ -215,9 +215,19 @@ function drop(event: DragEvent) {
 				v-if="expanded && entries.length > 0"
 			>
 				<div v-for="entry in orderedEntries" :key="entry.path">
-					<File :path="entry.path" :color="color" v-if="entry.kind === 'file'" :preview="FileExplorer.draggedItem.value?.path === entry.path" />
+					<File
+						:path="entry.path"
+						:color="color"
+						v-if="entry.kind === 'file'"
+						:preview="FileExplorer.draggedItem.value?.path === entry.path"
+					/>
 
-					<Directory :path="entry.path" :color="color" v-if="entry.kind === 'directory'" :preview="FileExplorer.draggedItem.value?.path === entry.path" />
+					<Directory
+						:path="entry.path"
+						:color="color"
+						v-if="entry.kind === 'directory'"
+						:preview="FileExplorer.draggedItem.value?.path === entry.path"
+					/>
 				</div>
 			</div>
 		</div>
@@ -241,7 +251,7 @@ function drop(event: DragEvent) {
 			<ActionContextMenuItem action="files.createFolder" :data="() => path" @click.stop="close" />
 			<ActionContextMenuItem action="files.renameFileSystemEntry" :data="() => path" @click.stop="close" />
 			<ActionContextMenuItem action="files.deleteFileSystemEntry" :data="() => path" @click.stop="close" />
-			<ActionContextMenuItem action="files.duplicateFilesystemEntry" :data="() => path" @click.stop="close" />
+			<ActionContextMenuItem action="files.duplicateFileSystemEntry" :data="() => path" @click.stop="close" />
 			<ActionContextMenuItem action="files.copyFileSystemEntry" :data="() => path" @click.stop="close" />
 			<ActionContextMenuItem action="files.pasteFileSystemEntry" :data="() => path" @click.stop="close" />
 		</FreeContextMenu>
