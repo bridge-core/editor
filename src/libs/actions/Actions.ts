@@ -647,6 +647,21 @@ function setupFileSystemActions() {
 		})
 	)
 
+	const openToSide = ActionManager.addAction(
+		new Action({
+			id: 'files.openToSide',
+			trigger: async (path: unknown) => {
+				if (typeof path !== 'string') return
+			},
+			name: 'actions.files.openToSide.name',
+			description: 'actions.files.openToSide.description',
+			icon: 'splitscreen_right',
+			requiresContext: true,
+			visible: false,
+			category: 'actions.files.name',
+		})
+	)
+
 	for (const action of [
 		deleteFileSystemEntry,
 		createFile,

@@ -207,6 +207,10 @@
 			"paste": {
 				"name": "Paste",
 				"description": "Paste a file or folder"
+			},
+			"openToSide": {
+				"name": "Open To Side",
+				"description": "Opens the file in a side window"
 			}
 		},
 		"textEditor": {

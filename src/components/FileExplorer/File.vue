@@ -18,6 +18,8 @@ import { BedrockProject } from '@/libs/project/BedrockProject'
 const contextMenu: Ref<typeof FreeContextMenu | null> = ref(null)
 
 function click() {
+	alert('Click!')
+
 	TabManager.openFile(props.path)
 }
 
@@ -63,21 +65,23 @@ onMounted(() => {
 </script>
 
 <template>
-	<div
-		v-show="FileExplorer.draggedItem.value?.path !== path || preview"
-		class="flex items-center gap-2 cursor-pointer transition-colors duration-100 ease-out rounded pl-1"
-		:class="{
-			'hover:bg-background-tertiary': !FileExplorer.draggedItem.value,
-		}"
-		@click="click"
-		@contextmenu.prevent.stop="contextMenu?.open"
-		@dragstart="dragStart"
-		@dragend="dragEnd"
-		draggable="true"
-	>
-		<Icon :icon="icon" :color="color" class="text-sm" />
+	<div>
+		<div
+			v-show="FileExplorer.draggedItem.value?.path !== path || preview"
+			class="flex items-center gap-2 cursor-pointer transition-colors duration-100 ease-out rounded pl-1"
+			:class="{
+				'hover:bg-background-tertiary': !FileExplorer.draggedItem.value,
+			}"
+			@click="click"
+			@contextmenu.prevent.stop="contextMenu?.open"
+			@dragstart="dragStart"
+			@dragend="dragEnd"
+			draggable="true"
+		>
+			<Icon :icon="icon" :color="color" class="text-sm" />
 
-		<span class="select-none font-theme text-ellipsis overflow-hidden"> {{ basename(path) }} </span>
+			<span class="select-none font-theme text-ellipsis overflow-hidden"> {{ basename(path) }} </span>
+		</div>
 
 		<FreeContextMenu ref="contextMenu" v-slot="{ close }">
 			<ActionContextMenuItem action="files.renameFileSystemEntry" :data="() => path" @click="close" />
@@ -85,6 +89,7 @@ onMounted(() => {
 			<ActionContextMenuItem action="files.duplicateFileSystemEntry" :data="() => path" @click="close" />
 			<ActionContextMenuItem action="files.copyFileSystemEntry" :data="() => path" @click="close" />
 			<ActionContextMenuItem action="files.pasteFileSystemEntry" :data="() => path" @click="close" />
+			<ActionContextMenuItem action="files.openToSide" :data="() => path" @click="close" />
 
 			<ContextMenuDivider v-if="fileActions.length > 0" />
 
