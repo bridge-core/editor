@@ -42,6 +42,7 @@ export class TabManager {
 		})
 
 		TabManager.tabSystems.value.push(tabSystem)
+		TabManager.tabSystems.value = [...TabManager.tabSystems.value]
 
 		return tabSystem
 	}
@@ -86,18 +87,18 @@ export class TabManager {
 				if (otherTab === tab) {
 					await tabSystem.selectTab(tab)
 
-					TabManager.focusedTabSystem.value = tabSystem
-					this.focusedTabSystemChanged.dispatch()
+					this.focusTabSystem(tabSystem)
 
 					return
 				}
 			}
 		}
 
-		await TabManager.getDefaultTabSystem().addTab(tab)
+		const tabSystem = TabManager.getFocusedTabSystem() ?? TabManager.getDefaultTabSystem()
 
-		TabManager.focusedTabSystem.value = TabManager.getDefaultTabSystem()
-		this.focusedTabSystemChanged.dispatch()
+		await tabSystem.addTab(tab)
+
+		this.focusTabSystem(tabSystem)
 	}
 
 	public static async openFile(path: string) {
@@ -106,8 +107,7 @@ export class TabManager {
 				if (tab instanceof FileTab && tab.is(path)) {
 					await tabSystem.selectTab(tab)
 
-					TabManager.focusedTabSystem.value = tabSystem
-					this.focusedTabSystemChanged.dispatch()
+					this.focusTabSystem(tabSystem)
 
 					return
 				}
@@ -145,6 +145,35 @@ export class TabManager {
 		return TabManager.focusedTabSystem.value.selectedTab.value
 	}
 
+	public static getFocusedTabSystem(): TabSystem | null {
+		return TabManager.focusedTabSystem.value
+	}
+
+	public static focusTabSystem(tabSystem: TabSystem | null) {
+		TabManager.focusedTabSystem.value = tabSystem
+		this.focusedTabSystemChanged.dispatch()
+	}
+
+	public static isTabOpen(tab: Tab): boolean {
+		for (const tabSystem of TabManager.tabSystems.value) {
+			for (const otherTab of tabSystem.tabs.value) {
+				if (otherTab === tab) return true
+			}
+		}
+
+		return false
+	}
+
+	public static isFileOpen(path: string): boolean {
+		for (const tabSystem of TabManager.tabSystems.value) {
+			for (const tab of tabSystem.tabs.value) {
+				if (tab instanceof FileTab && tab.is(path)) return true
+			}
+		}
+
+		return false
+	}
+
 	public static async save() {
 		if (!ProjectManager.currentProject) return
 
@@ -171,7 +200,6 @@ export class TabManager {
 
 		TabManager.tabSystems.value = [...TabManager.tabSystems.value]
 
-		TabManager.focusedTabSystem.value = TabManager.tabSystems.value.find((tabSystem) => tabSystem.id === state.focusedTabSystem) ?? null
-		this.focusedTabSystemChanged.dispatch()
+		this.focusTabSystem(TabManager.tabSystems.value.find((tabSystem) => tabSystem.id === state.focusedTabSystem) ?? null)
 	}
 }

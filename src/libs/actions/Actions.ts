@@ -652,6 +652,14 @@ function setupFileSystemActions() {
 			id: 'files.openToSide',
 			trigger: async (path: unknown) => {
 				if (typeof path !== 'string') return
+
+				if (TabManager.isFileOpen(path)) return
+
+				const tabSystem = await TabManager.addTabSystem()
+
+				TabManager.focusTabSystem(tabSystem)
+
+				await TabManager.openFile(path)
 			},
 			name: 'actions.files.openToSide.name',
 			description: 'actions.files.openToSide.description',
