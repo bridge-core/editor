@@ -18,8 +18,6 @@ import { BedrockProject } from '@/libs/project/BedrockProject'
 const contextMenu: Ref<typeof FreeContextMenu | null> = ref(null)
 
 function click() {
-	alert('Click!')
-
 	TabManager.openFile(props.path)
 }
 
