@@ -5,7 +5,7 @@ import { FileTab } from './FileTab'
 import { Settings } from '@/libs/settings/Settings'
 import { TabTypes } from './TabTypes'
 import { ProjectManager } from '@/libs/project/ProjectManager'
-import { Disposable } from '@/libs/disposeable/Disposeable'
+import { Disposable, disposeAll } from '@/libs/disposeable/Disposeable'
 import { Event } from '@/libs/event/Event'
 
 type TabManagerRecoveryState = { tabSystems: TabSystemRecoveryState[]; focusedTabSystem: string }
@@ -16,7 +16,7 @@ export class TabManager {
 
 	public static focusedTabSystemChanged: Event<void> = new Event()
 
-	private static tabSystemSaveListenters: Record<string, Disposable> = {}
+	private static tabDisposables: Record<string, Disposable[]> = {}
 
 	public static setup() {
 		Settings.addSetting('compactTabDesign', {
@@ -37,9 +37,16 @@ export class TabManager {
 
 		if (recoveryState) await tabSystem.applyRecoverState(recoveryState)
 
-		TabManager.tabSystemSaveListenters[tabSystem.id] = tabSystem.savedState.on(() => {
-			TabManager.save()
-		})
+		TabManager.tabDisposables[tabSystem.id] = [
+			tabSystem.savedState.on(() => {
+				TabManager.save()
+			}),
+			tabSystem.removedTab.on(() => {
+				if (tabSystem.tabs.value.length > 0) return
+
+				this.removeTabSystem(tabSystem)
+			}),
+		]
 
 		TabManager.tabSystems.value.push(tabSystem)
 		TabManager.tabSystems.value = [...TabManager.tabSystems.value]
@@ -56,9 +63,10 @@ export class TabManager {
 		}
 
 		TabManager.tabSystems.value.splice(TabManager.tabSystems.value.indexOf(tabSystem), 1)
+		TabManager.tabSystems.value = [...TabManager.tabSystems.value]
 
-		TabManager.tabSystemSaveListenters[tabSystem.id].dispose()
-		delete TabManager.tabSystemSaveListenters[tabSystem.id]
+		disposeAll(TabManager.tabDisposables[tabSystem.id])
+		delete TabManager.tabDisposables[tabSystem.id]
 
 		await tabSystem.clear()
 	}
@@ -76,8 +84,6 @@ export class TabManager {
 
 		await TabManager.clear()
 
-		await TabManager.addTabSystem()
-
 		await TabManager.recover()
 	}
 
@@ -93,6 +99,8 @@ export class TabManager {
 				}
 			}
 		}
+
+		if (TabManager.tabSystems.value.length === 0) TabManager.addTabSystem()
 
 		const tabSystem = TabManager.getFocusedTabSystem() ?? TabManager.getDefaultTabSystem()
 

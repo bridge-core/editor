@@ -16,6 +16,7 @@ export class TabSystem {
 	public selectedTab: Ref<Tab | null> = shallowRef(null)
 
 	public savedState = new Event<void>()
+	public removedTab = new Event<void>()
 
 	private tabSaveListenters: Record<string, Disposable> = {}
 
@@ -83,6 +84,8 @@ export class TabSystem {
 		if (this.tabs.value.length === 0) Editor.hideTabs()
 
 		await this.saveState()
+
+		this.removedTab.dispatch()
 	}
 
 	public async clear() {
