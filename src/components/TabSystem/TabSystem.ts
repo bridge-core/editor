@@ -17,6 +17,7 @@ export class TabSystem {
 
 	public savedState = new Event<void>()
 	public removedTab = new Event<void>()
+	public focused = new Event<void>()
 
 	private tabSaveListenters: Record<string, Disposable> = {}
 
@@ -180,5 +181,9 @@ export class TabSystem {
 
 		this.selectedTab.value.active = true
 		await this.selectedTab.value.activate()
+	}
+
+	public focus() {
+		this.focused.dispatch()
 	}
 }

@@ -46,6 +46,9 @@ export class TabManager {
 
 				this.removeTabSystem(tabSystem)
 			}),
+			tabSystem.focused.on(() => {
+				this.focusTabSystem(tabSystem)
+			}),
 		]
 
 		TabManager.tabSystems.value.push(tabSystem)

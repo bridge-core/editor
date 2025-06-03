@@ -5,6 +5,7 @@ import IconButton from '@/components/Common/IconButton.vue'
 import { TabSystem } from './TabSystem'
 import { FileTab } from './FileTab'
 import { Settings } from '@/libs/settings/Settings'
+import { TabManager } from './TabManager'
 
 defineProps({
 	instance: {
@@ -17,15 +18,17 @@ const get = Settings.useGet()
 </script>
 
 <template>
-	<div class="basis-0 min-w-0 flex-1 h-full border-background-secondary">
+	<div class="basis-0 min-w-0 flex-1 h-full border-background-secondary" @click="() => instance.focus()">
 		<div class="flex gap-2 mb-2 pb-2 overflow-x-scroll">
 			<div
 				v-for="tab in instance.tabs.value"
-				class="flex items-center gap-1 px-2 py-1 rounded cursor-pointer transition-colors duration-100 ease-out group"
+				class="flex items-center gap-1 px-2 py-1 rounded cursor-pointer transition-[colors, border-color] duration-100 ease-out group border-2 border-background"
 				:class="{
 					'max-w-[12rem]': get('compactTabDesign'),
-					'bg-background-secondary': instance.selectedTab.value === tab,
-					'bg-background-transparent hover:bg-background-secondary': instance.selectedTab.value !== tab,
+					'bg-background-secondary': instance.selectedTab.value === tab && TabManager.focusedTabSystem.value?.id === instance.id,
+					'bg-background-transparent hover:bg-background-secondary hover:border-background-secondary':
+						instance.selectedTab.value !== tab || TabManager.focusedTabSystem.value?.id !== instance.id,
+					'border-background-secondary': instance.selectedTab.value === tab,
 				}"
 				@click="() => instance.selectTab(tab)"
 			>
