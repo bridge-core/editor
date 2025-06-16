@@ -17,6 +17,7 @@ import { ConvertableProjectInfo } from './ConvertComMojangProject'
 import { packs } from './Packs'
 import { ProgressWindow } from '@/components/Windows/Progress/ProgressWindow'
 import { Windows } from '@/components/Windows/Windows'
+import { createReactable } from '@/libs/event/React'
 
 export interface ProjectInfo {
 	name: string
@@ -366,51 +367,13 @@ export class ProjectManager {
 	}
 }
 
-export function useProjects(): Ref<ProjectInfo[]> {
-	const projects: Ref<ProjectInfo[]> = ref(ProjectManager.projects)
+export const useProjects = createReactable(ProjectManager.updatedProjects, () => [...ProjectManager.projects])
 
-	function updateProjects() {
-		projects.value = [...ProjectManager.projects]
-	}
+export const useConvertableProjects = createReactable(ProjectManager.updatedConvertableProjects, () => [
+	...ProjectManager.convertableProjects,
+])
 
-	let disposable: Disposable
-
-	onMounted(() => (disposable = ProjectManager.updatedProjects.on(updateProjects)))
-	onUnmounted(() => disposable.dispose())
-
-	return projects
-}
-
-export function useConvertableProjects(): Ref<ConvertableProjectInfo[]> {
-	const projects: Ref<ConvertableProjectInfo[]> = ref(ProjectManager.convertableProjects)
-
-	function updateProjects() {
-		projects.value = [...ProjectManager.convertableProjects]
-	}
-
-	let disposable: Disposable
-
-	onMounted(() => (disposable = ProjectManager.updatedConvertableProjects.on(updateProjects)))
-	onUnmounted(() => disposable.dispose())
-
-	return projects
-}
-
-export function useCurrentProject(): Ref<Project | null> {
-	// ts typing for some reason doesn't like this type being in a ref
-	const currentProject: Ref<Project | null> = <any>ref(ProjectManager.currentProject)
-
-	function updateCurrentProject() {
-		currentProject.value = ProjectManager.currentProject
-	}
-
-	let disposable: Disposable
-
-	onMounted(() => (disposable = ProjectManager.updatedCurrentProject.on(updateCurrentProject)))
-	onUnmounted(() => disposable.dispose())
-
-	return currentProject
-}
+export const useCurrentProject = createReactable(ProjectManager.updatedCurrentProject, () => ProjectManager.currentProject)
 
 export function useUsingProjectOutputFolder(): Ref<boolean> {
 	const usingProjectOutputFolder: Ref<boolean> = ref(false)
