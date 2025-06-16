@@ -6,6 +6,7 @@ import { Ref, onMounted, onUnmounted, ref } from 'vue'
 import { Settings } from '@/libs/settings/Settings'
 import { Event } from '@/libs/event/Event'
 import { Disposable } from '@/libs/disposeable/Disposeable'
+import { createReactable } from '@/libs/event/React'
 
 // loads all languages, exclude the language file and en file since en is a special case
 // en is a special case since it is the default and other languages override it
@@ -85,8 +86,7 @@ export class LocaleManager {
 		if (!fetchName) throw new Error(`[Locales] Language with id "${id}" not found`)
 
 		const language = (await languages[fetchName]()).default
-		if (!language)
-			throw new Error(`[Locales] Language with id "${id}" not found: File "${fetchName}" does not exist`)
+		if (!language) throw new Error(`[Locales] Language with id "${id}" not found: File "${fetchName}" does not exist`)
 
 		this.currentLanguage = deepMerge(clone(enLang), clone({ ...language }))
 
@@ -129,22 +129,4 @@ function clone(obj: any) {
 	return JSON.parse(JSON.stringify(obj))
 }
 
-export function useTranslate(): Ref<(key: string) => string> {
-	const translation = ref((key: string) => LocaleManager.translate(key))
-
-	function updateTranslate() {
-		translation.value = (key: string) => LocaleManager.translate(key)
-	}
-
-	let disposable: Disposable
-
-	onMounted(() => {
-		disposable = LocaleManager.languageChanged.on(updateTranslate)
-	})
-
-	onUnmounted(() => {
-		disposable.dispose()
-	})
-
-	return translation
-}
+export const useTranslate = createReactable(LocaleManager.languageChanged, () => (key: string) => LocaleManager.translate(key))
