@@ -19,7 +19,7 @@ const get = Settings.useGet()
 
 <template>
 	<div class="basis-0 min-w-0 flex-1 h-full border-background-secondary" @click="() => instance.focus()">
-		<div class="flex gap-2 mb-2 pb-2 overflow-x-scroll">
+		<div class="flex gap-2 overflow-x-scroll">
 			<div
 				v-for="tab in instance.tabs.value"
 				class="flex items-center gap-1 px-2 py-1 rounded cursor-pointer transition-[colors, border-color] duration-100 ease-out group border-2 border-background"
