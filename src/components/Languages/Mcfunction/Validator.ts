@@ -226,8 +226,8 @@ export class CommandValidator {
 		if (pieces.find((argument) => argument == '')) return false
 
 		for (const piece of pieces) {
-			const scoreName = piece.split(':')[0]
-			const scoreValue = piece.split(':').slice(1).join(':')
+			const scoreName = piece.split('=')[0]
+			const scoreValue = piece.split('=').slice(1).join('=')
 
 			if (!scoreValue) return false
 
@@ -676,6 +676,7 @@ export class CommandValidator {
 				// or if we get a case where tokens are like @e[name="Test"] then we combine them
 				if (
 					(tokens[i].word.startsWith(':') ||
+						tokens[i].word.startsWith('=') ||
 						tokens[i].word.startsWith(',') ||
 						tokens[i].word.startsWith(']')) &&
 					tokens[i - 1].word.endsWith('"')
