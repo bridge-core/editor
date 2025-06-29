@@ -32,7 +32,7 @@
 		"confirmOverwriteFolder": "このアクションは同名のフォルダーを上書きします。 続行しますか？",
 		"fileSystemPolyfill": {
 			"name": "プロジェクトの保存",
-			"description": "お使いのブラウザは進捗状況を保存するためにプロジェクトをダウンロードする必要があります。 デスクトップ版 Chrome や Edge などこの必要がないブラウザを使用することをお勧めします。"
+			"description": "お使いのブラウザでは、プロジェクトを保存するためにはダウンロードする必要があります。 デスクトップ版の Chrome や Edge などダウンロードする必要のないブラウザを使用することをお勧めします。"
 		},
 		"successfulExport": {
 			"title": "エクスポート成功",
@@ -62,15 +62,15 @@
 	"packType": {
 		"behaviorPack": {
 			"name": "ビヘイビアパック",
-			"description": "新しいゲームの仕組みを作り Minecraft の動作を変えます"
+			"description": "新しいゲームの仕組みを作り Minecraft の動作を変更します"
 		},
 		"resourcePack": {
 			"name": "リソースパック",
-			"description": "Minecraft の外観やサウンドの変更します"
+			"description": "Minecraft の外観やサウンドを変更します"
 		},
 		"skinPack": {
 			"name": "スキンパック",
-			"description": "プレイヤーが選択できるキャラクターの新たなスキンを提供します"
+			"description": "プレイヤーがキャラクターに選択できる新たなスキンを提供します"
 		},
 		"worldTemplate": {
 			"name": "ワールドテンプレート",
@@ -78,6 +78,18 @@
 		}
 	},
 	"fileType": {
+		"aimAssistCategories": "エイムアシストカテゴリー",
+		"aimAssistPreset": "エイムアシストプリセット",
+		"atmosphereSettings": "雰囲気設定",
+		"blockCulling": "ブロックカリング",
+		"cameraPreset": "カメラプリセット",
+		"craftingItemCatalog": "クラフティングアイテムカタログ",
+		"colorGradingSettings": "カラーグレーディング設定",
+		"dimension": "ディメンション",
+		"splashes": "水しぶき",
+		"shadowSettings": "シャドウ設定",
+		"structureSet": "ストラクチャーセット",
+		"templatePool": "テンプレートプール",
 		"manifest": "マニフェスト",
 		"animation": "アニメーション",
 		"animationController": "アニメーションコントローラー",
