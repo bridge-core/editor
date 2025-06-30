@@ -11,6 +11,7 @@ import { TreeValueSelection } from './TreeSelection'
 import { PrimitiveTree } from './Tree/PrimitiveTree'
 import { AnyFileHandle } from '../../FileSystem/Types'
 import { HistoryEntry } from './History/HistoryEntry'
+import { readText, writeText } from '@tauri-apps/api/clipboard'
 
 const throttledCacheUpdate = debounce<(tab: TreeTab) => Promise<void> | void>(
 	async (tab) => {
@@ -125,7 +126,9 @@ export class TreeTab extends FileTab {
 	async paste() {
 		if (this.isReadOnly) return
 
-		const text = await navigator.clipboard.readText()
+		const text = import.meta.env.VITE_IS_TAURI_APP
+			? String(await readText())
+			: await navigator.clipboard.readText()
 
 		let data: any = undefined
 		// Try parsing clipboard text
@@ -164,7 +167,10 @@ export class TreeTab extends FileTab {
 			}
 		})
 
-		if (copyText !== '') await navigator.clipboard.writeText(copyText)
+		if (copyText !== '')
+			import.meta.env.VITE_IS_TAURI_APP
+				? String(await writeText(copyText))
+				: await navigator.clipboard.writeText(copyText)
 	}
 
 	async cut() {

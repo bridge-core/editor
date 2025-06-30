@@ -5,6 +5,7 @@ import { SolidButton } from '../../Solid/Inputs/Button/SolidButton'
 import { SolidSpacer } from '../../Solid/SolidSpacer'
 import { SolidWindow } from '../../Solid/Window/Window'
 import { App } from '/@/App'
+import { writeText } from '@tauri-apps/api/clipboard'
 
 const ErrorWindow: Component<{
 	error: Error
@@ -15,7 +16,11 @@ const ErrorWindow: Component<{
 		`Error: ${props.error.message}\n${props.error.stack ?? ''}`
 
 	const onCopyError = () => {
-		navigator.clipboard.writeText(prettyError())
+		if (import.meta.env.VITE_IS_TAURI_APP) {
+			writeText(prettyError())
+		} else {
+			navigator.clipboard.writeText(prettyError())
+		}
 	}
 	const onReportBug = () => {
 		App.openUrl(

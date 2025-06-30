@@ -11,6 +11,7 @@ import { AnyFileHandle } from '/@/components/FileSystem/Types'
 import { markRaw } from 'vue'
 import { loadMonaco, useMonaco } from '../../../utils/libs/useMonaco'
 import { wait } from '/@/utils/wait'
+import { readText, writeText } from '@tauri-apps/api/clipboard'
 
 const throttledCacheUpdate = debounce<(tab: TextTab) => Promise<void> | void>(
 	async (tab) => {
@@ -288,9 +289,16 @@ export class TextTab extends FileTab {
 		if (this.isReadOnly) return
 
 		this.focus()
-		this.editorInstance?.trigger('keyboard', 'paste', {
-			text: await navigator.clipboard.readText(),
-		})
+
+		if (import.meta.env.VITE_IS_TAURI_APP) {
+			this.editorInstance?.trigger('keyboard', 'paste', {
+				text: String(await readText()),
+			})
+		} else {
+			this.editorInstance?.trigger('keyboard', 'paste', {
+				text: await navigator.clipboard.readText(),
+			})
+		}
 	}
 	cut() {
 		if (this.isReadOnly) return
