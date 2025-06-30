@@ -15,9 +15,16 @@
 			"all": true,
 			"fs": {
 				"scope": {
-					"allow": ["**/*"],
+					"allow": [
+						"**/*"
+					],
 					"requireLiteralLeadingDot": false
 				}
+			},
+			"clipboard": {
+				"all": true,
+				"readText": true,
+				"writeText": true
 			}
 		},
 		"bundle": {
