@@ -131,6 +131,11 @@ function setupGeneralCategory() {
 		type: 'text',
 		label: 'windows.settings.projects.defaultNamespace.name',
 	})
+
+	SettingsWindow.addItem('general', 'restoreTabs', {
+		type: 'toggle',
+		label: 'windows.settings.general.restoreTabs.name',
+	})
 }
 
 function setupActionsCategory() {

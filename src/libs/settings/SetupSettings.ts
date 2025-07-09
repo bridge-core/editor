@@ -5,17 +5,23 @@ enum JSONEditorOptions {
 	RawText = 'Raw Text',
 }
 
+export function setupGeneralSettings() {
+	Settings.addSetting('restoreTabs', {
+		default: true,
+	})
+}
+
 export function setupEditorSettings() {
 	Settings.addSetting('jsonEditor', {
 		default: JSONEditorOptions.TreeEditor,
 	})
 
 	Settings.addSetting('formatOnSave', {
-		default: true
+		default: true,
 	})
 
 	Settings.addSetting('keepTabsOpen', {
-		default: true,
+		default: false,
 	})
 
 	Settings.addSetting('autoSaveChanges', {
