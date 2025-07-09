@@ -15,7 +15,7 @@ export function setupEditorSettings() {
 	})
 
 	Settings.addSetting('keepTabsOpen', {
-		default: false,
+		default: true,
 	})
 
 	Settings.addSetting('autoSaveChanges', {

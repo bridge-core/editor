@@ -199,6 +199,8 @@ export class TabManager {
 	public static async recover() {
 		if (!ProjectManager.currentProject) return
 
+		if (!Settings.get('keepTabsOpen')) return
+
 		const state = (await ProjectManager.currentProject.getTabManagerState()) as TabManagerRecoveryState | null
 
 		if (state === null) return

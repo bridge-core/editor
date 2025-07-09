@@ -330,6 +330,11 @@ function setupEditorCategory() {
 		type: 'toggle',
 		label: 'windows.settings.editor.inlineTreeEditorDiagnostics.name',
 	})
+
+	SettingsWindow.addItem('editor', 'keepTabsOpen', {
+		type: 'toggle',
+		label: 'windows.settings.editor.keepTabsOpen.name',
+	})
 }
 
 function setupDeveloperCategory() {
