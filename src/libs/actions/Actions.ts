@@ -185,7 +185,7 @@ function setupEditorActions() {
 		})
 	)
 
-	ActionManager.addAction(
+	const nextTabAction = ActionManager.addAction(
 		new Action({
 			id: 'editor.nextTab',
 			trigger() {
@@ -199,10 +199,11 @@ function setupEditorActions() {
 			description: 'actions.editor.nextTab.description',
 			icon: 'arrow_right',
 			category: 'actions.editor.name',
+			visible: false,
 		})
 	)
 
-	ActionManager.addAction(
+	const previousTabAction = ActionManager.addAction(
 		new Action({
 			id: 'editor.previousTab',
 			trigger() {
@@ -216,8 +217,15 @@ function setupEditorActions() {
 			description: 'actions.editor.previousTab.description',
 			icon: 'arrow_left',
 			category: 'actions.editor.name',
+			visible: false,
 		})
 	)
+
+	ProjectManager.updatedCurrentProject.on(() => {
+		for (const action of [nextTabAction, previousTabAction]) {
+			action.setVisible(ProjectManager.currentProject !== null)
+		}
+	})
 }
 
 function setupProjectActions() {
