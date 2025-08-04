@@ -221,8 +221,30 @@ function setupEditorActions() {
 		})
 	)
 
+	const closeTabAction = ActionManager.addAction(
+		new Action({
+			id: 'editor.closeTab',
+			trigger() {
+				const tabSystem = TabManager.focusedTabSystem.value
+
+				if (tabSystem === null) return
+
+				const tab = tabSystem.selectedTab.value
+
+				if (!tab) return
+
+				tabSystem.removeTab(tab)
+			},
+			name: 'actions.editor.closeTab.name',
+			description: 'actions.editor.closeTab.description',
+			icon: 'close',
+			category: 'actions.editor.name',
+			visible: false,
+		})
+	)
+
 	ProjectManager.updatedCurrentProject.on(() => {
-		for (const action of [nextTabAction, previousTabAction]) {
+		for (const action of [nextTabAction, previousTabAction, closeTabAction]) {
 			action.setVisible(ProjectManager.currentProject !== null)
 		}
 	})

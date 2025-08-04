@@ -180,6 +180,10 @@
 			"previousTab": {
 				"name": "Previous Tab",
 				"description": "Switch to the previous tab"
+			},
+			"closeTab": {
+				"name": "Close Tab",
+				"description": "Close the currently selected tab"
 			}
 		},
 		"files": {
