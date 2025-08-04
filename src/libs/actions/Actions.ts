@@ -66,7 +66,26 @@ function setupFileTabActions() {
 		})
 	)
 
-	for (const action of [save]) {
+	const saveAll = ActionManager.addAction(
+		new Action({
+			id: 'files.saveAll',
+			trigger: () => {
+				for (const tabSystem of TabManager.tabSystems.value) {
+					for (const tab of tabSystem.tabs.value) {
+						if (tab instanceof FileTab) tab.save()
+					}
+				}
+			},
+			keyBinding: 'Ctrl + Shift + S',
+			name: 'actions.files.saveAll.name',
+			description: 'actions.files.saveAll.description',
+			icon: 'save',
+			visible: false,
+			category: 'actions.files.name',
+		})
+	)
+
+	for (const action of [save, saveAll]) {
 		TabManager.focusedTabSystemChanged.on(() => {
 			action.setVisible(
 				TabManager.focusedTabSystem.value !== null &&

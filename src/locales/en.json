@@ -192,6 +192,10 @@
 				"name": "Save",
 				"description": "Save the current file"
 			},
+			"saveAll": {
+				"name": "Save All",
+				"description": "Save all unsaved files"
+			},
 			"createFile": {
 				"name": "Create File",
 				"description": "Create a new file"
