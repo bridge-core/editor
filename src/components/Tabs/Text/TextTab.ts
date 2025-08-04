@@ -124,7 +124,8 @@ export class TextTab extends FileTab {
 			Settings.updated.on((event: { id: string; value: any } | undefined) => {
 				if (!event) return
 
-				if (['wordWrap', 'wordWrapColumns', 'bracketPairColorization', 'editorFont', 'editorFontSize'].includes(event.id)) this.remountEditor()
+				if (['wordWrap', 'wordWrapColumns', 'bracketPairColorization', 'editorFont', 'editorFontSize'].includes(event.id))
+					this.remountEditor()
 			})
 		)
 	}
@@ -417,7 +418,9 @@ export class TextTab extends FileTab {
 
 		monaco.setTheme(`bridge`)
 
-		let keywords: string[] = ['minecraft', 'bridge', ProjectManager.currentProject?.config?.namespace].filter((item) => item !== undefined) as string[]
+		let keywords: string[] = ['minecraft', 'bridge', ProjectManager.currentProject?.config?.namespace].filter(
+			(item) => item !== undefined
+		) as string[]
 		let typeIdentifiers: string[] = []
 		let variables: string[] = []
 		let definitions: string[] = []

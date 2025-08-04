@@ -184,6 +184,40 @@ function setupEditorActions() {
 			category: 'actions.editor.name',
 		})
 	)
+
+	ActionManager.addAction(
+		new Action({
+			id: 'editor.nextTab',
+			trigger() {
+				const tabSystem = TabManager.focusedTabSystem.value
+
+				if (tabSystem === null) return
+
+				tabSystem.nextTab()
+			},
+			name: 'actions.editor.nextTab.name',
+			description: 'actions.editor.nextTab.description',
+			icon: 'arrow_right',
+			category: 'actions.editor.name',
+		})
+	)
+
+	ActionManager.addAction(
+		new Action({
+			id: 'editor.previousTab',
+			trigger() {
+				const tabSystem = TabManager.focusedTabSystem.value
+
+				if (tabSystem === null) return
+
+				tabSystem.previousTab()
+			},
+			name: 'actions.editor.previousTab.name',
+			description: 'actions.editor.previousTab.description',
+			icon: 'arrow_left',
+			category: 'actions.editor.name',
+		})
+	)
 }
 
 function setupProjectActions() {

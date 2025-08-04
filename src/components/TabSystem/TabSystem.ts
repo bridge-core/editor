@@ -186,4 +186,32 @@ export class TabSystem {
 	public focus() {
 		this.focused.dispatch()
 	}
+
+	public async nextTab() {
+		const tab = this.selectedTab.value
+
+		if (!tab) return
+
+		const index = this.tabs.value.indexOf(tab)
+
+		if (index === -1) return
+
+		const nextIndex = index < this.tabs.value.length - 1 ? index + 1 : 0
+
+		await this.selectTab(this.tabs.value[nextIndex])
+	}
+
+	public async previousTab() {
+		const tab = this.selectedTab.value
+
+		if (!tab) return
+
+		const index = this.tabs.value.indexOf(tab)
+
+		if (index === -1) return
+
+		const previousIndex = index > 0 ? index - 1 : this.tabs.value.length - 1
+
+		await this.selectTab(this.tabs.value[previousIndex])
+	}
 }

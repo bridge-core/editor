@@ -172,6 +172,14 @@
 			"reloadEditor": {
 				"name": "Reload Editor",
 				"description": "Completely reloads the editor"
+			},
+			"nextTab": {
+				"name": "Next Tab",
+				"description": "Switch to the next tab"
+			},
+			"previousTab": {
+				"name": "Previous Tab",
+				"description": "Switch to the previous tab"
 			}
 		},
 		"files": {
