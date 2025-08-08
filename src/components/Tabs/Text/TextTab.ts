@@ -209,9 +209,7 @@ export class TextTab extends FileTab {
 
 		if (!this.recoveryState) return
 
-		this.editor.setSelections(this.recoveryState.selections)
-		this.editor.setScrollTop(this.recoveryState.scrollTop)
-		this.editor.setScrollLeft(this.recoveryState.scrollLeft)
+		this.editor.restoreViewState(this.recoveryState.viewState)
 
 		this.recoveryState = null
 	}
@@ -527,14 +525,10 @@ export class TextTab extends FileTab {
 
 		if (!this.editor) return
 
-		const selections = this.editor.getSelections()
-		const scrollTop = this.editor.getScrollTop()
-		const scrollLeft = this.editor.getScrollLeft()
+		const viewState = this.editor.saveViewState()
 
 		this.currentState = {
-			selections,
-			scrollTop,
-			scrollLeft,
+			viewState,
 		}
 
 		this.saveState()
