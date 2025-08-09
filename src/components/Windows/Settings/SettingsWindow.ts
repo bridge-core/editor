@@ -136,6 +136,11 @@ function setupGeneralCategory() {
 		type: 'toggle',
 		label: 'windows.settings.general.restoreTabs.name',
 	})
+
+	SettingsWindow.addItem('general', 'keepTabsOpen', {
+		type: 'toggle',
+		label: 'windows.settings.general.keepTabsOpen.name',
+	})
 }
 
 function setupActionsCategory() {
@@ -334,11 +339,6 @@ function setupEditorCategory() {
 	SettingsWindow.addItem('editor', 'inlineDiagnostics', {
 		type: 'toggle',
 		label: 'windows.settings.editor.inlineTreeEditorDiagnostics.name',
-	})
-
-	SettingsWindow.addItem('editor', 'keepTabsOpen', {
-		type: 'toggle',
-		label: 'windows.settings.editor.keepTabsOpen.name',
 	})
 }
 

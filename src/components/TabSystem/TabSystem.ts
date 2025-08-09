@@ -6,6 +6,7 @@ import { Event } from '@/libs/event/Event'
 import { Disposable } from '@/libs/disposeable/Disposeable'
 import { TabTypes } from './TabTypes'
 import { FileTab } from './FileTab'
+import { Settings } from '@/libs/settings/Settings'
 
 export type TabSystemRecoveryState = { id: string; selectedTab: string | null; tabs: TabRecoveryState[] }
 
@@ -49,7 +50,11 @@ export class TabSystem {
 			const otherTemporaryTabs = this.tabs.value.filter((otherTab) => otherTab.temporary.value && otherTab.id !== tab.id)
 
 			for (const otherTab of otherTemporaryTabs) {
-				if (otherTab.temporary.value) await this.removeTab(otherTab)
+				if (Settings.get('keepTabsOpen')) {
+					otherTab.temporary.value = false
+				} else {
+					if (otherTab.temporary.value) await this.removeTab(otherTab)
+				}
 			}
 		}
 	}

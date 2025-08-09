@@ -936,6 +936,10 @@
 				"resetBridgeFolder": {
 					"name": "Reset Root Folder",
 					"description": "Reset the app to use bridge. v2's default root folder again"
+				},
+				"keepTabsOpen": {
+					"name": "Keep Tabs Open",
+					"description": "By default, opening a new tab closes the previously opened tab if it was not interacted with"
 				}
 			},
 			"developer": {
@@ -1012,10 +1016,6 @@
 				"compactTabDesign": {
 					"name": "Compact Tab Design",
 					"description": "Display tabs inside of the tab system in a more compact way"
-				},
-				"keepTabsOpen": {
-					"name": "Keep Tabs Open",
-					"description": "By default, opening a new tab closes the previously opened tab if it was not interacted with"
 				},
 				"autoSaveChanges": {
 					"name": "Auto Save Changes",
