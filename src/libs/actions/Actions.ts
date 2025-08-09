@@ -55,6 +55,8 @@ function setupFileTabActions() {
 
 				if (focusedTab === null) return
 
+				focusedTab.temporary.value = false
+
 				if (focusedTab instanceof FileTab) focusedTab.save()
 			},
 			keyBinding: 'Ctrl + S',
@@ -72,6 +74,8 @@ function setupFileTabActions() {
 			trigger: () => {
 				for (const tabSystem of TabManager.tabSystems.value) {
 					for (const tab of tabSystem.tabs.value) {
+						tab.temporary.value = false
+
 						if (tab instanceof FileTab) tab.save()
 					}
 				}
