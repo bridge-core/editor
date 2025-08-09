@@ -52,6 +52,7 @@ const get = Settings.useGet()
 					:class="{
 						'text-text': instance.selectedTab.value === tab,
 						'text-text-secondary group-hover:text-text': instance.selectedTab.value !== tab,
+						italic: tab.temporary.value,
 					}"
 				>
 					{{ tab.name.value ?? 'Tab' }}

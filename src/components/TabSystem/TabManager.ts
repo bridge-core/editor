@@ -90,7 +90,7 @@ export class TabManager {
 		await TabManager.recover()
 	}
 
-	public static async openTab(tab: Tab) {
+	public static async openTab(tab: Tab, temporary = false) {
 		for (const tabSystem of TabManager.tabSystems.value) {
 			for (const otherTab of tabSystem.tabs.value) {
 				if (otherTab === tab) {
@@ -107,7 +107,7 @@ export class TabManager {
 
 		const tabSystem = TabManager.getFocusedTabSystem() ?? TabManager.getDefaultTabSystem()
 
-		await tabSystem.addTab(tab)
+		await tabSystem.addTab(tab, true, temporary)
 
 		this.focusTabSystem(tabSystem)
 	}
@@ -127,7 +127,7 @@ export class TabManager {
 
 		for (const TabType of TabTypes.fileTabTypes.toSorted((a, b) => b.editPriority(path) - a.editPriority(path))) {
 			if (TabType.canEdit(path)) {
-				await TabManager.openTab(new TabType(path))
+				await TabManager.openTab(new TabType(path), true)
 
 				return
 			}

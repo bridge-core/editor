@@ -10,12 +10,7 @@
 </template>
 
 <script setup lang="ts">
-import { watch } from 'vue'
 import TabSystem from './TabSystem.vue'
 
 import { TabManager } from '@/components/TabSystem/TabManager'
-
-watch(TabManager.tabSystems, () => {
-	console.log('Updated tabsystems!')
-})
 </script>

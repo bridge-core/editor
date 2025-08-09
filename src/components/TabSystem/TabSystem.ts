@@ -1,6 +1,6 @@
 import { v4 as uuid } from 'uuid'
 import { RecoveryState as TabRecoveryState, Tab, RecoveryState } from './Tab'
-import { Ref, shallowRef } from 'vue'
+import { Ref, ShallowRef, shallowRef, watchEffect } from 'vue'
 import { Editor } from '@/components/Editor/Editor'
 import { Event } from '@/libs/event/Event'
 import { Disposable } from '@/libs/disposeable/Disposeable'
@@ -12,8 +12,8 @@ export type TabSystemRecoveryState = { id: string; selectedTab: string | null; t
 export class TabSystem {
 	public id = uuid()
 	// Monaco editor freezes browser when made deep reactive, so instead we make it shallow reactive
-	public tabs: Ref<Tab[]> = shallowRef([])
-	public selectedTab: Ref<Tab | null> = shallowRef(null)
+	public tabs: ShallowRef<Tab[]> = shallowRef([])
+	public selectedTab: ShallowRef<Tab | null> = shallowRef(null)
 
 	public savedState = new Event<void>()
 	public removedTab = new Event<void>()
@@ -21,7 +21,7 @@ export class TabSystem {
 
 	private tabSaveListenters: Record<string, Disposable> = {}
 
-	public async addTab(tab: Tab, select = true) {
+	public async addTab(tab: Tab, select = true, temporary = false) {
 		if (this.tabs.value.includes(tab)) {
 			if (select) await this.selectTab(tab)
 
@@ -30,6 +30,8 @@ export class TabSystem {
 			return
 		}
 
+		tab.temporary.value = temporary
+
 		this.tabSaveListenters[tab.id] = tab.savedState.on(() => {
 			this.saveState()
 		})
@@ -37,10 +39,19 @@ export class TabSystem {
 		await tab.create()
 
 		this.tabs.value.push(tab)
+		this.tabs.value = [...this.tabs.value]
 
 		if (select) await this.selectTab(tab)
 
 		await this.saveState()
+
+		if (temporary) {
+			const otherTemporaryTabs = this.tabs.value.filter((otherTab) => otherTab.temporary.value && otherTab.id !== tab.id)
+
+			for (const otherTab of otherTemporaryTabs) {
+				if (otherTab.temporary.value) await this.removeTab(otherTab)
+			}
+		}
 	}
 
 	public async selectTab(tab: Tab) {
@@ -64,18 +75,23 @@ export class TabSystem {
 	public async removeTab(tab: Tab) {
 		if (!this.tabs.value.includes(tab)) return
 
-		if (this.selectedTab.value?.id === tab.id) {
+		const selectedTab = this.selectedTab.value?.id === tab.id
+
+		if (selectedTab) {
 			tab.active = false
 			await tab.deactivate()
 		}
 
-		this.selectedTab.value = null
-
 		const tabIndex = this.tabs.value.indexOf(tab)
 
 		this.tabs.value.splice(tabIndex, 1)
+		this.tabs.value = [...this.tabs.value]
 
-		if (this.tabs.value.length != 0) await this.selectTab(this.tabs.value[Math.max(tabIndex - 1, 0)])
+		if (selectedTab) {
+			this.selectedTab.value = null
+
+			if (this.tabs.value.length != 0) await this.selectTab(this.tabs.value[Math.max(tabIndex - 1, 0)])
+		}
 
 		await tab.destroy()
 
@@ -116,12 +132,14 @@ export class TabSystem {
 				id: tab.id,
 				path: tab.path,
 				state: (await tab.getState()) ?? null,
+				temporary: tab.temporary.value,
 				type: tab.constructor.name,
 			}
 
 		return {
 			id: tab.id,
 			state: (await tab.getState()) ?? null,
+			temporary: tab.temporary.value,
 			type: tab.constructor.name,
 		}
 	}
@@ -148,6 +166,7 @@ export class TabSystem {
 				const tab = new (tabType as typeof FileTab)(tabRecoveryState.path)
 
 				tab.id = tabRecoveryState.id
+				tab.temporary.value = tabRecoveryState.temporary
 
 				this.tabSaveListenters[tab.id] = tab.savedState.on(() => {
 					this.saveState()
@@ -161,6 +180,7 @@ export class TabSystem {
 				const tab = new (tabType as typeof Tab)()
 
 				tab.id = tabRecoveryState.id
+				tab.temporary.value = tabRecoveryState.temporary
 
 				this.tabSaveListenters[tab.id] = tab.savedState.on(() => {
 					this.saveState()
