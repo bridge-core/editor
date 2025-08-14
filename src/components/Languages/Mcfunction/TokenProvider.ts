@@ -7,7 +7,7 @@ export const tokenProvider: any = {
 		['{', '}', 'delimiter.curly'],
 	],
 	keywords: [],
-	selectors: ['@a', '@e', '@p', '@r', '@s', '@initiator'],
+	selectors: ['@a', '@e', '@p', '@r', '@s', '@initiator', '@n'],
 	targetSelectorArguments: [],
 
 	tokenizer: {
