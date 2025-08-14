@@ -550,7 +550,7 @@ export class CommandData extends Signal<void> {
 				)
 			case 'selector':
 				return this.toCompletionItem(
-					['@a', '@e', '@p', '@s', '@r', '@initiator'],
+					['@a', '@e', '@p', '@s', '@r', '@initiator', '@n'],
 					commandArgument.description,
 					languages.CompletionItemKind.TypeParameter
 				)
