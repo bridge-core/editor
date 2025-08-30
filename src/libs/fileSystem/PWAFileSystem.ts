@@ -431,6 +431,7 @@ export class PWAFileSystem extends BaseFileSystem {
 
 	private async indexPath(path: string) {
 		const entries = await this.readDirectoryEntries(path)
+		entries.sort((a, b) => a.path.localeCompare(b.path))
 
 		let hash = ''
 
@@ -461,7 +462,9 @@ export class PWAFileSystem extends BaseFileSystem {
 			if (entry.kind === 'file') {
 				let fileHash = await this.generateFileHash(entry.path)
 
-				if (this.cache[entry.path] !== fileHash) this.pathUpdated.dispatch(this.resolvePath(entry.path))
+				if (this.cache[entry.path] !== fileHash) {
+					this.pathUpdated.dispatch(this.resolvePath(entry.path))
+				}
 
 				this.cache[entry.path] = fileHash
 			}
@@ -474,11 +477,15 @@ export class PWAFileSystem extends BaseFileSystem {
 			const newPaths = hash.split('\n').filter((path) => path.length > 0)
 
 			for (const previousPath of previousPaths) {
-				if (!newPaths.includes(previousPath)) this.pathUpdated.dispatch(this.resolvePath(previousPath))
+				if (!newPaths.includes(previousPath)) {
+					this.pathUpdated.dispatch(this.resolvePath(previousPath))
+				}
 			}
 
 			for (const newPath of newPaths) {
-				if (!previousPaths.includes(newPath)) this.pathUpdated.dispatch(this.resolvePath(newPath))
+				if (!previousPaths.includes(newPath)) {
+					this.pathUpdated.dispatch(this.resolvePath(newPath))
+				}
 			}
 
 			this.pathUpdated.dispatch(path)
