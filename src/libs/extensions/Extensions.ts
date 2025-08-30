@@ -9,7 +9,6 @@ import { Event } from '@/libs/event/Event'
 import { Disposable } from '@/libs/disposeable/Disposeable'
 import { Theme } from '@/libs/theme/Theme'
 import { Snippet } from '@/libs/snippets/Snippet'
-import { TBaseModule } from '@bridge-editor/js-runtime/dist/Runtime'
 
 export class Extensions {
 	public static globalExtensions: Record<string, Extension> = {}
@@ -192,7 +191,9 @@ export class Extensions {
 	}
 
 	private static async downloadExtension(extension: ExtensionManifest): Promise<Unzipped> {
-		const arrayBuffer = await (await fetch('https://raw.githubusercontent.com/bridge-core/plugins/master' + extension.link)).arrayBuffer()
+		const arrayBuffer = await (
+			await fetch('https://raw.githubusercontent.com/bridge-core/plugins/master' + extension.link)
+		).arrayBuffer()
 
 		return await new Promise<Unzipped>(async (resolve, reject) =>
 			unzip(new Uint8Array(arrayBuffer), (err, data) => {
