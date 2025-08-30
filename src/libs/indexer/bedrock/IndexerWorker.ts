@@ -217,10 +217,12 @@ async function indexFile(path: string) {
 	}
 }
 
-async function indexDirectory(path: string) {
+async function indexDirectory(path: string, ignore: string[]) {
 	for (const entry of await fileSystem.readDirectoryEntries(path)) {
+		if (ignore.includes(entry.path)) return
+
 		if (entry.kind == 'directory') {
-			await indexDirectory(entry.path)
+			await indexDirectory(entry.path, ignore)
 		} else {
 			await indexFile(entry.path)
 		}
@@ -236,7 +238,7 @@ async function setup(newConfig: IConfigJson, newInstructions: { [key: string]: a
 
 	projectPath = path
 
-	await indexDirectory(path)
+	await indexDirectory(path, join(path, '.git'))
 
 	postMessage({
 		action: 'setupComplete',
@@ -246,7 +248,7 @@ async function setup(newConfig: IConfigJson, newInstructions: { [key: string]: a
 }
 
 async function reindex(path: string, actionId: string) {
-	await indexDirectory(path)
+	await indexDirectory(path, join(path, '.git'))
 
 	postMessage({
 		action: 'indexComplete',
