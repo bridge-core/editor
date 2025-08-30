@@ -435,6 +435,8 @@ export class PWAFileSystem extends BaseFileSystem {
 		let hash = ''
 
 		for (const entry of entries) {
+			if (this.watchPathsToIgnore.includes(entry.path)) continue
+
 			hash += entry.path + '\n'
 
 			if (entry.kind === 'file') this.cache[entry.path] = await this.generateFileHash(entry.path)
@@ -452,6 +454,8 @@ export class PWAFileSystem extends BaseFileSystem {
 		let hash = ''
 
 		for (const entry of entries) {
+			if (this.watchPathsToIgnore.includes(entry.path)) continue
+
 			hash += entry.path + '\n'
 
 			if (entry.kind === 'file') {

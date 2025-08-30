@@ -39,6 +39,8 @@ export class Project implements AsyncDisposable {
 		this.usingProjectOutputFolderKey = `usingProjectFolder-${this.name}`
 
 		fileSystem.watch(this.path)
+		fileSystem.ingorePath(join(this.path, '.git'))
+		fileSystem.ingorePath(join(this.path, '.bridge/.dash.development.json'))
 
 		if (!(this.outputFileSystem instanceof LocalFileSystem)) return
 
@@ -53,7 +55,8 @@ export class Project implements AsyncDisposable {
 		for (const [packId, packPath] of Object.entries(this.config.packs)) {
 			this.packs[packId] = join(this.path, packPath)
 
-			if (await fileSystem.exists(join(this.packs[packId], 'pack_icon.png'))) this.icon = await fileSystem.readFileDataUrl(join(this.packs[packId], 'pack_icon.png'))
+			if (await fileSystem.exists(join(this.packs[packId], 'pack_icon.png')))
+				this.icon = await fileSystem.readFileDataUrl(join(this.packs[packId], 'pack_icon.png'))
 		}
 
 		if (await fileSystem.exists(join(this.path, 'globals.json'))) {
@@ -169,7 +172,9 @@ export class Project implements AsyncDisposable {
 	private async setupOutputFileSystemPWA() {
 		const localProjectFolder = await this.getLocalProjectFolderHandle()
 
-		let newOutputFolderHandle: FileSystemDirectoryHandle | undefined = this.usingProjectOutputFolder ? localProjectFolder : Settings.get('outputFolder')
+		let newOutputFolderHandle: FileSystemDirectoryHandle | undefined = this.usingProjectOutputFolder
+			? localProjectFolder
+			: Settings.get('outputFolder')
 
 		let newOutputFileSystem = new PWAFileSystem()
 
@@ -192,7 +197,11 @@ export class Project implements AsyncDisposable {
 		NotificationSystem.addNotification(
 			'warning',
 			() => {
-				Windows.open(new ConfirmWindow('You have not set up your output folder yet. Do you want to set it up now?', () => SettingsWindow.open('projects')))
+				Windows.open(
+					new ConfirmWindow('You have not set up your output folder yet. Do you want to set it up now?', () =>
+						SettingsWindow.open('projects')
+					)
+				)
 			},
 			'warning'
 		)

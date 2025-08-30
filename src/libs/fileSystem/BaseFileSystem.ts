@@ -13,6 +13,8 @@ import { Event } from '@/libs/event/Event'
 export class BaseFileSystem {
 	public pathUpdated: Event<string> = new Event()
 
+	protected watchPathsToIgnore: string[] = []
+
 	public async readFile(path: string): Promise<ArrayBuffer> {
 		throw new Error('Not implemented!')
 	}
@@ -163,6 +165,10 @@ export class BaseFileSystem {
 
 	public async watch(path: string) {
 		throw new Error('Not implemented!')
+	}
+
+	public async ingorePath(path: string) {
+		this.watchPathsToIgnore.push(path)
 	}
 
 	public async unwatch(path: string) {
