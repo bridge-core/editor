@@ -107,7 +107,13 @@ export class TextTab extends FileTab {
 
 		this.disposables.push(
 			this.model.onDidChangeContent(() => {
-				this.modified.value = this.initialVersionId !== this.model?.getVersionId()
+				const modified = this.initialVersionId !== this.model?.getVersionId()
+
+				this.modified.value = modified
+
+				if (modified) {
+					this.temporary.value = false
+				}
 			})
 		)
 
