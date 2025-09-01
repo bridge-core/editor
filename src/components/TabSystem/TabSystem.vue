@@ -1,18 +1,19 @@
 <script lang="ts" setup>
 import Icon from '@/components/Common/Icon.vue'
 import IconButton from '@/components/Common/IconButton.vue'
+import ContextMenu from '@/components/Common/ContextMenu.vue'
 
 import { TabSystem } from './TabSystem'
 import { FileTab } from './FileTab'
 import { Settings } from '@/libs/settings/Settings'
 import { TabManager } from './TabManager'
 import { computed, ComputedRef } from 'vue'
-import { Action } from '@/libs/actions/Action'
 import { ProjectManager } from '@/libs/project/ProjectManager'
 import { BedrockProject } from '@/libs/project/BedrockProject'
-import { useTabActions, useTabActionsForFileType } from '@/libs/actions/tab/TabActionManager'
+import { useTabActions } from '@/libs/actions/tab/TabActionManager'
 import { ActionManager } from '@/libs/actions/ActionManager'
 import { useTranslate } from '@/libs/locales/Locales'
+import ActionContextMenuItem from '../Common/ActionContextMenuItem.vue'
 
 const props = defineProps({
 	instance: {
@@ -27,7 +28,7 @@ const get = Settings.useGet()
 
 const tabActions = useTabActions()
 
-const currentTabAction: ComputedRef<string[]> = computed(() => {
+const currentTabActions: ComputedRef<string[]> = computed(() => {
 	const selectedTab = props.instance.selectedTab.value
 
 	if (!selectedTab) return []
@@ -48,7 +49,7 @@ const currentTabAction: ComputedRef<string[]> = computed(() => {
 
 <template>
 	<div class="basis-0 min-w-0 flex-1 h-full border-background-secondary" @click="() => instance.focus()">
-		<div class="flex gap-2 overflow-x-auto" :class="{ 'mb-2': currentTabAction.length === 0 }">
+		<div class="flex gap-2 overflow-x-auto" :class="{ 'mb-2': currentTabActions.length === 0 }">
 			<div
 				v-for="tab in instance.tabs.value"
 				class="flex items-center gap-1 px-2 py-1 rounded cursor-pointer transition-[colors, border-color] duration-100 ease-out group border-2 border-background"
@@ -92,28 +93,38 @@ const currentTabAction: ComputedRef<string[]> = computed(() => {
 		</div>
 
 		<div
-			v-if="currentTabAction.length === 1"
-			@click="ActionManager.trigger(currentTabAction[0])"
+			v-if="currentTabActions.length === 1"
+			@click="ActionManager.trigger(currentTabActions[0])"
 			class="flex items-center select-none cursor-pointer group mt-1 mb-2"
 		>
 			<Icon icon="arrow_right" class="text-primary group-hover:text-accent transition-colors duration-100 ease-in-out" />
 
 			<p class="text-sm text-text-secondary group-hover:text-accent transition-colors duration-100 ease-in-out">
-				{{ t(ActionManager.actions[currentTabAction[0]].name ?? 'actions.unknown.name') }}
+				{{ t(ActionManager.actions[currentTabActions[0]].name ?? 'actions.unknown.name') }}
 			</p>
 		</div>
 
-		<div
-			v-if="currentTabAction.length > 1"
-			@click="ActionManager.trigger(currentTabAction[0])"
-			class="flex items-center select-none cursor-pointer group mt-1 mb-2"
-		>
-			<Icon icon="arrow_right" class="text-primary group-hover:text-accent transition-colors duration-100 ease-in-out" />
+		<ContextMenu>
+			<template #main="{ toggle }">
+				<div
+					v-if="currentTabActions.length > 1"
+					@click="toggle"
+					class="flex items-center select-none cursor-pointer group mt-1 mb-2"
+				>
+					<Icon icon="arrow_right" class="text-primary group-hover:text-accent transition-colors duration-100 ease-in-out" />
 
-			<p class="text-sm text-text-secondary group-hover:text-accent transition-colors duration-100 ease-in-out">
-				{{ t(ActionManager.actions[currentTabAction[0]].name ?? 'actions.unknown.name') }}
-			</p>
-		</div>
+					<p class="text-sm text-text-secondary group-hover:text-accent transition-colors duration-100 ease-in-out">
+						{{ t('actions.tabActions') }}
+					</p>
+				</div>
+			</template>
+
+			<template #menu="{ close }">
+				<div class="w-56 bg-background-secondary rounded shadow-window overflow-hidden relative z-10">
+					<ActionContextMenuItem v-for="action in currentTabActions" :action="action" @click="close" />
+				</div>
+			</template>
+		</ContextMenu>
 
 		<div class="w-full tab-content">
 			<component

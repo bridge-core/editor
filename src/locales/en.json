@@ -140,6 +140,7 @@
 		"rebinding": "Rebinding",
 		"unbound": "Unbound",
 		"more": "More",
+		"tabActions": "Tab Actions",
 		"unknown": {
 			"name": "Unkown Action",
 			"description": "This action is missing!"
