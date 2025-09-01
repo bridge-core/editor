@@ -62,10 +62,10 @@ const bridgeFolderUnloaded = useBridgeFolderUnloaded()
 				</p>
 
 				<div v-if="bridgeFolderUnloaded" @click="loadBridgeFolder" class="group flex gap-1 mt-1">
-					<Icon icon="help" class="text-base text-primary group-hover:text-text transition-colors duration-100 ease-in-out" />
+					<Icon icon="help" class="text-base text-primary group-hover:text-accent transition-colors duration-100 ease-in-out" />
 
 					<a
-						class="text-base text-primary font-theme group-hover:text-text group-hover:underline cursor-pointer transition-colors duration-100 ease-in-out"
+						class="text-base text-primary font-theme group-hover:text-accent group-hover:underline cursor-pointer transition-colors duration-100 ease-in-out"
 						>{{ t('Click to Load bridge. Folder') }}</a
 					>
 				</div>
