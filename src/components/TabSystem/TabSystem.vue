@@ -6,20 +6,49 @@ import { TabSystem } from './TabSystem'
 import { FileTab } from './FileTab'
 import { Settings } from '@/libs/settings/Settings'
 import { TabManager } from './TabManager'
+import { computed, ComputedRef } from 'vue'
+import { Action } from '@/libs/actions/Action'
+import { ProjectManager } from '@/libs/project/ProjectManager'
+import { BedrockProject } from '@/libs/project/BedrockProject'
+import { useTabActions, useTabActionsForFileType } from '@/libs/actions/tab/TabActionManager'
+import { ActionManager } from '@/libs/actions/ActionManager'
+import { useTranslate } from '@/libs/locales/Locales'
 
-defineProps({
+const props = defineProps({
 	instance: {
 		type: TabSystem,
 		required: true,
 	},
 })
 
+const t = useTranslate()
+
 const get = Settings.useGet()
+
+const tabActions = useTabActions()
+
+const currentTabAction: ComputedRef<string[]> = computed(() => {
+	const selectedTab = props.instance.selectedTab.value
+
+	if (!selectedTab) return []
+
+	if (!(selectedTab instanceof FileTab)) return []
+
+	const path = selectedTab.path
+
+	if (!ProjectManager.currentProject || !(ProjectManager.currentProject instanceof BedrockProject)) return []
+
+	const fileType = ProjectManager.currentProject.fileTypeData.get(path)
+
+	if (!fileType) return []
+
+	return tabActions.value.filter((tabAction) => tabAction.fileTypes.includes(fileType.id)).map((tabAction) => tabAction.action)
+})
 </script>
 
 <template>
 	<div class="basis-0 min-w-0 flex-1 h-full border-background-secondary" @click="() => instance.focus()">
-		<div class="flex gap-2 overflow-x-auto">
+		<div class="flex gap-2 overflow-x-auto" :class="{ 'mb-2': currentTabAction.length === 0 }">
 			<div
 				v-for="tab in instance.tabs.value"
 				class="flex items-center gap-1 px-2 py-1 rounded cursor-pointer transition-[colors, border-color] duration-100 ease-out group border-2 border-background"
@@ -62,10 +91,28 @@ const get = Settings.useGet()
 			</div>
 		</div>
 
-		<div @click="console.log('hi')" class="flex items-center select-none cursor-pointer group mb-1">
+		<div
+			v-if="currentTabAction.length === 1"
+			@click="ActionManager.trigger(currentTabAction[0])"
+			class="flex items-center select-none cursor-pointer group mt-1 mb-2"
+		>
 			<Icon icon="arrow_right" class="text-primary group-hover:text-accent transition-colors duration-100 ease-in-out" />
 
-			<p class="text-sm text-text-secondary group-hover:text-accent transition-colors duration-100 ease-in-out">Action</p>
+			<p class="text-sm text-text-secondary group-hover:text-accent transition-colors duration-100 ease-in-out">
+				{{ t(ActionManager.actions[currentTabAction[0]].name ?? 'actions.unknown.name') }}
+			</p>
+		</div>
+
+		<div
+			v-if="currentTabAction.length > 1"
+			@click="ActionManager.trigger(currentTabAction[0])"
+			class="flex items-center select-none cursor-pointer group mt-1 mb-2"
+		>
+			<Icon icon="arrow_right" class="text-primary group-hover:text-accent transition-colors duration-100 ease-in-out" />
+
+			<p class="text-sm text-text-secondary group-hover:text-accent transition-colors duration-100 ease-in-out">
+				{{ t(ActionManager.actions[currentTabAction[0]].name ?? 'actions.unknown.name') }}
+			</p>
 		</div>
 
 		<div class="w-full tab-content">

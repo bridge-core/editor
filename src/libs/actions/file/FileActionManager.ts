@@ -25,10 +25,18 @@ export class FileActionManager {
 }
 
 export function useFileActions(fileType: string): ShallowRef<string[]> {
-	const current: ShallowRef<string[]> = shallowRef(FileActionManager.actions.filter((item) => item.fileTypes.includes(fileType)).map((item) => item.action))
+	const current: ShallowRef<string[]> = shallowRef(
+		FileActionManager.actions
+			.filter((item) => item.fileTypes.includes(fileType) && ActionManager.actions[item.action]?.visible)
+			.map((item) => item.action)
+	)
 
 	function update() {
-		current.value = [...FileActionManager.actions.filter((item) => item.fileTypes.includes(fileType) && ActionManager.actions[item.action]?.visible).map((item) => item.action)]
+		current.value = [
+			...FileActionManager.actions
+				.filter((item) => item.fileTypes.includes(fileType) && ActionManager.actions[item.action]?.visible)
+				.map((item) => item.action),
+		]
 	}
 
 	const disposables: Disposable[] = []

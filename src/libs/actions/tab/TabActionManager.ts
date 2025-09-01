@@ -24,9 +24,34 @@ export class TabActionManager {
 	}
 }
 
-export function useTabActions(fileType: string): ShallowRef<string[]> {
+export function useTabActions(): ShallowRef<{ action: string; fileTypes: string[] }[]> {
+	const current: ShallowRef<{ action: string; fileTypes: string[] }[]> = shallowRef(
+		TabActionManager.actions.filter((item) => ActionManager.actions[item.action]?.visible)
+	)
+
+	function update() {
+		current.value = [...TabActionManager.actions.filter((item) => ActionManager.actions[item.action]?.visible)]
+	}
+
+	const disposables: Disposable[] = []
+
+	onMounted(() => {
+		disposables.push(TabActionManager.updated.on(update))
+		disposables.push(ActionManager.actionsUpdated.on(update))
+	})
+
+	onUnmounted(() => {
+		disposeAll(disposables)
+	})
+
+	return current
+}
+
+export function useTabActionsForFileType(fileType: string): ShallowRef<string[]> {
 	const current: ShallowRef<string[]> = shallowRef(
-		TabActionManager.actions.filter((item) => item.fileTypes.includes(fileType)).map((item) => item.action)
+		TabActionManager.actions
+			.filter((item) => item.fileTypes.includes(fileType) && ActionManager.actions[item.action]?.visible)
+			.map((item) => item.action)
 	)
 
 	function update() {
