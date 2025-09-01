@@ -36,6 +36,16 @@
 	background-color: var(--theme-color-backgroundSecondary);
 }
 
+.dark-scrollbar::-webkit-scrollbar-thumb {
+	border-radius: 24px;
+	background-color: var(--theme-color-background);
+}
+
+.light-scrollbar::-webkit-scrollbar-thumb {
+	border-radius: 24px;
+	background-color: var(--theme-color-backgroundTertiary);
+}
+
 summary::-webkit-details-marker {
 	display: none;
 }

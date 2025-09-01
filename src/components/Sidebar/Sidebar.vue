@@ -25,7 +25,7 @@ function executeContextMenuAction(action: string, data: any) {
 
 <template>
 	<div
-		class="min-w-[3.5rem] h-full bg-background-secondary rounded mt-2 flex flex-col gap-2 items-center p-2 overflow-y-auto"
+		class="min-w-[3.5rem] h-full bg-background-secondary rounded mt-2 flex flex-col gap-2 items-center p-2 overflow-y-auto light-scrollbar"
 		@contextmenu.prevent.stop="contextMenu?.open"
 	>
 		<div v-for="item in Sidebar.items.filter((item) => item.type !== 'button' || !get('hiddenSidebarElements').includes(item.id))">
