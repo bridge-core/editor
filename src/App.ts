@@ -33,6 +33,7 @@ import { TabTypes } from '@/components/TabSystem/TabTypes'
 import { setupExportActions } from '@/libs/actions/export/ExportActions'
 import { setupFileActions } from '@/libs/actions/file/FileActions'
 import { ReportErrorWindow } from '@/components/Windows/ReportError/ReportErrorWindow'
+import { setupTabActions } from '@/libs/actions/tab/TabActions'
 
 export function setupBeforeComponents() {
 	NotificationSystem.setup()
@@ -60,6 +61,7 @@ export function setupBeforeComponents() {
 
 	setupExportActions()
 	setupFileActions()
+	setupTabActions()
 }
 
 export async function setup() {

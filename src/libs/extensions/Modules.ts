@@ -57,6 +57,7 @@ import { ImporterManager } from '@/libs/import/ImporterManager'
 import { ExportActionManager } from '@/libs/actions/export/ExportActionManager'
 import { TabTypes } from '@/components/TabSystem/TabTypes'
 import { FileActionManager } from '@/libs/actions/file/FileActionManager'
+import { TabActionManager } from '@/libs/actions/tab/TabActionManager'
 
 import json5 from 'json5'
 import * as fflate from 'fflate'
@@ -252,6 +253,31 @@ export function setupModules() {
 				registeredFileActions.splice(registeredFileActions.indexOf(action))
 
 				FileActionManager.removeAction(action)
+			},
+		}
+	})
+
+	Extension.registerModule('@bridge/tabAction', (extension) => {
+		let registeredTabActions: string[] = []
+
+		extension.deactivated.once(() => {
+			for (const action of registeredTabActions) {
+				TabActionManager.removeAction(action)
+			}
+
+			registeredTabActions = []
+		})
+
+		return {
+			addTabAction(action: string, fileTypes: string[]) {
+				registeredTabActions.push(action)
+
+				TabActionManager.addAction(action, fileTypes)
+			},
+			removeTabAction(action: string, fileTypes: string[]) {
+				registeredTabActions.splice(registeredTabActions.indexOf(action))
+
+				TabActionManager.removeAction(action)
 			},
 		}
 	})
