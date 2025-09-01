@@ -19,7 +19,7 @@ const get = Settings.useGet()
 
 <template>
 	<div class="basis-0 min-w-0 flex-1 h-full border-background-secondary" @click="() => instance.focus()">
-		<div class="flex gap-2 overflow-x-scroll">
+		<div class="flex gap-2 overflow-x-auto">
 			<div
 				v-for="tab in instance.tabs.value"
 				class="flex items-center gap-1 px-2 py-1 rounded cursor-pointer transition-[colors, border-color] duration-100 ease-out group border-2 border-background"
@@ -60,6 +60,12 @@ const get = Settings.useGet()
 
 				<IconButton icon="close" class="text-base" @click.stop="() => instance.removeTab(tab)" />
 			</div>
+		</div>
+
+		<div @click="console.log('hi')" class="flex items-center select-none cursor-pointer group mb-1">
+			<Icon icon="arrow_right" class="text-primary group-hover:text-accent transition-colors duration-100 ease-in-out" />
+
+			<p class="text-sm text-text-secondary group-hover:text-accent transition-colors duration-100 ease-in-out">Action</p>
 		</div>
 
 		<div class="w-full tab-content">
