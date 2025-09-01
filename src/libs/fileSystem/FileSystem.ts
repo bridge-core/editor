@@ -4,6 +4,8 @@ import { PWAFileSystem } from './PWAFileSystem'
 import { TauriFileSystem } from './TauriFileSystem'
 import { get, set } from 'idb-keyval'
 import { LocalFileSystem } from './LocalFileSystem'
+import { onMounted, onUnmounted, shallowRef, ShallowRef } from 'vue'
+import { Disposable } from '@/libs/disposeable/Disposeable'
 
 export function getFileSystem(): BaseFileSystem {
 	if (tauriBuild) return new TauriFileSystem()
@@ -27,6 +29,20 @@ export async function loadBridgeFolder() {
 	}
 }
 
+export async function selectBridgeFolder() {
+	if (!(fileSystem instanceof PWAFileSystem)) return
+
+	try {
+		fileSystem.setBaseHandle(
+			(await window.showDirectoryPicker({
+				mode: 'readwrite',
+			})) ?? null
+		)
+
+		await set('bridgeFolderHandle', fileSystem.baseHandle)
+	} catch {}
+}
+
 export async function selectOrLoadBridgeFolder() {
 	if (!(fileSystem instanceof PWAFileSystem)) return
 
@@ -39,7 +55,6 @@ export async function selectOrLoadBridgeFolder() {
 	}
 
 	try {
-		//No mobile detection support?
 		fileSystem.setBaseHandle(
 			(await window.showDirectoryPicker({
 				mode: 'readwrite',
@@ -105,4 +120,28 @@ function supportsFileSystemApi() {
 	if (edgeBrand) return true
 
 	return false
+}
+
+export function useBridgeFolderUnloaded(): ShallowRef<boolean> {
+	if (!(fileSystem instanceof PWAFileSystem)) return shallowRef(false)
+
+	const valueRef: ShallowRef<boolean> = shallowRef(!fileSystem.baseHandle)
+
+	function update() {
+		if (!(fileSystem instanceof PWAFileSystem)) return
+
+		valueRef.value = !fileSystem.baseHandle
+	}
+
+	let disposable: Disposable
+
+	onMounted(() => {
+		disposable = fileSystem.reloaded.on(update)
+	})
+
+	onUnmounted(() => {
+		disposable.dispose()
+	})
+
+	return valueRef
 }

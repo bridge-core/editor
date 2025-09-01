@@ -11,7 +11,13 @@ import { computed, ref } from 'vue'
 import { useTranslate } from '@/libs/locales/Locales'
 import { ProjectInfo, ProjectManager, useConvertableProjects, useCurrentProject, useProjects } from '@/libs/project/ProjectManager'
 import { Windows } from '@/components/Windows/Windows'
-import { fileSystem, loadBridgeFolder, selectOrLoadBridgeFolder } from '@/libs/fileSystem/FileSystem'
+import {
+	fileSystem,
+	loadBridgeFolder,
+	selectBridgeFolder,
+	selectOrLoadBridgeFolder,
+	useBridgeFolderUnloaded,
+} from '@/libs/fileSystem/FileSystem'
 import { CreateProjectWindow } from '@/components/Windows/CreateProject/CreateProjectWindow'
 import { NotificationSystem } from '@/components/Notifications/NotificationSystem'
 import { convertProject } from '@/libs/project/ConvertComMojangProject'
@@ -35,12 +41,14 @@ async function createProject() {
 }
 
 async function openProject(project: ProjectInfo) {
-	if (fileSystem instanceof PWAFileSystem && !fileSystem.setup) await selectOrLoadBridgeFolder()
+	if (fileSystem instanceof PWAFileSystem && !fileSystem.setup) await loadBridgeFolder()
 
 	ProjectManager.loadProject(project.name)
 }
 
 async function edit(name: string) {}
+
+const bridgeFolderUnloaded = useBridgeFolderUnloaded()
 </script>
 
 <template>
@@ -53,7 +61,7 @@ async function edit(name: string) {}
 					{{ t('greet.projects') }}
 				</p>
 
-				<div @click="loadBridgeFolder" class="group flex gap-1 mt-1">
+				<div v-if="bridgeFolderUnloaded" @click="loadBridgeFolder" class="group flex gap-1 mt-1">
 					<Icon icon="help" class="text-base text-primary group-hover:text-text transition-colors duration-100 ease-in-out" />
 
 					<a
@@ -63,7 +71,7 @@ async function edit(name: string) {}
 				</div>
 
 				<div>
-					<IconButton v-if="fileSystem instanceof PWAFileSystem" icon="folder" class="mr-1" @click="selectOrLoadBridgeFolder" />
+					<IconButton v-if="fileSystem instanceof PWAFileSystem" icon="folder" class="mr-1" @click="selectBridgeFolder" />
 					<IconButton icon="add" @click="createProject" v-if="!suggestSelectBridgeFolder" />
 				</div>
 			</div>
