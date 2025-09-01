@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import Logo from '@/components/Common/Logo.vue'
 import IconButton from '@/components/Common/IconButton.vue'
+import Icon from '@/components/Common/Icon.vue'
 import ProjectGalleryEntry from './ProjectGalleryEntry.vue'
 import TextButton from '@/components/Common/TextButton.vue'
 import Notification from '@/components/Notifications/Notification.vue'
@@ -10,7 +11,7 @@ import { computed, ref } from 'vue'
 import { useTranslate } from '@/libs/locales/Locales'
 import { ProjectInfo, ProjectManager, useConvertableProjects, useCurrentProject, useProjects } from '@/libs/project/ProjectManager'
 import { Windows } from '@/components/Windows/Windows'
-import { fileSystem, selectOrLoadBridgeFolder } from '@/libs/fileSystem/FileSystem'
+import { fileSystem, loadBridgeFolder, selectOrLoadBridgeFolder } from '@/libs/fileSystem/FileSystem'
 import { CreateProjectWindow } from '@/components/Windows/CreateProject/CreateProjectWindow'
 import { NotificationSystem } from '@/components/Notifications/NotificationSystem'
 import { convertProject } from '@/libs/project/ConvertComMojangProject'
@@ -23,7 +24,9 @@ const currentProject = useCurrentProject()
 let fileSystemSetup = ref(true)
 if (fileSystem instanceof PWAFileSystem) fileSystemSetup = fileSystem.useSetup()
 
-const suggestSelectBridgeFolder = computed(() => fileSystem instanceof PWAFileSystem && !fileSystemSetup.value && projects.value.length == 0)
+const suggestSelectBridgeFolder = computed(
+	() => fileSystem instanceof PWAFileSystem && !fileSystemSetup.value && projects.value.length == 0
+)
 
 async function createProject() {
 	if (fileSystem instanceof PWAFileSystem && !fileSystem.setup) await selectOrLoadBridgeFolder()
@@ -49,6 +52,15 @@ async function edit(name: string) {}
 				<p class="mb-1 text-lg text-text font-theme font-medium">
 					{{ t('greet.projects') }}
 				</p>
+
+				<div @click="loadBridgeFolder" class="group flex gap-1 mt-1">
+					<Icon icon="help" class="text-base text-primary group-hover:text-text transition-colors duration-100 ease-in-out" />
+
+					<a
+						class="text-base text-primary font-theme group-hover:text-text group-hover:underline cursor-pointer transition-colors duration-100 ease-in-out"
+						>{{ t('Click to Load bridge. Folder') }}</a
+					>
+				</div>
 
 				<div>
 					<IconButton v-if="fileSystem instanceof PWAFileSystem" icon="folder" class="mr-1" @click="selectOrLoadBridgeFolder" />

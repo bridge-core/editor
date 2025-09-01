@@ -15,6 +15,18 @@ export function getFileSystem(): BaseFileSystem {
 
 export const fileSystem = getFileSystem()
 
+export async function loadBridgeFolder() {
+	if (!(fileSystem instanceof PWAFileSystem)) return
+
+	const savedHandle: undefined | FileSystemDirectoryHandle = await get('bridgeFolderHandle')
+
+	if (!fileSystem.baseHandle && savedHandle && (await fileSystem.ensurePermissions(savedHandle))) {
+		fileSystem.setBaseHandle(savedHandle)
+
+		return
+	}
+}
+
 export async function selectOrLoadBridgeFolder() {
 	if (!(fileSystem instanceof PWAFileSystem)) return
 
@@ -38,11 +50,7 @@ export async function selectOrLoadBridgeFolder() {
 	} catch {}
 }
 
-export async function iterateDirectory(
-	fileSystem: BaseFileSystem,
-	path: string,
-	callback: (entry: BaseEntry) => void | Promise<void>
-) {
+export async function iterateDirectory(fileSystem: BaseFileSystem, path: string, callback: (entry: BaseEntry) => void | Promise<void>) {
 	for (const entry of await fileSystem.readDirectoryEntries(path)) {
 		if (entry.kind === 'directory') {
 			await iterateDirectory(fileSystem, entry.path, callback)
