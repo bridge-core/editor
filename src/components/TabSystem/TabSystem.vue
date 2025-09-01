@@ -2,18 +2,23 @@
 import Icon from '@/components/Common/Icon.vue'
 import IconButton from '@/components/Common/IconButton.vue'
 import ContextMenu from '@/components/Common/ContextMenu.vue'
+import FreeContextMenu from '@/components/Common/FreeContextMenu.vue'
+import ActionContextMenuItem from '@/components/Common/ActionContextMenuItem.vue'
+import ContextMenuDivider from '@/components/Common/ContextMenuDivider.vue'
+import SubMenu from '@/components/Common/SubMenu.vue'
+import ContextMenuItem from '@/components/Common/ContextMenuItem.vue'
 
 import { TabSystem } from './TabSystem'
 import { FileTab } from './FileTab'
 import { Settings } from '@/libs/settings/Settings'
 import { TabManager } from './TabManager'
-import { computed, ComputedRef } from 'vue'
+import { computed, ComputedRef, Ref, ref } from 'vue'
 import { ProjectManager } from '@/libs/project/ProjectManager'
 import { BedrockProject } from '@/libs/project/BedrockProject'
 import { useTabActions } from '@/libs/actions/tab/TabActionManager'
 import { ActionManager } from '@/libs/actions/ActionManager'
 import { useTranslate } from '@/libs/locales/Locales'
-import ActionContextMenuItem from '../Common/ActionContextMenuItem.vue'
+import { Tab } from './Tab'
 
 const props = defineProps({
 	instance: {
@@ -45,6 +50,10 @@ const currentTabActions: ComputedRef<string[]> = computed(() => {
 
 	return tabActions.value.filter((tabAction) => tabAction.fileTypes.includes(fileType.id)).map((tabAction) => tabAction.action)
 })
+
+const contextMenu: Ref<typeof FreeContextMenu | null> = ref(null)
+const contextMenuTab: Ref<Tab | null> = ref(null)
+const contextMenuTabActions: Ref<string[]> = ref([])
 </script>
 
 <template>
@@ -61,6 +70,27 @@ const currentTabActions: ComputedRef<string[]> = computed(() => {
 					'border-background-secondary': instance.selectedTab.value === tab,
 				}"
 				@click="() => instance.selectTab(tab)"
+				@contextmenu.prevent.stop="
+					(event) => {
+						contextMenuTab = tab
+
+						if (
+							tab instanceof FileTab &&
+							ProjectManager.currentProject &&
+							ProjectManager.currentProject instanceof BedrockProject
+						) {
+							const fileType = ProjectManager.currentProject.fileTypeData.get(tab.path)
+
+							if (fileType) {
+								contextMenuTabActions = tabActions
+									.filter((tabAction) => tabAction.fileTypes.includes(fileType.id))
+									.map((tabAction) => tabAction.action)
+							}
+						}
+
+						contextMenu?.open(event)
+					}
+				"
 			>
 				<div class="relative">
 					<div
@@ -94,7 +124,7 @@ const currentTabActions: ComputedRef<string[]> = computed(() => {
 
 		<div
 			v-if="currentTabActions.length === 1"
-			@click="ActionManager.trigger(currentTabActions[0])"
+			@click="ActionManager.trigger(currentTabActions[0], (<FileTab>instance.selectedTab.value!).path)"
 			class="flex items-center select-none cursor-pointer group mt-1 mb-2"
 		>
 			<Icon icon="arrow_right" class="text-primary group-hover:text-accent transition-colors duration-100 ease-in-out" />
@@ -121,7 +151,12 @@ const currentTabActions: ComputedRef<string[]> = computed(() => {
 
 			<template #menu="{ close }">
 				<div class="w-56 bg-background-secondary rounded shadow-window overflow-hidden relative z-10">
-					<ActionContextMenuItem v-for="action in currentTabActions" :action="action" @click="close" />
+					<ActionContextMenuItem
+						v-for="action in currentTabActions"
+						:action="action"
+						:data="() => (<FileTab>instance.selectedTab.value!).path"
+						@click="close"
+					/>
 				</div>
 			</template>
 		</ContextMenu>
@@ -134,6 +169,40 @@ const currentTabActions: ComputedRef<string[]> = computed(() => {
 				:key="instance.selectedTab.value.id"
 			/>
 		</div>
+
+		<FreeContextMenu ref="contextMenu" v-slot="{ close }">
+			<ActionContextMenuItem action="tabs.close" :data="() => contextMenuTab!" @click.stop="close" />
+			<ActionContextMenuItem action="tabs.closeAll" @click.stop="close" />
+			<ActionContextMenuItem action="tabs.closeToRight" :data="() => contextMenuTab!" @click.stop="close" />
+			<ActionContextMenuItem action="tabs.closeSaved" @click.stop="close" />
+			<ActionContextMenuItem action="tabs.closeOther" :data="() => contextMenuTab!" @click.stop="close" />
+
+			<ContextMenuDivider />
+
+			<ActionContextMenuItem action="tabs.splitscreen" :data="() => contextMenuTab!" @click.stop="close" />
+
+			<ContextMenuDivider v-if="contextMenuTabActions.length > 0" />
+
+			<SubMenu v-if="contextMenuTabActions.length > 0">
+				<template #main="slotProps">
+					<ContextMenuItem icon="more_horiz" text="actions.more" @mouseenter="slotProps.show" @mouseleave="slotProps.hide" />
+				</template>
+
+				<template #menu="">
+					<ActionContextMenuItem
+						v-for="action in contextMenuTabActions"
+						:action="action"
+						@click="
+							() => {
+								ActionManager.trigger(action, (<FileTab>instance.selectedTab.value!).path)
+
+								close()
+							}
+						"
+					/>
+				</template>
+			</SubMenu>
+		</FreeContextMenu>
 	</div>
 </template>
 
