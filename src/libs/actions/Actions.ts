@@ -25,6 +25,7 @@ import { FileTab } from '@/components/TabSystem/FileTab'
 import { Extensions } from '@/libs/extensions/Extensions'
 import { FileExplorer } from '@/components/FileExplorer/FileExplorer'
 import { CreateProjectWindow } from '@/components/Windows/CreateProject/CreateProjectWindow'
+import { Tab } from '@/components/TabSystem/Tab'
 
 export function setupActions() {
 	setupFileTabActions()
@@ -44,6 +45,8 @@ export function setupActions() {
 	setupJsonTreeActions()
 
 	setupHelpActions()
+
+	setupTabActions()
 }
 
 function setupFileTabActions() {
@@ -1368,4 +1371,33 @@ function setupHelpActions() {
 			category: 'actions.help.name',
 		})
 	)
+}
+
+function setupTabActions() {
+	const close = ActionManager.addAction(
+		new Action({
+			id: 'tabs.close',
+			trigger: (data: unknown) => {
+				if (!(data instanceof Tab)) return
+
+				TabManager.removeTab(data)
+			},
+			name: 'actions.tabs.close.name',
+			description: 'actions.tabs.close.description',
+			icon: 'close',
+			visible: false,
+			requiresContext: true,
+			category: 'actions.tabs.name',
+		})
+	)
+
+	for (const action of [close]) {
+		TabManager.focusedTabSystemChanged.on(() => {
+			action.setVisible(
+				TabManager.focusedTabSystem.value !== null &&
+					TabManager.focusedTabSystem.value.selectedTab.value !== null &&
+					TabManager.focusedTabSystem.value.selectedTab.value instanceof FileTab
+			)
+		})
+	}
 }

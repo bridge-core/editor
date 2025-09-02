@@ -411,6 +411,12 @@
 				"name": "Releases",
 				"description": "Opens the editor releases page on github"
 			}
+		},
+		"tabs": {
+			"close": {
+				"name": "Close Tab",
+				"description": "Close the currently selected tab"
+			}
 		}
 	},
 	"toolbar": {

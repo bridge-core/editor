@@ -23,7 +23,7 @@ export class TabSystem {
 	private tabSaveListenters: Record<string, Disposable> = {}
 
 	public async addTab(tab: Tab, select = true, temporary = false) {
-		if (this.tabs.value.includes(tab)) {
+		if (this.hasTab(tab)) {
 			if (select) await this.selectTab(tab)
 
 			await this.saveState()
@@ -60,7 +60,7 @@ export class TabSystem {
 	}
 
 	public async selectTab(tab: Tab) {
-		if (this.selectedTab.value === tab) return
+		if (this.selectedTab.value?.id === tab.id) return
 
 		if (this.selectedTab.value !== null) {
 			this.selectedTab.value.active = false
@@ -78,7 +78,7 @@ export class TabSystem {
 	}
 
 	public async removeTab(tab: Tab) {
-		if (!this.tabs.value.includes(tab)) return
+		if (!this.hasTab(tab)) return
 
 		const selectedTab = this.selectedTab.value?.id === tab.id
 
@@ -238,5 +238,9 @@ export class TabSystem {
 		const previousIndex = index > 0 ? index - 1 : this.tabs.value.length - 1
 
 		await this.selectTab(this.tabs.value[previousIndex])
+	}
+
+	public hasTab(tab: Tab): boolean {
+		return this.tabs.value.some((otherTab) => otherTab.id === tab.id)
 	}
 }

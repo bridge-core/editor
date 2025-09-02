@@ -74,6 +74,12 @@ export class TabManager {
 		await tabSystem.clear()
 	}
 
+	public static async removeTab(tab: Tab) {
+		for (const tabSystem of this.tabSystems.value) {
+			if (tabSystem.hasTab(tab)) await tabSystem.removeTab(tab)
+		}
+	}
+
 	public static async clear() {
 		const tabSystems = TabManager.tabSystems.value
 
