@@ -416,6 +416,10 @@
 			"close": {
 				"name": "Close Tab",
 				"description": "Close the currently selected tab"
+			},
+			"closeAll": {
+				"name": "Close All Tabs",
+				"description": "Close all open tabs"
 			}
 		}
 	},

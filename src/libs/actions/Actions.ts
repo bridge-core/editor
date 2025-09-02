@@ -1391,6 +1391,25 @@ function setupTabActions() {
 		})
 	)
 
+	const closeAll = ActionManager.addAction(
+		new Action({
+			id: 'tabs.closeAll',
+			trigger: async () => {
+				for (const tabSystem of TabManager.tabSystems.value) {
+					for (const tab of tabSystem.tabs.value) {
+						await TabManager.removeTab(tab)
+					}
+				}
+			},
+			name: 'actions.tabs.closeAll.name',
+			description: 'actions.tabs.closeAll.description',
+			icon: 'close',
+			visible: false,
+			requiresContext: true,
+			category: 'actions.tabs.name',
+		})
+	)
+
 	for (const action of [close]) {
 		TabManager.focusedTabSystemChanged.on(() => {
 			action.setVisible(
