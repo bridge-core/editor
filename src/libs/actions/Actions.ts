@@ -269,6 +269,20 @@ function setupEditorActions() {
 		})
 	)
 
+	ActionManager.addAction(
+		new Action({
+			id: 'editor.launchMinecraft',
+			trigger() {
+				openUrl('minecraft:')
+			},
+			keyBinding: 'F5',
+			name: 'actions.editor.launchMinecraft.name',
+			description: 'actions.editor.launchMinecraft.description',
+			icon: 'play_arrow',
+			category: 'actions.editor.name',
+		})
+	)
+
 	ProjectManager.updatedCurrentProject.on(() => {
 		for (const action of [nextTabAction, previousTabAction, closeTabAction]) {
 			action.setVisible(ProjectManager.currentProject !== null)

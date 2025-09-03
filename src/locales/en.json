@@ -185,6 +185,10 @@
 			"closeTab": {
 				"name": "Close Tab",
 				"description": "Close the currently selected tab"
+			},
+			"launchMinecraft": {
+				"name": "Launch Minecraft",
+				"description": "Launch Minecraft to test your projects"
 			}
 		},
 		"files": {

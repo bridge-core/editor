@@ -33,17 +33,18 @@ export class Toolbar {
 
 		this.addDropdown('project', 'toolbar.project.name', [
 			{ type: 'button', action: 'editor.goHome' },
+			{ type: 'button', action: 'editor.launchMinecraft' },
 			{ type: 'seperator' },
-			{ type: 'button', action: 'editor.importProject' },
-			{ type: 'seperator' },
-			{
-				type: 'button',
-				action: 'editor.openExtensions',
-			},
 			{
 				type: 'button',
 				action: 'editor.openSettings',
 			},
+			{
+				type: 'button',
+				action: 'editor.openExtensions',
+			},
+			{ type: 'seperator' },
+			{ type: 'button', action: 'editor.importProject' },
 		])
 
 		this.addButton('openSettings')
