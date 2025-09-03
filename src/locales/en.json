@@ -429,6 +429,10 @@
 			"closeSaved": {
 				"name": "Close Saved",
 				"description": "Close all open unmodified tabs"
+			},
+			"closeOther": {
+				"name": "Close Other",
+				"description": "Close all other open tabs than the currently selected tab"
 			}
 		}
 	},

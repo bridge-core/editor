@@ -1468,13 +1468,38 @@ function setupTabActions() {
 			},
 			name: 'actions.tabs.closeSaved.name',
 			description: 'actions.tabs.closeSaved.description',
-			icon: 'tab_close',
+			icon: 'save',
 			visible: false,
 			category: 'actions.tabs.name',
 		})
 	)
 
-	for (const action of [close, closeAll, closeToRight, closeSaved]) {
+	const closeOther = ActionManager.addAction(
+		new Action({
+			id: 'tabs.closeOther',
+			trigger: async (data: unknown) => {
+				if (!(data instanceof Tab)) return
+
+				for (const tabSystem of TabManager.tabSystems.value) {
+					const tabs = [...tabSystem.tabs.value]
+
+					for (const tab of tabs) {
+						if (tab.id === data.id) continue
+
+						await TabManager.removeTab(tab)
+					}
+				}
+			},
+			name: 'actions.tabs.closeOther.name',
+			description: 'actions.tabs.closeOther.description',
+			icon: 'tab_close_inactive',
+			visible: false,
+			requiresContext: true,
+			category: 'actions.tabs.name',
+		})
+	)
+
+	for (const action of [close, closeAll, closeToRight, closeSaved, closeOther]) {
 		TabManager.focusedTabSystemChanged.on(() => {
 			action.setVisible(
 				TabManager.focusedTabSystem.value !== null &&
