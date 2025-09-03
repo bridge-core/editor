@@ -1450,7 +1450,31 @@ function setupTabActions() {
 		})
 	)
 
-	for (const action of [close, closeAll, closeToRight]) {
+	const closeSaved = ActionManager.addAction(
+		new Action({
+			id: 'tabs.closeSaved',
+			trigger: async () => {
+				const tabSystems = [...TabManager.tabSystems.value]
+
+				for (const tabSystem of tabSystems) {
+					const tabs = [...tabSystem.tabs.value]
+
+					for (const tab of tabs) {
+						if (tab instanceof FileTab && tab.modified.value) continue
+
+						await TabManager.removeTab(tab)
+					}
+				}
+			},
+			name: 'actions.tabs.closeSaved.name',
+			description: 'actions.tabs.closeSaved.description',
+			icon: 'tab_close',
+			visible: false,
+			category: 'actions.tabs.name',
+		})
+	)
+
+	for (const action of [close, closeAll, closeToRight, closeSaved]) {
 		TabManager.focusedTabSystemChanged.on(() => {
 			action.setVisible(
 				TabManager.focusedTabSystem.value !== null &&

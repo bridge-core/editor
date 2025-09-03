@@ -424,6 +424,10 @@
 			"closeToRight": {
 				"name": "Close to the Right",
 				"description": "Close all open tabs to the right of the currently selected tab"
+			},
+			"closeSaved": {
+				"name": "Close Saved",
+				"description": "Close all open unmodified tabs"
 			}
 		}
 	},
