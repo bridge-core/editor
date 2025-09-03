@@ -27,7 +27,7 @@ function cancel() {
 					Windows.close(window)
 				}">
 					<span class="flex gap-2 items-center mb-1">
-						<Icon :icon="choice.icon"/>
+						<Icon :icon="choice.icon" class="text-primary"/>
 
 						<h1 class="font-theme font-bold text-lg">{{ t(choice.name) }}</h1>
 					</span>
