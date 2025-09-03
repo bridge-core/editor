@@ -96,10 +96,13 @@ function cleanupDropdownItems(items: DropdownItem[]): DropdownItem[] {
 		</div>
 
 		<div class="flex gap-4 items-center">
-			<div class="flex gap-2 items-center hover:cursor-pointer" @click="openChangelog">
+			<div class="flex gap-2 items-center hover:cursor-pointer group" @click="openChangelog">
 				<Logo class="w-4" />
 
-				<span v-if="!isMobile" class="text-sm text-text-secondary font-theme transition ease-out hover:text-accent duration-100">
+				<span
+					v-if="!isMobile"
+					class="text-sm text-text-secondary font-theme transition ease-out group-hover:text-accent duration-100"
+				>
 					v{{ appVersion }}
 				</span>
 			</div>
