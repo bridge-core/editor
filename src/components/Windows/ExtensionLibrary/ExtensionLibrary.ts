@@ -4,13 +4,8 @@ import { ExtensionManifest } from '@/libs/extensions/Extension'
 import { Data } from '@/libs/data/Data'
 import { Extensions } from '@/libs/extensions/Extensions'
 import { Window } from '@/components/Windows/Window'
+import { InformedChoiceWindow } from '@/components/Windows/InformedChoice/InformedChoiceWindow'
 import ExtensionLibrary from './ExtensionLibrary.vue'
-import ExtensionInstallLocation from './ExtensionInstallLocation.vue'
-
-export class ExtensionInstallLocationWindow extends Window {
-	public static id = 'extensionInstallLocationWindow'
-	public static component = ExtensionInstallLocation
-}
 
 export class ExtensionLibraryWindow extends Window {
 	public static tags: Record<string, { icon: string; color?: string }> = {}
@@ -41,7 +36,26 @@ export class ExtensionLibraryWindow extends Window {
 	public static requestInstall(extension: ExtensionManifest) {
 		ExtensionLibraryWindow.extensionToInstall = extension
 
-		Windows.open(ExtensionInstallLocationWindow)
+		Windows.open(
+			new InformedChoiceWindow('Extension Install Location', [
+				{
+					icon: 'public',
+					name: 'Install Globally',
+					description: 'Global extensions are accessible to all of your projects',
+					choose: () => {
+						ExtensionLibraryWindow.confirmInstallGlobal()
+					},
+				},
+				{
+					icon: 'folder',
+					name: 'Install Locally',
+					description: 'Local extensions are accessible to only the projects you install them to',
+					choose: () => {
+						ExtensionLibraryWindow.confirmInstallProject()
+					},
+				},
+			])
+		)
 	}
 
 	public static confirmInstallGlobal() {

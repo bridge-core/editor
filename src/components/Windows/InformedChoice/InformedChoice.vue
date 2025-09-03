@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import Window from '@/components/Windows/Window.vue'
-import Button from '@/components/Common/Button.vue'
 
 import { useTranslate } from '@/libs/locales/Locales'
 import type { InformedChoiceWindow } from './InformedChoiceWindow'
