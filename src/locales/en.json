@@ -420,6 +420,10 @@
 			"closeAll": {
 				"name": "Close All Tabs",
 				"description": "Close all open tabs"
+			},
+			"closeToRight": {
+				"name": "Close to the Right",
+				"description": "Close all open tabs to the right of the currently selected tab"
 			}
 		}
 	},

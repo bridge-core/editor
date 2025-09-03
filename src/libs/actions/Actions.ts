@@ -1413,7 +1413,44 @@ function setupTabActions() {
 		})
 	)
 
-	for (const action of [close, closeAll]) {
+	const closeToRight = ActionManager.addAction(
+		new Action({
+			id: 'tabs.closeToRight',
+			trigger: async (data: unknown) => {
+				if (!(data instanceof Tab)) return
+
+				for (const tabSystem of TabManager.tabSystems.value) {
+					if (tabSystem.hasTab(data)) {
+						const tabs = [...tabSystem.tabs.value]
+
+						let active = false
+
+						for (const tab of tabs) {
+							if (tab.id === data.id) {
+								active = true
+
+								continue
+							}
+
+							if (!active) continue
+
+							await TabManager.removeTab(tab)
+						}
+
+						break
+					}
+				}
+			},
+			name: 'actions.tabs.closeToRight.name',
+			description: 'actions.tabs.closeToRight.description',
+			icon: 'tab_close_right',
+			visible: false,
+			requiresContext: true,
+			category: 'actions.tabs.name',
+		})
+	)
+
+	for (const action of [close, closeAll, closeToRight]) {
 		TabManager.focusedTabSystemChanged.on(() => {
 			action.setVisible(
 				TabManager.focusedTabSystem.value !== null &&
