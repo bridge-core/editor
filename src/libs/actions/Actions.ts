@@ -768,6 +768,7 @@ function setupFileSystemActions() {
 		duplicateFileSystemEntry,
 		copyFileSystemEntry,
 		pasteFileSystemEntry,
+		openToSide,
 	]) {
 		ProjectManager.updatedCurrentProject.on(() => {
 			action.setVisible(ProjectManager.currentProject !== null)
