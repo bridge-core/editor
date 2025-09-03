@@ -413,6 +413,7 @@
 			}
 		},
 		"tabs": {
+			"name": "Tabs",
 			"close": {
 				"name": "Close Tab",
 				"description": "Close the currently selected tab"
