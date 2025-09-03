@@ -67,6 +67,7 @@ export class Toolbar {
 			{ type: 'button', action: 'help.bedrockDevDocs' },
 			{ type: 'button', action: 'help.creatorDocs' },
 			{ type: 'seperator' },
+			{ type: 'button', action: 'help.openChangelog' },
 			{ type: 'button', action: 'help.releases' },
 		])
 

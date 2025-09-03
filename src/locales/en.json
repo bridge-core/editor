@@ -414,6 +414,10 @@
 			"releases": {
 				"name": "Releases",
 				"description": "Opens the editor releases page on github"
+			},
+			"openChangelog": {
+				"name": "Open Changelog",
+				"description": "Opens the changelog for the current version of bridge."
 			}
 		},
 		"tabs": {
@@ -661,8 +665,8 @@
 			"github": "GitHub",
 			"copy": "Copy"
 		},
-		"changelogWindow": {
-			"title": "What's new?"
+		"about": {
+			"title": "About"
 		},
 		"openFile": {
 			"title": "Open",

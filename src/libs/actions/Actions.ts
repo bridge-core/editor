@@ -26,6 +26,7 @@ import { Extensions } from '@/libs/extensions/Extensions'
 import { FileExplorer } from '@/components/FileExplorer/FileExplorer'
 import { CreateProjectWindow } from '@/components/Windows/CreateProject/CreateProjectWindow'
 import { Tab } from '@/components/TabSystem/Tab'
+import { appVersion } from '@/libs/app/AppEnv'
 
 export function setupActions() {
 	setupFileTabActions()
@@ -1383,6 +1384,19 @@ function setupHelpActions() {
 			name: 'actions.help.releases.name',
 			description: 'actions.help.releases.description',
 			icon: 'publish',
+			category: 'actions.help.name',
+		})
+	)
+
+	ActionManager.addAction(
+		new Action({
+			id: 'help.openChangelog',
+			trigger() {
+				openUrl(`https://github.com/bridge-core/editor/releases/tag/v${appVersion}`)
+			},
+			name: 'actions.help.openChangelog.name',
+			description: 'actions.help.openChangelog.description',
+			icon: 'deployed_code_history',
 			category: 'actions.help.name',
 		})
 	)
