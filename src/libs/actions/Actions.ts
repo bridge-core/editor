@@ -1395,22 +1395,25 @@ function setupTabActions() {
 		new Action({
 			id: 'tabs.closeAll',
 			trigger: async () => {
-				for (const tabSystem of TabManager.tabSystems.value) {
-					for (const tab of tabSystem.tabs.value) {
+				const tabSystems = [...TabManager.tabSystems.value]
+
+				for (const tabSystem of tabSystems) {
+					const tabs = [...tabSystem.tabs.value]
+
+					for (const tab of tabs) {
 						await TabManager.removeTab(tab)
 					}
 				}
 			},
 			name: 'actions.tabs.closeAll.name',
 			description: 'actions.tabs.closeAll.description',
-			icon: 'close',
+			icon: 'tab_close',
 			visible: false,
-			requiresContext: true,
 			category: 'actions.tabs.name',
 		})
 	)
 
-	for (const action of [close]) {
+	for (const action of [close, closeAll]) {
 		TabManager.focusedTabSystemChanged.on(() => {
 			action.setVisible(
 				TabManager.focusedTabSystem.value !== null &&
