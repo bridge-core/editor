@@ -5,20 +5,20 @@ import ContextMenu from '@/components/Common/ContextMenu.vue'
 import ActionContextMenuItem from '@/components/Common/ActionContextMenuItem.vue'
 
 import { Windows } from '@/components/Windows/Windows'
+import { AboutWindow } from '@/components/Windows/About/AboutWindow'
 import { appVersion } from '@/libs/app/AppEnv'
 import { useTranslate } from '@/libs/locales/Locales'
 import { appWindow } from '@tauri-apps/api/window'
 import { tauriBuild } from '@/libs/tauri/Tauri'
 import { DropdownItem, Toolbar, ToolbarItem } from './Toolbar'
-import { ChangelogWindow } from '@/components/Windows/Changelog/ChangelogWindow'
-import { ActionManager, useAction } from '@/libs/actions/ActionManager'
+import { ActionManager } from '@/libs/actions/ActionManager'
 import { useIsMobile } from '@/libs/Mobile'
 import { onMounted, Ref, ref, watch } from 'vue'
 
 const t = useTranslate()
 
 function openChangelog() {
-	Windows.open(ChangelogWindow)
+	Windows.open(AboutWindow)
 }
 
 const isMobile = useIsMobile()
