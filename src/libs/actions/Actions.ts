@@ -92,9 +92,12 @@ function setupFileTabActions() {
 						'Name',
 						'Name',
 						async (newName) => {
-							if (!(await fileSystem.exists(path))) return
+							const newPath = join(dirname(path), newName)
 
-							focusedTab.saveAs(join(dirname(path), newName))
+							await focusedTab.saveAs(newPath)
+
+							await TabManager.removeTab(focusedTab)
+							await TabManager.openFile(newPath)
 						},
 						() => {},
 						basename(path)

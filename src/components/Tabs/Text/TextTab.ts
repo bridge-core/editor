@@ -265,8 +265,6 @@ export class TextTab extends FileTab {
 		this.modified.value = false
 
 		await fileSystem.writeFile(savePath, this.model.getValue())
-
-		this.icon.value = this.fileTypeIcon
 	}
 
 	public copy() {
