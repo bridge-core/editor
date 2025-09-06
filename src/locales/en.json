@@ -391,6 +391,10 @@
 			"importFile": {
 				"name": "Import File",
 				"description": "Import a file in the project"
+			},
+			"revealInFileExplorer": {
+				"name": "Open Project Folder",
+				"description": "Opens the project folder in your systems file explorer"
 			}
 		},
 		"help": {

@@ -57,7 +57,10 @@ const selectedPackPath: ComputedRef<string> = computed(() => {
 
 	return (
 		currentProject.value.packs[selectedPack.value] ??
-		join(currentProject.value.path, currentProject.value.packDefinitions.find((pack: IPackType) => pack.id === selectedPack.value)?.defaultPackPath ?? '')
+		join(
+			currentProject.value.path,
+			currentProject.value.packDefinitions.find((pack: IPackType) => pack.id === selectedPack.value)?.defaultPackPath ?? ''
+		)
 	)
 })
 
@@ -228,7 +231,12 @@ function drop(event: DragEvent) {
 
 							<SubMenu>
 								<template #main="slotProps">
-									<ContextMenuItem icon="ios_share" text="Export As" @mouseenter="slotProps.show" @mouseleave="slotProps.hide" />
+									<ContextMenuItem
+										icon="ios_share"
+										text="Export As"
+										@mouseenter="slotProps.show"
+										@mouseleave="slotProps.hide"
+									/>
 								</template>
 
 								<template #menu="">
@@ -247,7 +255,13 @@ function drop(event: DragEvent) {
 
 							<div class="bg-background-tertiary w-full h-[2px] my-1"></div>
 
-							<ContextMenuItem text="Open Project Config" icon="settings" @click="() => contextMenuOpenProjectConfig(close)" />
+							<ContextMenuItem
+								text="Open Project Config"
+								icon="settings"
+								@click="() => contextMenuOpenProjectConfig(close)"
+							/>
+
+							<ActionContextMenuItem action="project.revealInFileExplorer" @click="close" />
 						</div>
 					</template>
 				</ContextMenu>
@@ -255,7 +269,12 @@ function drop(event: DragEvent) {
 
 			<div class="h-full" @contextmenu.prevent="contextMenu?.open" @dragenter="dragEnter" @dragleave="dragLeave" @drop="drop">
 				<div v-for="entry in orderedEntries" :key="entry.path">
-					<File v-if="entry.kind === 'file'" :path="entry.path" :color="selectedPackDefinition!.color" :preview="FileExplorer.draggedItem.value?.path === entry.path" />
+					<File
+						v-if="entry.kind === 'file'"
+						:path="entry.path"
+						:color="selectedPackDefinition!.color"
+						:preview="FileExplorer.draggedItem.value?.path === entry.path"
+					/>
 
 					<Directory
 						v-if="entry.kind === 'directory'"

@@ -447,6 +447,28 @@ function setupProjectActions() {
 		)
 	)
 
+	projectActions.push(
+		ActionManager.addAction(
+			new Action({
+				id: 'project.revealInFileExplorer',
+				trigger: () => {
+					if (!tauriBuild) return
+
+					if (!(fileSystem instanceof TauriFileSystem)) return
+
+					if (!ProjectManager.currentProject) return
+
+					fileSystem.revealInFileExplorer(ProjectManager.currentProject.path)
+				},
+				name: 'actions.project.revealInFileExplorer.name',
+				description: 'actions.project.revealInFileExplorer.description',
+				icon: 'folder_open',
+				visible: false,
+				category: 'actions.project.name',
+			})
+		)
+	)
+
 	ProjectManager.updatedCurrentProject.on(() => {
 		for (const action of projectActions) {
 			action.setVisible(ProjectManager.currentProject !== null)
