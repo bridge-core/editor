@@ -27,6 +27,7 @@ import { FileExplorer } from '@/components/FileExplorer/FileExplorer'
 import { CreateProjectWindow } from '@/components/Windows/CreateProject/CreateProjectWindow'
 import { Tab } from '@/components/TabSystem/Tab'
 import { appVersion } from '@/libs/app/AppEnv'
+import { ImporterManager } from '../import/ImporterManager'
 
 export function setupActions() {
 	setupFileTabActions()
@@ -234,6 +235,32 @@ function setupEditorActions() {
 			},
 			name: 'actions.editor.importProject.name',
 			description: 'actions.editor.importProject.description',
+			icon: 'package',
+			category: 'actions.editor.name',
+		})
+	)
+
+	ActionManager.addAction(
+		new Action({
+			id: 'editor.importFile',
+			trigger: async () => {
+				const files = await window.showOpenFilePicker({
+					multiple: true,
+					types: [
+						{
+							description: 'Choose a File',
+						},
+					],
+				})
+
+				if (!files) return
+
+				for (const file of files) {
+					await ImporterManager.importFile(file)
+				}
+			},
+			name: 'actions.editor.importFile.name',
+			description: 'actions.editor.importFile.description',
 			icon: 'package',
 			category: 'actions.editor.name',
 		})
