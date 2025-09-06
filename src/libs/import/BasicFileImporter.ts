@@ -38,6 +38,9 @@ export class BasicFileImporter extends FileImporter {
 		}
 
 		const targetPath = join(basePath, fileHandle.name)
+
+		await fileSystem.ensureDirectory(targetPath)
+
 		const suitablePath = await fileSystem.findSuitableFileName(targetPath)
 
 		await fileSystem.writeFile(suitablePath, await (await fileHandle.getFile()).arrayBuffer())
