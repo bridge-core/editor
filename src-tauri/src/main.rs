@@ -8,6 +8,7 @@ use tauri::Manager;
 use window_shadows::set_shadow;
 
 mod watch;
+mod fs_extra;
 
 fn main() {
     let watcher_mutex: Arc<Mutex<Option<RecommendedWatcher>>> = Arc::new(Mutex::new(None));
@@ -15,7 +16,7 @@ fn main() {
     let app_watcher_mutex = watcher_mutex.clone();
     tauri::Builder::default()
         .manage(watcher_mutex)
-        .invoke_handler(tauri::generate_handler![watch::watch, watch::unwatch])
+        .invoke_handler(tauri::generate_handler![watch::watch, watch::unwatch, fs_extra::reveal_in_file_explorer,])
         .setup(move |app| {
             let window = app.get_window("main").unwrap();
 

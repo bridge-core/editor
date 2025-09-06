@@ -240,6 +240,10 @@
 			"openToSide": {
 				"name": "Open To Side",
 				"description": "Opens the file in a side window"
+			},
+			"revealInFileExplorer": {
+				"name": "Reveal in File Explorer",
+				"description": "Opens the file or folder in your systems file explorer"
 			}
 		},
 		"textEditor": {

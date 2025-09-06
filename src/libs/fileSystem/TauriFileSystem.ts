@@ -203,4 +203,10 @@ export class TauriFileSystem extends BaseFileSystem {
 	public async unwatch(path: string) {
 		invoke('unwatch', { path: join(this.basePath, path) })
 	}
+
+	public async revealInFileExplorer(path: string) {
+		await invoke('reveal_in_file_explorer', {
+			path: join(this.basePath, path),
+		})
+	}
 }

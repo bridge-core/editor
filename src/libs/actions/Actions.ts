@@ -28,6 +28,8 @@ import { CreateProjectWindow } from '@/components/Windows/CreateProject/CreatePr
 import { Tab } from '@/components/TabSystem/Tab'
 import { appVersion } from '@/libs/app/AppEnv'
 import { ImporterManager } from '@/libs/import/ImporterManager'
+import { tauriBuild } from '@/libs/tauri/Tauri'
+import { TauriFileSystem } from '@/libs/fileSystem/TauriFileSystem'
 
 export function setupActions() {
 	setupFileTabActions()
@@ -862,6 +864,27 @@ function setupFileSystemActions() {
 		})
 	)
 
+	const revealInFileExplorer = ActionManager.addAction(
+		new Action({
+			id: 'files.revealInFileExplorer',
+			trigger: (path: unknown) => {
+				if (!(typeof path === 'string')) return
+
+				if (!tauriBuild) return
+
+				if (!(fileSystem instanceof TauriFileSystem)) return
+
+				fileSystem.revealInFileExplorer(path)
+			},
+			name: 'actions.files.revealInFileExplorer.name',
+			description: 'actions.files.revealInFileExplorer.description',
+			icon: 'folder_open',
+			visible: false,
+			requiresContext: true,
+			category: 'actions.files.name',
+		})
+	)
+
 	for (const action of [
 		deleteFileSystemEntry,
 		createFile,
@@ -871,6 +894,7 @@ function setupFileSystemActions() {
 		copyFileSystemEntry,
 		pasteFileSystemEntry,
 		openToSide,
+		revealInFileExplorer,
 	]) {
 		ProjectManager.updatedCurrentProject.on(() => {
 			action.setVisible(ProjectManager.currentProject !== null)

@@ -88,6 +88,7 @@ onMounted(() => {
 			<ActionContextMenuItem action="files.copyFileSystemEntry" :data="() => path" @click="close" />
 			<ActionContextMenuItem action="files.pasteFileSystemEntry" :data="() => path" @click="close" />
 			<ActionContextMenuItem action="files.openToSide" :data="() => path" @click="close" />
+			<ActionContextMenuItem action="files.revealInFileExplorer" :data="() => path" @click="close" />
 
 			<ContextMenuDivider v-if="fileActions.length > 0" />
 
