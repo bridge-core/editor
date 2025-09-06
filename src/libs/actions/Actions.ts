@@ -27,7 +27,7 @@ import { FileExplorer } from '@/components/FileExplorer/FileExplorer'
 import { CreateProjectWindow } from '@/components/Windows/CreateProject/CreateProjectWindow'
 import { Tab } from '@/components/TabSystem/Tab'
 import { appVersion } from '@/libs/app/AppEnv'
-import { ImporterManager } from '../import/ImporterManager'
+import { ImporterManager } from '@/libs/import/ImporterManager'
 
 export function setupActions() {
 	setupFileTabActions()
@@ -261,7 +261,24 @@ function setupEditorActions() {
 			},
 			name: 'actions.editor.importFile.name',
 			description: 'actions.editor.importFile.description',
-			icon: 'package',
+			icon: 'file_open',
+			category: 'actions.editor.name',
+		})
+	)
+
+	ActionManager.addAction(
+		new Action({
+			id: 'editor.openFolder',
+			trigger: async () => {
+				const directory = await window.showDirectoryPicker()
+
+				if (!directory) return
+
+				await ImporterManager.importDirectory(directory)
+			},
+			name: 'actions.editor.openFolder.name',
+			description: 'actions.editor.openFolder.description',
+			icon: 'drive_folder_upload',
 			category: 'actions.editor.name',
 		})
 	)

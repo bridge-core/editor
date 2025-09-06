@@ -170,6 +170,14 @@
 				"name": "Import Project",
 				"description": "Import a new project"
 			},
+			"importFile": {
+				"name": "Import File",
+				"description": "Import a file in the project"
+			},
+			"openFolder": {
+				"name": "Open Folder",
+				"description": "Open a folder"
+			},
 			"reloadEditor": {
 				"name": "Reload Editor",
 				"description": "Completely reloads the editor"

@@ -45,12 +45,14 @@ export class Toolbar {
 			},
 			{ type: 'seperator' },
 			{ type: 'button', action: 'editor.importProject' },
+			{ type: 'button', action: 'editor.openFolder' },
 		])
 
 		this.addButton('openSettings')
 
 		this.addDropdown('file', 'toolbar.file.name', [
 			{ type: 'button', action: 'files.createFile' },
+			{ type: 'button', action: 'editor.importFile' },
 			{ type: 'seperator' },
 			{ type: 'button', action: 'files.save' },
 			{ type: 'button', action: 'files.saveAs' },
