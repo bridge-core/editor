@@ -188,6 +188,15 @@ export class TreeEditorTab extends FileTab {
 		this.icon.value = this.fileTypeIcon
 	}
 
+	public async saveAs(savePath: string) {
+		this.modified.value = false
+		this.icon.value = 'loading'
+
+		await fileSystem.writeFile(savePath, JSON.stringify(this.tree.value.toJson(), null, 2))
+
+		this.icon.value = this.fileTypeIcon
+	}
+
 	public select(tree: TreeElements) {
 		this.selectedTree.value = { type: 'value', tree }
 	}

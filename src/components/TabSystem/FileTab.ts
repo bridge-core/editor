@@ -28,4 +28,5 @@ export class FileTab extends Tab {
 	public async activate() {}
 	public async deactivate() {}
 	public async save() {}
+	public async saveAs(savePath: string) {}
 }

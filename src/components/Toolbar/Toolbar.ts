@@ -52,7 +52,9 @@ export class Toolbar {
 		this.addDropdown('file', 'toolbar.file.name', [
 			{ type: 'button', action: 'files.createFile' },
 			{ type: 'seperator' },
-			{ type: 'button', action: 'filessave' },
+			{ type: 'button', action: 'files.save' },
+			{ type: 'button', action: 'files.saveAs' },
+			{ type: 'button', action: 'files.saveAll' },
 		])
 
 		this.addDropdown('tools', 'toolbar.tools.name', [{ type: 'button', action: 'editor.clearNotifications' }])

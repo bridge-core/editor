@@ -251,6 +251,24 @@ export class TextTab extends FileTab {
 		this.icon.value = this.fileTypeIcon
 	}
 
+	public async saveAs(savePath: string) {
+		if (!this.model) return
+		if (!this.editor) return
+
+		this.icon.value = 'loading'
+
+		if (Settings.get('formatOnSave')) {
+			await this.format()
+		}
+
+		this.initialVersionId = this.model.getVersionId()
+		this.modified.value = false
+
+		await fileSystem.writeFile(savePath, this.model.getValue())
+
+		this.icon.value = this.fileTypeIcon
+	}
+
 	public copy() {
 		if (!this.model) return
 		if (!this.editor) return

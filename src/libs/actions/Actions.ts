@@ -72,6 +72,44 @@ function setupFileTabActions() {
 		})
 	)
 
+	const saveAs = ActionManager.addAction(
+		new Action({
+			id: 'files.saveAs',
+			trigger: async () => {
+				const focusedTab = TabManager.getFocusedTab()
+
+				if (focusedTab === null) return
+
+				if (!(focusedTab instanceof FileTab)) return
+
+				const path = focusedTab.path
+
+				if (!(await fileSystem.exists(path))) return
+
+				Windows.open(
+					new PromptWindow(
+						'Save As',
+						'Name',
+						'Name',
+						async (newName) => {
+							if (!(await fileSystem.exists(path))) return
+
+							focusedTab.saveAs(join(dirname(path), newName))
+						},
+						() => {},
+						basename(path)
+					)
+				)
+			},
+			keyBinding: 'Ctrl + Shift + S',
+			name: 'actions.files.saveAs.name',
+			description: 'actions.files.saveAs.description',
+			icon: 'save_as',
+			visible: false,
+			category: 'actions.files.name',
+		})
+	)
+
 	const saveAll = ActionManager.addAction(
 		new Action({
 			id: 'files.saveAll',
@@ -84,7 +122,7 @@ function setupFileTabActions() {
 					}
 				}
 			},
-			keyBinding: 'Ctrl + Shift + S',
+			keyBinding: 'Ctrl + Alt + S',
 			name: 'actions.files.saveAll.name',
 			description: 'actions.files.saveAll.description',
 			icon: 'save',
@@ -93,7 +131,7 @@ function setupFileTabActions() {
 		})
 	)
 
-	for (const action of [save, saveAll]) {
+	for (const action of [save, saveAll, saveAs]) {
 		TabManager.focusedTabSystemChanged.on(() => {
 			action.setVisible(
 				TabManager.focusedTabSystem.value !== null &&
@@ -1332,7 +1370,6 @@ function setupHelpActions() {
 			description: 'actions.help.scriptingDocs.description',
 			icon: 'data_array',
 			category: 'actions.help.name',
-			keyBinding: 'Ctrl + Alt + S',
 		})
 	)
 
