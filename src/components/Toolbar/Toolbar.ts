@@ -52,7 +52,7 @@ export class Toolbar {
 
 		this.addDropdown('file', 'toolbar.file.name', [
 			{ type: 'button', action: 'files.createFile' },
-			{ type: 'button', action: 'editor.importFile' },
+			{ type: 'button', action: 'project.importFile' },
 			{ type: 'seperator' },
 			{ type: 'button', action: 'files.save' },
 			{ type: 'button', action: 'files.saveAs' },

@@ -242,32 +242,6 @@ function setupEditorActions() {
 
 	ActionManager.addAction(
 		new Action({
-			id: 'editor.importFile',
-			trigger: async () => {
-				const files = await window.showOpenFilePicker({
-					multiple: true,
-					types: [
-						{
-							description: 'Choose a File',
-						},
-					],
-				})
-
-				if (!files) return
-
-				for (const file of files) {
-					await ImporterManager.importFile(file)
-				}
-			},
-			name: 'actions.editor.importFile.name',
-			description: 'actions.editor.importFile.description',
-			icon: 'file_open',
-			category: 'actions.editor.name',
-		})
-	)
-
-	ActionManager.addAction(
-		new Action({
 			id: 'editor.openFolder',
 			trigger: async () => {
 				const directory = await window.showDirectoryPicker()
@@ -441,6 +415,34 @@ function setupProjectActions() {
 			icon: 'add',
 			category: 'actions.project.name',
 		})
+	)
+
+	projectActions.push(
+		ActionManager.addAction(
+			new Action({
+				id: 'project.importFile',
+				trigger: async () => {
+					const files = await window.showOpenFilePicker({
+						multiple: true,
+						types: [
+							{
+								description: 'Choose a File',
+							},
+						],
+					})
+
+					if (!files) return
+
+					for (const file of files) {
+						await ImporterManager.importFile(file)
+					}
+				},
+				name: 'actions.project.importFile.name',
+				description: 'actions.project.importFile.description',
+				icon: 'file_open',
+				category: 'actions.project.name',
+			})
+		)
 	)
 
 	ProjectManager.updatedCurrentProject.on(() => {
