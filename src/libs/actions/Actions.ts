@@ -345,6 +345,23 @@ function setupEditorActions() {
 		})
 	)
 
+	ActionManager.addAction(
+		new Action({
+			id: 'editor.revealBridgeFolder',
+			trigger: () => {
+				if (!tauriBuild) return
+
+				if (!(fileSystem instanceof TauriFileSystem)) return
+
+				fileSystem.revealInFileExplorer('/')
+			},
+			name: 'actions.editor.revealBridgeFolder.name',
+			description: 'actions.editor.revealBridgeFolder.description',
+			icon: 'folder_open',
+			category: 'actions.editor.name',
+		})
+	)
+
 	ProjectManager.updatedCurrentProject.on(() => {
 		for (const action of [nextTabAction, previousTabAction, closeTabAction]) {
 			action.setVisible(ProjectManager.currentProject !== null)

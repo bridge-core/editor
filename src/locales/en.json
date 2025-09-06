@@ -193,6 +193,10 @@
 			"launchMinecraft": {
 				"name": "Launch Minecraft",
 				"description": "Launch Minecraft to test your projects"
+			},
+			"revealBridgeFolder": {
+				"name": "Open bridge. Folder",
+				"description": "Opens the bridge. folder in your systems file explorer"
 			}
 		},
 		"files": {
