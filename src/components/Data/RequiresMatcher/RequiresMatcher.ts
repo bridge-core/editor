@@ -20,7 +20,7 @@ export interface IRequirements {
 	/**
 	 * Check for manifest dependencies to be present in the pack.
 	 */
-	dependencies?: { module_name: string; version?: string }[]
+	dependencies?: { module_name: string; version?: string | string[] }[]
 	/**
 	 * Whether all conditions must be met. If set to false, any condition met makes the matcher valid.
 	 */
@@ -201,17 +201,26 @@ export class RequiresMatcher {
 			!requires.dependencies ||
 			!dependencies ||
 			requires?.dependencies.every((dep) => {
-				for (const dependency of dependencies) {
-					if (dependency.module_name !== dep.module_name) continue
+				for (const manifestDep of dependencies) {
+					if (manifestDep.module_name !== dep.module_name) continue
+					if (!manifestDep.version) continue
+
+					// Single version validation
 					if (
-						dependency.version &&
-						dependency.version !== dep.version
+						typeof dep.version === 'string' &&
+						manifestDep.version !== dep.version
+					)
+						continue
+
+					// Multiple version validation
+					if (
+						Array.isArray(dep.version) &&
+						!dep.version.includes(manifestDep.version)
 					)
 						continue
 
 					return true
 				}
-
 				return false
 			})
 
