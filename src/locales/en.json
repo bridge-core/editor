@@ -197,6 +197,14 @@
 			"revealBridgeFolder": {
 				"name": "Open bridge. Folder",
 				"description": "Opens the bridge. folder in your systems file explorer"
+			},
+			"revealOutputFolder": {
+				"name": "Open Output Folder",
+				"description": "Opens the current output folder in your systems file explorer"
+			},
+			"revealExtensionsFolder": {
+				"name": "Open bridge. extensions Folder",
+				"description": "Opens the bridge. extensions folder in your systems file explorer"
 			}
 		},
 		"files": {

@@ -362,6 +362,40 @@ function setupEditorActions() {
 		})
 	)
 
+	ActionManager.addAction(
+		new Action({
+			id: 'editor.revealOutputFolder',
+			trigger: () => {
+				if (!tauriBuild) return
+
+				if (!(fileSystem instanceof TauriFileSystem)) return
+
+				// fileSystem.revealInFileExplorer('/')
+			},
+			name: 'actions.editor.revealOutputFolder.name',
+			description: 'actions.editor.revealOutputFolder.description',
+			icon: 'manufacturing',
+			category: 'actions.editor.name',
+		})
+	)
+
+	ActionManager.addAction(
+		new Action({
+			id: 'editor.revealExtensionsFolder',
+			trigger: () => {
+				if (!tauriBuild) return
+
+				if (!(fileSystem instanceof TauriFileSystem)) return
+
+				fileSystem.revealInFileExplorer('/extensions')
+			},
+			name: 'actions.editor.revealExtensionsFolder.name',
+			description: 'actions.editor.revealExtensionsFolder.description',
+			icon: 'extension',
+			category: 'actions.editor.name',
+		})
+	)
+
 	ProjectManager.updatedCurrentProject.on(() => {
 		for (const action of [nextTabAction, previousTabAction, closeTabAction]) {
 			action.setVisible(ProjectManager.currentProject !== null)

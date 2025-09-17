@@ -45,8 +45,11 @@ export class Toolbar {
 			},
 			{ type: 'seperator' },
 			{ type: 'button', action: 'editor.importProject' },
+			{ type: 'seperator' },
 			{ type: 'button', action: 'editor.openFolder' },
 			{ type: 'button', action: 'editor.revealBridgeFolder' },
+			{ type: 'button', action: 'editor.revealOutputFolder' },
+			{ type: 'button', action: 'editor.revealExtensionsFolder' },
 		])
 
 		this.addButton('openSettings')
