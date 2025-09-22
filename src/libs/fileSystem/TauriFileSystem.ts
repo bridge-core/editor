@@ -1,6 +1,6 @@
 import { createDir, exists, readBinaryFile, readDir, readTextFile, removeDir, removeFile, writeBinaryFile } from '@tauri-apps/api/fs'
 import { BaseEntry, BaseFileSystem } from './BaseFileSystem'
-import { join, resolve } from 'pathe'
+import { dirname, join, resolve } from 'pathe'
 import { sep } from '@tauri-apps/api/path'
 import { listen } from '@tauri-apps/api/event'
 import { invoke } from '@tauri-apps/api'
@@ -153,10 +153,12 @@ export class TauriFileSystem extends BaseFileSystem {
 	public async ensureDirectory(path: string) {
 		if (this.basePath === null) throw new Error('Base path not set!')
 
-		if (await exists(join(this.basePath, path))) return
+		const directoryPath = dirname(path)
+
+		if (await exists(join(this.basePath, directoryPath))) return
 
 		try {
-			await createDir(join(this.basePath, path), { recursive: true })
+			await createDir(join(this.basePath, directoryPath), { recursive: true })
 		} catch (error) {
 			console.error(`Failed to ensure directory "${path}"`)
 
