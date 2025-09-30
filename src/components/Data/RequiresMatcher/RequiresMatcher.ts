@@ -20,7 +20,7 @@ export interface IRequirements {
 	/**
 	 * Check for manifest dependencies to be present in the pack.
 	 */
-	dependencies?: { module_name: string; version?: string | string[] }[]
+	dependencies?: { module_name: string; version?: string }[]
 	/**
 	 * Whether all conditions must be met. If set to false, any condition met makes the matcher valid.
 	 */
@@ -209,13 +209,6 @@ export class RequiresMatcher {
 					if (
 						typeof dep.version === 'string' &&
 						manifestDep.version !== dep.version
-					)
-						continue
-
-					// Multiple version validation
-					if (
-						Array.isArray(dep.version) &&
-						!dep.version.includes(manifestDep.version)
 					)
 						continue
 
