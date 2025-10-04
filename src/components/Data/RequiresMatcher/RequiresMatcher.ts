@@ -201,17 +201,19 @@ export class RequiresMatcher {
 			!requires.dependencies ||
 			!dependencies ||
 			requires?.dependencies.every((dep) => {
-				for (const dependency of dependencies) {
-					if (dependency.module_name !== dep.module_name) continue
+				for (const manifestDep of dependencies) {
+					if (manifestDep.module_name !== dep.module_name) continue
+					if (!manifestDep.version) continue
+
+					// Single version validation
 					if (
-						dependency.version &&
-						dependency.version !== dep.version
+						typeof dep.version === 'string' &&
+						manifestDep.version !== dep.version
 					)
 						continue
 
 					return true
 				}
-
 				return false
 			})
 
