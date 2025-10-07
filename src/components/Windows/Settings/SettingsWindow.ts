@@ -350,6 +350,11 @@ function setupEditorCategory() {
 		type: 'toggle',
 		label: 'windows.settings.editor.showArrayIndices.name',
 	})
+
+	SettingsWindow.addItem('editor', 'hideBrackets', {
+		type: 'toggle',
+		label: 'windows.settings.editor.hideBrackets.name',
+	})
 }
 
 function setupDeveloperCategory() {

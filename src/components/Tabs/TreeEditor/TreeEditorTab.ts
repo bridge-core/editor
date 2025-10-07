@@ -80,11 +80,11 @@ export class TreeEditorTab extends FileTab {
 
 		Settings.addSetting('showArrayIndices', {
 			default: false,
-		}) // TODO: Implement
+		})
 
 		Settings.addSetting('hideBrackets', {
 			default: false,
-		}) // TODO: Implement
+		})
 	}
 
 	public async create() {

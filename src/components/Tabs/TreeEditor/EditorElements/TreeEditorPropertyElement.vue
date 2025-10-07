@@ -278,7 +278,7 @@ defineExpose({ open })
 				}"
 				@click="editor.select(tree)"
 				@contextmenu.stop.prevent="(event: MouseEvent) => emit('opencontextmenu', {selection: { type: 'value', tree }, event})"
-				>{{ tree instanceof ObjectElement ? '{' : '[' }}</span
+				>{{ get('hideBrackets') ? '' : tree instanceof ObjectElement ? '{' : '[' }}</span
 			>
 
 			<Icon v-if="!isOpen && hasChildDiagnostic" icon="error" color="warning" class="text-base" />
@@ -306,7 +306,7 @@ defineExpose({ open })
 				}"
 				@click="editor.select(tree)"
 				@contextmenu.stop="(event: MouseEvent) => emit('opencontextmenu', {selection: { type: 'value', tree }, event})"
-				>{{ tree instanceof ObjectElement ? '}' : ']' }}</span
+				>{{ get('hideBrackets') ? '' : tree instanceof ObjectElement ? '}' : ']' }}</span
 			>
 		</div>
 
