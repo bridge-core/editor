@@ -15,5 +15,6 @@ export function setupImporters() {
 
 	ImporterManager.addDirectoryImporter(new BrProjectDirectoryImporter())
 
-	if (!tauriBuild) ImporterManager.addDirectoryImporter(new OutputFolderImporter())
+	// TODO: Disable when tauri acceleration for builds is implemented
+	ImporterManager.addDirectoryImporter(new OutputFolderImporter())
 }
