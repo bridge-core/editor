@@ -24,6 +24,7 @@ import { Disposable } from '@/libs/disposeable/Disposeable'
 import { Settings } from '@/libs/settings/Settings'
 import { useIsMobile } from '@/libs/Mobile'
 import { useExportActions } from '@/libs/actions/export/ExportActionManager'
+import { tauriBuild } from '@/libs/tauri/Tauri'
 
 const get = Settings.useGet()
 const isMobile = useIsMobile()
@@ -261,7 +262,7 @@ function drop(event: DragEvent) {
 								@click="() => contextMenuOpenProjectConfig(close)"
 							/>
 
-							<ActionContextMenuItem action="project.revealInFileExplorer" @click="close" />
+							<ActionContextMenuItem v-if="tauriBuild" action="project.revealInFileExplorer" @click="close" />
 						</div>
 					</template>
 				</ContextMenu>

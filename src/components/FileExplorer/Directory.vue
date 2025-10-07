@@ -13,6 +13,7 @@ import { ActionManager } from '@/libs/actions/ActionManager'
 import { Disposable } from '@/libs/disposeable/Disposeable'
 import { FileExplorer } from './FileExplorer'
 import { Settings } from '@/libs/settings/Settings'
+import { tauriBuild } from '@/libs/tauri/Tauri'
 
 const get = Settings.useGet()
 
@@ -254,7 +255,7 @@ function drop(event: DragEvent) {
 			<ActionContextMenuItem action="files.duplicateFileSystemEntry" :data="() => path" @click.stop="close" />
 			<ActionContextMenuItem action="files.copyFileSystemEntry" :data="() => path" @click.stop="close" />
 			<ActionContextMenuItem action="files.pasteFileSystemEntry" :data="() => path" @click.stop="close" />
-			<ActionContextMenuItem action="files.revealInFileExplorer" :data="() => path" @click="close" />
+			<ActionContextMenuItem v-if="tauriBuild" action="files.revealInFileExplorer" :data="() => path" @click="close" />
 		</FreeContextMenu>
 	</div>
 </template>

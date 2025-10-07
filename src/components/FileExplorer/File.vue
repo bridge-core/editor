@@ -14,6 +14,7 @@ import { FileExplorer } from './FileExplorer'
 import { useFileActions } from '@/libs/actions/file/FileActionManager'
 import { ProjectManager } from '@/libs/project/ProjectManager'
 import { BedrockProject } from '@/libs/project/BedrockProject'
+import { tauriBuild } from '@/libs/tauri/Tauri'
 
 const contextMenu: Ref<typeof FreeContextMenu | null> = ref(null)
 
@@ -88,7 +89,7 @@ onMounted(() => {
 			<ActionContextMenuItem action="files.copyFileSystemEntry" :data="() => path" @click="close" />
 			<ActionContextMenuItem action="files.pasteFileSystemEntry" :data="() => path" @click="close" />
 			<ActionContextMenuItem action="files.openToSide" :data="() => path" @click="close" />
-			<ActionContextMenuItem action="files.revealInFileExplorer" :data="() => path" @click="close" />
+			<ActionContextMenuItem v-if="tauriBuild" action="files.revealInFileExplorer" :data="() => path" @click="close" />
 
 			<ContextMenuDivider v-if="fileActions.length > 0" />
 

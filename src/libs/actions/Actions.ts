@@ -345,22 +345,23 @@ function setupEditorActions() {
 		})
 	)
 
-	ActionManager.addAction(
-		new Action({
-			id: 'editor.revealBridgeFolder',
-			trigger: () => {
-				if (!tauriBuild) return
+	if (tauriBuild)
+		ActionManager.addAction(
+			new Action({
+				id: 'editor.revealBridgeFolder',
+				trigger: () => {
+					if (!tauriBuild) return
 
-				if (!(fileSystem instanceof TauriFileSystem)) return
+					if (!(fileSystem instanceof TauriFileSystem)) return
 
-				fileSystem.revealInFileExplorer('/')
-			},
-			name: 'actions.editor.revealBridgeFolder.name',
-			description: 'actions.editor.revealBridgeFolder.description',
-			icon: 'folder_open',
-			category: 'actions.editor.name',
-		})
-	)
+					fileSystem.revealInFileExplorer('/')
+				},
+				name: 'actions.editor.revealBridgeFolder.name',
+				description: 'actions.editor.revealBridgeFolder.description',
+				icon: 'folder_open',
+				category: 'actions.editor.name',
+			})
+		)
 
 	// TODO: Renable once tauri build acceleration is implemented
 	// ActionManager.addAction(
@@ -387,22 +388,23 @@ function setupEditorActions() {
 	// 	})
 	// )
 
-	ActionManager.addAction(
-		new Action({
-			id: 'editor.revealExtensionsFolder',
-			trigger: () => {
-				if (!tauriBuild) return
+	if (tauriBuild)
+		ActionManager.addAction(
+			new Action({
+				id: 'editor.revealExtensionsFolder',
+				trigger: () => {
+					if (!tauriBuild) return
 
-				if (!(fileSystem instanceof TauriFileSystem)) return
+					if (!(fileSystem instanceof TauriFileSystem)) return
 
-				fileSystem.revealInFileExplorer('/extensions')
-			},
-			name: 'actions.editor.revealExtensionsFolder.name',
-			description: 'actions.editor.revealExtensionsFolder.description',
-			icon: 'extension',
-			category: 'actions.editor.name',
-		})
-	)
+					fileSystem.revealInFileExplorer('/extensions')
+				},
+				name: 'actions.editor.revealExtensionsFolder.name',
+				description: 'actions.editor.revealExtensionsFolder.description',
+				icon: 'extension',
+				category: 'actions.editor.name',
+			})
+		)
 
 	ProjectManager.updatedCurrentProject.on(() => {
 		for (const action of [nextTabAction, previousTabAction, closeTabAction]) {
@@ -506,27 +508,28 @@ function setupProjectActions() {
 		)
 	)
 
-	projectActions.push(
-		ActionManager.addAction(
-			new Action({
-				id: 'project.revealInFileExplorer',
-				trigger: () => {
-					if (!tauriBuild) return
+	if (tauriBuild)
+		projectActions.push(
+			ActionManager.addAction(
+				new Action({
+					id: 'project.revealInFileExplorer',
+					trigger: () => {
+						if (!tauriBuild) return
 
-					if (!(fileSystem instanceof TauriFileSystem)) return
+						if (!(fileSystem instanceof TauriFileSystem)) return
 
-					if (!ProjectManager.currentProject) return
+						if (!ProjectManager.currentProject) return
 
-					fileSystem.revealInFileExplorer(ProjectManager.currentProject.path)
-				},
-				name: 'actions.project.revealInFileExplorer.name',
-				description: 'actions.project.revealInFileExplorer.description',
-				icon: 'folder_open',
-				visible: false,
-				category: 'actions.project.name',
-			})
+						fileSystem.revealInFileExplorer(ProjectManager.currentProject.path)
+					},
+					name: 'actions.project.revealInFileExplorer.name',
+					description: 'actions.project.revealInFileExplorer.description',
+					icon: 'folder_open',
+					visible: false,
+					category: 'actions.project.name',
+				})
+			)
 		)
-	)
 
 	ProjectManager.updatedCurrentProject.on(() => {
 		for (const action of projectActions) {
@@ -945,26 +948,32 @@ function setupFileSystemActions() {
 		})
 	)
 
-	const revealInFileExplorer = ActionManager.addAction(
-		new Action({
-			id: 'files.revealInFileExplorer',
-			trigger: (path: unknown) => {
-				if (!(typeof path === 'string')) return
+	if (tauriBuild) {
+		const revealInFileExplorer = ActionManager.addAction(
+			new Action({
+				id: 'files.revealInFileExplorer',
+				trigger: (path: unknown) => {
+					if (!(typeof path === 'string')) return
 
-				if (!tauriBuild) return
+					if (!tauriBuild) return
 
-				if (!(fileSystem instanceof TauriFileSystem)) return
+					if (!(fileSystem instanceof TauriFileSystem)) return
 
-				fileSystem.revealInFileExplorer(path)
-			},
-			name: 'actions.files.revealInFileExplorer.name',
-			description: 'actions.files.revealInFileExplorer.description',
-			icon: 'folder_open',
-			visible: false,
-			requiresContext: true,
-			category: 'actions.files.name',
+					fileSystem.revealInFileExplorer(path)
+				},
+				name: 'actions.files.revealInFileExplorer.name',
+				description: 'actions.files.revealInFileExplorer.description',
+				icon: 'folder_open',
+				visible: false,
+				requiresContext: true,
+				category: 'actions.files.name',
+			})
+		)
+
+		ProjectManager.updatedCurrentProject.on(() => {
+			revealInFileExplorer.setVisible(ProjectManager.currentProject !== null)
 		})
-	)
+	}
 
 	for (const action of [
 		deleteFileSystemEntry,
@@ -975,7 +984,6 @@ function setupFileSystemActions() {
 		copyFileSystemEntry,
 		pasteFileSystemEntry,
 		openToSide,
-		revealInFileExplorer,
 	]) {
 		ProjectManager.updatedCurrentProject.on(() => {
 			action.setVisible(ProjectManager.currentProject !== null)
