@@ -203,7 +203,7 @@
 				"description": "Opens the current output folder in your systems file explorer"
 			},
 			"revealExtensionsFolder": {
-				"name": "Open bridge. extensions Folder",
+				"name": "Open Extensions Folder",
 				"description": "Opens the bridge. extensions folder in your systems file explorer"
 			}
 		},
