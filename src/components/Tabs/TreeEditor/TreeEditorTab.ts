@@ -9,6 +9,7 @@ import { buildTree, ObjectElement, ParentElements, TreeEdit, TreeElements, TreeS
 import { CompletionItem, createSchema, Diagnostic } from '@/libs/jsonSchema/Schema'
 import { Settings } from '@/libs/settings/Settings'
 import * as JSONC from 'jsonc-parser'
+import { interupt } from '@/libs/Interupt'
 
 export class TreeEditorTab extends FileTab {
 	public component: Component | null = TreeEditorTabComponent
@@ -223,6 +224,8 @@ export class TreeEditorTab extends FileTab {
 
 		this.validate()
 		this.updateCompletions()
+
+		this.interupAutoSave.invoke()
 	}
 
 	public undo() {
@@ -236,6 +239,8 @@ export class TreeEditorTab extends FileTab {
 
 		this.validate()
 		this.updateCompletions()
+
+		this.interupAutoSave.invoke()
 	}
 
 	public redo() {
@@ -249,6 +254,8 @@ export class TreeEditorTab extends FileTab {
 
 		this.validate()
 		this.updateCompletions()
+
+		this.interupAutoSave.invoke()
 	}
 
 	public getTreeSchemaPath(tree: TreeElements): string {
@@ -389,4 +396,8 @@ export class TreeEditorTab extends FileTab {
 
 		console.timeEnd('Completions')
 	}
+
+	private interupAutoSave = interupt(() => {
+		this.save()
+	}, 1000)
 }

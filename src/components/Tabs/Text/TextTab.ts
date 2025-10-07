@@ -12,6 +12,7 @@ import { Settings } from '@/libs/settings/Settings'
 import { Disposable, disposeAll } from '@/libs/disposeable/Disposeable'
 import { openUrl } from '@/libs/OpenUrl'
 import { debounce } from '@/libs/Debounce'
+import { interupt } from '@/libs/Interupt'
 
 export class TextTab extends FileTab {
 	public component: Component | null = TextTabComponent
@@ -113,6 +114,7 @@ export class TextTab extends FileTab {
 
 				if (modified) {
 					this.temporary.value = false
+					this.interuptAutoSave.invoke()
 				}
 			})
 		)
@@ -142,6 +144,7 @@ export class TextTab extends FileTab {
 		this.model?.dispose()
 
 		this.debouncedSaveState.dispose()
+		this.interuptAutoSave.dispose()
 	}
 
 	public async activate() {
@@ -555,4 +558,8 @@ export class TextTab extends FileTab {
 
 		this.saveState()
 	}, 50)
+
+	private interuptAutoSave = interupt(() => {
+		this.save()
+	}, 1000)
 }

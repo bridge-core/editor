@@ -306,7 +306,12 @@ function setupEditorCategory() {
 
 	SettingsWindow.addItem('editor', 'formatOnSave', {
 		type: 'toggle',
-		label: 'windows.settings.general.formatOnSave.name',
+		label: 'windows.settings.editor.formatOnSave.name',
+	})
+
+	SettingsWindow.addItem('editor', 'autoSaveChanges', {
+		type: 'toggle',
+		label: 'windows.settings.editor.autoSaveChanges.name',
 	})
 
 	SettingsWindow.addItem('editor', 'bracketPairColorization', {

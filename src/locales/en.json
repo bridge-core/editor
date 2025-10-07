@@ -989,10 +989,6 @@
 					"name": "Pack Spider",
 					"description": "Pack Spider connects files inside of your projects and presents the connections to you in a virtual file system"
 				},
-				"formatOnSave": {
-					"name": "Format On Save",
-					"description": "Formats your text files upon saving them"
-				},
 				"openLinksInBrowser": {
 					"name": "Open Links in Default Browser",
 					"description": "Open links inside of your default browser instead of a native app window"
@@ -1120,6 +1116,10 @@
 				"hideBracketsWithinTreeEditor": {
 					"name": "Hide Brackets",
 					"description": "Hide brackets within bridge.'s tree editor"
+				},
+				"formatOnSave": {
+					"name": "Format On Save",
+					"description": "Formats your text files upon saving them"
 				}
 			}
 		},

@@ -1,10 +1,5 @@
 import { Settings } from './Settings'
 
-enum JSONEditorOptions {
-	TreeEditor = 'Tree Editor',
-	RawText = 'Raw Text',
-}
-
 export function setupGeneralSettings() {
 	Settings.addSetting('restoreTabs', {
 		default: true,
@@ -13,7 +8,7 @@ export function setupGeneralSettings() {
 
 export function setupEditorSettings() {
 	Settings.addSetting('jsonEditor', {
-		default: JSONEditorOptions.TreeEditor,
+		default: 'text',
 	})
 
 	Settings.addSetting('formatOnSave', {
