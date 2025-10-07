@@ -25,3 +25,5 @@ pnpm-debug.log*
 todos.md
 
 public/changelog.html
+
+.direnv
