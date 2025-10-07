@@ -106,7 +106,7 @@ const bridgeFolderUnloaded = useBridgeFolderUnloaded()
 					{{ t('greet.noProjects') }}
 				</p>
 
-				<TextButton :text="t('greet.createOne')" @click="createProject" />
+				<TextButton :text="t('greet.createOne')" @click="createProject" class="mb-8" />
 			</div>
 
 			<div class="flex items-center flex-col mt-6" v-if="suggestSelectBridgeFolder">
