@@ -58,10 +58,6 @@ export class TreeEditorTab extends FileTab {
 	}
 
 	public static setup() {
-		Settings.addSetting('showTreeEditorLocationBar', {
-			default: true,
-		}) // TODO: Implement
-
 		Settings.addSetting('bridgePredictions', {
 			default: true,
 		})
