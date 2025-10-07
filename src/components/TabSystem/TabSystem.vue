@@ -12,7 +12,7 @@ import { TabSystem } from './TabSystem'
 import { FileTab } from './FileTab'
 import { Settings } from '@/libs/settings/Settings'
 import { TabManager } from './TabManager'
-import { computed, ComputedRef, Ref, ref } from 'vue'
+import { computed, ComputedRef, Ref, ref, ShallowRef, shallowRef } from 'vue'
 import { ProjectManager } from '@/libs/project/ProjectManager'
 import { BedrockProject } from '@/libs/project/BedrockProject'
 import { useTabActions } from '@/libs/actions/tab/TabActionManager'
@@ -52,7 +52,7 @@ const currentTabActions: ComputedRef<string[]> = computed(() => {
 })
 
 const contextMenu: Ref<typeof FreeContextMenu | null> = ref(null)
-const contextMenuTab: Ref<Tab | null> = ref(null)
+const contextMenuTab: ShallowRef<Tab | null> = shallowRef(null)
 const contextMenuTabActions: Ref<string[]> = ref([])
 </script>
 

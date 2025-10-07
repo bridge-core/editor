@@ -1737,7 +1737,36 @@ function setupTabActions() {
 		})
 	)
 
-	for (const action of [close, closeAll, closeToRight, closeSaved, closeOther]) {
+	const splitscreen = ActionManager.addAction(
+		new Action({
+			id: 'tabs.splitscreen',
+			trigger: async (tab: unknown) => {
+				if (!(tab instanceof Tab)) return
+
+				if (TabManager.tabSystems.value.length < 2) await TabManager.addTabSystem()
+
+				const otherTabSystem = TabManager.tabSystems.value.find(
+					(tabSystem) => TabManager.focusedTabSystem.value?.id !== tabSystem.id
+				)
+
+				if (!otherTabSystem) return
+
+				await TabManager.removeTab(tab)
+
+				TabManager.focusTabSystem(otherTabSystem)
+
+				await TabManager.openTab(tab)
+			},
+			name: 'actions.tabs.splitscreen.name',
+			description: 'actions.tabs.splitscreen.description',
+			icon: 'splitscreen_right',
+			requiresContext: true,
+			visible: false,
+			category: 'actions.tabs.name',
+		})
+	)
+
+	for (const action of [close, closeAll, closeToRight, closeSaved, closeOther, splitscreen]) {
 		TabManager.focusedTabSystemChanged.on(() => {
 			action.setVisible(
 				TabManager.focusedTabSystem.value !== null &&
