@@ -72,7 +72,7 @@ export class ImporterManager {
 			}
 		}
 
-		if (this.directoryImporters.length > 1) {
+		if (this.directoryImporters.length > 0) {
 			Windows.open(
 				new InformedChoiceWindow(
 					'fileDropper.importMethod.name',
@@ -86,8 +86,6 @@ export class ImporterManager {
 					}))
 				)
 			)
-		} else if (this.directoryImporters.length > 0) {
-			await this.directoryImporters[0].onImport(directoryHandle, basePath)
 		} else {
 			throw new Error('Could not import directory. No importers added!')
 		}
