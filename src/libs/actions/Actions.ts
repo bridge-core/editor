@@ -362,22 +362,30 @@ function setupEditorActions() {
 		})
 	)
 
-	ActionManager.addAction(
-		new Action({
-			id: 'editor.revealOutputFolder',
-			trigger: () => {
-				if (!tauriBuild) return
+	// TODO: Renable once tauri build acceleration is implemented
+	// ActionManager.addAction(
+	// 	new Action({
+	// 		id: 'editor.revealOutputFolder',
+	// 		trigger: () => {
+	// 			if (!tauriBuild) return
 
-				if (!(fileSystem instanceof TauriFileSystem)) return
+	// 			if (!ProjectManager.currentProject) return
 
-				// fileSystem.revealInFileExplorer('/')
-			},
-			name: 'actions.editor.revealOutputFolder.name',
-			description: 'actions.editor.revealOutputFolder.description',
-			icon: 'manufacturing',
-			category: 'actions.editor.name',
-		})
-	)
+	// 			let outputFileSystem = null
+	// 			outputFileSystem = ProjectManager.currentProject.outputFileSystem
+
+	// 			console.log(outputFileSystem)
+
+	// 			if (!(outputFileSystem instanceof TauriFileSystem)) return
+
+	// 			outputFileSystem.revealInFileExplorer('/')
+	// 		},
+	// 		name: 'actions.editor.revealOutputFolder.name',
+	// 		description: 'actions.editor.revealOutputFolder.description',
+	// 		icon: 'manufacturing',
+	// 		category: 'actions.editor.name',
+	// 	})
+	// )
 
 	ActionManager.addAction(
 		new Action({
