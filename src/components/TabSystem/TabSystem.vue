@@ -180,6 +180,12 @@ const contextMenuTabActions: Ref<string[]> = ref([])
 			<ContextMenuDivider />
 
 			<ActionContextMenuItem action="tabs.splitscreen" :data="() => contextMenuTab!" @click.stop="close" />
+			<ActionContextMenuItem
+				v-if="contextMenuTab!.temporary.value"
+				action="tabs.keepOpen"
+				:data="() => contextMenuTab!"
+				@click.stop="close"
+			/>
 
 			<ContextMenuDivider v-if="contextMenuTabActions.length > 0" />
 

@@ -1766,7 +1766,24 @@ function setupTabActions() {
 		})
 	)
 
-	for (const action of [close, closeAll, closeToRight, closeSaved, closeOther, splitscreen]) {
+	const keepOpen = ActionManager.addAction(
+		new Action({
+			id: 'tabs.keepOpen',
+			trigger: async (tab: unknown) => {
+				if (!(tab instanceof Tab)) return
+
+				tab.temporary.value = false
+			},
+			name: 'actions.tabs.keepOpen.name',
+			description: 'actions.tabs.keepOpen.description',
+			icon: 'keep',
+			requiresContext: true,
+			visible: false,
+			category: 'actions.tabs.name',
+		})
+	)
+
+	for (const action of [close, closeAll, closeToRight, closeSaved, closeOther, splitscreen, keepOpen]) {
 		TabManager.focusedTabSystemChanged.on(() => {
 			action.setVisible(
 				TabManager.focusedTabSystem.value !== null &&

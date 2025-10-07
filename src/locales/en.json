@@ -473,6 +473,14 @@
 			"closeOther": {
 				"name": "Close Other",
 				"description": "Close all other open tabs than the currently selected tab"
+			},
+			"splitscreen": {
+				"name": "Splitscreen Tab",
+				"description": "Moves tab into another tab system to the side"
+			},
+			"keepOpen": {
+				"name": "Keep Open",
+				"description": "Keep tab open"
 			}
 		}
 	},
