@@ -933,9 +933,19 @@ function setupFileSystemActions() {
 
 				if (TabManager.isFileOpen(path)) return
 
-				const tabSystem = await TabManager.addTabSystem()
+				if (TabManager.tabSystems.value.length < 2) {
+					const tabSystem = await TabManager.addTabSystem()
 
-				TabManager.focusTabSystem(tabSystem)
+					TabManager.focusTabSystem(tabSystem)
+				} else {
+					const otherTabSystem = TabManager.tabSystems.value.find(
+						(tabSystem) => TabManager.focusedTabSystem.value?.id !== tabSystem.id
+					)
+
+					if (!otherTabSystem) return
+
+					TabManager.focusTabSystem(otherTabSystem)
+				}
 
 				await TabManager.openFile(path)
 			},
