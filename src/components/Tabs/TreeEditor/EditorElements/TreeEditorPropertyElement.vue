@@ -7,6 +7,9 @@ import HighlightedText from '../HighlightedText.vue'
 import { computed, onMounted, Ref, ref } from 'vue'
 import { TreeEditorTab } from '../TreeEditorTab'
 import { TreeElements, ObjectElement, ArrayElement, MoveEdit } from '../Tree'
+import { Settings } from '@/libs/settings/Settings'
+
+const get = Settings.useGet()
 
 const props = defineProps<{
 	tree: TreeElements
@@ -226,8 +229,12 @@ defineExpose({ open })
 				:style="{
 					'--color': propertySelected ? 'var(--theme-color-backgroundSecondary)' : 'none',
 				}"
-				@click="clickProperty"
-				@contextmenu.stop.prevent="(event: MouseEvent) => emit('opencontextmenu', {selection: { type: 'property', tree }, event})"
+				@click="typeof elementKey === 'string' ? clickProperty() : undefined"
+				@contextmenu.stop.prevent="
+					typeof elementKey === 'string'
+						? (event: MouseEvent) => emit('opencontextmenu', { selection: { type: 'property', tree }, event })
+						: undefined
+				"
 			>
 				<Icon
 					icon="chevron_right"
@@ -239,8 +246,18 @@ defineExpose({ open })
 					@click.stop="toggleOpen"
 				/>
 
-				<span v-if="typeof elementKey === 'string'" class="select-none font-theme-editor text-theme-editor">
-					"<HighlightedText :known-words="(editor as TreeEditorTab).knownWords" :value="elementKey" type="string" />":
+				<span
+					v-if="typeof elementKey === 'string' || (typeof elementKey === 'number' && get('showArrayIndices'))"
+					class="select-none font-theme-editor text-theme-editor"
+				>
+					{{ typeof elementKey === 'string' ? '"' : '' }}
+					<HighlightedText
+						:known-words="(editor as TreeEditorTab).knownWords"
+						:value="elementKey.toString()"
+						:type="typeof elementKey"
+					/>
+					{{ typeof elementKey === 'string' ? '"' : '' }}
+					:
 				</span>
 			</span>
 

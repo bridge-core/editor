@@ -22,4 +22,8 @@ export function setupEditorSettings() {
 	Settings.addSetting('autoSaveChanges', {
 		default: false,
 	})
+
+	Settings.addSetting('showArrayIndices', {
+		default: false,
+	})
 }

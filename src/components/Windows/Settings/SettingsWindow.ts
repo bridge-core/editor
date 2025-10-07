@@ -345,6 +345,11 @@ function setupEditorCategory() {
 		type: 'toggle',
 		label: 'windows.settings.editor.inlineTreeEditorDiagnostics.name',
 	})
+
+	SettingsWindow.addItem('editor', 'showArrayIndices', {
+		type: 'toggle',
+		label: 'windows.settings.editor.showArrayIndices.name',
+	})
 }
 
 function setupDeveloperCategory() {
