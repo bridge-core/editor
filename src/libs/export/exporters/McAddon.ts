@@ -2,7 +2,7 @@ import { ProjectManager } from '@/libs/project/ProjectManager'
 import { fileSystem } from '@/libs/fileSystem/FileSystem'
 import { zipDirectory } from '@/libs/zip/ZipDirectory'
 import { join } from 'pathe'
-import { incrementManifestVersions, saveOrDownload } from '../Export'
+import { addGeneratedWith, incrementManifestVersions, saveOrDownload } from '../Export'
 import { DashService } from '@/libs/compiler/DashService'
 import { BedrockProject } from '@/libs/project/BedrockProject'
 import { Settings } from '@/libs/settings/Settings'
@@ -12,6 +12,7 @@ export async function exportAsMcAddon() {
 	if (!(ProjectManager.currentProject instanceof BedrockProject)) return
 
 	if (Settings.get('incrementVersionOnExport')) await incrementManifestVersions()
+	if (Settings.get('addGeneratedWith')) await addGeneratedWith()
 
 	const dash = new DashService(ProjectManager.currentProject, fileSystem)
 	await dash.setup('production')

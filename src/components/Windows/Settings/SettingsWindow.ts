@@ -107,6 +107,16 @@ function setupProjectsCategory() {
 		type: 'custom',
 		component: OutputFolder,
 	})
+
+	SettingsWindow.addItem('projects', 'incrementVersionOnExport', {
+		type: 'toggle',
+		label: 'windows.settings.projects.incrementVersionOnExport.name',
+	})
+
+	SettingsWindow.addItem('projects', 'addGeneratedWith', {
+		type: 'toggle',
+		label: 'windows.settings.projects.addGeneratedWith.name',
+	})
 }
 
 function setupGeneralCategory() {

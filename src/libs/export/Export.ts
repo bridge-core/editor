@@ -6,6 +6,7 @@ import { LocaleManager } from '@/libs/locales/Locales'
 import { ProjectManager } from '@/libs/project/ProjectManager'
 import { fileSystem } from '@/libs/fileSystem/FileSystem'
 import { BedrockProject } from '@/libs/project/BedrockProject'
+import { appVersion, dashVersion } from '../app/AppEnv'
 
 export async function saveOrDownload(path: string, data: Uint8Array, fileSystem: BaseFileSystem) {
 	await fileSystem.writeFile(path, data)
@@ -63,6 +64,53 @@ export async function incrementManifestVersions() {
 
 			dep.version = depManifest.header.version
 		})
+	}
+
+	const announcement = fileSystem.announceFileModifications()
+
+	try {
+		for (const [path, manifest] of Object.entries(manifests)) {
+			await fileSystem.writeFileJson(path, manifest, true)
+		}
+	} catch {}
+
+	announcement.dispose()
+}
+
+export async function addGeneratedWith() {
+	if (!ProjectManager.currentProject) return
+	if (!(ProjectManager.currentProject instanceof BedrockProject)) return
+
+	let manifests: Record<string, any> = {}
+
+	for (const pack of Object.keys(ProjectManager.currentProject.packs)) {
+		const manifestPath = ProjectManager.currentProject.resolvePackPath(pack, 'manifest.json')
+
+		if (await fileSystem.exists(manifestPath)) {
+			let manifest
+
+			try {
+				manifest = await fileSystem.readFileJson(manifestPath)
+			} catch {
+				continue
+			}
+
+			const [major, minor, patch] = <[number, number, number]>manifest.header?.version ?? [0, 0, 0]
+
+			const newVersion = [major, minor, patch + 1]
+
+			manifests[manifestPath] = {
+				...manifest,
+				metadata: {
+					...(manifest.metadata ?? {}),
+					generated_with: {
+						...(manifest.metadata?.generated_with ?? {}),
+						bridge: [appVersion],
+						dash: [dashVersion],
+					},
+				},
+			}
+		}
 	}
 
 	const announcement = fileSystem.announceFileModifications()

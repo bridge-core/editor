@@ -2,7 +2,7 @@ import { ProjectManager } from '@/libs/project/ProjectManager'
 import { fileSystem } from '@/libs/fileSystem/FileSystem'
 import { zipDirectory } from '@/libs/zip/ZipDirectory'
 import { join } from 'pathe'
-import { incrementManifestVersions, saveOrDownload } from '../Export'
+import { addGeneratedWith, incrementManifestVersions, saveOrDownload } from '../Export'
 import { DashService } from '@/libs/compiler/DashService'
 import { BedrockProject } from '@/libs/project/BedrockProject'
 import { v4 as uuid } from 'uuid'
@@ -16,6 +16,7 @@ export async function exportAsTemplate(asMcworld = false) {
 	if (!(ProjectManager.currentProject instanceof BedrockProject)) return
 
 	if (Settings.get('incrementVersionOnExport')) await incrementManifestVersions()
+	if (Settings.get('addGeneratedWith')) await addGeneratedWith()
 
 	const projectPath = ProjectManager.currentProject.path
 

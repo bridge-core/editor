@@ -22,7 +22,7 @@ import { setupSnippetCompletions } from '@/libs/monaco/SnippetCompletions'
 import { LocalFileSystem } from '@/libs/fileSystem/LocalFileSystem'
 import { NotificationSystem } from '@/components/Notifications/NotificationSystem'
 import { setupModules } from '@/libs/extensions/Modules'
-import { setupEditorSettings, setupGeneralSettings } from '@/libs/settings/SetupSettings'
+import { setupEditorSettings, setupGeneralSettings, setupProjectsSettings } from '@/libs/settings/SetupSettings'
 import { TreeEditorTab } from '@/components/Tabs/TreeEditor/TreeEditorTab'
 import { tauriBuild } from '@/libs/tauri/Tauri'
 import { setupImporters } from '@/libs/import/Importers'
@@ -53,6 +53,7 @@ export function setupBeforeComponents() {
 	setupSidebar()
 
 	setupGeneralSettings()
+	setupProjectsSettings()
 	setupEditorSettings()
 
 	setupModules()
