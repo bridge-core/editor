@@ -66,9 +66,9 @@ export class TreeEditorTab extends FileTab {
 			default: true,
 		})
 
-		Settings.addSetting('autoOpenTreeNodes', {
+		Settings.addSetting('automaticallyOpenTreeNodes', {
 			default: true,
-		}) // TODO: Implement
+		})
 
 		Settings.addSetting('dragAndDropTreeNodes', {
 			default: true,

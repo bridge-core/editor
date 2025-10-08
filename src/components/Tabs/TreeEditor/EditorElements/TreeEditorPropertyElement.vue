@@ -45,6 +45,8 @@ function clickProperty() {
 
 	if (!(props.tree instanceof ObjectElement || props.tree instanceof ArrayElement)) return
 
+	if (!Settings.get('automaticallyOpenTreeNodes')) return
+
 	isOpen.value = true
 }
 

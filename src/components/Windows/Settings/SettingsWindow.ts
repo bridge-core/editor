@@ -365,6 +365,11 @@ function setupEditorCategory() {
 		type: 'toggle',
 		label: 'windows.settings.editor.hideBrackets.name',
 	})
+
+	SettingsWindow.addItem('editor', 'automaticallyOpenTreeNodes', {
+		type: 'toggle',
+		label: 'windows.settings.editor.automaticallyOpenTreeNodes.name',
+	})
 }
 
 function setupDeveloperCategory() {
