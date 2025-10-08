@@ -72,7 +72,7 @@ export class TreeEditorTab extends FileTab {
 
 		Settings.addSetting('dragAndDropTreeNodes', {
 			default: true,
-		}) // TODO: Implement
+		})
 
 		Settings.addSetting('showArrayIndices', {
 			default: false,

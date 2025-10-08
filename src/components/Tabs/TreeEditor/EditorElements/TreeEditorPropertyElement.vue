@@ -200,7 +200,7 @@ defineExpose({ open })
 	<div
 		v-show="preview || !dragging"
 		class="table relative w-full"
-		draggable="true"
+		:draggable="get('dragAndDropTreeNodes')"
 		ref="propertyElement"
 		@drag=""
 		@dragstart="dragStart"

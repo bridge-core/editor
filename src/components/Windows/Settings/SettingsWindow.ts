@@ -370,6 +370,11 @@ function setupEditorCategory() {
 		type: 'toggle',
 		label: 'windows.settings.editor.automaticallyOpenTreeNodes.name',
 	})
+
+	SettingsWindow.addItem('editor', 'dragAndDropTreeNodes', {
+		type: 'toggle',
+		label: 'windows.settings.editor.dragAndDropTreeNodes.name',
+	})
 }
 
 function setupDeveloperCategory() {
