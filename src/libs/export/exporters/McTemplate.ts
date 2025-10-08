@@ -2,17 +2,20 @@ import { ProjectManager } from '@/libs/project/ProjectManager'
 import { fileSystem } from '@/libs/fileSystem/FileSystem'
 import { zipDirectory } from '@/libs/zip/ZipDirectory'
 import { join } from 'pathe'
-import { saveOrDownload } from '../Export'
+import { incrementManifestVersions, saveOrDownload } from '../Export'
 import { DashService } from '@/libs/compiler/DashService'
 import { BedrockProject } from '@/libs/project/BedrockProject'
 import { v4 as uuid } from 'uuid'
 import { Data } from '@/libs/data/Data'
 import { Windows } from '@/components/Windows/Windows'
 import { DropdownWindow } from '@/components/Windows/Dropdown/DropdownWindow'
+import { Settings } from '@/libs/settings/Settings'
 
 export async function exportAsTemplate(asMcworld = false) {
 	if (!ProjectManager.currentProject) return
 	if (!(ProjectManager.currentProject instanceof BedrockProject)) return
+
+	if (Settings.get('incrementVersionOnExport')) await incrementManifestVersions()
 
 	const projectPath = ProjectManager.currentProject.path
 
@@ -25,7 +28,8 @@ export async function exportAsTemplate(asMcworld = false) {
 
 	if (ProjectManager.currentProject.packs['worldTemplate']) baseWorlds.push('WT')
 
-	if (await fileSystem.exists(join(projectPath, 'worlds'))) baseWorlds.push(...(await fileSystem.readDirectoryEntries(join(projectPath, 'worlds'))).map((entry) => entry.path))
+	if (await fileSystem.exists(join(projectPath, 'worlds')))
+		baseWorlds.push(...(await fileSystem.readDirectoryEntries(join(projectPath, 'worlds'))).map((entry) => entry.path))
 
 	let exportWorldFolder: string | null
 
@@ -116,13 +120,19 @@ export async function exportAsTemplate(asMcworld = false) {
 	if (packLocations.BP) {
 		await fileSystem.ensureDirectory(join(projectPath, `builds/mctemplate/behavior_packs/BP_${ProjectManager.currentProject.name}`))
 
-		await fileSystem.move(packLocations.BP, join(projectPath, `builds/mctemplate/behavior_packs/BP_${ProjectManager.currentProject.name}`))
+		await fileSystem.move(
+			packLocations.BP,
+			join(projectPath, `builds/mctemplate/behavior_packs/BP_${ProjectManager.currentProject.name}`)
+		)
 	}
 
 	if (packLocations.RP) {
 		await fileSystem.ensureDirectory(join(projectPath, `builds/mctemplate/resource_packs/RP_${ProjectManager.currentProject.name}`))
 
-		await fileSystem.move(packLocations.RP, join(projectPath, `builds/mctemplate/resource_packs/RP_${ProjectManager.currentProject.name}`))
+		await fileSystem.move(
+			packLocations.RP,
+			join(projectPath, `builds/mctemplate/resource_packs/RP_${ProjectManager.currentProject.name}`)
+		)
 	}
 
 	// Generate world template manifest if file doesn't exist yet
@@ -137,7 +147,12 @@ export async function exportAsTemplate(asMcworld = false) {
 					version: [1, 0, 0],
 					uuid: uuid(),
 					lock_template_options: true,
-					base_game_version: (ProjectManager.currentProject.config!.targetVersion ?? (await Data.get('packages/minecraftBedrock/formatVersions.json'))[0])
+					base_game_version: (
+						ProjectManager.currentProject.config!.targetVersion ??
+						(
+							await Data.get('packages/minecraftBedrock/formatVersions.json')
+						)[0]
+					)
 						.split('.')
 						.map((str) => Number(str)),
 				},
@@ -157,7 +172,8 @@ export async function exportAsTemplate(asMcworld = false) {
 
 	// ZIP builds/mctemplate folder
 	const zipFile = await zipDirectory(fileSystem, join(ProjectManager.currentProject.path, 'builds/mctemplate'))
-	const savePath = join(ProjectManager.currentProject.path, 'builds/', ProjectManager.currentProject.name) + (asMcworld ? '.mcworld' : '.mctemplate')
+	const savePath =
+		join(ProjectManager.currentProject.path, 'builds/', ProjectManager.currentProject.name) + (asMcworld ? '.mcworld' : '.mctemplate')
 
 	try {
 		await saveOrDownload(savePath, zipFile, fileSystem)

@@ -228,6 +228,8 @@ export class DashService implements AsyncDisposable {
 		if (path.startsWith(join(this.project.path, '.bridge'))) return
 		if (path.startsWith(join(this.project.path, '.git'))) return
 
+		if (fileSystem.modificationsAnnounced()) return
+
 		const requestId = uuid()
 
 		this.watchRebuildRequestId = requestId

@@ -21,6 +21,8 @@ export class TauriFileSystem extends BaseFileSystem {
 			const paths = (event.payload as string[]).map((path) => resolve('/', path.substring(this.basePath!.length)))
 
 			for (const path of paths) {
+				if (this.watchPathsToIgnore.find((watchPath) => path.startsWith(watchPath)) !== undefined) continue
+
 				this.pathUpdated.dispatch(path)
 			}
 		})

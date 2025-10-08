@@ -1,5 +1,7 @@
 import { basename, dirname, extname, join } from 'pathe'
 import { Event } from '@/libs/event/Event'
+import { v4 as uuid } from 'uuid'
+import { Disposable } from '../disposeable/Disposeable'
 
 /**
  * The Base File Systems acts as a fascade covering the platform specific implementations of the different file systems. New file systems methods should extends BaseFileSystem.
@@ -14,6 +16,7 @@ export class BaseFileSystem {
 	public pathUpdated: Event<string> = new Event()
 
 	protected watchPathsToIgnore: string[] = []
+	protected modificationAnnouncements: string[] = []
 
 	public async readFile(path: string): Promise<ArrayBuffer> {
 		throw new Error('Not implemented!')
@@ -214,6 +217,22 @@ export class BaseFileSystem {
 
 	protected resolvePath(path: string): string {
 		return path
+	}
+
+	public announceFileModifications(): Disposable {
+		const id = uuid()
+
+		this.modificationAnnouncements.push(id)
+
+		return {
+			dispose: () => {
+				this.modificationAnnouncements.splice(this.modificationAnnouncements.indexOf(id), 1)
+			},
+		}
+	}
+
+	public modificationsAnnounced(): boolean {
+		return this.modificationAnnouncements.length > 0
 	}
 }
 
