@@ -172,7 +172,7 @@ export class TauriFileSystem extends BaseFileSystem {
 		if (this.basePath === null) throw new Error('Base path not set!')
 
 		try {
-			if (await this.exists(path)) return
+			if (!(await this.exists(path))) return
 
 			await removeDir(join(this.basePath, path))
 		} catch (error) {
