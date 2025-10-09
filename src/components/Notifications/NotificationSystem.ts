@@ -58,10 +58,7 @@ export class NotificationSystem {
 
 	public static activateNotification(notification: Notification) {
 		if (notification.type === 'button') {
-			NotificationSystem.notifications.value.splice(
-				NotificationSystem.notifications.value.indexOf(notification),
-				1
-			)
+			NotificationSystem.notifications.value.splice(NotificationSystem.notifications.value.indexOf(notification), 1)
 			NotificationSystem.notifications.value = [...NotificationSystem.notifications.value]
 		}
 
@@ -72,18 +69,21 @@ export class NotificationSystem {
 		if (notification.type === 'progress') {
 			// Allow time for the progress bar to reach full value
 			setTimeout(() => {
-				NotificationSystem.notifications.value.splice(
-					NotificationSystem.notifications.value.indexOf(notification),
+				this.notifications.value.splice(
+					this.notifications.value.findIndex((otherNotification) => otherNotification.id === notification.id),
 					1
 				)
-				NotificationSystem.notifications.value = [...NotificationSystem.notifications.value]
+				this.notifications.value = [...this.notifications.value]
 			}, 300)
 
 			return
 		}
 
-		NotificationSystem.notifications.value.splice(NotificationSystem.notifications.value.indexOf(notification), 1)
-		NotificationSystem.notifications.value = [...NotificationSystem.notifications.value]
+		this.notifications.value.splice(
+			this.notifications.value.findIndex((otherNotification) => otherNotification.id === notification.id),
+			1
+		)
+		this.notifications.value = [...this.notifications.value]
 	}
 
 	public static clearNotifications() {

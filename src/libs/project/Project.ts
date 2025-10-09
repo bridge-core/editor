@@ -41,6 +41,7 @@ export class Project implements AsyncDisposable {
 		fileSystem.watch(this.path)
 		fileSystem.ingorePath(join(this.path, '.git'))
 		fileSystem.ingorePath(join(this.path, '.bridge/.dash.development.json'))
+		fileSystem.ingorePath(join(this.path, 'builds/'))
 
 		if (!(this.outputFileSystem instanceof LocalFileSystem)) return
 

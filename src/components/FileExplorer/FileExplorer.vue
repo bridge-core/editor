@@ -134,14 +134,6 @@ async function contextMenuOpenProjectConfig(close: any) {
 
 const contextMenu: Ref<typeof FreeContextMenu | null> = ref(null)
 
-function executeContextMenuAction(action: string, data: any) {
-	if (!contextMenu.value) return
-
-	ActionManager.trigger(action, data)
-
-	contextMenu.value.close()
-}
-
 const draggingCount = ref(0)
 const draggingOver = computed(() => draggingCount.value > 0)
 
@@ -241,16 +233,7 @@ function drop(event: DragEvent) {
 								</template>
 
 								<template #menu="">
-									<ActionContextMenuItem
-										v-for="action in exportActions"
-										:action="action"
-										@click="
-											() => {
-												ActionManager.trigger(action)
-												close()
-											}
-										"
-									/>
+									<ActionContextMenuItem v-for="action in exportActions" :action="action" @click="close" />
 								</template>
 							</SubMenu>
 

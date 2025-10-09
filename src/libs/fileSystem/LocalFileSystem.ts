@@ -89,7 +89,11 @@ export class LocalFileSystem extends BaseFileSystem {
 			content,
 		})
 
-		if (this.pathsToWatch.find((watchPath) => path.startsWith(watchPath)) !== undefined) this.pathUpdated.dispatch(path)
+		if (
+			this.pathsToWatch.find((watchPath) => path.startsWith(watchPath)) !== undefined &&
+			this.watchPathsToIgnore.find((watchPath) => path.startsWith(watchPath)) === undefined
+		)
+			this.pathUpdated.dispatch(path)
 	}
 
 	public async removeFile(path: string) {
@@ -99,7 +103,11 @@ export class LocalFileSystem extends BaseFileSystem {
 
 		await del(`localFileSystem/${this.rootName}${path}`)
 
-		if (this.pathsToWatch.find((watchPath) => path.startsWith(watchPath)) !== undefined) this.pathUpdated.dispatch(path)
+		if (
+			this.pathsToWatch.find((watchPath) => path.startsWith(watchPath)) !== undefined &&
+			this.watchPathsToIgnore.find((watchPath) => path.startsWith(watchPath)) === undefined
+		)
+			this.pathUpdated.dispatch(path)
 	}
 
 	public async makeDirectory(path: string) {
@@ -111,7 +119,11 @@ export class LocalFileSystem extends BaseFileSystem {
 			kind: 'directory',
 		})
 
-		if (this.pathsToWatch.find((watchPath) => path.startsWith(watchPath)) !== undefined) this.pathUpdated.dispatch(path)
+		if (
+			this.pathsToWatch.find((watchPath) => path.startsWith(watchPath)) !== undefined &&
+			this.watchPathsToIgnore.find((watchPath) => path.startsWith(watchPath)) === undefined
+		)
+			this.pathUpdated.dispatch(path)
 	}
 
 	public async removeDirectory(path: string) {
@@ -121,7 +133,11 @@ export class LocalFileSystem extends BaseFileSystem {
 
 		await del(`localFileSystem/${this.rootName}${path}`)
 
-		if (this.pathsToWatch.find((watchPath) => path.startsWith(watchPath)) !== undefined) this.pathUpdated.dispatch(path)
+		if (
+			this.pathsToWatch.find((watchPath) => path.startsWith(watchPath)) !== undefined &&
+			this.watchPathsToIgnore.find((watchPath) => path.startsWith(watchPath)) === undefined
+		)
+			this.pathUpdated.dispatch(path)
 	}
 
 	public async ensureDirectory(path: string): Promise<void> {

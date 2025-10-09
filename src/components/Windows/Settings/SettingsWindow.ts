@@ -107,6 +107,16 @@ function setupProjectsCategory() {
 		type: 'custom',
 		component: OutputFolder,
 	})
+
+	SettingsWindow.addItem('projects', 'incrementVersionOnExport', {
+		type: 'toggle',
+		label: 'windows.settings.projects.incrementVersionOnExport.name',
+	})
+
+	SettingsWindow.addItem('projects', 'addGeneratedWith', {
+		type: 'toggle',
+		label: 'windows.settings.projects.addGeneratedWith.name',
+	})
 }
 
 function setupGeneralCategory() {
@@ -354,6 +364,16 @@ function setupEditorCategory() {
 	SettingsWindow.addItem('editor', 'hideBrackets', {
 		type: 'toggle',
 		label: 'windows.settings.editor.hideBrackets.name',
+	})
+
+	SettingsWindow.addItem('editor', 'automaticallyOpenTreeNodes', {
+		type: 'toggle',
+		label: 'windows.settings.editor.automaticallyOpenTreeNodes.name',
+	})
+
+	SettingsWindow.addItem('editor', 'dragAndDropTreeNodes', {
+		type: 'toggle',
+		label: 'windows.settings.editor.dragAndDropTreeNodes.name',
 	})
 }
 

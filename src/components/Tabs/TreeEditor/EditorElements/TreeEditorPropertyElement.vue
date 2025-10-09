@@ -45,6 +45,8 @@ function clickProperty() {
 
 	if (!(props.tree instanceof ObjectElement || props.tree instanceof ArrayElement)) return
 
+	if (!Settings.get('automaticallyOpenTreeNodes')) return
+
 	isOpen.value = true
 }
 
@@ -198,7 +200,7 @@ defineExpose({ open })
 	<div
 		v-show="preview || !dragging"
 		class="table relative w-full"
-		draggable="true"
+		:draggable="get('dragAndDropTreeNodes')"
 		ref="propertyElement"
 		@drag=""
 		@dragstart="dragStart"
