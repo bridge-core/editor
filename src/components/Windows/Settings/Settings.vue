@@ -2,7 +2,7 @@
 import SidebarWindow from '@/components/Windows/SidebarWindow.vue'
 import LabeledInput from '@/components/Common/LabeledInput.vue'
 import Icon from '@/components/Common/Icon.vue'
-import Dropdown from '@/components/Common/Legacy/LegacyDropdown.vue'
+import LabeledDropdown from '@/components/Common/LabeledDropdown.vue'
 import Switch from '@/components/Common/Switch.vue'
 import LabeledTextInput from '@/components/Common/LabeledTextInput.vue'
 import LabeledAutocompleteInput from '@/components/Common/LabeledAutocompleteInput.vue'
@@ -122,43 +122,14 @@ const isMobile = useIsMobile()
 						<component :is="item.component" :item="item" />
 					</div>
 
-					<Dropdown v-if="item.type === 'dropdown'" class="mt-2 mb-4 flex-1">
-						<template #main="{ expanded, toggle }">
-							<LabeledInput :label="t(item.label)" :focused="expanded" class="bg-background">
-								<div class="flex items-center justify-between cursor-pointer" @click="toggle">
-									<span class="font-theme">{{ item.labels.value[item.values.value.indexOf(get(id))] }}</span>
-
-									<Icon
-										icon="arrow_drop_down"
-										class="transition-transform duration-200 ease-out"
-										:class="{ '-rotate-180': expanded }"
-									/>
-								</div>
-							</LabeledInput>
-						</template>
-
-						<template #choices="{ collapse }">
-							<div class="mt-2 bg-background-secondary w-full p-1 rounded">
-								<div class="flex flex-col max-h-[12rem] overflow-y-auto p-1">
-									<button
-										v-for="value in item.values.value"
-										@click="
-											() => {
-												Settings.set(id, value)
-												collapse()
-											}
-										"
-										class="hover:bg-primary text-start p-1 rounded transition-colors duration-100 ease-out font-theme"
-										:class="{
-											'bg-background-tertiary': get(id) === value,
-										}"
-									>
-										{{ item.labels.value[item.values.value.indexOf(value)] }}
-									</button>
-								</div>
-							</div>
-						</template>
-					</Dropdown>
+					<LabeledDropdown
+						v-if="item.type === 'dropdown'"
+						class="mt-2 mb-4 flex-1"
+						:label="item.label"
+						:options="item.labels.value"
+						:model-value="item.labels.value[item.values.value.indexOf(get(id))]"
+						@submit="(value) => Settings.set(id, item.values.value[item.labels.value.indexOf(value)])"
+					/>
 
 					<div v-if="item.type === 'toggle'" class="mt-2 mb-4">
 						<h2 class="mb-2 text-text font-theme">{{ t(item.label) }}</h2>
@@ -172,7 +143,7 @@ const isMobile = useIsMobile()
 
 					<div v-if="item.type === 'autocomplete'">
 						<LabeledAutocompleteInput
-							class="mt-2"
+							class="mt-2 mb-4"
 							:completions="item.completions.value"
 							:label="item.label"
 							:model-value="get(id).toString()"
