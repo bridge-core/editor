@@ -8,6 +8,7 @@ import { NotificationSystem } from '@/components/Notifications/NotificationSyste
 import { SocialsWindow } from '@/components/Windows/Socials/SocialsWindow'
 import { openUrl } from '@/libs/OpenUrl'
 import { ActionManager } from '@/libs/actions/ActionManager'
+import { tauriBuild } from '@/libs/tauri/Tauri'
 
 export function setupSidebar() {
 	Sidebar.addButton('fileExplorer', 'sidebar.fileExplorer.name', 'folder', () => {
@@ -26,13 +27,15 @@ export function setupSidebar() {
 	})
 	Sidebar.addDivider()
 
-	NotificationSystem.addNotification(
-		'download',
-		() => {
-			openUrl('https://bridge-core.app/guide/download/')
-		},
-		'primary'
-	)
+	if (!tauriBuild) {
+		NotificationSystem.addNotification(
+			'download',
+			() => {
+				openUrl('https://bridge-core.app/guide/download/')
+			},
+			'primary'
+		)
+	}
 
 	NotificationSystem.addNotification('link', () => {
 		Windows.open(SocialsWindow)
