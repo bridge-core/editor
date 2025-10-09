@@ -189,7 +189,7 @@ export class TauriFileSystem extends BaseFileSystem {
 			return (await readDir(join(this.basePath, path))).map(
 				(entry) =>
 					new BaseEntry(
-						entry.path.substring(this.basePath?.length ?? 0).replaceAll(sep, '/'),
+						resolve('/', entry.path.substring(this.basePath?.length ?? 0).replaceAll(sep, '/')),
 						(entry.children !== undefined ? 'directory' : 'file') as 'directory' | 'file'
 					)
 			)
