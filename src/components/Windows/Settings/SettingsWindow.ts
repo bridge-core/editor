@@ -339,6 +339,11 @@ function setupEditorCategory() {
 		icon: 'edit',
 	})
 
+	SettingsWindow.addItem('editor', 'generalEditorLabel', {
+		type: 'label',
+		label: 'General Editor Settings',
+	})
+
 	SettingsWindow.addItem('editor', 'jsonEditor', {
 		type: 'dropdown',
 		label: 'windows.settings.editor.jsonEditor.name',
@@ -346,16 +351,21 @@ function setupEditorCategory() {
 		values: computed(() => ['text', 'tree']),
 	})
 
-	SettingsWindow.addItem('editor', 'formatOnSave', {
-		type: 'toggle',
-		label: 'windows.settings.editor.formatOnSave.name',
-		description: 'windows.settings.editor.formatOnSave.description',
-	})
-
 	SettingsWindow.addItem('editor', 'autoSaveChanges', {
 		type: 'toggle',
 		label: 'windows.settings.editor.autoSaveChanges.name',
 		description: 'windows.settings.editor.autoSaveChanges.description',
+	})
+
+	SettingsWindow.addItem('editor', 'textEditorLabel', {
+		type: 'label',
+		label: 'Text Editor Settings',
+	})
+
+	SettingsWindow.addItem('editor', 'formatOnSave', {
+		type: 'toggle',
+		label: 'windows.settings.editor.formatOnSave.name',
+		description: 'windows.settings.editor.formatOnSave.description',
 	})
 
 	SettingsWindow.addItem('editor', 'bracketPairColorization', {
@@ -380,6 +390,11 @@ function setupEditorCategory() {
 				value,
 			}))
 		),
+	})
+
+	SettingsWindow.addItem('editor', 'treeLabel', {
+		type: 'label',
+		label: 'Tree Editor Settings',
 	})
 
 	SettingsWindow.addItem('editor', 'bridgePredictions', {
@@ -423,6 +438,11 @@ function setupDeveloperCategory() {
 	SettingsWindow.addCategory('developer', {
 		label: 'windows.settings.developer.name',
 		icon: 'code',
+	})
+
+	SettingsWindow.addItem('developer', 'developerLabel', {
+		type: 'label',
+		label: 'Developer Settings',
 	})
 
 	SettingsWindow.addItem('developer', 'dataDeveloperMode', {
