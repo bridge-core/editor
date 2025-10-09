@@ -133,7 +133,7 @@ function updateTokensProvider(commands: string[], selectorArguments: string[]) {
 			},
 		],
 		keywords: commands,
-		selectors: ['@a', '@e', '@p', '@r', '@s', '@initiator'],
+		selectors: ['@a', '@e', '@p', '@r', '@s', '@initiator', '@n'],
 		targetSelectorArguments: selectorArguments,
 
 		tokenizer: {
@@ -185,11 +185,7 @@ function updateTokensProvider(commands: string[], selectorArguments: string[]) {
 				[/-?([0-9]+(\.[0-9]+)?)|((\~|\^)-?([0-9]+(\.[0-9]+)?)?)/, 'number'],
 			],
 
-			embeddedJson: [
-				[/\{/, 'delimiter.bracket', '@embeddedJson'],
-				[/\}/, 'delimiter.bracket', '@pop'],
-				{ include: '@common' },
-			],
+			embeddedJson: [[/\{/, 'delimiter.bracket', '@embeddedJson'], [/\}/, 'delimiter.bracket', '@pop'], { include: '@common' }],
 			targetSelectorArguments: [
 				[/\]/, { token: '@brackets', bracket: '@close', next: '@pop' }],
 				[
@@ -211,10 +207,7 @@ function updateTokensProvider(commands: string[], selectorArguments: string[]) {
 				],
 				{ include: '@common' },
 			],
-			targetSelectorScore: [
-				[/}/, { token: '@brackets', bracket: '@close', next: '@pop' }],
-				{ include: '@common' },
-			],
+			targetSelectorScore: [[/}/, { token: '@brackets', bracket: '@close', next: '@pop' }], { include: '@common' }],
 		},
 	})
 }

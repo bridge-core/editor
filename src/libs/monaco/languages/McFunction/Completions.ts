@@ -111,7 +111,7 @@ export async function provideInlineJsonCompletionItems(
 				if (argumentType.type === 'selector') {
 					completions = completions.concat(
 						makeCompletions(
-							['@p', '@r', '@a', '@e', '@s', '@initiator'],
+							['@p', '@r', '@a', '@e', '@s', '@initiator', '@n'],
 							undefined,
 							languages.CompletionItemKind.Enum,
 							position,
@@ -288,7 +288,7 @@ export async function provideCompletionItems(
 				if (argumentType.type === 'selector') {
 					completions = completions.concat(
 						makeCompletions(
-							['@p', '@r', '@a', '@e', '@s', '@initiator'],
+							['@p', '@r', '@a', '@e', '@s', '@initiator', '@n'],
 							undefined,
 							languages.CompletionItemKind.Enum,
 							position,
