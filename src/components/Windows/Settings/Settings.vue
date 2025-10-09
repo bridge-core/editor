@@ -122,7 +122,7 @@ const isMobile = useIsMobile()
 						<component :is="item.component" :item="item" />
 					</div>
 
-					<Dropdown v-if="item.type === 'dropdown'" class="mb-4 flex-1">
+					<Dropdown v-if="item.type === 'dropdown'" class="mt-2 mb-4 flex-1">
 						<template #main="{ expanded, toggle }">
 							<LabeledInput :label="t(item.label)" :focused="expanded" class="bg-background">
 								<div class="flex items-center justify-between cursor-pointer" @click="toggle">
