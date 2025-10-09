@@ -114,7 +114,7 @@ export class TextTab extends FileTab {
 
 				if (modified) {
 					this.temporary.value = false
-					this.interuptAutoSave.invoke()
+					this.interruptAutoSave.invoke()
 				}
 			})
 		)
@@ -144,7 +144,7 @@ export class TextTab extends FileTab {
 		this.model?.dispose()
 
 		this.debouncedSaveState.dispose()
-		this.interuptAutoSave.dispose()
+		this.interruptAutoSave.dispose()
 	}
 
 	public async activate() {
@@ -559,7 +559,9 @@ export class TextTab extends FileTab {
 		this.saveState()
 	}, 50)
 
-	private interuptAutoSave = interupt(() => {
-		this.save()
+	private interruptAutoSave = interupt(() => {
+		if (Settings.get('autoSaveChanges')) {
+			this.save()
+		}
 	}, 1000)
 }

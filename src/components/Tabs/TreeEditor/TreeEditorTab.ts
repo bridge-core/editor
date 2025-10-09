@@ -221,7 +221,7 @@ export class TreeEditorTab extends FileTab {
 		this.validate()
 		this.updateCompletions()
 
-		this.interupAutoSave.invoke()
+		this.interruptAutoSave.invoke()
 	}
 
 	public undo() {
@@ -236,7 +236,7 @@ export class TreeEditorTab extends FileTab {
 		this.validate()
 		this.updateCompletions()
 
-		this.interupAutoSave.invoke()
+		this.interruptAutoSave.invoke()
 	}
 
 	public redo() {
@@ -251,7 +251,7 @@ export class TreeEditorTab extends FileTab {
 		this.validate()
 		this.updateCompletions()
 
-		this.interupAutoSave.invoke()
+		this.interruptAutoSave.invoke()
 	}
 
 	public getTreeSchemaPath(tree: TreeElements): string {
@@ -393,7 +393,9 @@ export class TreeEditorTab extends FileTab {
 		console.timeEnd('Completions')
 	}
 
-	private interupAutoSave = interupt(() => {
-		this.save()
+	private interruptAutoSave = interupt(() => {
+		if (Settings.get('autoSaveChanges')) {
+			this.save()
+		}
 	}, 1000)
 }
