@@ -114,7 +114,10 @@ export class TextTab extends FileTab {
 
 				if (modified) {
 					this.temporary.value = false
-					this.interruptAutoSave.invoke()
+
+					if (Settings.get('autoSaveChanges')) {
+						this.interruptAutoSave.invoke()
+					}
 				}
 			})
 		)
@@ -560,8 +563,6 @@ export class TextTab extends FileTab {
 	}, 50)
 
 	private interruptAutoSave = interupt(() => {
-		if (Settings.get('autoSaveChanges')) {
-			this.save()
-		}
+		this.save()
 	}, 1000)
 }

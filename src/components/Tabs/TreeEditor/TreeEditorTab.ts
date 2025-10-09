@@ -154,6 +154,8 @@ export class TreeEditorTab extends FileTab {
 
 	public async destroy() {
 		disposeAll(this.disposables)
+
+		this.interruptAutoSave.dispose()
 	}
 
 	public async activate() {
@@ -221,7 +223,9 @@ export class TreeEditorTab extends FileTab {
 		this.validate()
 		this.updateCompletions()
 
-		this.interruptAutoSave.invoke()
+		if (Settings.get('autoSaveChanges')) {
+			this.interruptAutoSave.invoke()
+		}
 	}
 
 	public undo() {
@@ -236,7 +240,9 @@ export class TreeEditorTab extends FileTab {
 		this.validate()
 		this.updateCompletions()
 
-		this.interruptAutoSave.invoke()
+		if (Settings.get('autoSaveChanges')) {
+			this.interruptAutoSave.invoke()
+		}
 	}
 
 	public redo() {
@@ -251,7 +257,9 @@ export class TreeEditorTab extends FileTab {
 		this.validate()
 		this.updateCompletions()
 
-		this.interruptAutoSave.invoke()
+		if (Settings.get('autoSaveChanges')) {
+			this.interruptAutoSave.invoke()
+		}
 	}
 
 	public getTreeSchemaPath(tree: TreeElements): string {
@@ -394,8 +402,6 @@ export class TreeEditorTab extends FileTab {
 	}
 
 	private interruptAutoSave = interupt(() => {
-		if (Settings.get('autoSaveChanges')) {
-			this.save()
-		}
+		this.save()
 	}, 1000)
 }
