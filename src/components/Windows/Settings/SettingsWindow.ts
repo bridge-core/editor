@@ -44,6 +44,7 @@ export interface TextItem {
 export interface ToggleItem {
 	type: 'toggle'
 	label: string
+	description: string
 }
 
 export interface TabItem {
@@ -103,19 +104,46 @@ function setupProjectsCategory() {
 		icon: 'folder',
 	})
 
+	SettingsWindow.addItem('projects', 'outputFolderLabel', {
+		type: 'label',
+		label: 'Output Folder',
+	})
+
 	SettingsWindow.addItem('projects', 'outputFolder', {
 		type: 'custom',
 		component: OutputFolder,
 	})
 
+	SettingsWindow.addItem('projects', 'defaultLabel', {
+		type: 'label',
+		label: 'Project Defaults',
+	})
+
+	SettingsWindow.addItem('projects', 'defaultAuthor', {
+		type: 'text',
+		label: 'windows.settings.projects.defaultAuthor.name',
+	})
+
+	SettingsWindow.addItem('projects', 'defaultNamespace', {
+		type: 'text',
+		label: 'windows.settings.projects.defaultNamespace.name',
+	})
+
+	SettingsWindow.addItem('projects', 'exportLabel', {
+		type: 'label',
+		label: 'Export Settings',
+	})
+
 	SettingsWindow.addItem('projects', 'incrementVersionOnExport', {
 		type: 'toggle',
 		label: 'windows.settings.projects.incrementVersionOnExport.name',
+		description: 'windows.settings.projects.incrementVersionOnExport.description',
 	})
 
 	SettingsWindow.addItem('projects', 'addGeneratedWith', {
 		type: 'toggle',
 		label: 'windows.settings.projects.addGeneratedWith.name',
+		description: 'windows.settings.projects.addGeneratedWith.description',
 	})
 }
 
@@ -125,6 +153,11 @@ function setupGeneralCategory() {
 		icon: 'circle',
 	})
 
+	SettingsWindow.addItem('general', 'languageLabel', {
+		type: 'label',
+		label: 'Language Settings',
+	})
+
 	SettingsWindow.addItem('general', 'language', {
 		type: 'dropdown',
 		label: 'windows.settings.general.language.name',
@@ -132,24 +165,21 @@ function setupGeneralCategory() {
 		labels: computed(() => LocaleManager.getAvailableLanguages().map((language) => language.text)),
 	})
 
-	SettingsWindow.addItem('general', 'defaultAuthor', {
-		type: 'text',
-		label: 'windows.settings.projects.defaultAuthor.name',
-	})
-
-	SettingsWindow.addItem('general', 'defaultNamespace', {
-		type: 'text',
-		label: 'windows.settings.projects.defaultNamespace.name',
+	SettingsWindow.addItem('general', 'tabLabel', {
+		type: 'label',
+		label: 'Tab Settings',
 	})
 
 	SettingsWindow.addItem('general', 'restoreTabs', {
 		type: 'toggle',
 		label: 'windows.settings.general.restoreTabs.name',
+		description: 'windows.settings.general.restoreTabs.description',
 	})
 
 	SettingsWindow.addItem('general', 'keepTabsOpen', {
 		type: 'toggle',
 		label: 'windows.settings.general.keepTabsOpen.name',
+		description: 'windows.settings.general.keepTabsOpen.description',
 	})
 }
 
@@ -261,6 +291,7 @@ function setupAppearanceCategory() {
 	SettingsWindow.addItem('appearance', 'compactTabDesign', {
 		type: 'toggle',
 		label: 'windows.settings.editor.compactTabDesign.name',
+		description: 'windows.settings.editor.compactTabDesign.description',
 	})
 
 	SettingsWindow.addItem('appearance', 'sideBarLabel', {
@@ -271,6 +302,7 @@ function setupAppearanceCategory() {
 	SettingsWindow.addItem('appearance', 'sidebarRight', {
 		type: 'toggle',
 		label: 'windows.settings.sidebar.sidebarRight.name',
+		description: 'windows.settings.sidebar.sidebarRight.description',
 	})
 
 	SettingsWindow.addItem('appearance', 'sidebarSize', {
@@ -317,21 +349,25 @@ function setupEditorCategory() {
 	SettingsWindow.addItem('editor', 'formatOnSave', {
 		type: 'toggle',
 		label: 'windows.settings.editor.formatOnSave.name',
+		description: 'windows.settings.editor.formatOnSave.description',
 	})
 
 	SettingsWindow.addItem('editor', 'autoSaveChanges', {
 		type: 'toggle',
 		label: 'windows.settings.editor.autoSaveChanges.name',
+		description: 'windows.settings.editor.autoSaveChanges.description',
 	})
 
 	SettingsWindow.addItem('editor', 'bracketPairColorization', {
 		type: 'toggle',
 		label: 'windows.settings.editor.bracketPairColorization.name',
+		description: 'windows.settings.editor.bracketPairColorization.description',
 	})
 
 	SettingsWindow.addItem('editor', 'wordWrap', {
 		type: 'toggle',
 		label: 'windows.settings.editor.wordWrap.name',
+		description: 'windows.settings.editor.wordWrap.description',
 	})
 
 	SettingsWindow.addItem('editor', 'wordWrapColumns', {
@@ -349,31 +385,37 @@ function setupEditorCategory() {
 	SettingsWindow.addItem('editor', 'bridgePredictions', {
 		type: 'toggle',
 		label: 'windows.settings.editor.bridgePredictions.name',
+		description: 'windows.settings.editor.bridgePredictions.description',
 	})
 
 	SettingsWindow.addItem('editor', 'inlineDiagnostics', {
 		type: 'toggle',
 		label: 'windows.settings.editor.inlineTreeEditorDiagnostics.name',
+		description: 'windows.settings.editor.inlineTreeEditorDiagnostics.description',
 	})
 
 	SettingsWindow.addItem('editor', 'showArrayIndices', {
 		type: 'toggle',
 		label: 'windows.settings.editor.showArrayIndices.name',
+		description: 'windows.settings.editor.showArrayIndices.description',
 	})
 
 	SettingsWindow.addItem('editor', 'hideBrackets', {
 		type: 'toggle',
 		label: 'windows.settings.editor.hideBrackets.name',
+		description: 'windows.settings.editor.hideBrackets.description',
 	})
 
 	SettingsWindow.addItem('editor', 'automaticallyOpenTreeNodes', {
 		type: 'toggle',
 		label: 'windows.settings.editor.automaticallyOpenTreeNodes.name',
+		description: 'windows.settings.editor.automaticallyOpenTreeNodes.description',
 	})
 
 	SettingsWindow.addItem('editor', 'dragAndDropTreeNodes', {
 		type: 'toggle',
 		label: 'windows.settings.editor.dragAndDropTreeNodes.name',
+		description: 'windows.settings.editor.dragAndDropTreeNodes.description',
 	})
 }
 
@@ -386,5 +428,6 @@ function setupDeveloperCategory() {
 	SettingsWindow.addItem('developer', 'dataDeveloperMode', {
 		type: 'toggle',
 		label: 'windows.settings.developer.dataDeveloperMode.name',
+		description: 'windows.settings.developer.dataDeveloperMode.description',
 	})
 }

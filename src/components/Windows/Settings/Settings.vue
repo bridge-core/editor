@@ -163,11 +163,16 @@ const isMobile = useIsMobile()
 					<div v-if="item.type === 'toggle'" class="mt-2 mb-4">
 						<h2 class="mb-2 text-text font-theme">{{ t(item.label) }}</h2>
 
-						<Switch :model-value="get(id)" @update:model-value="(value) => Settings.set(id, value)" />
+						<div class="flex">
+							<Switch :model-value="get(id)" @update:model-value="(value) => Settings.set(id, value)" />
+
+							<p class="text-text-secondary ml-4">{{ t(item.description) }}</p>
+						</div>
 					</div>
 
 					<div v-if="item.type === 'autocomplete'">
 						<LabeledAutocompleteInput
+							class="mt-2"
 							:completions="item.completions.value"
 							:label="item.label"
 							:model-value="get(id).toString()"
@@ -177,6 +182,7 @@ const isMobile = useIsMobile()
 
 					<div v-if="item.type === 'text'" class="w-full">
 						<LabeledTextInput
+							class="mt-2 mb-4"
 							:label="item.label"
 							:model-value="get(id).toString()"
 							@update:model-value="(value: string | undefined) => Settings.set(id, value)"
