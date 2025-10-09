@@ -22,6 +22,8 @@ export async function provideInlineJsonCompletionItems(
 
 	const locationPatterns = validCommandLocations[fileType.id]
 
+	if (!locationPatterns) return
+
 	const location = await getLocation(model, position)
 
 	if (!isMatch(location, locationPatterns)) return undefined
