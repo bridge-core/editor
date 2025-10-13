@@ -170,6 +170,10 @@
 				"name": "Import Project",
 				"description": "Import a new project"
 			},
+			"importComMojangProject": {
+				"name": "Import com.mojang Project",
+				"description": "Import a new project from the com.mojang folder"
+			},
 			"openFolder": {
 				"name": "Open Folder",
 				"description": "Open a folder"

@@ -32,6 +32,7 @@ export class TauriFileSystem extends BaseFileSystem {
 		if (this.basePath === null) throw new Error('Base path not set!')
 
 		try {
+			//@ts-ignore
 			return (await readBinaryFile(join(this.basePath, path))).buffer
 		} catch (error) {
 			console.error(`Failed to read "${path}"`)
@@ -65,6 +66,7 @@ export class TauriFileSystem extends BaseFileSystem {
 					resolve(reader.result as string)
 				}
 
+				//@ts-ignore
 				reader.readAsDataURL(new Blob([content.buffer]))
 			})
 		} catch (error) {
@@ -94,14 +96,17 @@ export class TauriFileSystem extends BaseFileSystem {
 		let writeableContent: ArrayBuffer | null = null
 
 		if (typeof content === 'string') {
+			//@ts-ignore
 			writeableContent = this.textEncoder.encode(content)
 		}
 
 		if (content instanceof ArrayBuffer) {
+			//@ts-ignore
 			writeableContent = content
 		}
 
 		if ((content as ArrayBufferView).buffer) {
+			//@ts-ignore
 			writeableContent = (content as ArrayBufferView).buffer
 		}
 
