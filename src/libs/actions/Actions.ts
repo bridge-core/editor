@@ -30,7 +30,6 @@ import { appVersion } from '@/libs/app/AppEnv'
 import { ImporterManager } from '@/libs/import/ImporterManager'
 import { tauriBuild } from '@/libs/tauri/Tauri'
 import { TauriFileSystem } from '@/libs/fileSystem/TauriFileSystem'
-import { ImportComMojangProject } from '@/components/Windows/ImportComMojangProject/ImportComMojangProject'
 
 export function setupActions() {
 	setupFileTabActions()
@@ -238,19 +237,6 @@ function setupEditorActions() {
 			},
 			name: 'actions.editor.importProject.name',
 			description: 'actions.editor.importProject.description',
-			icon: 'package',
-			category: 'actions.editor.name',
-		})
-	)
-
-	ActionManager.addAction(
-		new Action({
-			id: 'editor.importComMojangProject',
-			trigger: async () => {
-				Windows.open(ImportComMojangProject)
-			},
-			name: 'actions.editor.importComMojangProject.name',
-			description: 'actions.editor.importComMojangProject.description',
 			icon: 'package',
 			category: 'actions.editor.name',
 		})

@@ -45,7 +45,6 @@ export class Toolbar {
 			},
 			{ type: 'seperator' },
 			{ type: 'button', action: 'editor.importProject' },
-			{ type: 'button', action: 'editor.importComMojangProject' },
 			{ type: 'seperator' },
 			{ type: 'button', action: 'editor.openFolder' },
 			{ type: 'button', action: 'editor.revealBridgeFolder' },
