@@ -32,15 +32,19 @@ const linkBehaviourPack = ref(false)
 const linkResourcePack = ref(false)
 
 function setLinkBehaviourPack(value: boolean) {
-	if (!selectedPackTypes.value.find((pack) => pack.id === 'behaviorPack')) selectPackType(packTypes.value.find((packType) => packType.id === 'behaviorPack')!)
-	if (!selectedPackTypes.value.find((pack) => pack.id === 'resourcePack')) selectPackType(packTypes.value.find((packType) => packType.id === 'resourcePack')!)
+	if (!selectedPackTypes.value.find((pack) => pack.id === 'behaviorPack'))
+		selectPackType(packTypes.value.find((packType) => packType.id === 'behaviorPack')!)
+	if (!selectedPackTypes.value.find((pack) => pack.id === 'resourcePack'))
+		selectPackType(packTypes.value.find((packType) => packType.id === 'resourcePack')!)
 
 	linkBehaviourPack.value = value
 }
 
 function setLinkResourcePack(value: boolean) {
-	if (!selectedPackTypes.value.find((pack) => pack.id === 'behaviorPack')) selectPackType(packTypes.value.find((packType) => packType.id === 'behaviorPack')!)
-	if (!selectedPackTypes.value.find((pack) => pack.id === 'resourcePack')) selectPackType(packTypes.value.find((packType) => packType.id === 'resourcePack')!)
+	if (!selectedPackTypes.value.find((pack) => pack.id === 'behaviorPack'))
+		selectPackType(packTypes.value.find((packType) => packType.id === 'behaviorPack')!)
+	if (!selectedPackTypes.value.find((pack) => pack.id === 'resourcePack'))
+		selectPackType(packTypes.value.find((packType) => packType.id === 'resourcePack')!)
 
 	linkResourcePack.value = value
 }
@@ -143,7 +147,9 @@ async function create() {
 			rpAsBpDependency: linkResourcePack.value,
 			bpAsRpDependency: linkBehaviourPack.value,
 			uuids: Object.fromEntries(selectedPackTypes.value.map((packType) => [packType.id, uuid()])),
-			experiments: Object.fromEntries(experimentalToggles.value.map((toggle) => [toggle.id, selectedExperimentalToggles.value.includes(toggle)])),
+			experiments: Object.fromEntries(
+				experimentalToggles.value.map((toggle) => [toggle.id, selectedExperimentalToggles.value.includes(toggle)])
+			),
 		},
 		fileSystem
 	)
@@ -226,13 +232,27 @@ const isMobile = useIsMobile()
 						@click="selectPackType(packType)"
 					>
 						<div class="flex items-center my-4" v-if="packType.id === 'behaviorPack'">
-							<Switch class="mr-2" border-color="backgroundTertiary" :model-value="linkResourcePack" @update:model-value="setLinkResourcePack" />
-							<span class="text-xs text-text-secondary select-none font-theme">{{ t('windows.createProject.rpAsBpDependency') }}</span>
+							<Switch
+								class="mr-2"
+								border-color="backgroundTertiary"
+								:model-value="linkResourcePack"
+								@update:model-value="setLinkResourcePack"
+							/>
+							<span class="text-xs text-text-secondary select-none font-theme">{{
+								t('windows.createProject.rpAsBpDependency')
+							}}</span>
 						</div>
 
 						<div class="flex items-center my-4" v-if="packType.id === 'resourcePack'">
-							<Switch class="mr-2" border-color="backgroundTertiary" :model-value="linkBehaviourPack" @update:model-value="setLinkBehaviourPack" />
-							<span class="text-xs text-text-secondary select-none font-theme">{{ t('windows.createProject.bpAsRpDependency') }}</span>
+							<Switch
+								class="mr-2"
+								border-color="backgroundTertiary"
+								:model-value="linkBehaviourPack"
+								@update:model-value="setLinkBehaviourPack"
+							/>
+							<span class="text-xs text-text-secondary select-none font-theme">{{
+								t('windows.createProject.bpAsRpDependency')
+							}}</span>
 						</div>
 					</InformativeToggle>
 				</div>
@@ -266,6 +286,10 @@ const isMobile = useIsMobile()
 							:selected="selectedFiles.includes(file)"
 							@click="selectFile(file)"
 						/>
+
+						<p v-if="selectedPackTypes.length === 0" class="font-theme text-text-secondary">
+							{{ t('Select a pack to modify individual files') }}
+						</p>
 					</div>
 				</Expandable>
 
@@ -274,7 +298,12 @@ const isMobile = useIsMobile()
 					<LabeledInput :label="t('windows.createProject.icon.label')" class="bg-background h-min grow" v-slot="{ focus, blur }">
 						<input type="file" class="hidden" ref="projectIconInput" @:change="chooseProjectIcon" />
 
-						<button class="flex align-center gap-2 text-text-secondary font-theme grow" @mouseenter="focus" @mouseleave="blur" @click="projectIconInput?.click()">
+						<button
+							class="flex align-center gap-2 text-text-secondary font-theme grow"
+							@mouseenter="focus"
+							@mouseleave="blur"
+							@click="projectIconInput?.click()"
+						>
 							<Icon icon="image" class="no-fill" color="text-text-secondary" />
 							{{ t('windows.createProject.icon.placeholder') }}
 						</button>
@@ -323,7 +352,11 @@ const isMobile = useIsMobile()
 								<div class="flex items-center justify-between cursor-pointer" @click="toggle">
 									<span class="font-theme">{{ projectTargetVersion }}</span>
 
-									<Icon icon="arrow_drop_down" class="transition-transform duration-200 ease-out" :class="{ '-rotate-180': expanded }" />
+									<Icon
+										icon="arrow_drop_down"
+										class="transition-transform duration-200 ease-out"
+										:class="{ '-rotate-180': expanded }"
+									/>
 								</div>
 							</LabeledInput>
 						</template>
