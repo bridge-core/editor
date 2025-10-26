@@ -446,6 +446,9 @@
 		"edit": {
 			"name": "編集"
 		},
+		"download": {
+			"name": "ダウンロード"
+		},
 		"view": {
 			"name": "表示",
 			"togglePackExplorer": {
@@ -629,6 +632,18 @@
 		"educationEdition": {
 			"name": "Education Edition の有効化",
 			"description": "物質還元レシピなどの教育機能で自動補完機能を有効にします。"
+		},
+		"experimentalCreatorCameraFeatures": {
+			"name": "実験的なクリエイターカメラ機能",
+			"description": "実験的なカメラプリセット機能に対する自動補完機能を有効にします。"
+		},
+		"dataDrivenJigsawStructures": {
+			"name": "データ駆動型ジグソー構造",
+			"description": "ジグソー構造、テンプレートプール、プロセッサーリスト、構造セットの作成を有効にします。"
+		},
+		"renderDragonFeatures": {
+			"name": "クリエイター向けRender Dragonの機能",
+			"description": "遅延レンダリング設定ファイルの作成を可能にします。"
 		}
 	},
 	"windows": {
@@ -717,6 +732,10 @@
 					"soundDefinitions": {
 						"name": "sound_definitions.json",
 						"description": "プロジェクト内の他の場所で使用するサウンドファイルのIDを定義します。"
+					},
+					"splashes": {
+						"name": "splashes.json",
+						"description": "Minecraftのタイトル画面に表示されるスプラッシュメッセージの定義に使用されます。"
 					}
 				}
 			}
