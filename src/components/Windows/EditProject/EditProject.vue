@@ -171,7 +171,7 @@ const validationError: ComputedRef<string | null> = computed(() => {
 
         <TextButton
           :text="t('Save')"
-          @click="create"
+          @click="save"
           class="transition-[color, opacity]"
           :enabled="validationError === null"
         />
