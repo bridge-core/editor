@@ -39,9 +39,9 @@ export class Project implements AsyncDisposable {
 		this.usingProjectOutputFolderKey = `usingProjectFolder-${this.name}`
 
 		fileSystem.watch(this.path)
-		fileSystem.ingorePath(join(this.path, '.git'))
-		fileSystem.ingorePath(join(this.path, '.bridge/.dash.development.json'))
-		fileSystem.ingorePath(join(this.path, 'builds/'))
+		fileSystem.ignorePath(join(this.path, '.git'))
+		fileSystem.ignorePath(join(this.path, '.bridge/.dash.development.json'))
+		fileSystem.ignorePath(join(this.path, 'builds/'))
 
 		if (!(this.outputFileSystem instanceof LocalFileSystem)) return
 

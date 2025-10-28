@@ -170,7 +170,7 @@ export class BaseFileSystem {
 		throw new Error('Not implemented!')
 	}
 
-	public async ingorePath(path: string) {
+	public async ignorePath(path: string) {
 		this.watchPathsToIgnore.push(path)
 	}
 

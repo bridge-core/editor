@@ -1,410 +1,472 @@
 <script lang="ts" setup>
-import Window from '@/components/Windows/Window.vue'
-import Icon from '@/components/Common/Icon.vue'
-import Switch from '@/components/Common/Switch.vue'
-import LabeledInput from '@/components/Common/LabeledInput.vue'
-import InformativeToggle from '@/components/Common/InformativeToggle.vue'
-import Expandable from '@/components/Common/Expandable.vue'
-import Dropdown from '@/components/Common/Legacy/LegacyDropdown.vue'
+import Window from "@/components/Windows/Window.vue";
+import Icon from "@/components/Common/Icon.vue";
+import Switch from "@/components/Common/Switch.vue";
+import LabeledInput from "@/components/Common/LabeledInput.vue";
+import InformativeToggle from "@/components/Common/InformativeToggle.vue";
+import Expandable from "@/components/Common/Expandable.vue";
+import Dropdown from "@/components/Common/Legacy/LegacyDropdown.vue";
+import LabeledTextInput from "@/components/Common/LabeledTextInput.vue";
+import TextButton from "@/components/Common/TextButton.vue";
 
-import { ComputedRef, Ref, computed, onMounted, ref, watch } from 'vue'
-import { IPackType } from 'mc-project-core'
-import { ProjectManager } from '@/libs/project/ProjectManager'
-import { ConfigurableFile } from '@/libs/project/create/files/configurable/ConfigurableFile'
-import { FormatVersionDefinitions, ExperimentalToggle, useGetData, Data } from '@/libs/data/Data'
-import { v4 as uuid } from 'uuid'
-import { useTranslate } from '@/libs/locales/Locales'
-import { fileSystem } from '@/libs/fileSystem/FileSystem'
-import { Windows } from '../Windows'
-import { CreateProjectWindow } from './CreateProjectWindow'
-import TextButton from '@/components/Common/TextButton.vue'
-import { useIsMobile } from '@/libs/Mobile'
-import { packs } from '@/libs/project/Packs'
-import { Settings } from '@/libs/settings/Settings'
-import LabeledTextInput from '@/components/Common/LabeledTextInput.vue'
+import { ComputedRef, Ref, computed, onMounted, ref, watch } from "vue";
+import { IPackType } from "mc-project-core";
+import { ProjectManager } from "@/libs/project/ProjectManager";
+import { ConfigurableFile } from "@/libs/project/create/files/configurable/ConfigurableFile";
+import {
+  FormatVersionDefinitions,
+  ExperimentalToggle,
+  useGetData,
+  Data,
+} from "@/libs/data/Data";
+import { v4 as uuid } from "uuid";
+import { useTranslate } from "@/libs/locales/Locales";
+import { fileSystem } from "@/libs/fileSystem/FileSystem";
+import { Windows } from "../Windows";
+import { CreateProjectWindow } from "./CreateProjectWindow";
+import { useIsMobile } from "@/libs/Mobile";
+import { packs } from "@/libs/project/Packs";
+import { Settings } from "@/libs/settings/Settings";
 
-const t = useTranslate()
-const getData = useGetData()
+const t = useTranslate();
+const getData = useGetData();
 
-const projectIconInput: Ref<HTMLInputElement | null> = ref(null)
+const projectIconInput: Ref<HTMLInputElement | null> = ref(null);
 
-const linkBehaviourPack = ref(false)
-const linkResourcePack = ref(false)
+const linkBehaviourPack = ref(false);
+const linkResourcePack = ref(false);
 
 function setLinkBehaviourPack(value: boolean) {
-	if (!selectedPackTypes.value.find((pack) => pack.id === 'behaviorPack'))
-		selectPackType(packTypes.value.find((packType) => packType.id === 'behaviorPack')!)
-	if (!selectedPackTypes.value.find((pack) => pack.id === 'resourcePack'))
-		selectPackType(packTypes.value.find((packType) => packType.id === 'resourcePack')!)
+  if (!selectedPackTypes.value.find((pack) => pack.id === "behaviorPack"))
+    selectPackType(packTypes.value.find((packType) => packType.id === "behaviorPack")!);
+  if (!selectedPackTypes.value.find((pack) => pack.id === "resourcePack"))
+    selectPackType(packTypes.value.find((packType) => packType.id === "resourcePack")!);
 
-	linkBehaviourPack.value = value
+  linkBehaviourPack.value = value;
 }
 
 function setLinkResourcePack(value: boolean) {
-	if (!selectedPackTypes.value.find((pack) => pack.id === 'behaviorPack'))
-		selectPackType(packTypes.value.find((packType) => packType.id === 'behaviorPack')!)
-	if (!selectedPackTypes.value.find((pack) => pack.id === 'resourcePack'))
-		selectPackType(packTypes.value.find((packType) => packType.id === 'resourcePack')!)
+  if (!selectedPackTypes.value.find((pack) => pack.id === "behaviorPack"))
+    selectPackType(packTypes.value.find((packType) => packType.id === "behaviorPack")!);
+  if (!selectedPackTypes.value.find((pack) => pack.id === "resourcePack"))
+    selectPackType(packTypes.value.find((packType) => packType.id === "resourcePack")!);
 
-	linkResourcePack.value = value
+  linkResourcePack.value = value;
 }
 
-const projectName: Ref<string> = ref('New Project')
-const projectDescription: Ref<string> = ref('')
-const projectNamespace: Ref<string> = ref('bridge')
-const projectAuthor: Ref<string> = ref('')
-const projectTargetVersion: Ref<string> = ref('1.20.50')
-const projectIcon: Ref<File | null> = ref(null)
+const projectName: Ref<string> = ref("New Project");
+const projectDescription: Ref<string> = ref("");
+const projectNamespace: Ref<string> = ref("bridge");
+const projectAuthor: Ref<string> = ref("");
+const projectTargetVersion: Ref<string> = ref("1.20.50");
+const projectIcon: Ref<File | null> = ref(null);
 
-const packTypes: Ref<IPackType[]> = ref([])
-const selectedPackTypes: Ref<IPackType[]> = ref([])
+const packTypes: Ref<IPackType[]> = ref([]);
+const selectedPackTypes: Ref<IPackType[]> = ref([]);
 
-const experimentalToggles: Ref<ExperimentalToggle[]> = ref([])
-const selectedExperimentalToggles: Ref<ExperimentalToggle[]> = ref([])
+const experimentalToggles: Ref<ExperimentalToggle[]> = ref([]);
+const selectedExperimentalToggles: Ref<ExperimentalToggle[]> = ref([]);
 
 async function setup() {
-	projectAuthor.value = Settings.get('defaultAuthor')
+  projectAuthor.value = Settings.get("defaultAuthor");
 
-	projectNamespace.value = Settings.get('defaultNamespace')
+  projectNamespace.value = Settings.get("defaultNamespace");
 
-	packTypes.value = (await getData.value('packages/minecraftBedrock/packDefinitions.json')) || []
+  packTypes.value =
+    (await getData.value("packages/minecraftBedrock/packDefinitions.json")) || [];
 
-	experimentalToggles.value = (await getData.value('packages/minecraftBedrock/experimentalGameplay.json')) || []
+  experimentalToggles.value =
+    (await getData.value("packages/minecraftBedrock/experimentalGameplay.json")) || [];
 
-	formatVersionDefinitions.value = <FormatVersionDefinitions>await getData.value('packages/minecraftBedrock/formatVersions.json') || []
+  formatVersionDefinitions.value =
+    <FormatVersionDefinitions>(
+      await getData.value("packages/minecraftBedrock/formatVersions.json")
+    ) || [];
 
-	if (!formatVersionDefinitions.value) return
+  if (!formatVersionDefinitions.value) return;
 
-	projectTargetVersion.value = formatVersionDefinitions.value.currentStable
+  projectTargetVersion.value = formatVersionDefinitions.value.currentStable;
 }
 
-watch(getData, setup)
-onMounted(setup)
+watch(getData, setup);
+onMounted(setup);
 
 const availableConfigurableFiles = computed(() => {
-	const files: ConfigurableFile[] = []
+  const files: ConfigurableFile[] = [];
 
-	for (const packType of selectedPackTypes.value) {
-		const pack = packs[packType.id]
+  for (const packType of selectedPackTypes.value) {
+    const pack = packs[packType.id];
 
-		if (!pack) continue
+    if (!pack) continue;
 
-		files.push(...pack.configurableFiles)
-	}
+    files.push(...pack.configurableFiles);
+  }
 
-	return files
-})
+  return files;
+});
 
 function validateProjectName(value: string): string | null {
-	if (value === '') return 'windows.createProject.name.mustNotBeEmpty'
-	if (value.match(/"|\\|\/|:|\||<|>|\*|\?|~/g) !== null) return 'windows.createProject.name.invalidLetters'
-	if (value.endsWith('.')) return 'windows.createProject.name.endsInPeriod'
+  if (value === "") return "windows.createProject.name.mustNotBeEmpty";
+  if (value.match(/"|\\|\/|:|\||<|>|\*|\?|~/g) !== null)
+    return "windows.createProject.name.invalidLetters";
+  if (value.endsWith(".")) return "windows.createProject.name.endsInPeriod";
 
-	return null
+  return null;
 }
 
 function validateProjectNamespace(value: string): string | null {
-	if (value.toLocaleLowerCase() !== value) return 'windows.createProject.namespace.invalidCharacters'
-	if (value.includes(' ')) return 'windows.createProject.namespace.invalidCharacters'
-	if (value.includes(':')) return 'windows.createProject.namespace.invalidCharacters'
-	if (value.match(/"|\\|\/|:|\||<|>|\*|\?|~/g) !== null) return 'windows.createProject.namespace.invalidCharacters'
-	if (value === '') return 'windows.createProject.namespace.mustNotBeEmpty'
+  if (value.toLocaleLowerCase() !== value)
+    return "windows.createProject.namespace.invalidCharacters";
+  if (value.includes(" ")) return "windows.createProject.namespace.invalidCharacters";
+  if (value.includes(":")) return "windows.createProject.namespace.invalidCharacters";
+  if (value.match(/"|\\|\/|:|\||<|>|\*|\?|~/g) !== null)
+    return "windows.createProject.namespace.invalidCharacters";
+  if (value === "") return "windows.createProject.namespace.mustNotBeEmpty";
 
-	return null
+  return null;
 }
 
-const selectedFiles: Ref<ConfigurableFile[]> = ref([])
-const formatVersionDefinitions: Ref<FormatVersionDefinitions | null> = ref(null)
+const selectedFiles: Ref<ConfigurableFile[]> = ref([]);
+const formatVersionDefinitions: Ref<FormatVersionDefinitions | null> = ref(null);
 
 const validationError: ComputedRef<string | null> = computed(() => {
-	if (selectedPackTypes.value.length === 0) return 'windows.createProject.errors.noPacks'
-	if (projectName.value === '') return 'windows.createProject.name.mustNotBeEmpty'
-	if (projectName.value.match(/"|\\|\/|:|\||<|>|\*|\?|~/g) !== null) return 'windows.createProject.name.invalidLetters'
-	if (projectName.value.endsWith('.')) return 'windows.createProject.name.endsInPeriod'
+  if (selectedPackTypes.value.length === 0) return "windows.createProject.errors.noPacks";
+  if (projectName.value === "") return "windows.createProject.name.mustNotBeEmpty";
+  if (projectName.value.match(/"|\\|\/|:|\||<|>|\*|\?|~/g) !== null)
+    return "windows.createProject.name.invalidLetters";
+  if (projectName.value.endsWith(".")) return "windows.createProject.name.endsInPeriod";
 
-	if (projectNamespace.value.toLocaleLowerCase() !== projectNamespace.value) return 'windows.createProject.namespace.invalidCharacters'
-	if (projectNamespace.value.includes(' ')) return 'windows.createProject.namespace.invalidCharacters'
-	if (projectNamespace.value.includes(':')) return 'windows.createProject.namespace.invalidCharacters'
-	if (projectNamespace.value.match(/"|\\|\/|:|\||<|>|\*|\?|~/g) !== null) return 'windows.createProject.namespace.invalidCharacters'
-	if (projectNamespace.value === '') return 'windows.createProject.namespace.mustNotBeEmpty'
+  if (projectNamespace.value.toLocaleLowerCase() !== projectNamespace.value)
+    return "windows.createProject.namespace.invalidCharacters";
+  if (projectNamespace.value.includes(" "))
+    return "windows.createProject.namespace.invalidCharacters";
+  if (projectNamespace.value.includes(":"))
+    return "windows.createProject.namespace.invalidCharacters";
+  if (projectNamespace.value.match(/"|\\|\/|:|\||<|>|\*|\?|~/g) !== null)
+    return "windows.createProject.namespace.invalidCharacters";
+  if (projectNamespace.value === "")
+    return "windows.createProject.namespace.mustNotBeEmpty";
 
-	return null
-})
+  return null;
+});
 
 async function create() {
-	if (validationError.value !== null) return
+  if (validationError.value !== null) return;
 
-	ProjectManager.createProject(
-		{
-			name: projectName.value,
-			description: projectDescription.value,
-			namespace: projectNamespace.value,
-			author: projectAuthor.value,
-			targetVersion: projectTargetVersion.value,
-			icon: projectIcon.value ?? (await Data.getRaw(`packages/common/packIcon.png`)),
-			packs: ['bridge', ...selectedPackTypes.value.map((pack) => pack.id)],
-			configurableFiles: selectedFiles.value.map((file) => file.id),
-			rpAsBpDependency: linkResourcePack.value,
-			bpAsRpDependency: linkBehaviourPack.value,
-			uuids: Object.fromEntries(selectedPackTypes.value.map((packType) => [packType.id, uuid()])),
-			experiments: Object.fromEntries(
-				experimentalToggles.value.map((toggle) => [toggle.id, selectedExperimentalToggles.value.includes(toggle)])
-			),
-		},
-		fileSystem
-	)
+  ProjectManager.createProject(
+    {
+      name: projectName.value,
+      description: projectDescription.value,
+      namespace: projectNamespace.value,
+      author: projectAuthor.value,
+      targetVersion: projectTargetVersion.value,
+      icon: projectIcon.value ?? (await Data.getRaw(`packages/common/packIcon.png`)),
+      packs: ["bridge", ...selectedPackTypes.value.map((pack) => pack.id)],
+      configurableFiles: selectedFiles.value.map((file) => file.id),
+      rpAsBpDependency: linkResourcePack.value,
+      bpAsRpDependency: linkBehaviourPack.value,
+      uuids: Object.fromEntries(
+        selectedPackTypes.value.map((packType) => [packType.id, uuid()])
+      ),
+      experiments: Object.fromEntries(
+        experimentalToggles.value.map((toggle) => [
+          toggle.id,
+          selectedExperimentalToggles.value.includes(toggle),
+        ])
+      ),
+    },
+    fileSystem
+  );
 
-	Windows.close(CreateProjectWindow)
+  Windows.close(CreateProjectWindow);
 }
 
 function selectPackType(packType: IPackType) {
-	if (selectedPackTypes.value.includes(packType)) {
-		selectedPackTypes.value.splice(selectedPackTypes.value.indexOf(packType), 1)
-		selectedPackTypes.value = selectedPackTypes.value
+  if (selectedPackTypes.value.includes(packType)) {
+    selectedPackTypes.value.splice(selectedPackTypes.value.indexOf(packType), 1);
+    selectedPackTypes.value = selectedPackTypes.value;
 
-		if (packType.id === 'behaviorPack' || packType.id === 'resourcePack') {
-			linkBehaviourPack.value = false
-			linkResourcePack.value = false
-		}
+    if (packType.id === "behaviorPack" || packType.id === "resourcePack") {
+      linkBehaviourPack.value = false;
+      linkResourcePack.value = false;
+    }
 
-		const pack = packs[packType.id]
+    const pack = packs[packType.id];
 
-		if (pack) {
-			for (const file of pack.configurableFiles) {
-				if (!selectedFiles.value.includes(file)) continue
+    if (pack) {
+      for (const file of pack.configurableFiles) {
+        if (!selectedFiles.value.includes(file)) continue;
 
-				selectedFiles.value.splice(selectedFiles.value.indexOf(file), 1)
-				selectedFiles.value = selectedFiles.value
-			}
-		}
-	} else {
-		selectedPackTypes.value.push(packType)
-		selectedPackTypes.value = selectedPackTypes.value
-	}
+        selectedFiles.value.splice(selectedFiles.value.indexOf(file), 1);
+        selectedFiles.value = selectedFiles.value;
+      }
+    }
+  } else {
+    selectedPackTypes.value.push(packType);
+    selectedPackTypes.value = selectedPackTypes.value;
+  }
 }
 
 function selectExperimentalToggle(toggle: ExperimentalToggle) {
-	if (selectedExperimentalToggles.value.includes(toggle)) {
-		selectedExperimentalToggles.value.splice(selectedExperimentalToggles.value.indexOf(toggle), 1)
-		selectedExperimentalToggles.value = selectedExperimentalToggles.value
-	} else {
-		selectedExperimentalToggles.value.push(toggle)
-		selectedExperimentalToggles.value = selectedExperimentalToggles.value
-	}
+  if (selectedExperimentalToggles.value.includes(toggle)) {
+    selectedExperimentalToggles.value.splice(
+      selectedExperimentalToggles.value.indexOf(toggle),
+      1
+    );
+    selectedExperimentalToggles.value = selectedExperimentalToggles.value;
+  } else {
+    selectedExperimentalToggles.value.push(toggle);
+    selectedExperimentalToggles.value = selectedExperimentalToggles.value;
+  }
 }
 
 function selectFile(file: ConfigurableFile) {
-	if (selectedFiles.value.includes(file)) {
-		selectedFiles.value.splice(selectedFiles.value.indexOf(file), 1)
-		selectedFiles.value = selectedFiles.value
-	} else {
-		selectedFiles.value.push(file)
-		selectedFiles.value = selectedFiles.value
-	}
+  if (selectedFiles.value.includes(file)) {
+    selectedFiles.value.splice(selectedFiles.value.indexOf(file), 1);
+    selectedFiles.value = selectedFiles.value;
+  } else {
+    selectedFiles.value.push(file);
+    selectedFiles.value = selectedFiles.value;
+  }
 }
 
 function chooseProjectIcon() {
-	if (!projectIconInput.value) return
+  if (!projectIconInput.value) return;
 
-	if (!projectIconInput.value.files) return
+  if (!projectIconInput.value.files) return;
 
-	if (!projectIconInput.value.files[0]) return
+  if (!projectIconInput.value.files[0]) return;
 
-	projectIcon.value = projectIconInput.value.files[0]
+  projectIcon.value = projectIconInput.value.files[0];
 }
 
-const isMobile = useIsMobile()
+const isMobile = useIsMobile();
 </script>
 
 <template>
-	<Window :name="t('windows.createProject.title')" @close="Windows.close(CreateProjectWindow)">
-		<div class="flex flex-col pb-8 grow" :class="{ 'h-[42.5rem] max-width': !isMobile }">
-			<div class="overflow-auto p-4 pt-0 m-4 mt-2 basis-0 grow">
-				<!-- Pack Types -->
-				<div class="flex justify-stretch flex-wrap gap-3 mb-4">
-					<InformativeToggle
-						v-for="packType in packTypes"
-						:icon="packType.icon"
-						:color="packType.color"
-						:name="t(`packType.${packType.id}.name`)"
-						:description="t(`packType.${packType.id}.description`)"
-						:selected="selectedPackTypes.includes(packType)"
-						@click="selectPackType(packType)"
-					>
-						<div class="flex items-center my-4" v-if="packType.id === 'behaviorPack'">
-							<Switch
-								class="mr-2"
-								border-color="backgroundTertiary"
-								:model-value="linkResourcePack"
-								@update:model-value="setLinkResourcePack"
-							/>
-							<span class="text-xs text-text-secondary select-none font-theme">{{
-								t('windows.createProject.rpAsBpDependency')
-							}}</span>
-						</div>
+  <Window
+    :name="t('windows.createProject.title')"
+    @close="Windows.close(CreateProjectWindow)"
+  >
+    <div class="flex flex-col pb-8 grow" :class="{ 'h-[42.5rem] max-width': !isMobile }">
+      <div class="overflow-auto p-4 pt-0 m-4 mt-2 basis-0 grow">
+        <!-- Pack Types -->
+        <div class="flex justify-stretch flex-wrap gap-3 mb-4">
+          <InformativeToggle
+            v-for="packType in packTypes"
+            :icon="packType.icon"
+            :color="packType.color"
+            :name="t(`packType.${packType.id}.name`)"
+            :description="t(`packType.${packType.id}.description`)"
+            :selected="selectedPackTypes.includes(packType)"
+            @click="selectPackType(packType)"
+          >
+            <div class="flex items-center my-4" v-if="packType.id === 'behaviorPack'">
+              <Switch
+                class="mr-2"
+                border-color="backgroundTertiary"
+                :model-value="linkResourcePack"
+                @update:model-value="setLinkResourcePack"
+              />
+              <span class="text-xs text-text-secondary select-none font-theme">{{
+                t("windows.createProject.rpAsBpDependency")
+              }}</span>
+            </div>
 
-						<div class="flex items-center my-4" v-if="packType.id === 'resourcePack'">
-							<Switch
-								class="mr-2"
-								border-color="backgroundTertiary"
-								:model-value="linkBehaviourPack"
-								@update:model-value="setLinkBehaviourPack"
-							/>
-							<span class="text-xs text-text-secondary select-none font-theme">{{
-								t('windows.createProject.bpAsRpDependency')
-							}}</span>
-						</div>
-					</InformativeToggle>
-				</div>
+            <div class="flex items-center my-4" v-if="packType.id === 'resourcePack'">
+              <Switch
+                class="mr-2"
+                border-color="backgroundTertiary"
+                :model-value="linkBehaviourPack"
+                @update:model-value="setLinkBehaviourPack"
+              />
+              <span class="text-xs text-text-secondary select-none font-theme">{{
+                t("windows.createProject.bpAsRpDependency")
+              }}</span>
+            </div>
+          </InformativeToggle>
+        </div>
 
-				<!-- Experiment Toggles -->
-				<Expandable :name="t('general.experimentalGameplay')" class="mt-6">
-					<div class="flex flex-wrap gap-2">
-						<InformativeToggle
-							v-for="toggle in experimentalToggles"
-							:icon="toggle.icon"
-							color="primary"
-							background="background"
-							:name="t(`experimentalGameplay.${toggle.id}.name`)"
-							:description="t(`experimentalGameplay.${toggle.id}.description`)"
-							:selected="selectedExperimentalToggles.includes(toggle)"
-							@click="selectExperimentalToggle(toggle)"
-						/>
-					</div>
-				</Expandable>
+        <!-- Experiment Toggles -->
+        <Expandable :name="t('general.experimentalGameplay')" class="mt-6">
+          <div class="flex flex-wrap gap-2">
+            <InformativeToggle
+              v-for="toggle in experimentalToggles"
+              :icon="toggle.icon"
+              color="primary"
+              background="background"
+              :name="t(`experimentalGameplay.${toggle.id}.name`)"
+              :description="t(`experimentalGameplay.${toggle.id}.description`)"
+              :selected="selectedExperimentalToggles.includes(toggle)"
+              @click="selectExperimentalToggle(toggle)"
+            />
+          </div>
+        </Expandable>
 
-				<!-- Files -->
-				<Expandable :name="t('windows.createProject.individualFiles.name')" class="mt-6">
-					<div class="flex flex-wrap gap-2">
-						<InformativeToggle
-							v-for="file in availableConfigurableFiles"
-							icon="draft"
-							color="primary"
-							background="background"
-							:name="t(`windows.createProject.individualFiles.file.${file.id}.name`)"
-							:description="t(`windows.createProject.individualFiles.file.${file.id}.description`)"
-							:selected="selectedFiles.includes(file)"
-							@click="selectFile(file)"
-						/>
+        <!-- Files -->
+        <Expandable :name="t('windows.createProject.individualFiles.name')" class="mt-6">
+          <div class="flex flex-wrap gap-2">
+            <InformativeToggle
+              v-for="file in availableConfigurableFiles"
+              icon="draft"
+              color="primary"
+              background="background"
+              :name="t(`windows.createProject.individualFiles.file.${file.id}.name`)"
+              :description="
+                t(`windows.createProject.individualFiles.file.${file.id}.description`)
+              "
+              :selected="selectedFiles.includes(file)"
+              @click="selectFile(file)"
+            />
 
-						<p v-if="selectedPackTypes.length === 0" class="font-theme text-text-secondary">
-							{{ t('Select a pack to modify individual files') }}
-						</p>
-					</div>
-				</Expandable>
+            <p
+              v-if="selectedPackTypes.length === 0"
+              class="font-theme text-text-secondary"
+            >
+              {{ t("Select a pack to modify individual files") }}
+            </p>
+          </div>
+        </Expandable>
 
-				<div class="flex flex-wrap justify-stretch gap-4 w-full mt-4 mb-2">
-					<!-- Icon -->
-					<LabeledInput :label="t('windows.createProject.icon.label')" class="bg-background h-min grow" v-slot="{ focus, blur }">
-						<input type="file" class="hidden" ref="projectIconInput" @:change="chooseProjectIcon" />
+        <div class="flex flex-wrap justify-stretch gap-4 w-full mt-4 mb-2">
+          <!-- Icon -->
+          <LabeledInput
+            :label="t('windows.createProject.icon.label')"
+            class="bg-background h-min grow"
+            v-slot="{ focus, blur }"
+          >
+            <input
+              type="file"
+              class="hidden"
+              ref="projectIconInput"
+              @:change="chooseProjectIcon"
+            />
 
-						<button
-							class="flex align-center gap-2 text-text-secondary font-theme grow"
-							@mouseenter="focus"
-							@mouseleave="blur"
-							@click="projectIconInput?.click()"
-						>
-							<Icon icon="image" class="no-fill" color="text-text-secondary" />
-							{{ t('windows.createProject.icon.placeholder') }}
-						</button>
-					</LabeledInput>
+            <button
+              class="flex align-center gap-2 text-text-secondary font-theme grow"
+              @mouseenter="focus"
+              @mouseleave="blur"
+              @click="projectIconInput?.click()"
+            >
+              <Icon icon="image" class="no-fill" color="text-text-secondary" />
+              {{ t("windows.createProject.icon.placeholder") }}
+            </button>
+          </LabeledInput>
 
-					<!-- Name -->
-					<LabeledTextInput
-						:label="t('windows.createProject.name.label')"
-						class="h-min grow-[7]"
-						v-model="projectName"
-						:placeholder="t('windows.createProject.name.placeholder')"
-						:rules="[validateProjectName]"
-					/>
-				</div>
+          <!-- Name -->
+          <LabeledTextInput
+            :label="t('windows.createProject.name.label')"
+            class="h-min grow-[7]"
+            v-model="projectName"
+            :placeholder="t('windows.createProject.name.placeholder')"
+            :rules="[validateProjectName]"
+          />
+        </div>
 
-				<!-- Description -->
-				<LabeledTextInput
-					:label="t('windows.createProject.description.label')"
-					class="mb-4 flex-1 h-min"
-					v-model="projectDescription"
-					:placeholder="t('windows.createProject.description.placeholder')"
-				/>
+        <!-- Description -->
+        <LabeledTextInput
+          :label="t('windows.createProject.description.label')"
+          class="mb-4 flex-1 h-min"
+          v-model="projectDescription"
+          :placeholder="t('windows.createProject.description.placeholder')"
+        />
 
-				<div class="flex flex-wrap gap-x-4 mb-4">
-					<!-- Namespace -->
-					<LabeledTextInput
-						:label="t('windows.createProject.namespace.label')"
-						class="flex-1 h-min"
-						v-model="projectNamespace"
-						:placeholder="t('windows.createProject.namespace.placeholder')"
-						:rules="[validateProjectNamespace]"
-					/>
+        <div class="flex flex-wrap gap-x-4 mb-4">
+          <!-- Namespace -->
+          <LabeledTextInput
+            :label="t('windows.createProject.namespace.label')"
+            class="flex-1 h-min"
+            v-model="projectNamespace"
+            :placeholder="t('windows.createProject.namespace.placeholder')"
+            :rules="[validateProjectNamespace]"
+          />
 
-					<!-- Author -->
-					<LabeledTextInput
-						:label="t('windows.createProject.author.label')"
-						class="flex-1 h-min mb-5"
-						v-model="projectAuthor"
-						:placeholder="t('windows.createProject.author.placeholder')"
-					/>
+          <!-- Author -->
+          <LabeledTextInput
+            :label="t('windows.createProject.author.label')"
+            class="flex-1 h-min mb-5"
+            v-model="projectAuthor"
+            :placeholder="t('windows.createProject.author.placeholder')"
+          />
 
-					<!-- Target Version -->
-					<Dropdown class="flex-1">
-						<template #main="{ expanded, toggle }">
-							<LabeledInput :label="t('windows.createProject.targetVersion.label')" :focused="expanded" class="bg-background">
-								<div class="flex items-center justify-between cursor-pointer" @click="toggle">
-									<span class="font-theme">{{ projectTargetVersion }}</span>
+          <!-- Target Version -->
+          <Dropdown class="flex-1">
+            <template #main="{ expanded, toggle }">
+              <LabeledInput
+                :label="t('windows.createProject.targetVersion.label')"
+                :focused="expanded"
+                class="bg-background"
+              >
+                <div
+                  class="flex items-center justify-between cursor-pointer"
+                  @click="toggle"
+                >
+                  <span class="font-theme">{{ projectTargetVersion }}</span>
 
-									<Icon
-										icon="arrow_drop_down"
-										class="transition-transform duration-200 ease-out"
-										:class="{ '-rotate-180': expanded }"
-									/>
-								</div>
-							</LabeledInput>
-						</template>
+                  <Icon
+                    icon="arrow_drop_down"
+                    class="transition-transform duration-200 ease-out"
+                    :class="{ '-rotate-180': expanded }"
+                  />
+                </div>
+              </LabeledInput>
+            </template>
 
-						<template #choices="{ collapse }">
-							<div class="mt-2 bg-background-secondary w-full p-1 rounded">
-								<div class="flex flex-col max-h-[6.5rem] overflow-y-auto p-1 light-scroll">
-									<button
-										v-for="version in formatVersionDefinitions?.formatVersions.slice().reverse()"
-										@click="
-											() => {
-												projectTargetVersion = version
-												collapse()
-											}
-										"
-										class="hover:bg-primary text-start p-1 rounded transition-colors duration-100 ease-out font-theme"
-										:class="{
-											'bg-background-tertiary': projectTargetVersion === version,
-										}"
-									>
-										{{ version }}
-									</button>
-								</div>
-							</div>
-						</template>
-					</Dropdown>
-				</div>
-			</div>
+            <template #choices="{ collapse }">
+              <div class="mt-2 bg-background-secondary w-full p-1 rounded">
+                <div
+                  class="flex flex-col max-h-[6.5rem] overflow-y-auto p-1 light-scroll"
+                >
+                  <button
+                    v-for="version in formatVersionDefinitions?.formatVersions
+                      .slice()
+                      .reverse()"
+                    @click="
+                      () => {
+                        projectTargetVersion = version;
+                        collapse();
+                      }
+                    "
+                    class="hover:bg-primary text-start p-1 rounded transition-colors duration-100 ease-out font-theme"
+                    :class="{
+                      'bg-background-tertiary': projectTargetVersion === version,
+                    }"
+                  >
+                    {{ version }}
+                  </button>
+                </div>
+              </div>
+            </template>
+          </Dropdown>
+        </div>
+      </div>
 
-			<div class="mx-8 flex justify-between items-center">
-				<div class="flex items-center gap-2">
-					<Icon v-if="validationError !== null" icon="error" class="text-sm text-error" />
+      <div class="mx-8 flex justify-between items-center">
+        <div class="flex items-center gap-2">
+          <Icon v-if="validationError !== null" icon="error" class="text-sm text-error" />
 
-					<p class="text-error font-theme text-xs h-min">{{ validationError !== null ? t(validationError) : '' }}</p>
-				</div>
+          <p class="text-error font-theme text-xs h-min">
+            {{ validationError !== null ? t(validationError) : "" }}
+          </p>
+        </div>
 
-				<TextButton :text="t('Create')" @click="create" class="transition-[color, opacity]" :enabled="validationError === null" />
-			</div>
-		</div>
-	</Window>
+        <TextButton
+          :text="t('Create')"
+          @click="create"
+          class="transition-[color, opacity]"
+          :enabled="validationError === null"
+        />
+      </div>
+    </div>
+  </Window>
 </template>
 
 <style scoped>
 .max-width {
-	max-width: min(90vw, 67rem);
+  max-width: min(90vw, 67rem);
 }
 
 .light-scroll::-webkit-scrollbar-thumb {
-	background-color: var(--theme-color-backgroundTertiary);
+  background-color: var(--theme-color-backgroundTertiary);
 }
 </style>

@@ -96,13 +96,15 @@ export class ProjectManager {
 	}
 
 	public static async createProject(config: CreateProjectConfig, fileSystem: BaseFileSystem) {
+		//Bandaid Fix.
+		const projectPath = join('projects', config.name)
+		if(await fileSystem.exists(projectPath)) throw new Error("Cannot create project! Another project with the same name already exists!")
+
 		const packDefinitions: { id: string; defaultPackPath: string }[] = await Data.get('packages/minecraftBedrock/packDefinitions.json')
 		packDefinitions.push({
 			id: 'bridge',
 			defaultPackPath: '.bridge',
 		})
-
-		const projectPath = join('projects', config.name)
 
 		await fileSystem.makeDirectory(projectPath)
 

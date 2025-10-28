@@ -7,6 +7,7 @@ import TextButton from '@/components/Common/TextButton.vue'
 import Notification from '@/components/Notifications/Notification.vue'
 
 import { PWAFileSystem } from '@/libs/fileSystem/PWAFileSystem'
+import { join } from 'pathe'
 import { computed, ref } from 'vue'
 import { useTranslate } from '@/libs/locales/Locales'
 import { ProjectInfo, ProjectManager, useConvertableProjects, useCurrentProject, useProjects } from '@/libs/project/ProjectManager'
@@ -19,6 +20,7 @@ import {
 	useBridgeFolderUnloaded,
 } from '@/libs/fileSystem/FileSystem'
 import { CreateProjectWindow } from '@/components/Windows/CreateProject/CreateProjectWindow'
+import { EditProjectWindow } from '@/components/Windows/EditProject/EditProjectWindow'
 import { NotificationSystem } from '@/components/Notifications/NotificationSystem'
 import { convertProject } from '@/libs/project/ConvertComMojangProject'
 
@@ -46,7 +48,11 @@ async function openProject(project: ProjectInfo) {
 	ProjectManager.loadProject(project.name)
 }
 
-async function edit(name: string) {}
+async function edit(name: string) {
+	const projectInfo = await ProjectManager.getProjectInfo(join('/projects', name))
+	if(!projectInfo) throw new Error("Failed to get project info!")
+	Windows.open(new EditProjectWindow(projectInfo))
+}
 
 const bridgeFolderUnloaded = useBridgeFolderUnloaded()
 </script>
