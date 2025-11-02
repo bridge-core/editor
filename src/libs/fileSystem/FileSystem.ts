@@ -1,6 +1,6 @@
 import { tauriBuild } from '@/libs/tauri/Tauri'
 import { BaseEntry, BaseFileSystem } from './BaseFileSystem'
-import { PWAFileSystem } from './PWAFileSystem'
+import { PWAEntry, PWAFileSystem } from './PWAFileSystem'
 import { TauriFileSystem } from './TauriFileSystem'
 import { get, set } from 'idb-keyval'
 import { LocalFileSystem } from './LocalFileSystem'
@@ -144,4 +144,50 @@ export function useBridgeFolderUnloaded(): ShallowRef<boolean> {
 	})
 
 	return valueRef
+}
+
+export async function showFilePicker(
+	multiple: boolean,
+	description?: string,
+	accept?: Record<MIMEType, FileExtension | FileExtension[]> | undefined
+): Promise<BaseEntry[]> {
+	if (fileSystem instanceof PWAFileSystem) {
+		let handles = null
+
+		try {
+			handles = await window.showOpenFilePicker({
+				multiple,
+				types: [
+					{
+						description,
+						accept,
+					},
+				],
+			})
+		} catch {}
+
+		if (!handles) return []
+
+		return handles.map((handle) => new PWAEntry('/__virtual__/' + handle.name, 'file', handle))
+	}
+
+	return []
+}
+
+export async function showDirectoryPicker(): Promise<BaseEntry | null> {
+	if (fileSystem instanceof PWAFileSystem) {
+		let handle = null
+
+		try {
+			handle = await window.showDirectoryPicker({
+				mode: 'readwrite',
+			})
+		} catch {}
+
+		if (!handle) return null
+
+		return new PWAEntry('/__virtual__/' + handle.name, 'directory', handle)
+	}
+
+	return null
 }

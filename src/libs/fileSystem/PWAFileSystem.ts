@@ -498,3 +498,9 @@ export class PWAFileSystem extends BaseFileSystem {
 		return resolve('/', path)
 	}
 }
+
+export class PWAEntry extends BaseEntry {
+	constructor(path: string, kind: 'file' | 'directory', public handle: FileSystemHandle) {
+		super(path, kind)
+	}
+}
