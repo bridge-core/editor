@@ -6,6 +6,9 @@ import { get, set } from 'idb-keyval'
 import { LocalFileSystem } from './LocalFileSystem'
 import { onMounted, onUnmounted, shallowRef, ShallowRef } from 'vue'
 import { Disposable } from '@/libs/disposeable/Disposeable'
+import { open } from '@tauri-apps/api/dialog'
+import { readBinaryFile } from '@tauri-apps/api/fs'
+import { basename } from 'pathe'
 
 export function getFileSystem(): BaseFileSystem {
 	if (tauriBuild) return new TauriFileSystem()
@@ -151,8 +154,39 @@ export async function pickFile(
 	accept?: Record<MIMEType, FileExtension | FileExtension[]> | undefined
 ): Promise<{ name: string; data: ArrayBuffer } | null> {
 	if (tauriBuild) {
-		// TODO: Implement
-		throw new Error('Pick file not implemented on Tauri yet')
+		const extensions = []
+
+		if (accept) {
+			for (const acceptedExtensions of Object.values(accept)) {
+				for (const extension of Array.isArray(acceptedExtensions) ? acceptedExtensions : [acceptedExtensions]) {
+					extensions.push(extension)
+				}
+			}
+		}
+
+		const files = await open({
+			directory: false,
+			multiple: false,
+			filters:
+				accept === undefined
+					? undefined
+					: [
+							{
+								name: description ?? 'File',
+								extensions: extensions.map((extension) => extension.slice(1)),
+							},
+					  ],
+		})
+
+		if (!files) return null
+
+		const file = Array.isArray(files) ? files[0] : files
+
+		return {
+			name: basename(file),
+			// @ts-ignore TS being weird about buffers
+			data: (await readBinaryFile(file)).buffer,
+		}
 	} else if (window.showOpenFilePicker) {
 		let handles = null
 

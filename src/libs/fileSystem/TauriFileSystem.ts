@@ -1,5 +1,5 @@
 import { createDir, exists, readBinaryFile, readDir, readTextFile, removeDir, removeFile, writeBinaryFile } from '@tauri-apps/api/fs'
-import { BaseEntry, BaseFileSystem } from './BaseFileSystem'
+import { BaseEntry, BaseFileSystem, StreamableLike } from './BaseFileSystem'
 import { dirname, join, resolve } from 'pathe'
 import { sep } from '@tauri-apps/api/path'
 import { listen } from '@tauri-apps/api/event'
@@ -118,6 +118,44 @@ export class TauriFileSystem extends BaseFileSystem {
 
 		try {
 			await writeBinaryFile(join(this.basePath, path), writeableContent)
+		} catch (error) {
+			console.error(`Failed to write "${path}"`)
+
+			throw error
+		}
+	}
+
+	// TODO: Optimize this later
+	public async writeFileStreaming(path: string, stream: StreamableLike) {
+		if (this.basePath === null) throw new Error('Base path not set!')
+
+		path = resolve('/', path)
+
+		const chunks: Uint8Array[] = []
+		let totalLength = 0
+
+		await new Promise<void>((resolve) => {
+			stream.ondata = (error, data, final) => {
+				chunks.push(data)
+				totalLength += data.length
+
+				if (final) resolve()
+			}
+
+			stream.start()
+		})
+
+		const content = new Uint8Array(totalLength)
+		let writePosition = 0
+
+		for (const chunk of chunks) {
+			content.set(chunk, writePosition)
+
+			writePosition += chunk.length
+		}
+
+		try {
+			await writeBinaryFile(join(this.basePath, path), content)
 		} catch (error) {
 			console.error(`Failed to write "${path}"`)
 
