@@ -1,5 +1,5 @@
 import { basename, parse, resolve, sep } from 'pathe'
-import { BaseEntry, BaseFileSystem } from './BaseFileSystem'
+import { BaseEntry, BaseFileSystem, StreamableLike } from './BaseFileSystem'
 import { del, get, keys, set } from 'idb-keyval'
 import * as JSONC from 'jsonc-parser'
 
@@ -22,6 +22,7 @@ export class LocalFileSystem extends BaseFileSystem {
 
 		const data = (await get(`localFileSystem/${this.rootName}${path}`)).content
 
+		// @ts-ignore TS being weird about errors
 		if (data instanceof Uint8Array) return data.buffer
 
 		return this.textEncoder.encode(data).buffer
@@ -83,6 +84,46 @@ export class LocalFileSystem extends BaseFileSystem {
 		if (this.rootName === null) throw new Error('Root name not set')
 
 		path = resolve('/', path)
+
+		await set(`localFileSystem/${this.rootName}${path}`, {
+			kind: 'file',
+			content,
+		})
+
+		if (
+			this.pathsToWatch.find((watchPath) => path.startsWith(watchPath)) !== undefined &&
+			this.watchPathsToIgnore.find((watchPath) => path.startsWith(watchPath)) === undefined
+		)
+			this.pathUpdated.dispatch(path)
+	}
+
+	public async writeFileStreaming(path: string, stream: StreamableLike) {
+		if (this.rootName === null) throw new Error('Root name not set')
+
+		path = resolve('/', path)
+
+		const chunks: Uint8Array[] = []
+		let totalLength = 0
+
+		await new Promise<void>((resolve) => {
+			stream.ondata = (error, data, final) => {
+				chunks.push(data)
+				totalLength += data.length
+
+				if (final) resolve()
+			}
+
+			stream.start()
+		})
+
+		const content = new Uint8Array(totalLength)
+		let writePosition = 0
+
+		for (const chunk of chunks) {
+			content.set(chunk, writePosition)
+
+			writePosition += chunk.length
+		}
 
 		await set(`localFileSystem/${this.rootName}${path}`, {
 			kind: 'file',

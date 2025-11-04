@@ -205,6 +205,7 @@ export class PWAFileSystem extends BaseFileSystem {
 
 					if (chunk) {
 						writePromises.push(
+							// @ts-ignore Weird TS giving errors about buffers
 							writable.write({
 								type: 'write',
 								data: chunk,

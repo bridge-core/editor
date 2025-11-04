@@ -238,7 +238,7 @@ export class BaseFileSystem {
 
 export type StreamableLike = {
 	ondata: (err: any | null, data: Uint8Array, final: boolean) => void
-	start?: () => void
+	start: () => void
 }
 
 export class BaseEntry {
