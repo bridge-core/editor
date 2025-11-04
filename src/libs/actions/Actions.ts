@@ -6,7 +6,7 @@ import { getClipboard, setClipboard } from '@/libs/Clipboard'
 import { BaseEntry } from '@/libs/fileSystem/BaseFileSystem'
 import { ActionManager } from './ActionManager'
 import { Action } from './Action'
-import { fileSystem } from '@/libs/fileSystem/FileSystem'
+import { fileSystem, pickFile } from '@/libs/fileSystem/FileSystem'
 import { Windows } from '@/components/Windows/Windows'
 import { NotificationSystem } from '@/components/Notifications/NotificationSystem'
 import { TreeEditorTab } from '@/components/Tabs/TreeEditor/TreeEditorTab'
@@ -30,6 +30,7 @@ import { appVersion } from '@/libs/app/AppEnv'
 import { ImporterManager } from '@/libs/import/ImporterManager'
 import { tauriBuild } from '@/libs/tauri/Tauri'
 import { TauriFileSystem } from '@/libs/fileSystem/TauriFileSystem'
+import { LocaleManager } from '@/libs/locales/Locales'
 
 export function setupActions() {
 	setupFileTabActions()
@@ -211,28 +212,19 @@ function setupEditorActions() {
 		new Action({
 			id: 'editor.importProject',
 			trigger: async () => {
-				const files = await window.showOpenFilePicker({
-					multiple: false,
-					types: [
-						{
-							description: 'Choose a Project',
-							accept: {
-								'application/zip': ['.brproject', '.mcaddon', '.mcpack'],
-							},
-						},
-					],
+				// TODO: Translate
+				const file = await pickFile(LocaleManager.translate('Choose a Project'), {
+					'application/zip': ['.brproject', '.mcaddon', '.mcpack'],
 				})
 
-				if (!files) return
-
-				const file = files[0]
+				if (!file) return
 
 				if (file.name.endsWith('.mcaddon')) {
-					await importFromMcAddon(await (await file.getFile()).arrayBuffer(), basename(file.name, '.mcaddon'))
+					await importFromMcAddon(file.data, basename(file.name, '.mcaddon'))
 				} else if (file.name.endsWith('.mcpack')) {
-					await importFromMcPack(await (await file.getFile()).arrayBuffer(), basename(file.name, '.mcpack'))
+					await importFromMcPack(file.data, basename(file.name, '.mcpack'))
 				} else {
-					await importFromBrProject(await (await file.getFile()).arrayBuffer(), basename(file.name, '.brproject'))
+					await importFromBrProject(file.data, basename(file.name, '.brproject'))
 				}
 			},
 			name: 'actions.editor.importProject.name',

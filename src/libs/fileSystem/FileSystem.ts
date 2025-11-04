@@ -146,17 +146,18 @@ export function useBridgeFolderUnloaded(): ShallowRef<boolean> {
 	return valueRef
 }
 
-export async function showFilePicker(
-	multiple: boolean,
+export async function pickFile(
 	description?: string,
 	accept?: Record<MIMEType, FileExtension | FileExtension[]> | undefined
-): Promise<BaseEntry[]> {
-	if (fileSystem instanceof PWAFileSystem) {
+): Promise<{ name: string; data: ArrayBuffer } | null> {
+	if (tauriBuild) {
+		// TODO: Implement
+		throw new Error('Pick file not implemented on Tauri yet')
+	} else if (window.showOpenFilePicker) {
 		let handles = null
 
 		try {
 			handles = await window.showOpenFilePicker({
-				multiple,
 				types: [
 					{
 						description,
@@ -166,12 +167,67 @@ export async function showFilePicker(
 			})
 		} catch {}
 
-		if (!handles) return []
+		if (!handles) return null
 
-		return handles.map((handle) => new PWAEntry('/__virtual__/' + handle.name, 'file', handle))
+		const handle = handles[0]
+
+		if (!handle) return null
+
+		return {
+			name: handle.name,
+			data: await (await handle.getFile()).arrayBuffer(),
+		}
+	} else {
+		return new Promise((resolve) => {
+			const input = document.createElement('input')
+			input.type = 'file'
+
+			if (accept) {
+				const acceptedTypes = []
+
+				for (const [mimeType, extensions] of Object.entries(accept)) {
+					acceptedTypes.push(mimeType)
+
+					for (const extension of Array.isArray(extensions) ? extensions : [extensions]) {
+						acceptedTypes.push(extension)
+					}
+				}
+
+				input.accept = acceptedTypes.join(',')
+			}
+
+			input.onchange = async () => {
+				const file = input.files?.[0]
+
+				if (!file) {
+					resolve(null)
+
+					return
+				}
+
+				const reader = new FileReader()
+
+				reader.onload = () => {
+					resolve({
+						name: file.name,
+						data: reader.result as ArrayBuffer,
+					})
+				}
+
+				reader.onerror = () => {
+					resolve(null)
+				}
+
+				reader.readAsArrayBuffer(file)
+			}
+
+			input.oncancel = () => {
+				resolve(null)
+			}
+
+			input.click()
+		})
 	}
-
-	return []
 }
 
 export async function showDirectoryPicker(): Promise<BaseEntry | null> {
