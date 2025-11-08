@@ -264,6 +264,141 @@ export async function pickFile(
 	}
 }
 
+export async function pickFiles(
+	description?: string,
+	accept?: Record<MIMEType, FileExtension | FileExtension[]> | undefined
+): Promise<{ name: string; data: ArrayBuffer }[] | null> {
+	if (tauriBuild) {
+		const extensions = []
+
+		if (accept) {
+			for (const acceptedExtensions of Object.values(accept)) {
+				for (const extension of Array.isArray(acceptedExtensions) ? acceptedExtensions : [acceptedExtensions]) {
+					extensions.push(extension)
+				}
+			}
+		}
+
+		const files = await open({
+			directory: false,
+			multiple: true,
+			filters:
+				accept === undefined
+					? undefined
+					: [
+							{
+								name: description ?? 'File',
+								extensions: extensions.map((extension) => extension.slice(1)),
+							},
+					  ],
+		})
+
+		if (!files) return null
+
+		const fileArray = Array.isArray(files) ? files : [files]
+
+		// @ts-ignore TS being weird about buffers
+		return await Promise.all(
+			fileArray.map(async (file) => ({
+				name: basename(file),
+				data: (await readBinaryFile(file)).buffer,
+			}))
+		)
+	} else if (window.showOpenFilePicker) {
+		let handles = null
+
+		try {
+			handles = await window.showOpenFilePicker({
+				types: [
+					{
+						description,
+						accept,
+					},
+				],
+			})
+		} catch {}
+
+		if (!handles) return null
+
+		return await Promise.all(
+			handles.map(async (handle) => ({
+				name: handle.name,
+				data: await (await handle.getFile()).arrayBuffer(),
+			}))
+		)
+	} else {
+		return new Promise((resolve) => {
+			const input = document.createElement('input')
+			input.type = 'file'
+			input.multiple = true
+
+			if (accept) {
+				const acceptedTypes = []
+
+				for (const [mimeType, extensions] of Object.entries(accept)) {
+					acceptedTypes.push(mimeType)
+
+					for (const extension of Array.isArray(extensions) ? extensions : [extensions]) {
+						acceptedTypes.push(extension)
+					}
+				}
+
+				input.accept = acceptedTypes.join(',')
+			}
+
+			input.onchange = async () => {
+				const items = input.files
+
+				if (!items) {
+					resolve(null)
+
+					return
+				}
+
+				const files: File[] = []
+
+				for (const item of items) {
+					files.push(item)
+				}
+
+				const result: ({ name: string; data: ArrayBuffer } | null)[] = await Promise.all(
+					files.map(
+						async (file) =>
+							await new Promise((resolveBuffer) => {
+								const reader = new FileReader()
+
+								reader.onload = () => {
+									resolveBuffer({
+										name: file.name,
+										data: reader.result as ArrayBuffer,
+									})
+								}
+
+								reader.onerror = () => {
+									resolveBuffer(null)
+								}
+
+								reader.readAsArrayBuffer(file)
+							})
+					)
+				)
+
+				if (result.includes(null)) {
+					resolve(null)
+				} else {
+					resolve(<{ name: string; data: ArrayBuffer }[]>result)
+				}
+			}
+
+			input.oncancel = () => {
+				resolve(null)
+			}
+
+			input.click()
+		})
+	}
+}
+
 export async function showDirectoryPicker(): Promise<BaseEntry | null> {
 	if (fileSystem instanceof PWAFileSystem) {
 		let handle = null

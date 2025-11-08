@@ -6,7 +6,7 @@ import { getClipboard, setClipboard } from '@/libs/Clipboard'
 import { BaseEntry } from '@/libs/fileSystem/BaseFileSystem'
 import { ActionManager } from './ActionManager'
 import { Action } from './Action'
-import { fileSystem, pickFile } from '@/libs/fileSystem/FileSystem'
+import { fileSystem, pickFile, pickFiles } from '@/libs/fileSystem/FileSystem'
 import { Windows } from '@/components/Windows/Windows'
 import { NotificationSystem } from '@/components/Notifications/NotificationSystem'
 import { TreeEditorTab } from '@/components/Tabs/TreeEditor/TreeEditorTab'
@@ -477,14 +477,7 @@ function setupProjectActions() {
 			new Action({
 				id: 'project.importFile',
 				trigger: async () => {
-					const files = await window.showOpenFilePicker({
-						multiple: true,
-						types: [
-							{
-								description: 'Choose a File',
-							},
-						],
-					})
+					const files = await pickFiles(LocaleManager.translate('Choose a File'))
 
 					if (!files) return
 
