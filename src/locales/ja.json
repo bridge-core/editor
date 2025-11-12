@@ -16,7 +16,6 @@
 		"skip": "スキップ",
 		"save": "保存",
 		"shareFile": "共有",
-		"more": "もっと...",
 		"selectFolder": "フォルダーを選択",
 		"fileName": "ファイル名",
 		"folderName": "フォルダー名",
@@ -32,7 +31,7 @@
 		"confirmOverwriteFolder": "このアクションは同名のフォルダーを上書きします。 続行しますか？",
 		"fileSystemPolyfill": {
 			"name": "プロジェクトの保存",
-			"description": "お使いのブラウザは進捗状況を保存するためにプロジェクトをダウンロードする必要があります。 デスクトップ版 Chrome や Edge などこの必要がないブラウザを使用することをお勧めします。"
+			"description": "お使いのブラウザでは、プロジェクトを保存するためにはダウンロードする必要があります。 デスクトップ版の Chrome や Edge などダウンロードする必要のないブラウザを使用することをお勧めします。"
 		},
 		"successfulExport": {
 			"title": "エクスポート成功",
@@ -62,15 +61,15 @@
 	"packType": {
 		"behaviorPack": {
 			"name": "ビヘイビアパック",
-			"description": "新しいゲームの仕組みを作り Minecraft の動作を変えます"
+			"description": "新しいゲームの仕組みを作り Minecraft の動作を変更します"
 		},
 		"resourcePack": {
 			"name": "リソースパック",
-			"description": "Minecraft の外観やサウンドの変更します"
+			"description": "Minecraft の外観やサウンドを変更します"
 		},
 		"skinPack": {
 			"name": "スキンパック",
-			"description": "プレイヤーが選択できるキャラクターの新たなスキンを提供します"
+			"description": "プレイヤーがキャラクターに選択できる新たなスキンを提供します"
 		},
 		"worldTemplate": {
 			"name": "ワールドテンプレート",
@@ -78,6 +77,18 @@
 		}
 	},
 	"fileType": {
+		"aimAssistCategories": "エイムアシストカテゴリー",
+		"aimAssistPreset": "エイムアシストプリセット",
+		"atmosphereSettings": "雰囲気設定",
+		"blockCulling": "ブロックカリング",
+		"cameraPreset": "カメラプリセット",
+		"craftingItemCatalog": "クラフティングアイテムカタログ",
+		"colorGradingSettings": "カラーグレーディング設定",
+		"dimension": "ディメンション",
+		"splashes": "水しぶき",
+		"shadowSettings": "シャドウ設定",
+		"structureSet": "ストラクチャーセット",
+		"templatePool": "テンプレートプール",
 		"manifest": "マニフェスト",
 		"animation": "アニメーション",
 		"animationController": "アニメーションコントローラー",
@@ -141,13 +152,192 @@
 			"name": "bridge. フォルダーを見る",
 			"description": "bridge. がプロジェクトを保存しているフォルダーを表示する"
 		},
+		"dash": {
+			"compileDefault": {
+				"name": "Dash",
+				"description": "プロジェクトの「config.json」ファイルに含まれるデフォルトのコンパイラ設定で、Run bridge.のコンパイラを実行してください。"
+			},
+			"name": "Dash"
+		},
+		"editor": {
+			"clearNotifications": {
+				"name": "通知を消去",
+				"description": "サイドバーの通知をすべて消去します"
+			},
+			"closeTab": {
+				"name": "タブを閉じる",
+				"description": "このタブを閉じる"
+			},
+			"extensions": {
+				"name": "拡張機能",
+				"description": "拡張機能のインストールと管理"
+			},
+			"goHome": {
+				"name": "ホームへ戻る",
+				"description": "ホーム画面へ戻る"
+			},
+			"importProject": {
+				"name": "プロジェクトのインポート",
+				"description": "新しいプロジェクトをインポートする"
+			},
+			"launchMinecraft": {
+				"name": "Minecraftを起動",
+				"description": "プロジェクトをテストするためにMinecraftを起動してください"
+			},
+			"name": "Editor",
+			"nextTab": {
+				"name": "次のタブ",
+				"description": "次のタブに切り替える"
+			},
+			"openFolder": {
+				"name": "フォルダーを開く",
+				"description": "フォルダーを開いて編集したり、出力フォルダーとして設定したり、その他のアクションを起動することができます。"
+			},
+			"previousTab": {
+				"name": "前のタブ",
+				"description": "前のタブに切り替える"
+			},
+			"reloadEditor": {
+				"name": "エディターを再読み込み",
+				"description": "エディターを再起動します。保存していない変更はすべて失われます"
+			},
+			"revealBridgeFolder": {
+				"name": "bridge. フォルダーを開く",
+				"description": "システムのファイルエクスプローラーでbridge. フォルダーを開きます"
+			},
+			"revealExtensionsFolder": {
+				"name": "拡張機能フォルダーを開く",
+				"description": "システムのファイルエクスプローラーでbridge. の拡張機能フォルダーを開きます。"
+			},
+			"revealOutputFolder": {
+				"name": "出力フォルダーを開く",
+				"description": "システムのファイルエクスプローラーで現在の出力フォルダーを開きます"
+			},
+			"settings": {
+				"name": "設定",
+				"description": "設定ウィンドウを開きます"
+			}
+		},
+		"export": {
+			"brproject": {
+				"name": "bridge. プロジェクトとしてエクスポート",
+				"description": "現在のプロジェクトを.brprojectとしてエクスポートする"
+			},
+			"mcaddon": {
+				"name": "Add-On としてエクスポート",
+				"description": "現在のプロジェクトを.mcaddonとしてエクスポートする"
+			},
+			"mctemplate": {
+				"name": "ワールドテンプレートとしてエクスポート",
+				"description": "現在のプロジェクトをワールトテンプレートとしてエクスポートする"
+			},
+			"mcworld": {
+				"name": "ワールドとしてエクスポート",
+				"description": "現在のプロジェクトを.mcworldとしてエクスポートする"
+			},
+			"name": "エクスポート"
+		},
+		"files": {
+			"copy": {
+				"name": "コピー",
+				"description": "選択したテキストをクリップボードにコピー"
+			},
+			"createFile": {
+				"name": "ファイルを作成する",
+				"description": "新規ファイル作成"
+			},
+			"createFolder": {
+				"name": "フォルダーを作成する",
+				"description": "新規フォルダー作成"
+			},
+			"delete": {
+				"name": "削除",
+				"description": "ファイルやフォルダーを削除する"
+			},
+			"duplicate": {
+				"name": "複製",
+				"description": "ファイルやフォルダーを複製する"
+			},
+			"name": "ファイル",
+			"openToSide": {
+				"name": "サイドに開く",
+				"description": "ファイルをサイドウィンドウで開く"
+			},
+			"paste": {
+				"name": "貼り付け",
+				"description": "クリップボードの内容を貼り付ける"
+			},
+			"rename": {
+				"name": "名前の変更",
+				"description": "ファイルやフォルダー名の変更"
+			},
+			"revealInFileExplorer": {
+				"name": "エクスプローラーで表示する",
+				"description": "ファイルエクスプローラーでファイルやフォルダーの場所を表示します。"
+			},
+			"save": {
+				"name": "保存",
+				"description": "現在のファイルを保存する"
+			},
+			"saveAll": {
+				"name": "すべて保存",
+				"description": "現在開いているファイルをすべて保存する"
+			},
+			"saveAs": {
+				"name": "名前を付けて保存...",
+				"description": "現在開いているファイルを別の名前で保存する"
+			}
+		},
+		"help": {
+			"bedrockDevDocs": {
+				"name": "bedrock.dev ドキュメント",
+				"description": "bedrock.dev ドキュメントを新しいブラウザタブで開きます"
+			},
+			"creatorDocs": {
+				"name": "Minecraft クリエイタードキュメント",
+				"description": "Minecraft クリエイター向けドキュメントを新しいブラウザタブで開きます"
+			},
+			"download": {
+				"name": "ダウンロード",
+				"description": "bridge. のネイティブアプリをダウンロードするためのガイドを開きます"
+			},
+			"extensions": {
+				"name": "拡張機能",
+				"description": "bridge. の拡張機能の作り方を新しいブラウザタブで開きます"
+			},
+			"faq": {
+				"name": "FAQ",
+				"description": "bridge. でのアドオン開発に関するよくある質問を新しいブラウザタブで開きます"
+			},
+			"feedback": {
+				"name": "フィードバックとバグ報告",
+				"description": "GitHubでIssueを開く"
+			},
+			"gettingStarted": {
+				"name": "はじめに",
+				"description": "bridge. を使い始めるためのガイドを読む"
+			},
+			"name": "ヘルプ",
+			"openChangelog": {
+				"name": "チェンジログを開く",
+				"description": "現在のバージョンのbridge. のチェンジログを開きます"
+			},
+			"releases": {
+				"name": "リリース",
+				"description": "最新の bridge. リリースを見る"
+			},
+			"scriptingDocs": {
+				"name": "Script API ドキュメント",
+				"description": "Minecraft Script API ドキュメントを新しいブラウザタブで開きます"
+			}
+		},
+		"misc": {
+			"name": "その他"
+		},
+		"more": "もっと",
 		"about": {
 			"name": "About",
 			"description": "bridge. について"
-		},
-		"launchMinecraft": {
-			"name": "Minecraftを起動",
-			"description": "Minecraftを起動し、プロジェクトをテストする"
 		},
 		"download": {
 			"name": "ダウンロード",
@@ -181,21 +371,6 @@
 			"name": "編集",
 			"description": "ファイルまたはフォルダーを編集する"
 		},
-		"delete": {
-			"name": "削除",
-			"description": "ファイルやフォルダーを削除する",
-			"confirmText": "本当に削除しますか?",
-			"noRestoring": "後からファイルを復元することはできません"
-		},
-		"rename": {
-			"name": "名前の変更",
-			"description": "ファイル名の変更",
-			"sameName": "新しいファイル名は大文字と小文字が異なるだけです。 Windowsではサポートされません。"
-		},
-		"duplicate": {
-			"name": "複製",
-			"description": "ファイルを複製する"
-		},
 		"viewCompilerOutput": {
 			"name": "コンパイラの出力表示",
 			"view": "コンパイラの出力を見る",
@@ -206,28 +381,12 @@
 			"name": "ファイルパスの表示",
 			"description": "ファイルやフォルダーの場所を表示する"
 		},
-		"revealInFileExplorer": {
-			"name": "エクスプローラーで表示する",
-			"description": "ファイルエクスプローラーでファイルやフォルダーの場所を表示します。"
-		},
-		"createFile": {
-			"name": "新しいファイル",
-			"description": "新規ファイル作成"
-		},
 		"importFile": {
 			"name": "ファイルのインポート"
-		},
-		"createFolder": {
-			"name": "新しいフォルダー",
-			"description": "新規フォルダー作成"
 		},
 		"findInFolder": {
 			"name": "フォルダー内検索",
 			"description": "フォルダー内を検索する"
-		},
-		"goHome": {
-			"name": "ホームへ戻る",
-			"description": "ホーム画面へ戻る"
 		},
 		"newProject": {
 			"name": "新規プロジェクト",
@@ -241,10 +400,6 @@
 			"name": "ファイルを開く",
 			"description": "現在のプロジェクトからファイルを開く"
 		},
-		"openFolder": {
-			"name": "フォルダーを開く",
-			"description": "フォルダーを開いて編集したり、出力フォルダーとして設定したり、その他のアクションを起動することができます。"
-		},
 		"searchFile": {
 			"name": "ファイルを探す",
 			"description": "現在のプロジェクトからファイルを検索して開く"
@@ -252,14 +407,6 @@
 		"saveFile": {
 			"name": "ファイルを保存",
 			"description": "現在開いているファイルを保存する"
-		},
-		"saveAs": {
-			"name": "名前を付けて保存...",
-			"description": "現在開いているファイルを別の名前で保存する"
-		},
-		"saveAll": {
-			"name": "すべて保存",
-			"description": "現在開いているファイルをすべて保存"
 		},
 		"closeFile": {
 			"name": "ファイルを閉じる",
@@ -269,21 +416,9 @@
 			"name": "設定",
 			"description": "bridge. のアプリ設定を開く"
 		},
-		"extensions": {
-			"name": "拡張機能",
-			"description": "拡張機能のインストールと管理"
-		},
-		"copy": {
-			"name": "コピー",
-			"description": "選択したテキストをクリップボードにコピー"
-		},
 		"cut": {
 			"name": "切り取り",
 			"description": "選択したテキストをクリップボードにコピーして切り取る"
-		},
-		"paste": {
-			"name": "貼り付け",
-			"description": "クリップボードの内容を貼り付ける"
 		},
 		"docs": {
 			"name": "ドキュメント",
@@ -292,10 +427,6 @@
 		"minecraftDocs": {
 			"name": "Minecraft ドキュメント",
 			"description": "Minecraft Bedrock Add-Onのドキュメントを開く"
-		},
-		"releases": {
-			"name": "リリース",
-			"description": "最新の bridge. リリースを見る"
 		},
 		"bugReports": {
 			"name": "バグレポート",
@@ -309,14 +440,6 @@
 			"name": "拡張機能 API",
 			"description": "bridge. の拡張機能 API について詳しくはこちら"
 		},
-		"gettingStarted": {
-			"name": "はじめに",
-			"description": "bridge. を使い始めるためのガイドを読む"
-		},
-		"faq": {
-			"name": "FAQ",
-			"description": "bridge. でのアドオン開発に関するよくある質問"
-		},
 		"reloadAutoCompletions": {
 			"name": "オートコンプリートの再読み込み",
 			"description": "すべてのオートコンプリートデータを再読み込みする"
@@ -328,10 +451,6 @@
 		"moveToSplitScreen": {
 			"name": "分割画面へ移動",
 			"description": "分割画面を開きこのタブを移す"
-		},
-		"closeTab": {
-			"name": "タブを閉じる",
-			"description": "このタブを閉じる"
 		},
 		"closeAll": {
 			"name": "すべて閉じる",
@@ -434,6 +553,9 @@
 		"edit": {
 			"name": "編集"
 		},
+		"download": {
+			"name": "ダウンロード"
+		},
 		"view": {
 			"name": "表示",
 			"togglePackExplorer": {
@@ -455,10 +577,6 @@
 			"nextTab": {
 				"name": "次のタブ",
 				"description": "次のタブに切り替える"
-			},
-			"previousTab": {
-				"name": "前のタブ",
-				"description": "前のタブに切り替える"
 			}
 		},
 		"tools": {
@@ -617,6 +735,18 @@
 		"educationEdition": {
 			"name": "Education Edition の有効化",
 			"description": "物質還元レシピなどの教育機能で自動補完機能を有効にします。"
+		},
+		"experimentalCreatorCameraFeatures": {
+			"name": "実験的なクリエイターカメラ機能",
+			"description": "実験的なカメラプリセット機能に対する自動補完機能を有効にします。"
+		},
+		"dataDrivenJigsawStructures": {
+			"name": "データ駆動型ジグソー構造",
+			"description": "ジグソー構造、テンプレートプール、プロセッサーリスト、構造セットの作成を有効にします。"
+		},
+		"renderDragonFeatures": {
+			"name": "クリエイター向けRender Dragonの機能",
+			"description": "遅延レンダリング設定ファイルの作成を可能にします。"
 		}
 	},
 	"windows": {
@@ -705,6 +835,10 @@
 					"soundDefinitions": {
 						"name": "sound_definitions.json",
 						"description": "プロジェクト内の他の場所で使用するサウンドファイルのIDを定義します。"
+					},
+					"splashes": {
+						"name": "splashes.json",
+						"description": "Minecraftのタイトル画面に表示されるスプラッシュメッセージの定義に使用されます。"
 					}
 				}
 			}
