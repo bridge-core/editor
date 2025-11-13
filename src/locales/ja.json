@@ -155,7 +155,7 @@
 		"dash": {
 			"compileDefault": {
 				"name": "Dash",
-				"description": "プロジェクトの「config.json」ファイルに含まれるデフォルトのコンパイラ設定で、Run bridge.のコンパイラを実行してください。"
+				"description": "プロジェクトの「config.json」ファイルに含まれるデフォルトのコンパイラ設定で、 bridge.のコンパイラを実行します"
 			},
 			"name": "Dash"
 		},
@@ -335,6 +335,66 @@
 			"name": "その他"
 		},
 		"more": "もっと",
+		"project": {
+			"importFile": {
+				"name": "ファイルをインポート",
+				"description": "プロジェクトにファイルをインポートする"
+			},
+			"name": "プロジェクト",
+			"newProject": {
+				"name": "新規プロジェクト",
+				"description": "プロジェクト作成ダイアログを開く"
+			},
+			"reload": {
+				"name": "プロジェクトを再読み込み",
+				"description": "現在読み込まれているプロジェクトを再読み込みします"
+			},
+			"reloadExtensions": {
+				"name": "拡張機能を再読み込み",
+				"description": "すべての拡張機能を再読み込みします"
+			},
+			"revealInFileExplorer": {
+				"name": "プロジェクトフォルダーを開く",
+				"description": "システムのファイルエクスプローラーでプロジェクトフォルダーを開きます"
+			},
+			"toggleFileExplorer": {
+				"name": "ファイルエクスプローラーを切り替える",
+				"description": "ファイルエクスプローラーを開くか閉じるかを切り替える"
+			}
+		},
+		"rebinding": "再割り当て",
+		"tabActions": "タブの操作",
+		"tabs": {
+			"close": {
+				"name": "タブを閉じる",
+				"description": "選択されているタブを閉じる"
+			},
+			"closeAll": {
+				"name": "すべて閉じる",
+				"description": "すべてのタブを閉じる"
+			},
+			"closeOther": {
+				"name": "このタブ以外のすべてを閉じる",
+				"description": "現在選択されているタブ以外のすべての開いているタブを閉じる"
+			},
+			"closeSaved": {
+				"name": "保存されているすべてを閉じる",
+				"description": "保存されているすべてのタブを閉じる"
+			},
+			"closeToRight": {
+				"name": "右側をすべて閉じる",
+				"description": "現在選択されているタブの右側に開いているタブをすべて閉じる"
+			},
+			"keepOpen": {
+				"name": "タブを開いたままにする",
+				"description": "タブを開いたままにして、誤って閉じないようにします"
+			},
+			"name": "タブ",
+			"splitscreen": {
+				"name": "分割画面",
+				"description": "分割画面でタブを表示する"
+			}
+		},
 		"about": {
 			"name": "About",
 			"description": "bridge. について"
@@ -380,9 +440,6 @@
 		"revealPath": {
 			"name": "ファイルパスの表示",
 			"description": "ファイルやフォルダーの場所を表示する"
-		},
-		"importFile": {
-			"name": "ファイルのインポート"
 		},
 		"findInFolder": {
 			"name": "フォルダー内検索",
@@ -436,10 +493,6 @@
 			"name": "Twitter",
 			"description": "Twitter で bridge. をフォローする"
 		},
-		"extensionAPI": {
-			"name": "拡張機能 API",
-			"description": "bridge. の拡張機能 API について詳しくはこちら"
-		},
 		"reloadAutoCompletions": {
 			"name": "オートコンプリートの再読み込み",
 			"description": "すべてのオートコンプリートデータを再読み込みする"
@@ -452,21 +505,9 @@
 			"name": "分割画面へ移動",
 			"description": "分割画面を開きこのタブを移す"
 		},
-		"closeAll": {
-			"name": "すべて閉じる",
-			"description": "すべてのタブを閉じる"
-		},
 		"closeTabsToRight": {
 			"name": "右側を閉じる",
 			"description": "このタブの右側にあるすべてのタブを閉じる"
-		},
-		"closeAllSaved": {
-			"name": "保存済みを閉じる",
-			"description": "保存したタブをすべて閉じる"
-		},
-		"closeOtherTabs": {
-			"name": "その他を閉じる",
-			"description": "このタブ以外のすべてのタブを閉じる"
 		},
 		"clearAllNotifications": {
 			"name": "すべての通知を消去",
