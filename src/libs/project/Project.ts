@@ -156,7 +156,7 @@ export class Project implements AsyncDisposable {
 	}
 
 	private async setOutputFolderHandle(handle: FileSystemDirectoryHandle): Promise<boolean> {
-		const newOutputFileSystem = new PWAFileSystem()
+		const newOutputFileSystem = new PWAFileSystem(false)
 		newOutputFileSystem.setBaseHandle(handle)
 
 		if (!(await newOutputFileSystem.ensurePermissions(handle))) return false
@@ -177,7 +177,7 @@ export class Project implements AsyncDisposable {
 			? localProjectFolder
 			: Settings.get('outputFolder')
 
-		let newOutputFileSystem = new PWAFileSystem()
+		let newOutputFileSystem = new PWAFileSystem(false)
 
 		if (newOutputFolderHandle && (await newOutputFileSystem.ensurePermissions(newOutputFolderHandle))) {
 			if (this.outputFileSystem instanceof PWAFileSystem && newOutputFolderHandle === this.outputFileSystem.baseHandle) return

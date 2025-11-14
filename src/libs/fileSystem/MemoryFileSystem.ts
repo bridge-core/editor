@@ -22,6 +22,8 @@ export class MemoryFileSystem extends BaseFileSystem {
 		// @ts-ignore TS being weird about errors
 		if (data instanceof Uint8Array) return data.buffer
 
+		if (data instanceof ArrayBuffer) return data
+
 		return this.textEncoder.encode(data as string).buffer
 	}
 
@@ -202,7 +204,7 @@ export class MemoryFileSystem extends BaseFileSystem {
 
 		const allEntries = await this.allEntries()
 
-		const entries = allEntries.filter((entry) => parse(entry).dir === path)
+		const entries = allEntries.filter((entry) => parse(entry).dir === path && entry !== path)
 
 		return Promise.all(
 			entries.map(async (entryPath) => {

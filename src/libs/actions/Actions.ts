@@ -242,8 +242,6 @@ function setupEditorActions() {
 
 				if (!directory) return
 
-				console.log(directory)
-
 				await ImporterManager.importDirectory(directory)
 			},
 			name: 'actions.editor.openFolder.name',

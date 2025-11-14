@@ -255,7 +255,7 @@ export class ProjectManager {
 
 			if (!outputFolder) return
 
-			const comMojangFileSystem = new PWAFileSystem()
+			const comMojangFileSystem = new PWAFileSystem(false)
 			comMojangFileSystem.setBaseHandle(outputFolder)
 
 			if (outputFolder && (await comMojangFileSystem.ensurePermissions(outputFolder))) {

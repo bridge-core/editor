@@ -455,7 +455,10 @@ export async function pickDirectory(): Promise<ImportedDirectoryEntry | null> {
 
 					directoryName = file.webkitRelativePath.split('/')[0]
 
-					await fileSystem.writeFile(file.webkitRelativePath.substring(directoryName.length), data)
+					const path = file.webkitRelativePath.substring(directoryName.length)
+
+					await fileSystem.ensureDirectory(path)
+					await fileSystem.writeFile(path, data)
 				}
 
 				resolveReads(true)

@@ -48,12 +48,12 @@ export class BrProjectDirectoryImporter extends DirectoryImporter {
 	public name: string = 'fileDropper.importMethod.folder.project.name'
 	public description: string = 'fileDropper.importMethod.folder.project.description'
 
-	public async onImport(directoryHandle: FileSystemDirectoryHandle, basePath: string) {
-		const targetPath = join('/projects', directoryHandle.name)
+	public async onImport(directory: BaseEntry, basePath: string) {
+		const targetPath = join('/projects', basename(directory.path))
 		const projectPath = await fileSystem.findSuitableFolderName(targetPath)
 		const projectName = basename(projectPath)
 
-		await fileSystem.copyDirectoryHandle(projectPath, directoryHandle)
+		await fileSystem.copyDirectoryFromFileSystem('/', await directory.getFileSystem(), projectPath)
 
 		await ProjectManager.closeProject()
 		await ProjectManager.loadProjects()
