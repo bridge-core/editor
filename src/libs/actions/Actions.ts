@@ -6,7 +6,7 @@ import { getClipboard, setClipboard } from '@/libs/Clipboard'
 import { BaseEntry } from '@/libs/fileSystem/BaseFileSystem'
 import { ActionManager } from './ActionManager'
 import { Action } from './Action'
-import { fileSystem, pickFile, pickFiles } from '@/libs/fileSystem/FileSystem'
+import { fileSystem, pickDirectory, pickFile, pickFiles } from '@/libs/fileSystem/FileSystem'
 import { Windows } from '@/components/Windows/Windows'
 import { NotificationSystem } from '@/components/Notifications/NotificationSystem'
 import { TreeEditorTab } from '@/components/Tabs/TreeEditor/TreeEditorTab'
@@ -238,9 +238,11 @@ function setupEditorActions() {
 		new Action({
 			id: 'editor.openFolder',
 			trigger: async () => {
-				const directory = await window.showDirectoryPicker()
+				const directory = await pickDirectory()
 
 				if (!directory) return
+
+				console.log(directory)
 
 				await ImporterManager.importDirectory(directory)
 			},

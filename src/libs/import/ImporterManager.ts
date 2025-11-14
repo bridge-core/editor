@@ -64,7 +64,7 @@ export class ImporterManager {
 		}
 	}
 
-	public static async importDirectory(directoryHandle: FileSystemDirectoryHandle, basePath?: string) {
+	public static async importDirectory(directory: BaseEntry, basePath?: string) {
 		if (!basePath) {
 			if (ProjectManager.currentProject) {
 				basePath = ProjectManager.currentProject.path
@@ -82,7 +82,7 @@ export class ImporterManager {
 						name: importer.name,
 						description: importer.description,
 						choose: () => {
-							importer.onImport(directoryHandle, basePath)
+							importer.onImport(directory, basePath)
 						},
 					}))
 				)

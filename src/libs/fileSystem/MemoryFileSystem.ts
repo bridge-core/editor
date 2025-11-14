@@ -1,44 +1,43 @@
 import { basename, parse, resolve, sep } from 'pathe'
 import { BaseEntry, BaseFileSystem, StreamableLike } from './BaseFileSystem'
-import { del, get, keys, set } from 'idb-keyval'
 import * as JSONC from 'jsonc-parser'
 
-export class LocalFileSystem extends BaseFileSystem {
+export class MemoryFileSystem extends BaseFileSystem {
 	private textEncoder = new TextEncoder()
 	private textDecoder = new TextDecoder()
 
-	private rootName: string | null = null
-
 	private pathsToWatch: string[] = []
 
-	public setRootName(name: string) {
-		this.rootName = name
-	}
+	private data: Record<string, { kind: 'file'; content: FileSystemWriteChunkType } | { kind: 'directory' }> = {}
 
 	public async readFile(path: string): Promise<ArrayBuffer> {
-		if (this.rootName === null) throw new Error('Root name not set')
-
 		path = resolve('/', path)
 
-		const data = (await get(`localFileSystem/${this.rootName}${path}`)).content
+		const entry = this.data[path]
+
+		if (entry.kind === 'directory') throw new Error(`Can not call read on a directory! ${path}`)
+
+		const data = entry.content
 
 		// @ts-ignore TS being weird about errors
 		if (data instanceof Uint8Array) return data.buffer
 
-		return this.textEncoder.encode(data).buffer
+		return this.textEncoder.encode(data as string).buffer
 	}
 
 	public async readFileText(path: string): Promise<string> {
-		if (this.rootName === null) throw new Error('Root name not set')
-
 		path = resolve('/', path)
 
+		const entry = this.data[path]
+
+		if (entry.kind === 'directory') throw new Error(`Can not call read on a directory! ${path}`)
+
 		try {
-			const content = (await get(`localFileSystem/${this.rootName}${path}`)).content
+			const content = entry.content
 
 			if (typeof content === 'string') return content
 
-			return this.textDecoder.decode(new Uint8Array(content))
+			return this.textDecoder.decode(new Uint8Array(content as ArrayBuffer))
 		} catch (error) {
 			console.error(`Failed to read file text "${path}"`)
 
@@ -53,16 +52,18 @@ export class LocalFileSystem extends BaseFileSystem {
 	}
 
 	public async readFileDataUrl(path: string): Promise<string> {
-		if (this.rootName === null) throw new Error('Root name not set')
-
 		path = resolve('/', path)
 
+		const entry = this.data[path]
+
+		if (entry.kind === 'directory') throw new Error(`Can not call read on a directory! ${path}`)
+
 		try {
-			const content = (await get(`localFileSystem/${this.rootName}${path}`)).content
+			const content = entry.content
 
 			if (typeof content === 'string') throw new Error('Reading string as Data Url is not supported yet!')
 
-			const file = new File([new Blob([new Uint8Array(content)])], basename(path))
+			const file = new File([new Blob([new Uint8Array(content as ArrayBuffer)])], basename(path))
 
 			const reader = new FileReader()
 
@@ -81,14 +82,12 @@ export class LocalFileSystem extends BaseFileSystem {
 	}
 
 	public async writeFile(path: string, content: FileSystemWriteChunkType) {
-		if (this.rootName === null) throw new Error('Root name not set')
-
 		path = resolve('/', path)
 
-		await set(`localFileSystem/${this.rootName}${path}`, {
+		this.data[path] = {
 			kind: 'file',
 			content,
-		})
+		}
 
 		if (
 			this.pathsToWatch.find((watchPath) => path.startsWith(watchPath)) !== undefined &&
@@ -98,8 +97,6 @@ export class LocalFileSystem extends BaseFileSystem {
 	}
 
 	public async writeFileStreaming(path: string, stream: StreamableLike) {
-		if (this.rootName === null) throw new Error('Root name not set')
-
 		path = resolve('/', path)
 
 		const chunks: Uint8Array[] = []
@@ -125,10 +122,10 @@ export class LocalFileSystem extends BaseFileSystem {
 			writePosition += chunk.length
 		}
 
-		await set(`localFileSystem/${this.rootName}${path}`, {
+		this.data[path] = {
 			kind: 'file',
 			content,
-		})
+		}
 
 		if (
 			this.pathsToWatch.find((watchPath) => path.startsWith(watchPath)) !== undefined &&
@@ -138,11 +135,9 @@ export class LocalFileSystem extends BaseFileSystem {
 	}
 
 	public async removeFile(path: string) {
-		if (this.rootName === null) throw new Error('Root name not set')
-
 		path = resolve('/', path)
 
-		await del(`localFileSystem/${this.rootName}${path}`)
+		delete this.data[path]
 
 		if (
 			this.pathsToWatch.find((watchPath) => path.startsWith(watchPath)) !== undefined &&
@@ -152,13 +147,11 @@ export class LocalFileSystem extends BaseFileSystem {
 	}
 
 	public async makeDirectory(path: string) {
-		if (this.rootName === null) throw new Error('Root name not set')
-
 		path = resolve('/', path)
 
-		await set(`localFileSystem/${this.rootName}${path}`, {
+		this.data[path] = {
 			kind: 'directory',
-		})
+		}
 
 		if (
 			this.pathsToWatch.find((watchPath) => path.startsWith(watchPath)) !== undefined &&
@@ -168,11 +161,9 @@ export class LocalFileSystem extends BaseFileSystem {
 	}
 
 	public async removeDirectory(path: string) {
-		if (this.rootName === null) throw new Error('Root name not set')
-
 		path = resolve('/', path)
 
-		await del(`localFileSystem/${this.rootName}${path}`)
+		delete this.data[path]
 
 		if (
 			this.pathsToWatch.find((watchPath) => path.startsWith(watchPath)) !== undefined &&
@@ -182,8 +173,6 @@ export class LocalFileSystem extends BaseFileSystem {
 	}
 
 	public async ensureDirectory(path: string): Promise<void> {
-		if (this.rootName === null) throw new Error('Root name not set')
-
 		path = resolve('/', path)
 
 		const directoryNames = parse(path).dir.split(sep)
@@ -199,28 +188,16 @@ export class LocalFileSystem extends BaseFileSystem {
 	}
 
 	public async exists(path: string): Promise<boolean> {
-		if (this.rootName === null) throw new Error('Root name not set')
-
 		path = resolve('/', path)
 
-		return (await get(`localFileSystem/${this.rootName}${path}`)) !== undefined
+		return this.data[path] !== undefined
 	}
 
 	public async allEntries(): Promise<string[]> {
-		if (this.rootName === null) throw new Error('Root name not set')
-
-		const allKeys = await keys()
-		const localFSKeys = allKeys
-			.map((key) => key.toString())
-			.filter((key) => key.startsWith(`localFileSystem/${this.rootName}/`))
-			.map((key) => key.substring(`localFileSystem/${this.rootName}`.length))
-
-		return localFSKeys
+		return Object.keys(this.data)
 	}
 
 	public async readDirectoryEntries(path: string): Promise<BaseEntry[]> {
-		if (this.rootName === null) throw new Error('Root name not set')
-
 		path = resolve('/', path)
 
 		const allEntries = await this.allEntries()
@@ -229,7 +206,7 @@ export class LocalFileSystem extends BaseFileSystem {
 
 		return Promise.all(
 			entries.map(async (entryPath) => {
-				const entry = await get(`localFileSystem/${this.rootName}${entryPath}`)
+				const entry = this.data[entryPath]
 
 				return new BaseEntry(entryPath, entry.kind)
 			})

@@ -8,14 +8,15 @@ import { onMounted, onUnmounted, shallowRef, ShallowRef } from 'vue'
 import { Disposable } from '@/libs/disposeable/Disposeable'
 import { open } from '@tauri-apps/api/dialog'
 import { readBinaryFile } from '@tauri-apps/api/fs'
-import { basename } from 'pathe'
+import { basename, resolve } from 'pathe'
+import { MemoryFileSystem } from './MemoryFileSystem'
 
 export function getFileSystem(): BaseFileSystem {
 	if (tauriBuild) return new TauriFileSystem()
 
 	if (!supportsFileSystemApi()) return new LocalFileSystem()
 
-	return new PWAFileSystem()
+	return new PWAFileSystem(true)
 }
 
 export const fileSystem = getFileSystem()
@@ -380,8 +381,21 @@ export async function pickFiles(
 	}
 }
 
-export async function showDirectoryPicker(): Promise<BaseEntry | null> {
-	if (fileSystem instanceof PWAFileSystem) {
+export async function pickDirectory(): Promise<ImportedDirectoryEntry | null> {
+	if (tauriBuild) {
+		const directory = await open({
+			directory: true,
+			multiple: false,
+		})
+
+		if (!directory) return null
+		if (typeof directory !== 'string') return null
+
+		const fileSystem = new TauriFileSystem()
+		fileSystem.setBasePath(directory)
+
+		return new ImportedDirectoryEntry(directory, fileSystem)
+	} else if (fileSystem instanceof PWAFileSystem) {
 		let handle = null
 
 		try {
@@ -392,11 +406,73 @@ export async function showDirectoryPicker(): Promise<BaseEntry | null> {
 
 		if (!handle) return null
 
-		// return new PWAEntry('/__virtual__/' + handle.name, 'directory', handle)
-		return null
-	}
+		const fileSystem = new PWAFileSystem(false)
+		if (await fileSystem.ensurePermissions(handle)) {
+			fileSystem.setBaseHandle(handle)
 
-	return null
+			return new ImportedDirectoryEntry('/' + handle.name, fileSystem)
+		}
+
+		return null
+	} else {
+		const fileSystem = new MemoryFileSystem()
+		let directoryName = null
+
+		const succeeded = await new Promise((resolveReads) => {
+			const input = document.createElement('input')
+			input.type = 'file'
+			input.webkitdirectory = true
+
+			input.onchange = async () => {
+				const files = input.files
+
+				if (!files) {
+					resolveReads(false)
+
+					return
+				}
+
+				for (const file of files) {
+					const data = await new Promise<ArrayBuffer | null>((resolveData) => {
+						const reader = new FileReader()
+
+						reader.onload = () => {
+							resolveData(reader.result as ArrayBuffer)
+						}
+
+						reader.onerror = () => {
+							resolveData(null)
+						}
+
+						reader.readAsArrayBuffer(file)
+					})
+
+					if (!data) {
+						resolveReads(false)
+
+						return
+					}
+
+					directoryName = file.webkitRelativePath.split('/')[0]
+
+					await fileSystem.writeFile(file.webkitRelativePath.substring(directoryName.length), data)
+				}
+
+				resolveReads(true)
+			}
+
+			input.oncancel = () => {
+				resolveReads(false)
+			}
+
+			input.click()
+		})
+
+		if (!succeeded) return null
+		if (!directoryName) return null
+
+		return new ImportedDirectoryEntry('/' + directoryName, fileSystem)
+	}
 }
 
 export class ImportedFileEntry extends BaseEntry {
@@ -416,5 +492,19 @@ export class ImportedFileEntry extends BaseEntry {
 		const decoder = new TextDecoder()
 
 		return decoder.decode(this.data)
+	}
+}
+
+export class ImportedDirectoryEntry extends BaseEntry {
+	private fileSystem: BaseFileSystem
+
+	constructor(path: string, fileSystem: BaseFileSystem) {
+		super(path, 'directory')
+
+		this.fileSystem = fileSystem
+	}
+
+	public async getFileSystem(): Promise<BaseFileSystem> {
+		return this.fileSystem
 	}
 }
