@@ -4,6 +4,7 @@ import { ProjectManager } from '@/libs/project/ProjectManager'
 import { DirectoryImporter } from './DirectoryImporter'
 import { Windows } from '@/components/Windows/Windows'
 import { InformedChoiceWindow } from '@/components/Windows/InformedChoice/InformedChoiceWindow'
+import { BaseEntry } from '@/libs/fileSystem/BaseFileSystem'
 
 export class ImporterManager {
 	protected static fileImporters: Record<string, FileImporter[]> = {}
@@ -43,7 +44,7 @@ export class ImporterManager {
 		this.directoryImporters.splice(this.directoryImporters.indexOf(importer), 1)
 	}
 
-	public static async importFile(file: { name: string; data: ArrayBuffer }, basePath?: string) {
+	public static async importFile(entry: BaseEntry, basePath?: string) {
 		if (!basePath) {
 			if (ProjectManager.currentProject) {
 				basePath = ProjectManager.currentProject.path
@@ -52,12 +53,12 @@ export class ImporterManager {
 			}
 		}
 
-		const extension = extname(file.name)
+		const extension = extname(entry.path)
 
 		if (this.fileImporters[extension] && this.fileImporters[extension].length > 0) {
-			await this.fileImporters[extension][0].onImport(file, basePath)
+			await this.fileImporters[extension][0].onImport(entry, basePath)
 		} else if (this.defaultFileImporters.length > 0) {
-			await this.defaultFileImporters[0].onImport(file, basePath)
+			await this.defaultFileImporters[0].onImport(entry, basePath)
 		} else {
 			throw new Error('Could not import file. No importers added!')
 		}

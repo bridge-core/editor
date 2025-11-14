@@ -1,9 +1,10 @@
-import { join } from 'pathe'
+import { basename, join } from 'pathe'
 import { FileImporter } from './FileImporter'
-import { fileSystem } from '../fileSystem/FileSystem'
+import { fileSystem } from '@/libs/fileSystem/FileSystem'
 import { TabManager } from '@/components/TabSystem/TabManager'
-import { ProjectManager } from '../project/ProjectManager'
-import { BedrockProject } from '../project/BedrockProject'
+import { ProjectManager } from '@/libs/project/ProjectManager'
+import { BedrockProject } from '@/libs/project/BedrockProject'
+import { BaseEntry } from '@/libs/fileSystem/BaseFileSystem'
 
 export class BasicFileImporter extends FileImporter {
 	public constructor() {
@@ -26,7 +27,7 @@ export class BasicFileImporter extends FileImporter {
 		])
 	}
 
-	public async onImport(fileHandle: FileSystemFileHandle, basePath: string) {
+	public async onImport(entry: BaseEntry, basePath: string) {
 		if (basePath === '/') return
 
 		if (
@@ -34,16 +35,16 @@ export class BasicFileImporter extends FileImporter {
 			ProjectManager.currentProject instanceof BedrockProject &&
 			basePath === ProjectManager.currentProject.path
 		) {
-			basePath = (await ProjectManager.currentProject.fileTypeData.guessFolder(fileHandle)) ?? basePath
+			basePath = (await ProjectManager.currentProject.fileTypeData.guessFolder(entry)) ?? basePath
 		}
 
-		const targetPath = join(basePath, fileHandle.name)
+		const targetPath = join(basePath, basename(entry.path))
 
 		await fileSystem.ensureDirectory(targetPath)
 
 		const suitablePath = await fileSystem.findSuitableFileName(targetPath)
 
-		await fileSystem.writeFile(suitablePath, await (await fileHandle.getFile()).arrayBuffer())
+		await fileSystem.writeFile(suitablePath, await entry.read())
 
 		await TabManager.openFile(suitablePath)
 	}

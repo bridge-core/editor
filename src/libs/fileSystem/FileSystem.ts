@@ -1,6 +1,6 @@
 import { tauriBuild } from '@/libs/tauri/Tauri'
 import { BaseEntry, BaseFileSystem } from './BaseFileSystem'
-import { PWAEntry, PWAFileSystem } from './PWAFileSystem'
+import { PWAFileSystem } from './PWAFileSystem'
 import { TauriFileSystem } from './TauriFileSystem'
 import { get, set } from 'idb-keyval'
 import { LocalFileSystem } from './LocalFileSystem'
@@ -152,7 +152,7 @@ export function useBridgeFolderUnloaded(): ShallowRef<boolean> {
 export async function pickFile(
 	description?: string,
 	accept?: Record<MIMEType, FileExtension | FileExtension[]> | undefined
-): Promise<{ name: string; data: ArrayBuffer } | null> {
+): Promise<BaseEntry | null> {
 	if (tauriBuild) {
 		const extensions = []
 
@@ -182,11 +182,7 @@ export async function pickFile(
 
 		const file = Array.isArray(files) ? files[0] : files
 
-		return {
-			name: basename(file),
-			// @ts-ignore TS being weird about buffers
-			data: (await readBinaryFile(file)).buffer,
-		}
+		return new ImportedFileEntry(file, (await readBinaryFile(file)).buffer as ArrayBuffer)
 	} else if (window.showOpenFilePicker) {
 		let handles = null
 
@@ -207,10 +203,7 @@ export async function pickFile(
 
 		if (!handle) return null
 
-		return {
-			name: handle.name,
-			data: await (await handle.getFile()).arrayBuffer(),
-		}
+		return new ImportedFileEntry('/' + handle.name, await (await handle.getFile()).arrayBuffer())
 	} else {
 		return new Promise((resolve) => {
 			const input = document.createElement('input')
@@ -242,10 +235,7 @@ export async function pickFile(
 				const reader = new FileReader()
 
 				reader.onload = () => {
-					resolve({
-						name: file.name,
-						data: reader.result as ArrayBuffer,
-					})
+					resolve(new ImportedFileEntry('/' + file.name, reader.result as ArrayBuffer))
 				}
 
 				reader.onerror = () => {
@@ -267,7 +257,7 @@ export async function pickFile(
 export async function pickFiles(
 	description?: string,
 	accept?: Record<MIMEType, FileExtension | FileExtension[]> | undefined
-): Promise<{ name: string; data: ArrayBuffer }[] | null> {
+): Promise<BaseEntry[] | null> {
 	if (tauriBuild) {
 		const extensions = []
 
@@ -299,10 +289,7 @@ export async function pickFiles(
 
 		// @ts-ignore TS being weird about buffers
 		return await Promise.all(
-			fileArray.map(async (file) => ({
-				name: basename(file),
-				data: (await readBinaryFile(file)).buffer,
-			}))
+			fileArray.map(async (file) => new ImportedFileEntry(file, (await readBinaryFile(file)).buffer as ArrayBuffer))
 		)
 	} else if (window.showOpenFilePicker) {
 		let handles = null
@@ -321,10 +308,7 @@ export async function pickFiles(
 		if (!handles) return null
 
 		return await Promise.all(
-			handles.map(async (handle) => ({
-				name: handle.name,
-				data: await (await handle.getFile()).arrayBuffer(),
-			}))
+			handles.map(async (handle) => new ImportedFileEntry('/' + handle.name, await (await handle.getFile()).arrayBuffer()))
 		)
 	} else {
 		return new Promise((resolve) => {
@@ -361,17 +345,14 @@ export async function pickFiles(
 					files.push(item)
 				}
 
-				const result: ({ name: string; data: ArrayBuffer } | null)[] = await Promise.all(
+				const result: (BaseEntry | null)[] = await Promise.all(
 					files.map(
 						async (file) =>
 							await new Promise((resolveBuffer) => {
 								const reader = new FileReader()
 
 								reader.onload = () => {
-									resolveBuffer({
-										name: file.name,
-										data: reader.result as ArrayBuffer,
-									})
+									resolveBuffer(new ImportedFileEntry('/' + file.name, reader.result as ArrayBuffer))
 								}
 
 								reader.onerror = () => {
@@ -386,7 +367,7 @@ export async function pickFiles(
 				if (result.includes(null)) {
 					resolve(null)
 				} else {
-					resolve(<{ name: string; data: ArrayBuffer }[]>result)
+					resolve(<BaseEntry[]>result)
 				}
 			}
 
@@ -411,8 +392,29 @@ export async function showDirectoryPicker(): Promise<BaseEntry | null> {
 
 		if (!handle) return null
 
-		return new PWAEntry('/__virtual__/' + handle.name, 'directory', handle)
+		// return new PWAEntry('/__virtual__/' + handle.name, 'directory', handle)
+		return null
 	}
 
 	return null
+}
+
+export class ImportedFileEntry extends BaseEntry {
+	private data: ArrayBuffer
+
+	constructor(path: string, data: ArrayBuffer) {
+		super(path, 'file')
+
+		this.data = data
+	}
+
+	public async read(): Promise<ArrayBuffer> {
+		return this.data
+	}
+
+	public async readText(): Promise<string> {
+		const decoder = new TextDecoder()
+
+		return decoder.decode(this.data)
+	}
 }

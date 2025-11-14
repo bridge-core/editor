@@ -219,12 +219,12 @@ function setupEditorActions() {
 
 				if (!file) return
 
-				if (file.name.endsWith('.mcaddon')) {
-					await importFromMcAddon(file.data, basename(file.name, '.mcaddon'))
-				} else if (file.name.endsWith('.mcpack')) {
-					await importFromMcPack(file.data, basename(file.name, '.mcpack'))
+				if (file.path.endsWith('.mcaddon')) {
+					await importFromMcAddon(file)
+				} else if (file.path.endsWith('.mcpack')) {
+					await importFromMcPack(file)
 				} else {
-					await importFromBrProject(file.data, basename(file.name, '.brproject'))
+					await importFromBrProject(file)
 				}
 			},
 			name: 'actions.editor.importProject.name',

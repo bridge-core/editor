@@ -243,4 +243,12 @@ export type StreamableLike = {
 
 export class BaseEntry {
 	constructor(public path: string, public kind: 'file' | 'directory') {}
+
+	public async read(): Promise<ArrayBuffer> {
+		throw new Error('Read is not implemented on this entry!')
+	}
+
+	public async readText(): Promise<string> {
+		throw new Error('Read text is not implemented on this entry!')
+	}
 }
