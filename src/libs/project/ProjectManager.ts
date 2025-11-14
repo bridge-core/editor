@@ -22,9 +22,8 @@ import { createReactable } from '@/libs/event/React'
 export interface ProjectInfo {
 	name: string
 	icon: string
-	config: IConfigJson
 	favorite: boolean
-	packs: { type: TPackTypeId; uuid: string; path: string }[]
+	type: string
 }
 
 export class ProjectManager {
@@ -152,9 +151,15 @@ export class ProjectManager {
 	}
 
 	public static async getProjectInfo(path: string): Promise<ProjectInfo | undefined> {
-		if (basename(path) === 'bridge-temp-project') return undefined
+		if (basename(path) === 'bridge-temp-project') return
 
-		if (!(await fileSystem.exists(join(path, 'config.json')))) return undefined
+		if (await fileSystem.exists(join(path, 'fishtank.project.json'))) return await this.getFishtankProjectInfo(path)
+
+		return await this.getBedrockProjectInfo(path)
+	}
+
+	private static async getBedrockProjectInfo(path: string): Promise<ProjectInfo | undefined> {
+		if (!(await fileSystem.exists(join(path, 'config.json')))) return
 
 		let config: undefined | any = undefined
 
@@ -162,9 +167,9 @@ export class ProjectManager {
 			config = await fileSystem.readFileJson(join(path, 'config.json'))
 		} catch {}
 
-		if (config === undefined) return undefined
+		if (config === undefined) return
 
-		if (!config.packs) return undefined
+		if (!config.packs) return
 
 		let iconDataUrl = 'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw=='
 
@@ -182,38 +187,51 @@ export class ProjectManager {
 			favorites = JSON.parse((await get('favoriteProjects')) as string)
 		} catch {}
 
-		const packs: { type: TPackTypeId; uuid: string; path: string }[] = (
-			await Promise.all(
-				Object.entries(config.packs as Record<string, string>).map(async ([id, packPath]) => {
-					let manifest: any | null = null
+		return {
+			name: basename(path),
+			icon: iconDataUrl,
+			favorite: favorites.includes(basename(path)),
+			type: 'bedrock',
+		}
+	}
 
-					if (await fileSystem.exists(join(path, packPath, 'manifest.json'))) {
-						try {
-							manifest = await fileSystem.readFileJson(join(path, packPath, 'manifest.json'))
-						} catch {}
-					}
+	private static async getFishtankProjectInfo(path: string): Promise<ProjectInfo | undefined> {
+		if (!(await fileSystem.exists(join(path, 'fishtank.project.json')))) return
 
-					if (!manifest) return null
+		let config: undefined | any = undefined
 
-					const uuid = manifest.header?.uuid
+		try {
+			config = await fileSystem.readFileJson(join(path, 'fishtank.project.json'))
+		} catch {}
 
-					if (!uuid) return null
+		if (config === undefined) return
 
-					return {
-						type: id as TPackTypeId,
-						uuid,
-						path: packPath,
-					}
-				})
-			)
-		).filter((pack) => pack !== null)
+		let iconDataUrl = 'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw=='
+
+		const packs: string[] = []
+
+		if (config.behaviorPackPath) packs.push(config.behaviorPackPath)
+		if (config.resourcePackPath) packs.push(config.resourcePackPath)
+
+		for (const packPath of packs) {
+			const projectPackPath = join(path, packPath as string)
+
+			if (await fileSystem.exists(join(projectPackPath, 'pack_icon.png'))) {
+				iconDataUrl = await fileSystem.readFileDataUrl(join(projectPackPath, 'pack_icon.png'))
+			}
+		}
+
+		let favorites: string[] = []
+
+		try {
+			favorites = JSON.parse((await get('favoriteProjects')) as string)
+		} catch {}
 
 		return {
 			name: basename(path),
 			icon: iconDataUrl,
-			config: await fileSystem.readFileJson(join(path, 'config.json')),
 			favorite: favorites.includes(basename(path)),
-			packs,
+			type: 'fishtank',
 		}
 	}
 
