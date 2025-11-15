@@ -1,7 +1,7 @@
 import { DashService } from '@/libs/compiler/DashService'
 import { Project } from './Project'
 import { BaseFileSystem } from '@/libs/fileSystem/BaseFileSystem'
-import { IPackType } from 'mc-project-core'
+import { IConfigJson, IPackType } from 'mc-project-core'
 import { FileTypeData } from '@/libs/data/bedrock/FileTypeData'
 import { SchemaData } from '@/libs/data/bedrock/SchemaData'
 import { PresetData } from '@/libs/data/bedrock/PresetData'
@@ -12,8 +12,12 @@ import { Data } from '@/libs/data/Data'
 import { LangData } from '@/libs/data/bedrock/LangData'
 import { CommandData } from '@/libs/data/bedrock/CommandData'
 import { SnippetManager } from '@/libs/snippets/SnippetManager'
+import { fileSystem } from '@/libs/fileSystem/FileSystem'
+import { join } from 'pathe'
 
 export class BedrockProject extends Project {
+	public config: IConfigJson | null = null
+
 	public packDefinitions: IPackType[] = []
 	public fileTypeData = new FileTypeData()
 	public schemaData = new SchemaData(this)
@@ -28,6 +32,17 @@ export class BedrockProject extends Project {
 
 	public async load() {
 		await super.load()
+
+		this.config = await fileSystem.readFileJson(join(this.path, 'config.json'))
+
+		if (!this.config) throw new Error('Failed to load project config!')
+
+		for (const [packId, packPath] of Object.entries(this.config.packs)) {
+			this.packs[packId] = join(this.path, packPath)
+
+			if (await fileSystem.exists(join(this.packs[packId], 'pack_icon.png')))
+				this.icon = await fileSystem.readFileDataUrl(join(this.packs[packId], 'pack_icon.png'))
+		}
 
 		this.packDefinitions = await Data.get('packages/minecraftBedrock/packDefinitions.json')
 

@@ -52,7 +52,10 @@ export class Extensions {
 
 		const path = join(ProjectManager.currentProject.path, '.bridge/extensions')
 
-		if (!(await fileSystem.exists(path))) await fileSystem.makeDirectory(path)
+		if (!(await fileSystem.exists(path))) {
+			await fileSystem.ensureDirectory(path)
+			await fileSystem.makeDirectory(path)
+		}
 
 		for (const entry of await fileSystem.readDirectoryEntries(path)) {
 			const extension = await this.loadExtension(entry.path)

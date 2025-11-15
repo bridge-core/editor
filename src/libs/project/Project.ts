@@ -5,7 +5,6 @@ import { fileSystem } from '@/libs/fileSystem/FileSystem'
 import { BaseFileSystem } from '@/libs/fileSystem/BaseFileSystem'
 import { PWAFileSystem } from '@/libs/fileSystem/PWAFileSystem'
 import { get, set } from 'idb-keyval'
-import { IConfigJson } from 'mc-project-core'
 import { LocalFileSystem } from '@/libs/fileSystem/LocalFileSystem'
 import { Settings } from '@/libs/settings/Settings'
 import { SettingsWindow } from '@/components/Windows/Settings/SettingsWindow'
@@ -17,7 +16,6 @@ import { NotificationSystem } from '@/components/Notifications/NotificationSyste
 export class Project implements AsyncDisposable {
 	public path: string
 	public icon: string | null = null
-	public config: IConfigJson | null = null
 	public globals: any = null
 
 	public outputFileSystem: BaseFileSystem = new LocalFileSystem()
@@ -49,17 +47,6 @@ export class Project implements AsyncDisposable {
 	}
 
 	public async load() {
-		this.config = await fileSystem.readFileJson(join(this.path, 'config.json'))
-
-		if (!this.config) throw new Error('Failed to load project config!')
-
-		for (const [packId, packPath] of Object.entries(this.config.packs)) {
-			this.packs[packId] = join(this.path, packPath)
-
-			if (await fileSystem.exists(join(this.packs[packId], 'pack_icon.png')))
-				this.icon = await fileSystem.readFileDataUrl(join(this.packs[packId], 'pack_icon.png'))
-		}
-
 		if (await fileSystem.exists(join(this.path, 'globals.json'))) {
 			try {
 				this.globals = await fileSystem.readFileJson(join(this.path, 'globals.json'))
@@ -87,16 +74,15 @@ export class Project implements AsyncDisposable {
 	}
 
 	public resolvePackPath(packId?: string, path?: string) {
-		if (!this.config) return ''
-		if (!this.config.packs) return ''
-
 		if (packId === undefined && path === undefined) return this.path
 
-		if (packId === undefined) return join(this.path ?? '', path!)
+		if (packId === undefined) return join(this.path, path)
 
-		if (path === undefined) return join(this.path ?? '', (<any>this.config.packs)[packId])
+		if (path === undefined && this.packs[packId]) return this.path
 
-		return join(this.path ?? '', (<any>this.config.packs)[packId], path)
+		if (path === undefined) return join(this.path, this.packs[packId])
+
+		return join(this.path, this.packs[packId], path)
 	}
 
 	public async getLocalProjectFolderHandle(): Promise<FileSystemDirectoryHandle | undefined> {
