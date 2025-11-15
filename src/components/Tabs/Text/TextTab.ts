@@ -76,69 +76,115 @@ export class TextTab extends FileTab {
 
 	public async create() {
 		if (!ProjectManager.currentProject) return
-		if (!(ProjectManager.currentProject instanceof BedrockProject)) return
 
-		const fileTypeData = ProjectManager.currentProject.fileTypeData
+		if (ProjectManager.currentProject instanceof BedrockProject) {
+			const fileTypeData = ProjectManager.currentProject.fileTypeData
 
-		this.fileType = fileTypeData.get(this.path)
+			this.fileType = fileTypeData.get(this.path)
 
-		if (this.fileType !== null) {
-			this.hasDocumentation.value = this.fileType.documentation !== undefined
+			if (this.fileType !== null) {
+				this.hasDocumentation.value = this.fileType.documentation !== undefined
 
-			if (this.fileType.icon !== undefined) this.fileTypeIcon = this.fileType.icon
-		}
+				if (this.fileType.icon !== undefined) this.fileTypeIcon = this.fileType.icon
+			}
 
-		const fileContent = await fileSystem.readFileText(this.path)
+			const fileContent = await fileSystem.readFileText(this.path)
 
-		this.model = monaco.getModel(Uri.file(this.path))
+			this.model = monaco.getModel(Uri.file(this.path))
 
-		if (this.model === null) this.model = monaco.createModel(fileContent, this.fileType?.meta?.language, Uri.file(this.path))
+			if (this.model === null) this.model = monaco.createModel(fileContent, this.fileType?.meta?.language, Uri.file(this.path))
 
-		this.initialVersionId = this.model.getAlternativeVersionId()
+			this.initialVersionId = this.model.getAlternativeVersionId()
 
-		this.language.value = this.model.getLanguageId()
+			this.language.value = this.model.getLanguageId()
 
-		this.disposables.push(
-			this.model.onDidChangeLanguageConfiguration(() => {
-				if (this.editor === undefined) return
+			this.disposables.push(
+				this.model.onDidChangeLanguageConfiguration(() => {
+					if (this.editor === undefined) return
 
-				this.updateEditorTheme()
-			})
-		)
+					this.updateEditorTheme()
+				})
+			)
 
-		this.disposables.push(
-			this.model.onDidChangeContent(() => {
-				const modified = this.initialVersionId !== this.model?.getVersionId()
+			this.disposables.push(
+				this.model.onDidChangeContent(() => {
+					const modified = this.initialVersionId !== this.model?.getVersionId()
 
-				this.modified.value = modified
+					this.modified.value = modified
 
-				if (modified) {
-					this.temporary.value = false
+					if (modified) {
+						this.temporary.value = false
 
-					if (Settings.get('autoSaveChanges')) {
-						this.interruptAutoSave.invoke()
+						if (Settings.get('autoSaveChanges')) {
+							this.interruptAutoSave.invoke()
+						}
 					}
-				}
-			})
-		)
+				})
+			)
 
-		const schemaData = ProjectManager.currentProject.schemaData
-		const scriptTypeData = ProjectManager.currentProject.scriptTypeData
+			const schemaData = ProjectManager.currentProject.schemaData
+			const scriptTypeData = ProjectManager.currentProject.scriptTypeData
 
-		await schemaData.updateSchemaForFile(this.path, this.fileType?.id, this.fileType?.schema)
+			await schemaData.updateSchemaForFile(this.path, this.fileType?.id, this.fileType?.schema)
 
-		await scriptTypeData.applyTypes(this.fileType?.types ?? [])
+			await scriptTypeData.applyTypes(this.fileType?.types ?? [])
 
-		this.icon.value = this.fileTypeIcon
+			this.icon.value = this.fileTypeIcon
 
-		this.disposables.push(
-			Settings.updated.on((event: { id: string; value: any } | undefined) => {
-				if (!event) return
+			this.disposables.push(
+				Settings.updated.on((event: { id: string; value: any } | undefined) => {
+					if (!event) return
 
-				if (['wordWrap', 'wordWrapColumns', 'bracketPairColorization', 'editorFont', 'editorFontSize'].includes(event.id))
-					this.remountEditor()
-			})
-		)
+					if (['wordWrap', 'wordWrapColumns', 'bracketPairColorization', 'editorFont', 'editorFontSize'].includes(event.id))
+						this.remountEditor()
+				})
+			)
+		} else {
+			const fileContent = await fileSystem.readFileText(this.path)
+
+			this.model = monaco.getModel(Uri.file(this.path))
+
+			if (this.model === null) this.model = monaco.createModel(fileContent, this.fileType?.meta?.language, Uri.file(this.path))
+
+			this.initialVersionId = this.model.getAlternativeVersionId()
+
+			this.language.value = this.model.getLanguageId()
+
+			this.disposables.push(
+				this.model.onDidChangeLanguageConfiguration(() => {
+					if (this.editor === undefined) return
+
+					this.updateEditorTheme()
+				})
+			)
+
+			this.disposables.push(
+				this.model.onDidChangeContent(() => {
+					const modified = this.initialVersionId !== this.model?.getVersionId()
+
+					this.modified.value = modified
+
+					if (modified) {
+						this.temporary.value = false
+
+						if (Settings.get('autoSaveChanges')) {
+							this.interruptAutoSave.invoke()
+						}
+					}
+				})
+			)
+
+			this.icon.value = this.fileTypeIcon
+
+			this.disposables.push(
+				Settings.updated.on((event: { id: string; value: any } | undefined) => {
+					if (!event) return
+
+					if (['wordWrap', 'wordWrapColumns', 'bracketPairColorization', 'editorFont', 'editorFontSize'].includes(event.id))
+						this.remountEditor()
+				})
+			)
+		}
 	}
 
 	public async destroy() {
@@ -184,7 +230,6 @@ export class TextTab extends FileTab {
 
 	public async mountEditor(element: HTMLElement) {
 		if (!ProjectManager.currentProject) return
-		if (!(ProjectManager.currentProject instanceof BedrockProject)) return
 
 		this.updateEditorTheme()
 
