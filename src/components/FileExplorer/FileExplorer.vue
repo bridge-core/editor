@@ -96,6 +96,7 @@ const orderedEntries = computed(() =>
 async function updateEntries(path: unknown) {
 	if (typeof path !== 'string') return
 	if (!currentProject.value) return
+	if (path !== currentProject.value.packs[selectedPack.value]) return
 
 	entries.value = await fileSystem.readDirectoryEntries(path)
 }
