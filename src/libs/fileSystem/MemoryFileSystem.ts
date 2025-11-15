@@ -177,9 +177,9 @@ export class MemoryFileSystem extends BaseFileSystem {
 	public async ensureDirectory(path: string): Promise<void> {
 		path = resolve('/', path)
 
-		const directoryNames = parse(path).dir.split(sep)
+		if (parse(path).dir === '/') return
 
-		if (directoryNames[0] === '' || directoryNames[0] === '.') directoryNames.shift()
+		const directoryNames = parse(path).dir.split(sep).slice(1)
 
 		let currentPath = ''
 		for (const directoryName of directoryNames) {
