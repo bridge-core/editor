@@ -14,7 +14,7 @@ export async function importFromBrProject(entry: BaseEntry) {
 
 	const buffer = new Uint8Array(await entry.read())
 
-	const targetPath = join('/projects', name)
+	const targetPath = join('/projects', basename(entry.path, '.brproject'))
 	const projectPath = await fileSystem.findSuitableFolderName(targetPath)
 	const projectName = basename(projectPath)
 
