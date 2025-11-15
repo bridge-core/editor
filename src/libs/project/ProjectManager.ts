@@ -18,6 +18,7 @@ import { packs } from './Packs'
 import { ProgressWindow } from '@/components/Windows/Progress/ProgressWindow'
 import { Windows } from '@/components/Windows/Windows'
 import { createReactable } from '@/libs/event/React'
+import { FishtankProject } from './FishtankProject'
 
 export interface ProjectInfo {
 	name: string
@@ -129,7 +130,15 @@ export class ProjectManager {
 		const progressWindow = new ProgressWindow('projects.loading')
 		Windows.open(progressWindow)
 
-		this.currentProject = new BedrockProject(name)
+		const projectInfo = await this.getProjectInfo(join('/projects', name))
+
+		if (!projectInfo) return
+
+		if (projectInfo.type === 'fishtank') {
+			this.currentProject = new FishtankProject(name)
+		} else {
+			this.currentProject = new BedrockProject(name)
+		}
 
 		await this.currentProject.load()
 
