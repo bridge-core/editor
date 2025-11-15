@@ -33,36 +33,48 @@ const currentProject = useCurrentProject()
 
 const exportActions = useExportActions()
 
-const currentProjectPackDefinitions: Ref<IPackType[]> = computed(() => {
+const currentProjectPackDefinitions: Ref<{ id: string; icon: string; color: string }[]> = computed(() => {
 	if (!currentProject.value) return []
-	if (!(currentProject.value instanceof BedrockProject)) return []
 
-	return currentProject.value.packDefinitions.filter((pack: IPackType) => {
-		if (!currentProject.value) return false
-		if (!currentProject.value.config) return false
+	if (currentProject.value instanceof BedrockProject) {
+		return currentProject.value.packDefinitions.filter((pack: IPackType) => {
+			if (!currentProject.value) return false
+			if (!(currentProject.value instanceof BedrockProject)) return false
+			if (!currentProject.value.config) return false
 
-		return Object.keys(currentProject.value.config.packs).includes(pack.id)
-	})
+			return Object.keys(currentProject.value.config.packs).includes(pack.id)
+		})
+	} else {
+		return Object.keys(currentProject.value.packs).map((id) => ({
+			id: id,
+			icon: 'folder',
+			color: 'primary',
+		}))
+	}
 })
 
 const selectedPack: Ref<string> = ref('')
-const selectedPackDefinition: ComputedRef<IPackType | null> = computed(() => {
-	if (!currentProject.value) return null
-	if (!(currentProject.value instanceof BedrockProject)) return null
 
-	return currentProject.value.packDefinitions.find((pack: IPackType) => pack.id === selectedPack.value) ?? null
+const selectedPackDefinition: ComputedRef<{ id: string; icon: string; color: string } | null> = computed(() => {
+	if (!currentProject.value) return null
+
+	return currentProjectPackDefinitions.value.find((pack) => pack.id === selectedPack.value) ?? null
 })
+
 const selectedPackPath: ComputedRef<string> = computed(() => {
 	if (!currentProject.value) return ''
-	if (!(currentProject.value instanceof BedrockProject)) return ''
 
-	return (
-		currentProject.value.packs[selectedPack.value] ??
-		join(
-			currentProject.value.path,
-			currentProject.value.packDefinitions.find((pack: IPackType) => pack.id === selectedPack.value)?.defaultPackPath ?? ''
+	if (currentProject.value instanceof BedrockProject) {
+		return (
+			currentProject.value.packs[selectedPack.value] ??
+			join(
+				currentProject.value.path,
+				currentProject.value.packDefinitions.find((pack: IPackType) => pack.id === selectedPack.value)?.defaultPackPath ?? ''
+			)
 		)
-	)
+	}
+
+	return currentProject.value.packs[selectedPack.value]
 })
 
 const entries: Ref<BaseEntry[]> = ref([])
@@ -85,9 +97,7 @@ async function updateEntries(path: unknown) {
 	if (typeof path !== 'string') return
 	if (!currentProject.value) return
 
-	if (!path.startsWith(selectedPackPath.value)) return
-
-	entries.value = await fileSystem.readDirectoryEntries(selectedPackPath.value)
+	entries.value = await fileSystem.readDirectoryEntries(path)
 }
 
 watch(selectedPackPath, (path) => {
@@ -100,11 +110,10 @@ onMounted(async () => {
 	disposable = fileSystem.pathUpdated.on(updateEntries)
 
 	if (!currentProject.value) return
-	if (!(currentProject.value instanceof BedrockProject)) return
 
 	selectedPack.value = Object.keys(currentProject.value.packs)[0] ?? ''
 
-	updateEntries(selectedPackPath.value)
+	updateEntries(currentProject.value.packs[selectedPack.value])
 })
 
 onUnmounted(() => {
