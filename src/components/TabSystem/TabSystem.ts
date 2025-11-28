@@ -1,6 +1,6 @@
 import { v4 as uuid } from 'uuid'
 import { RecoveryState as TabRecoveryState, Tab, RecoveryState } from './Tab'
-import { Ref, ShallowRef, shallowRef, watchEffect } from 'vue'
+import { ref, Ref, ShallowRef, shallowRef, watchEffect } from 'vue'
 import { Editor } from '@/components/Editor/Editor'
 import { Event } from '@/libs/event/Event'
 import { Disposable } from '@/libs/disposeable/Disposeable'
@@ -19,6 +19,10 @@ export class TabSystem {
 	public savedState = new Event<void>()
 	public removedTab = new Event<void>()
 	public focused = new Event<void>()
+
+	public static draggingTab: ShallowRef<Tab | null> = shallowRef(null)
+	public static dropTargetTab: ShallowRef<Tab | null> = shallowRef(null)
+	public static dropSide: Ref<'right' | 'left'> = ref('right')
 
 	private tabSaveListenters: Record<string, Disposable> = {}
 
@@ -87,7 +91,7 @@ export class TabSystem {
 			await tab.deactivate()
 		}
 
-		const tabIndex = this.tabs.value.indexOf(tab)
+		const tabIndex = this.indexOfTab(tab)
 
 		this.tabs.value.splice(tabIndex, 1)
 		this.tabs.value = [...this.tabs.value]
@@ -108,6 +112,16 @@ export class TabSystem {
 		await this.saveState()
 
 		this.removedTab.dispatch()
+	}
+
+	public orderTab(tab: Tab, index: number) {
+		const currentIndex = this.tabs.value.findIndex((otherTab) => otherTab.id === tab.id)
+
+		this.tabs.value.splice(currentIndex, 1)
+
+		this.tabs.value.splice(index > currentIndex ? index - 1 : index, 0, tab)
+
+		this.tabs.value = [...this.tabs.value]
 	}
 
 	public async clear() {
@@ -217,7 +231,7 @@ export class TabSystem {
 
 		if (!tab) return
 
-		const index = this.tabs.value.indexOf(tab)
+		const index = this.indexOfTab(tab)
 
 		if (index === -1) return
 
@@ -231,7 +245,7 @@ export class TabSystem {
 
 		if (!tab) return
 
-		const index = this.tabs.value.indexOf(tab)
+		const index = this.indexOfTab(tab)
 
 		if (index === -1) return
 
@@ -242,5 +256,9 @@ export class TabSystem {
 
 	public hasTab(tab: Tab): boolean {
 		return this.tabs.value.some((otherTab) => otherTab.id === tab.id)
+	}
+
+	public indexOfTab(tab: Tab): number {
+		return this.tabs.value.findIndex((otherTab) => otherTab.id === tab.id)
 	}
 }

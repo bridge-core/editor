@@ -55,15 +55,18 @@ const contextMenu: Ref<typeof FreeContextMenu | null> = ref(null)
 const contextMenuTab: ShallowRef<Tab | null> = shallowRef(null)
 const contextMenuTabActions: Ref<string[]> = ref([])
 
-const hoveredTab: Ref<null | Tab> = ref(null)
-const hoveredSide: Ref<'right' | 'left'> = ref('right')
-
 function getTabFromTarget(target: HTMLElement): HTMLElement | null {
 	if (target.dataset.tab === 'tab') return target
 
 	if (target.parentElement) return getTabFromTarget(target.parentElement)
 
 	return null
+}
+
+function dragStart(event: DragEvent, tab: Tab) {
+	event.stopPropagation()
+
+	TabSystem.draggingTab.value = tab
 }
 
 function dragOver(event: DragEvent, tab: Tab) {
@@ -76,20 +79,31 @@ function dragOver(event: DragEvent, tab: Tab) {
 
 	const center = (bounds.left + bounds.right) / 2
 
-	hoveredTab.value = tab
-	hoveredSide.value = event.clientX >= center ? 'right' : 'left'
+	TabSystem.dropTargetTab.value = tab
+	TabSystem.dropSide.value = event.clientX >= center ? 'right' : 'left'
 }
 
 function dragOverBack(event: DragEvent) {
 	event.preventDefault()
 	event.stopPropagation()
 
-	hoveredTab.value = props.instance.tabs.value[props.instance.tabs.value.length - 1] ?? null
-	hoveredSide.value = 'right'
+	TabSystem.dropTargetTab.value = props.instance.tabs.value[props.instance.tabs.value.length - 1] ?? null
+	TabSystem.dropSide.value = 'right'
 }
 
 function drop(event: DragEvent) {
-	hoveredTab.value = null
+	if (!TabSystem.draggingTab.value) return
+
+	if (TabSystem.dropTargetTab.value) {
+		if (props.instance.hasTab(TabSystem.dropTargetTab.value)) {
+			const dropIndex = props.instance.indexOfTab(TabSystem.dropTargetTab.value) + (TabSystem.dropSide.value === 'right' ? 1 : 0)
+
+			props.instance.orderTab(TabSystem.draggingTab.value, dropIndex)
+		} else {
+		}
+	}
+
+	TabSystem.dropTargetTab.value = null
 	dragLevel = 0
 }
 
@@ -100,8 +114,6 @@ function dragEnter(event: DragEvent) {
 	if ((event.target as HTMLElement).dataset.ignoreDrag === 'true') return
 
 	dragLevel++
-
-	console.log('enter', dragLevel, event.target)
 }
 
 function dragExit(event: DragEvent) {
@@ -110,13 +122,11 @@ function dragExit(event: DragEvent) {
 
 	dragLevel--
 
-	console.log('exit', dragLevel, event.target)
-
-	if (dragLevel === 0) hoveredTab.value = null
+	if (dragLevel === 0) TabSystem.dropTargetTab.value = null
 }
 
 function dragEnd(event: DragEvent) {
-	hoveredTab.value = null
+	TabSystem.dropTargetTab.value = null
 	dragLevel = 0
 }
 </script>
@@ -136,6 +146,7 @@ function dragEnd(event: DragEvent) {
 				class="flex px-2 -mx-2"
 				v-for="tab in instance.tabs.value"
 				draggable="true"
+				@dragstart="(event) => dragStart(event, tab)"
 				@dragover="(event) => dragOver(event, tab)"
 				@drop="drop"
 				@dragend="dragEnd"
@@ -144,7 +155,7 @@ function dragEnd(event: DragEvent) {
 				data-tab="tab"
 			>
 				<div
-					v-if="hoveredTab?.id === tab.id && hoveredSide === 'left'"
+					v-if="TabSystem.dropTargetTab.value?.id === tab.id && TabSystem.dropSide.value === 'left'"
 					class="self-stretch rounded my-1 bg-accent w-[2px] mr-[calc(0.25rem-1px)] ml-[calc(-0.25rem-1px)]"
 					data-ignore-drag="true"
 				></div>
@@ -212,7 +223,7 @@ function dragEnd(event: DragEvent) {
 				</div>
 
 				<div
-					v-if="hoveredTab?.id === tab.id && hoveredSide === 'right'"
+					v-if="TabSystem.dropTargetTab.value?.id === tab.id && TabSystem.dropSide.value === 'right'"
 					class="self-stretch rounded my-1 bg-accent w-[2px] mr-[calc(-0.25rem-1px)] ml-[calc(0.25rem-1px)]"
 					data-ignore-drag="true"
 				></div>
