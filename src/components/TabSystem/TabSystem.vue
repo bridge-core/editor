@@ -68,6 +68,7 @@ function getTabFromTarget(target: HTMLElement): HTMLElement | null {
 
 function dragOver(event: DragEvent, tab: Tab) {
 	event.preventDefault()
+	event.stopPropagation()
 
 	if (!event.target) return
 
@@ -77,6 +78,14 @@ function dragOver(event: DragEvent, tab: Tab) {
 
 	hoveredTab.value = tab
 	hoveredSide.value = event.clientX >= center ? 'right' : 'left'
+}
+
+function dragOverBack(event: DragEvent) {
+	event.preventDefault()
+	event.stopPropagation()
+
+	hoveredTab.value = props.instance.tabs.value[props.instance.tabs.value.length - 1] ?? null
+	hoveredSide.value = 'right'
 }
 
 function drop(event: DragEvent) {
@@ -114,7 +123,15 @@ function dragEnd(event: DragEvent) {
 
 <template>
 	<div class="basis-0 min-w-0 flex-1 h-full border-background-secondary" @click="() => instance.focus()">
-		<div class="flex gap-2 overflow-x-auto px-2" :class="{ 'mb-2': currentTabActions.length === 0 }">
+		<div
+			class="flex gap-2 overflow-x-auto px-2"
+			:class="{ 'mb-2': currentTabActions.length === 0 }"
+			@dragover="dragOverBack"
+			@drop="drop"
+			@dragend="dragEnd"
+			@dragenter="dragEnter"
+			@dragexit="dragExit"
+		>
 			<div
 				class="flex px-2 -mx-2"
 				v-for="tab in instance.tabs.value"
