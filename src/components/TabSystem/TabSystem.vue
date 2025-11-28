@@ -114,13 +114,23 @@ function dragEnd(event: DragEvent) {
 
 <template>
 	<div class="basis-0 min-w-0 flex-1 h-full border-background-secondary" @click="() => instance.focus()">
-		<div class="flex gap-2 overflow-x-auto" :class="{ 'mb-2': currentTabActions.length === 0 }">
-			<div class="flex" v-for="tab in instance.tabs.value">
+		<div class="flex gap-2 overflow-x-auto px-2" :class="{ 'mb-2': currentTabActions.length === 0 }">
+			<div
+				class="flex px-2 -mx-2"
+				v-for="tab in instance.tabs.value"
+				draggable="true"
+				@dragover="(event) => dragOver(event, tab)"
+				@drop="drop"
+				@dragend="dragEnd"
+				@dragenter="dragEnter"
+				@dragexit="dragExit"
+				data-tab="tab"
+			>
 				<div
-					class="self-stretch rounded my-1 mr-2 bg-accent transition-[width] duration-100 ease-out"
+					class="self-stretch rounded my-1 bg-accent duration-100 ease-out"
 					:class="{
-						'w-[2px]': hoveredTab?.id === tab.id && hoveredSide === 'left',
-						'w-0': !(hoveredTab?.id === tab.id && hoveredSide === 'left'),
+						'w-[2px] mr-[calc(0.25rem-1px)] ml-[calc(-0.25rem-1px)]': hoveredTab?.id === tab.id && hoveredSide === 'left',
+						'w-0 mr-1 -ml-1': !(hoveredTab?.id === tab.id && hoveredSide === 'left'),
 					}"
 					data-ignore-drag="true"
 				></div>
@@ -157,13 +167,6 @@ function dragEnd(event: DragEvent) {
 							contextMenu?.open(event)
 						}
 					"
-					draggable="true"
-					@dragover="(event) => dragOver(event, tab)"
-					@drop="drop"
-					@dragend="dragEnd"
-					@dragenter="dragEnter"
-					@dragexit="dragExit"
-					data-tab="tab"
 				>
 					<div class="relative">
 						<div
@@ -195,10 +198,10 @@ function dragEnd(event: DragEvent) {
 				</div>
 
 				<div
-					class="self-stretch rounded my-1 ml-2 mr-[-0.5rem] bg-accent transition-[width] duration-100 ease-out"
+					class="self-stretch rounded my-1 bg-accent duration-100 ease-out"
 					:class="{
-						'w-[2px]': hoveredTab?.id === tab.id && hoveredSide === 'right',
-						'w-0': !(hoveredTab?.id === tab.id && hoveredSide === 'right'),
+						'w-[2px] mr-[calc(-0.25rem-1px)] ml-[calc(0.25rem-1px)]': hoveredTab?.id === tab.id && hoveredSide === 'right',
+						'w-0 -mr-1 ml-1': !(hoveredTab?.id === tab.id && hoveredSide === 'right'),
 					}"
 					data-ignore-drag="true"
 				></div>
