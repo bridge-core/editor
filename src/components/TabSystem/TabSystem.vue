@@ -58,12 +58,20 @@ const contextMenuTabActions: Ref<string[]> = ref([])
 const hoveredTab: Ref<null | Tab> = ref(null)
 const hoveredSide: Ref<'right' | 'left'> = ref('right')
 
+function getTabFromTarget(target: HTMLElement): HTMLElement | null {
+	if (target.dataset.tab === 'tab') return target
+
+	if (target.parentElement) return getTabFromTarget(target.parentElement)
+
+	return null
+}
+
 function dragOver(event: DragEvent, tab: Tab) {
 	event.preventDefault()
 
 	if (!event.target) return
 
-	const bounds = (event.target as Element).getBoundingClientRect()
+	const bounds = (getTabFromTarget(event.target as HTMLElement) ?? (event.target as HTMLElement)).getBoundingClientRect()
 
 	const center = (bounds.left + bounds.right) / 2
 
@@ -71,7 +79,37 @@ function dragOver(event: DragEvent, tab: Tab) {
 	hoveredSide.value = event.clientX >= center ? 'right' : 'left'
 }
 
-function drop(event: DragEvent) {}
+function drop(event: DragEvent) {
+	hoveredTab.value = null
+	dragLevel = 0
+}
+
+let dragLevel = 0
+
+function dragEnter(event: DragEvent) {
+	if (!event.target) return
+	if ((event.target as HTMLElement).dataset.ignoreDrag === 'true') return
+
+	dragLevel++
+
+	console.log('enter', dragLevel, event.target)
+}
+
+function dragExit(event: DragEvent) {
+	if (!event.target) return
+	if ((event.target as HTMLElement).dataset.ignoreDrag === 'true') return
+
+	dragLevel--
+
+	console.log('exit', dragLevel, event.target)
+
+	if (dragLevel === 0) hoveredTab.value = null
+}
+
+function dragEnd(event: DragEvent) {
+	hoveredTab.value = null
+	dragLevel = 0
+}
 </script>
 
 <template>
@@ -84,6 +122,7 @@ function drop(event: DragEvent) {}
 						'w-[2px]': hoveredTab?.id === tab.id && hoveredSide === 'left',
 						'w-0': !(hoveredTab?.id === tab.id && hoveredSide === 'left'),
 					}"
+					data-ignore-drag="true"
 				></div>
 
 				<div
@@ -121,6 +160,10 @@ function drop(event: DragEvent) {}
 					draggable="true"
 					@dragover="(event) => dragOver(event, tab)"
 					@drop="drop"
+					@dragend="dragEnd"
+					@dragenter="dragEnter"
+					@dragexit="dragExit"
+					data-tab="tab"
 				>
 					<div class="relative">
 						<div
@@ -150,6 +193,15 @@ function drop(event: DragEvent) {}
 
 					<IconButton icon="close" class="text-base" @click.stop="() => instance.removeTab(tab)" />
 				</div>
+
+				<div
+					class="self-stretch rounded my-1 ml-2 mr-[-0.5rem] bg-accent transition-[width] duration-100 ease-out"
+					:class="{
+						'w-[2px]': hoveredTab?.id === tab.id && hoveredSide === 'right',
+						'w-0': !(hoveredTab?.id === tab.id && hoveredSide === 'right'),
+					}"
+					data-ignore-drag="true"
+				></div>
 			</div>
 		</div>
 
