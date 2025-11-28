@@ -26,7 +26,7 @@ export class TabSystem {
 
 	private tabSaveListenters: Record<string, Disposable> = {}
 
-	public async addTab(tab: Tab, select = true, temporary = false) {
+	public async addTab(tab: Tab, select = true, temporary = false, index?: number) {
 		if (this.hasTab(tab)) {
 			if (select) await this.selectTab(tab)
 
@@ -43,7 +43,12 @@ export class TabSystem {
 
 		await tab.create()
 
-		this.tabs.value.push(tab)
+		if (index === undefined) {
+			this.tabs.value.push(tab)
+		} else {
+			this.tabs.value.splice(index, 0, tab)
+		}
+
 		this.tabs.value = [...this.tabs.value]
 
 		if (select) await this.selectTab(tab)

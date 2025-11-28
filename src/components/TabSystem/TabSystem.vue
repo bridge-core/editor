@@ -110,7 +110,7 @@ async function drop(event: DragEvent) {
 
 		await sourceTabSystem.removeTab(draggingTab)
 
-		await props.instance.addTab(draggingTab, true)
+		await props.instance.addTab(draggingTab, true, draggingTab.temporary.value, dropIndex)
 	}
 }
 
