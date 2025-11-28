@@ -127,11 +127,8 @@ function dragEnd(event: DragEvent) {
 				data-tab="tab"
 			>
 				<div
-					class="self-stretch rounded my-1 bg-accent duration-100 ease-out"
-					:class="{
-						'w-[2px] mr-[calc(0.25rem-1px)] ml-[calc(-0.25rem-1px)]': hoveredTab?.id === tab.id && hoveredSide === 'left',
-						'w-0 mr-1 -ml-1': !(hoveredTab?.id === tab.id && hoveredSide === 'left'),
-					}"
+					v-if="hoveredTab?.id === tab.id && hoveredSide === 'left'"
+					class="self-stretch rounded my-1 bg-accent w-[2px] mr-[calc(0.25rem-1px)] ml-[calc(-0.25rem-1px)]"
 					data-ignore-drag="true"
 				></div>
 
@@ -198,11 +195,8 @@ function dragEnd(event: DragEvent) {
 				</div>
 
 				<div
-					class="self-stretch rounded my-1 bg-accent duration-100 ease-out"
-					:class="{
-						'w-[2px] mr-[calc(-0.25rem-1px)] ml-[calc(0.25rem-1px)]': hoveredTab?.id === tab.id && hoveredSide === 'right',
-						'w-0 -mr-1 ml-1': !(hoveredTab?.id === tab.id && hoveredSide === 'right'),
-					}"
+					v-if="hoveredTab?.id === tab.id && hoveredSide === 'right'"
+					class="self-stretch rounded my-1 bg-accent w-[2px] mr-[calc(-0.25rem-1px)] ml-[calc(0.25rem-1px)]"
 					data-ignore-drag="true"
 				></div>
 			</div>
