@@ -54,71 +54,102 @@ const currentTabActions: ComputedRef<string[]> = computed(() => {
 const contextMenu: Ref<typeof FreeContextMenu | null> = ref(null)
 const contextMenuTab: ShallowRef<Tab | null> = shallowRef(null)
 const contextMenuTabActions: Ref<string[]> = ref([])
+
+const hoveredTab: Ref<null | Tab> = ref(null)
+const hoveredSide: Ref<'right' | 'left'> = ref('right')
+
+function dragOver(event: DragEvent, tab: Tab) {
+	event.preventDefault()
+
+	if (!event.target) return
+
+	const bounds = (event.target as Element).getBoundingClientRect()
+
+	const center = (bounds.left + bounds.right) / 2
+
+	hoveredTab.value = tab
+	hoveredSide.value = event.clientX >= center ? 'right' : 'left'
+}
+
+function drop(event: DragEvent) {}
 </script>
 
 <template>
 	<div class="basis-0 min-w-0 flex-1 h-full border-background-secondary" @click="() => instance.focus()">
 		<div class="flex gap-2 overflow-x-auto" :class="{ 'mb-2': currentTabActions.length === 0 }">
-			<div
-				v-for="tab in instance.tabs.value"
-				class="flex items-center gap-1 px-2 py-1 rounded cursor-pointer transition-[colors, border-color] duration-100 ease-out group border-2 border-background"
-				:class="{
-					'max-w-[12rem]': get('compactTabDesign'),
-					'bg-background-secondary': instance.selectedTab.value === tab && TabManager.focusedTabSystem.value?.id === instance.id,
-					'bg-background-transparent hover:bg-background-secondary hover:border-background-secondary':
-						instance.selectedTab.value !== tab || TabManager.focusedTabSystem.value?.id !== instance.id,
-					'border-background-secondary': instance.selectedTab.value === tab,
-				}"
-				@click="() => instance.selectTab(tab)"
-				@contextmenu.prevent.stop="
-					(event) => {
-						contextMenuTab = tab
-
-						if (
-							tab instanceof FileTab &&
-							ProjectManager.currentProject &&
-							ProjectManager.currentProject instanceof BedrockProject
-						) {
-							const fileType = ProjectManager.currentProject.fileTypeData.get(tab.path)
-
-							if (fileType) {
-								contextMenuTabActions = tabActions
-									.filter((tabAction) => tabAction.fileTypes.includes(fileType.id))
-									.map((tabAction) => tabAction.action)
-							}
-						}
-
-						contextMenu?.open(event)
-					}
-				"
-			>
-				<div class="relative">
-					<div
-						v-if="tab instanceof FileTab && tab.modified.value"
-						class="bg-behaviorPack border-2 border-[var(--border-color)] w-3 h-3 rounded-full absolute right-[-0.25rem] top-1"
-						:style="{
-							'--border-color':
-								instance.selectedTab.value == tab
-									? 'var(--theme-color-backgroundSecondary)'
-									: 'var(--theme-color-background)',
-						}"
-					></div>
-
-					<Icon v-if="tab.icon" :icon="tab.icon.value ?? 'help'" class="text-base text-behaviorPack" />
-				</div>
-
-				<p
-					class="font-theme select-none overflow-hidden text-ellipsis whitespace-nowrap h-6 transition-colors duration-100 ease-out basis-0 grow"
+			<div class="flex" v-for="tab in instance.tabs.value">
+				<div
+					class="self-stretch rounded my-1 mr-2 bg-accent transition-[width] duration-100 ease-out"
 					:class="{
-						'text-text': instance.selectedTab.value === tab,
-						'text-text-secondary group-hover:text-text': instance.selectedTab.value !== tab,
-						italic: tab.temporary.value && !get('keepTabsOpen'),
+						'w-[2px]': hoveredTab?.id === tab.id && hoveredSide === 'left',
+						'w-0': !(hoveredTab?.id === tab.id && hoveredSide === 'left'),
 					}"
-				>
-					{{ tab.name.value ?? 'Tab' }}
-				</p>
+				></div>
 
-				<IconButton icon="close" class="text-base" @click.stop="() => instance.removeTab(tab)" />
+				<div
+					class="flex items-center gap-1 px-2 py-1 rounded cursor-pointer transition-[colors, border-color] duration-100 ease-out group border-2 border-background"
+					:class="{
+						'max-w-[12rem]': get('compactTabDesign'),
+						'bg-background-secondary':
+							instance.selectedTab.value === tab && TabManager.focusedTabSystem.value?.id === instance.id,
+						'bg-background-transparent hover:bg-background-secondary hover:border-background-secondary':
+							instance.selectedTab.value !== tab || TabManager.focusedTabSystem.value?.id !== instance.id,
+						'border-background-secondary': instance.selectedTab.value === tab,
+					}"
+					@click="() => instance.selectTab(tab)"
+					@contextmenu.prevent.stop="
+						(event) => {
+							contextMenuTab = tab
+
+							if (
+								tab instanceof FileTab &&
+								ProjectManager.currentProject &&
+								ProjectManager.currentProject instanceof BedrockProject
+							) {
+								const fileType = ProjectManager.currentProject.fileTypeData.get(tab.path)
+
+								if (fileType) {
+									contextMenuTabActions = tabActions
+										.filter((tabAction) => tabAction.fileTypes.includes(fileType.id))
+										.map((tabAction) => tabAction.action)
+								}
+							}
+
+							contextMenu?.open(event)
+						}
+					"
+					draggable="true"
+					@dragover="(event) => dragOver(event, tab)"
+					@drop="drop"
+				>
+					<div class="relative">
+						<div
+							v-if="tab instanceof FileTab && tab.modified.value"
+							class="bg-behaviorPack border-2 border-[var(--border-color)] w-3 h-3 rounded-full absolute right-[-0.25rem] top-1"
+							:style="{
+								'--border-color':
+									instance.selectedTab.value == tab
+										? 'var(--theme-color-backgroundSecondary)'
+										: 'var(--theme-color-background)',
+							}"
+						></div>
+
+						<Icon v-if="tab.icon" :icon="tab.icon.value ?? 'help'" class="text-base text-behaviorPack" />
+					</div>
+
+					<p
+						class="font-theme select-none overflow-hidden text-ellipsis whitespace-nowrap h-6 transition-colors duration-100 ease-out basis-0 grow"
+						:class="{
+							'text-text': instance.selectedTab.value === tab,
+							'text-text-secondary group-hover:text-text': instance.selectedTab.value !== tab,
+							italic: tab.temporary.value && !get('keepTabsOpen'),
+						}"
+					>
+						{{ tab.name.value ?? 'Tab' }}
+					</p>
+
+					<IconButton icon="close" class="text-base" @click.stop="() => instance.removeTab(tab)" />
+				</div>
 			</div>
 		</div>
 
