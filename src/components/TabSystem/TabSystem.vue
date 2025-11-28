@@ -91,20 +91,27 @@ function dragOverBack(event: DragEvent) {
 	TabSystem.dropSide.value = 'right'
 }
 
-function drop(event: DragEvent) {
-	if (!TabSystem.draggingTab.value) return
+async function drop(event: DragEvent) {
+	event.stopPropagation()
 
-	if (TabSystem.dropTargetTab.value) {
-		if (props.instance.hasTab(TabSystem.dropTargetTab.value)) {
-			const dropIndex = props.instance.indexOfTab(TabSystem.dropTargetTab.value) + (TabSystem.dropSide.value === 'right' ? 1 : 0)
+	const dropTargetTab = TabSystem.dropTargetTab.value
+	const draggingTab = TabSystem.draggingTab.value
 
-			props.instance.orderTab(TabSystem.draggingTab.value, dropIndex)
-		} else {
-		}
+	if (!dropTargetTab) return
+
+	if (!draggingTab) return
+
+	const dropIndex = props.instance.indexOfTab(dropTargetTab) + (TabSystem.dropSide.value === 'right' ? 1 : 0)
+
+	if (props.instance.hasTab(draggingTab)) {
+		props.instance.orderTab(draggingTab, dropIndex)
+	} else {
+		const sourceTabSystem = TabManager.getTabSystemWithTab(draggingTab)!
+
+		await sourceTabSystem.removeTab(draggingTab)
+
+		await props.instance.addTab(draggingTab, true)
 	}
-
-	TabSystem.dropTargetTab.value = null
-	dragLevel = 0
 }
 
 let dragLevel = 0
@@ -127,6 +134,7 @@ function dragExit(event: DragEvent) {
 
 function dragEnd(event: DragEvent) {
 	TabSystem.dropTargetTab.value = null
+	TabSystem.draggingTab.value = null
 	dragLevel = 0
 }
 </script>
@@ -134,7 +142,7 @@ function dragEnd(event: DragEvent) {
 <template>
 	<div class="basis-0 min-w-0 flex-1 h-full border-background-secondary" @click="() => instance.focus()">
 		<div
-			class="flex gap-2 overflow-x-auto px-2"
+			class="flex gap-2 overflow-x-auto px-2 -mx-2"
 			:class="{ 'mb-2': currentTabActions.length === 0 }"
 			@dragover="dragOverBack"
 			@drop="drop"

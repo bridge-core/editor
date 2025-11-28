@@ -221,4 +221,12 @@ export class TabManager {
 
 		this.focusTabSystem(TabManager.tabSystems.value.find((tabSystem) => tabSystem.id === state.focusedTabSystem) ?? null)
 	}
+
+	public static getTabSystemWithTab(tab: Tab): TabSystem | null {
+		for (const tabSystem of this.tabSystems.value) {
+			if (tabSystem.hasTab(tab)) return tabSystem
+		}
+
+		return null
+	}
 }
