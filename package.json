@@ -9,7 +9,8 @@
 		"dev:native": "cargo tauri dev",
 		"serve": "vite preview",
 		"check": "tsc --project tsconfig.json --noEmit",
-		"build": "vue-tsc --noEmit && vite build"
+		"build": "vue-tsc --noEmit && vite build",
+		"build:no-check": "vite build"
 	},
 	"dependencies": {
 		"@bridge-editor/dash-compiler": "^0.13.0-beta",
