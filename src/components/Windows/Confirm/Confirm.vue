@@ -20,15 +20,15 @@ function confirm() {
 	Windows.close(window)
 }
 
-function cancel(closedWindow: boolean) {
-	window.cancel(closedWindow)
+function cancel() {
+	window.cancel()
 
 	Windows.close(window)
 }
 </script>
 
 <template>
-	<Window :name="t('general.confirm')" @close="() => cancel(true)">
+	<Window :name="t('general.confirm')" @close="() => cancel()">
 		<div class="p-4">
 			<p class="mb-4 max-w-sm font-theme">
 				{{ t(window.text) }}
@@ -36,7 +36,7 @@ function cancel(closedWindow: boolean) {
 
 			<div class="flex justify-end gap-2">
 				<Button :text="t('Confirm')" class="font-theme" @click="confirm" />
-				<Button :text="t('Cancel')" class="font-theme" @click="() => cancel(false)" />
+				<Button :text="t('Cancel')" class="font-theme" @click="() => cancel()" />
 			</div>
 		</div>
 	</Window>

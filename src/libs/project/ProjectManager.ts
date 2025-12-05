@@ -18,6 +18,9 @@ import { packs } from './Packs'
 import { ProgressWindow } from '@/components/Windows/Progress/ProgressWindow'
 import { Windows } from '@/components/Windows/Windows'
 import { createReactable } from '@/libs/event/React'
+import { TabManager } from '@/components/TabSystem/TabManager'
+import { FileTab } from '@/components/TabSystem/FileTab'
+import { ConfirmWindow } from '@/components/Windows/Confirm/ConfirmWindow'
 
 export interface ProjectInfo {
 	name: string
@@ -143,6 +146,25 @@ export class ProjectManager {
 
 	public static async closeProject() {
 		if (!this.currentProject) return
+
+		for (const tabSystem of TabManager.tabSystems.value) {
+			for (const tab of tabSystem.tabs.value) {
+				if (tab instanceof FileTab && tab.modified.value) {
+					if (
+						!(await new Promise<boolean>((resolve) => {
+							Windows.open(
+								new ConfirmWindow(
+									`windows.unsavedFile.closeFile`,
+									() => resolve(true),
+									() => resolve(false)
+								)
+							)
+						}))
+					)
+						return
+				}
+			}
+		}
 
 		await this.currentProject.dispose()
 

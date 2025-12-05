@@ -127,19 +127,15 @@ export class TabSystem {
 
 		if (tab instanceof FileTab && tab.modified.value) {
 			if (
-				await new Promise<boolean>((resolve) => {
+				!(await new Promise<boolean>((resolve) => {
 					Windows.open(
 						new ConfirmWindow(
-							`windows.unsavedFile.description`,
-							async () => {
-								await tab.save()
-
-								resolve(false)
-							},
-							(closedWindow) => resolve(closedWindow)
+							`windows.unsavedFile.closeFile`,
+							() => resolve(true),
+							() => resolve(false)
 						)
 					)
-				})
+				}))
 			)
 				return
 		}
