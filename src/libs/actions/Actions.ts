@@ -143,7 +143,8 @@ function setupFileTabActions() {
 			action.setVisible(
 				TabManager.focusedTabSystem.value !== null &&
 					TabManager.focusedTabSystem.value.selectedTab.value !== null &&
-					TabManager.focusedTabSystem.value.selectedTab.value instanceof FileTab
+					TabManager.focusedTabSystem.value.selectedTab.value instanceof FileTab &&
+					TabManager.focusedTabSystem.value.selectedTab.value.canSave
 			)
 		})
 	}

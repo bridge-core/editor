@@ -4,6 +4,7 @@ import { ref, Ref } from 'vue'
 
 export class FileTab extends Tab {
 	public modified: Ref<boolean> = ref(false)
+	public canSave: boolean = true
 
 	constructor(public path: string) {
 		super()

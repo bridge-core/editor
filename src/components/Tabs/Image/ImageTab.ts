@@ -6,6 +6,7 @@ import { FileTab } from '@/components/TabSystem/FileTab'
 export class ImageTab extends FileTab {
 	public component: Component | null = ImageTabComponent
 	public image: Ref<string | null> = ref(null)
+	public canSave: boolean = false
 
 	public static canEdit(path: string): boolean {
 		return path.endsWith('.png')
