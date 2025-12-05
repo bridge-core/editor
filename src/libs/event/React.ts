@@ -23,3 +23,17 @@ export function createReactable<T>(event: Event<any>, provider: () => T): () => 
 		return valueRef
 	}
 }
+
+export function createHeadlessReactable<T>(event: Event<any>, provider: () => T): () => ShallowRef<T> {
+	return () => {
+		const valueRef: ShallowRef<T> = shallowRef(provider())
+
+		function update() {
+			valueRef.value = provider()
+		}
+
+		event.on(update)
+
+		return valueRef
+	}
+}

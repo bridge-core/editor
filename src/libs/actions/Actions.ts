@@ -728,13 +728,23 @@ function setupFileSystemActions() {
 		new Action({
 			id: 'files.createFile',
 			trigger: async (path: unknown) => {
-				if (typeof path !== 'string') return
+				if (typeof path !== 'string' && path !== undefined) return
 
-				Windows.open(
-					new PromptWindow('Create File', 'File Name', 'File Name', (name) => {
-						fileSystem.writeFile(join(path, name), '')
-					})
-				)
+				if (path === undefined) {
+					const currentPackPath = FileExplorer.selectedPackPath.value
+
+					Windows.open(
+						new PromptWindow('Create File', 'File Name', 'File Name', (name) => {
+							fileSystem.writeFile(join(currentPackPath, name), '')
+						})
+					)
+				} else {
+					Windows.open(
+						new PromptWindow('Create File', 'File Name', 'File Name', (name) => {
+							fileSystem.writeFile(join(path, name), '')
+						})
+					)
+				}
 			},
 			name: 'actions.files.createFile.name',
 			description: 'actions.files.createFile.description',

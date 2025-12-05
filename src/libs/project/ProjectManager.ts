@@ -17,7 +17,7 @@ import { ConvertableProjectInfo } from './ConvertComMojangProject'
 import { packs } from './Packs'
 import { ProgressWindow } from '@/components/Windows/Progress/ProgressWindow'
 import { Windows } from '@/components/Windows/Windows'
-import { createReactable } from '@/libs/event/React'
+import { createHeadlessReactable, createReactable } from '@/libs/event/React'
 import { TabManager } from '@/components/TabSystem/TabManager'
 import { FileTab } from '@/components/TabSystem/FileTab'
 import { ConfirmWindow } from '@/components/Windows/Confirm/ConfirmWindow'
@@ -396,6 +396,7 @@ export const useConvertableProjects = createReactable(ProjectManager.updatedConv
 ])
 
 export const useCurrentProject = createReactable(ProjectManager.updatedCurrentProject, () => ProjectManager.currentProject)
+export const useCurrentProjectHeadless = createHeadlessReactable(ProjectManager.updatedCurrentProject, () => ProjectManager.currentProject)
 
 export function useUsingProjectOutputFolder(): Ref<boolean> {
 	const usingProjectOutputFolder: Ref<boolean> = ref(false)
