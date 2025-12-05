@@ -7,6 +7,8 @@ import { Disposable } from '@/libs/disposeable/Disposeable'
 import { TabTypes } from './TabTypes'
 import { FileTab } from './FileTab'
 import { Settings } from '@/libs/settings/Settings'
+import { Windows } from '../Windows/Windows'
+import { ConfirmWindow } from '../Windows/Confirm/ConfirmWindow'
 
 export type TabSystemRecoveryState = { id: string; selectedTab: string | null; tabs: TabRecoveryState[] }
 
@@ -117,6 +119,32 @@ export class TabSystem {
 		await this.saveState()
 
 		this.removedTab.dispatch()
+	}
+
+	// TODO: Changet he tab API so that there is a seperation between creating the tab ui and creating the tab so we can support moving tabs without saving them
+	public async removeTabSafe(tab: Tab) {
+		if (!this.hasTab(tab)) return
+
+		if (tab instanceof FileTab && tab.modified.value) {
+			if (
+				await new Promise<boolean>((resolve) => {
+					Windows.open(
+						new ConfirmWindow(
+							`windows.unsavedFile.description`,
+							async () => {
+								await tab.save()
+
+								resolve(false)
+							},
+							(closedWindow) => resolve(closedWindow)
+						)
+					)
+				})
+			)
+				return
+		}
+
+		await this.removeTab(tab)
 	}
 
 	public orderTab(tab: Tab, index: number) {

@@ -313,7 +313,7 @@ function setupEditorActions() {
 
 				if (!tab) return
 
-				tabSystem.removeTab(tab)
+				tabSystem.removeTabSafe(tab)
 			},
 			name: 'actions.editor.closeTab.name',
 			description: 'actions.editor.closeTab.description',
@@ -1603,7 +1603,7 @@ function setupTabActions() {
 			trigger: (data: unknown) => {
 				if (!(data instanceof Tab)) return
 
-				TabManager.removeTab(data)
+				TabManager.removeTabSafe(data)
 			},
 			name: 'actions.tabs.close.name',
 			description: 'actions.tabs.close.description',
@@ -1624,7 +1624,7 @@ function setupTabActions() {
 					const tabs = [...tabSystem.tabs.value]
 
 					for (const tab of tabs) {
-						await TabManager.removeTab(tab)
+						await TabManager.removeTabSafe(tab)
 					}
 				}
 			},
@@ -1657,7 +1657,7 @@ function setupTabActions() {
 
 							if (!active) continue
 
-							await TabManager.removeTab(tab)
+							await TabManager.removeTabSafe(tab)
 						}
 
 						break
@@ -1709,7 +1709,7 @@ function setupTabActions() {
 					for (const tab of tabs) {
 						if (tab.id === data.id) continue
 
-						await TabManager.removeTab(tab)
+						await TabManager.removeTabSafe(tab)
 					}
 				}
 			},
@@ -1736,7 +1736,7 @@ function setupTabActions() {
 
 				if (!otherTabSystem) return
 
-				await TabManager.removeTab(tab)
+				await TabManager.removeTabSafe(tab)
 
 				TabManager.focusTabSystem(otherTabSystem)
 

@@ -108,7 +108,7 @@ async function drop(event: DragEvent) {
 	} else {
 		const sourceTabSystem = TabManager.getTabSystemWithTab(draggingTab)!
 
-		await sourceTabSystem.removeTab(draggingTab)
+		await sourceTabSystem.removeTabSafe(draggingTab)
 
 		await props.instance.addTab(draggingTab, true, draggingTab.temporary.value, dropIndex)
 	}
@@ -227,7 +227,7 @@ function dragEnd(event: DragEvent) {
 						{{ tab.name.value ?? 'Tab' }}
 					</p>
 
-					<IconButton icon="close" class="text-base" @click.stop="() => instance.removeTab(tab)" />
+					<IconButton icon="close" class="text-base" @click.stop="() => instance.removeTabSafe(tab)" />
 				</div>
 
 				<div

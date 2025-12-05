@@ -80,6 +80,12 @@ export class TabManager {
 		}
 	}
 
+	public static async removeTabSafe(tab: Tab) {
+		for (const tabSystem of this.tabSystems.value) {
+			if (tabSystem.hasTab(tab)) await tabSystem.removeTabSafe(tab)
+		}
+	}
+
 	public static async clear() {
 		const tabSystems = TabManager.tabSystems.value
 
