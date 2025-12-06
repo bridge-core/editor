@@ -45,26 +45,6 @@ const currentProjectPackDefinitions: Ref<IPackType[]> = computed(() => {
 	})
 })
 
-const selectedPack: Ref<string> = ref('')
-const selectedPackDefinition: ComputedRef<IPackType | null> = computed(() => {
-	if (!currentProject.value) return null
-	if (!(currentProject.value instanceof BedrockProject)) return null
-
-	return currentProject.value.packDefinitions.find((pack: IPackType) => pack.id === selectedPack.value) ?? null
-})
-const selectedPackPath: ComputedRef<string> = computed(() => {
-	if (!currentProject.value) return ''
-	if (!(currentProject.value instanceof BedrockProject)) return ''
-
-	return (
-		currentProject.value.packs[selectedPack.value] ??
-		join(
-			currentProject.value.path,
-			currentProject.value.packDefinitions.find((pack: IPackType) => pack.id === selectedPack.value)?.defaultPackPath ?? ''
-		)
-	)
-})
-
 const entries: Ref<BaseEntry[]> = ref([])
 const orderedEntries = computed(() =>
 	(FileExplorer.isItemDragging()
@@ -85,12 +65,12 @@ async function updateEntries(path: unknown) {
 	if (typeof path !== 'string') return
 	if (!currentProject.value) return
 
-	if (!path.startsWith(selectedPackPath.value)) return
+	if (!path.startsWith(FileExplorer.selectedPackPath.value)) return
 
-	entries.value = await fileSystem.readDirectoryEntries(selectedPackPath.value)
+	entries.value = await fileSystem.readDirectoryEntries(FileExplorer.selectedPackPath.value)
 }
 
-watch(selectedPackPath, (path) => {
+watch(FileExplorer.selectedPackPath, (path) => {
 	updateEntries(path)
 })
 
@@ -102,9 +82,9 @@ onMounted(async () => {
 	if (!currentProject.value) return
 	if (!(currentProject.value instanceof BedrockProject)) return
 
-	selectedPack.value = Object.keys(currentProject.value.packs)[0] ?? ''
+	FileExplorer.selectedPack.value = Object.keys(currentProject.value.packs)[0] ?? ''
 
-	updateEntries(selectedPackPath.value)
+	updateEntries(FileExplorer.selectedPackPath.value)
 })
 
 onUnmounted(() => {
@@ -164,7 +144,10 @@ function drop(event: DragEvent) {
 
 	if (!FileExplorer.draggedItem.value) return
 
-	fileSystem.move(FileExplorer.draggedItem.value.path, join(selectedPackPath.value, basename(FileExplorer.draggedItem.value.path)))
+	fileSystem.move(
+		FileExplorer.draggedItem.value.path,
+		join(FileExplorer.selectedPackPath.value, basename(FileExplorer.draggedItem.value.path))
+	)
 
 	FileExplorer.draggedItem.value = null
 }
@@ -194,15 +177,18 @@ function drop(event: DragEvent) {
 					v-for="packDefinition in currentProjectPackDefinitions"
 					class="flex-1 flex items-center justify-center p-2 rounded border-2 hover:border-accent transition-colors duration-100 ease-out"
 					:class="{
-						'bg-background border-background': packDefinition.id !== selectedPack,
-						'bg-[var(--color)] border-[var(--color)]': packDefinition.id === selectedPack,
+						'bg-background border-background': packDefinition.id !== FileExplorer.selectedPack.value,
+						'bg-[var(--color)] border-[var(--color)]': packDefinition.id === FileExplorer.selectedPack.value,
 					}"
 					:style="{
 						'--color': `var(--theme-color-${packDefinition.color})`,
 					}"
-					@click="selectedPack = packDefinition.id"
+					@click="FileExplorer.selectedPack.value = packDefinition.id"
 				>
-					<Icon :icon="packDefinition.icon" :color="packDefinition.id === selectedPack ? 'text' : packDefinition.color" />
+					<Icon
+						:icon="packDefinition.icon"
+						:color="packDefinition.id === FileExplorer.selectedPack.value ? 'text' : packDefinition.color"
+					/>
 				</button>
 
 				<ContextMenu class="flex-1 basis-5">
@@ -256,14 +242,14 @@ function drop(event: DragEvent) {
 					<File
 						v-if="entry.kind === 'file'"
 						:path="entry.path"
-						:color="selectedPackDefinition!.color"
+						:color="FileExplorer.selectedPackDefinition.value!.color"
 						:preview="FileExplorer.draggedItem.value?.path === entry.path"
 					/>
 
 					<Directory
 						v-if="entry.kind === 'directory'"
 						:path="entry.path"
-						:color="selectedPackDefinition!.color"
+						:color="FileExplorer.selectedPackDefinition.value!.color"
 						:preview="FileExplorer.draggedItem.value?.path === entry.path"
 					/>
 				</div>
@@ -272,8 +258,8 @@ function drop(event: DragEvent) {
 	</div>
 
 	<FreeContextMenu ref="contextMenu" v-slot="{ close }">
-		<ActionContextMenuItem action="files.createFile" :data="() => selectedPackPath" @click="close" />
-		<ActionContextMenuItem action="files.createFolder" :data="() => selectedPackPath" @click="close" />
-		<ActionContextMenuItem action="files.pasteFileSystemEntry" :data="() => selectedPackPath" @click="close" />
+		<ActionContextMenuItem action="files.createFile" :data="() => FileExplorer.selectedPackPath.value" @click="close" />
+		<ActionContextMenuItem action="files.createFolder" :data="() => FileExplorer.selectedPackPath.value" @click="close" />
+		<ActionContextMenuItem action="files.pasteFileSystemEntry" :data="() => FileExplorer.selectedPackPath.value" @click="close" />
 	</FreeContextMenu>
 </template>

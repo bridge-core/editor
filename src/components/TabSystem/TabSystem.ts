@@ -1,12 +1,14 @@
 import { v4 as uuid } from 'uuid'
 import { RecoveryState as TabRecoveryState, Tab, RecoveryState } from './Tab'
-import { Ref, ShallowRef, shallowRef, watchEffect } from 'vue'
+import { ref, Ref, ShallowRef, shallowRef, watchEffect } from 'vue'
 import { Editor } from '@/components/Editor/Editor'
 import { Event } from '@/libs/event/Event'
 import { Disposable } from '@/libs/disposeable/Disposeable'
 import { TabTypes } from './TabTypes'
 import { FileTab } from './FileTab'
 import { Settings } from '@/libs/settings/Settings'
+import { Windows } from '../Windows/Windows'
+import { ConfirmWindow } from '../Windows/Confirm/ConfirmWindow'
 
 export type TabSystemRecoveryState = { id: string; selectedTab: string | null; tabs: TabRecoveryState[] }
 
@@ -20,9 +22,13 @@ export class TabSystem {
 	public removedTab = new Event<void>()
 	public focused = new Event<void>()
 
+	public static draggingTab: ShallowRef<Tab | null> = shallowRef(null)
+	public static dropTargetTab: ShallowRef<Tab | null> = shallowRef(null)
+	public static dropSide: Ref<'right' | 'left'> = ref('right')
+
 	private tabSaveListenters: Record<string, Disposable> = {}
 
-	public async addTab(tab: Tab, select = true, temporary = false) {
+	public async addTab(tab: Tab, select = true, temporary = false, index?: number) {
 		if (this.hasTab(tab)) {
 			if (select) await this.selectTab(tab)
 
@@ -39,7 +45,12 @@ export class TabSystem {
 
 		await tab.create()
 
-		this.tabs.value.push(tab)
+		if (index === undefined) {
+			this.tabs.value.push(tab)
+		} else {
+			this.tabs.value.splice(index, 0, tab)
+		}
+
 		this.tabs.value = [...this.tabs.value]
 
 		if (select) await this.selectTab(tab)
@@ -87,7 +98,7 @@ export class TabSystem {
 			await tab.deactivate()
 		}
 
-		const tabIndex = this.tabs.value.indexOf(tab)
+		const tabIndex = this.indexOfTab(tab)
 
 		this.tabs.value.splice(tabIndex, 1)
 		this.tabs.value = [...this.tabs.value]
@@ -108,6 +119,38 @@ export class TabSystem {
 		await this.saveState()
 
 		this.removedTab.dispatch()
+	}
+
+	// TODO: Changet he tab API so that there is a seperation between creating the tab ui and creating the tab so we can support moving tabs without saving them
+	public async removeTabSafe(tab: Tab) {
+		if (!this.hasTab(tab)) return
+
+		if (tab instanceof FileTab && tab.modified.value) {
+			if (
+				!(await new Promise<boolean>((resolve) => {
+					Windows.open(
+						new ConfirmWindow(
+							`windows.unsavedFile.closeFile`,
+							() => resolve(true),
+							() => resolve(false)
+						)
+					)
+				}))
+			)
+				return
+		}
+
+		await this.removeTab(tab)
+	}
+
+	public orderTab(tab: Tab, index: number) {
+		const currentIndex = this.tabs.value.findIndex((otherTab) => otherTab.id === tab.id)
+
+		this.tabs.value.splice(currentIndex, 1)
+
+		this.tabs.value.splice(index > currentIndex ? index - 1 : index, 0, tab)
+
+		this.tabs.value = [...this.tabs.value]
 	}
 
 	public async clear() {
@@ -217,7 +260,7 @@ export class TabSystem {
 
 		if (!tab) return
 
-		const index = this.tabs.value.indexOf(tab)
+		const index = this.indexOfTab(tab)
 
 		if (index === -1) return
 
@@ -231,7 +274,7 @@ export class TabSystem {
 
 		if (!tab) return
 
-		const index = this.tabs.value.indexOf(tab)
+		const index = this.indexOfTab(tab)
 
 		if (index === -1) return
 
@@ -242,5 +285,9 @@ export class TabSystem {
 
 	public hasTab(tab: Tab): boolean {
 		return this.tabs.value.some((otherTab) => otherTab.id === tab.id)
+	}
+
+	public indexOfTab(tab: Tab): number {
+		return this.tabs.value.findIndex((otherTab) => otherTab.id === tab.id)
 	}
 }

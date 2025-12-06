@@ -9,7 +9,8 @@
 		"dev:native": "cargo tauri dev",
 		"serve": "vite preview",
 		"check": "tsc --project tsconfig.json --noEmit",
-		"build": "vue-tsc --noEmit && vite build"
+		"build": "vue-tsc --noEmit && vite build",
+		"build:no-check": "vite build"
 	},
 	"dependencies": {
 		"@bridge-editor/dash-compiler": "^0.13.0-beta",
@@ -42,10 +43,10 @@
 		"autoprefixer": "^10.4.16",
 		"postcss": "^8.4.32",
 		"tailwindcss": "^3.3.6",
-		"typescript": "^5.3.2",
+		"typescript": "^5.6.2",
 		"vite": "^5.0.5",
 		"vite-plugin-pwa": "^0.20.1",
-		"vue-tsc": "^1.8.24"
+		"vue-tsc": "^3.1.5"
 	},
 	"type": "module"
 }

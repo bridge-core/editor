@@ -1154,6 +1154,8 @@
 		},
 		"unsavedFile": {
 			"description": "Do you want to save your changes to this file before closing it?",
+			"closeFile": "It looks like you have unsaved changes. Are you sure you want to close the window?",
+			"closeProject": "It looks like you have unsaved changes. Are you sure you want to close the project?",
 			"save": "Save & Close"
 		},
 		"browserUnsupported": {

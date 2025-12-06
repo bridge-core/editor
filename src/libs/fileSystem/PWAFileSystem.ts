@@ -6,7 +6,7 @@ import { Event } from '@/libs/event/Event'
 import { Disposable } from '@/libs/disposeable/Disposeable'
 import * as JSONC from 'jsonc-parser'
 
-export class PWAFileSystem extends BaseFileSystem {
+export class PWAFileSystem extends BaseFileSystem implements Disposable {
 	public baseHandle: FileSystemDirectoryHandle | null = null
 	public reloaded: Event<undefined> = new Event()
 
@@ -14,14 +14,22 @@ export class PWAFileSystem extends BaseFileSystem {
 
 	private pathsToWatch: string[] = []
 
-	constructor() {
+	private checkForUpdateTimeout: number | null = null
+
+	constructor(watchEnabled: boolean) {
 		super()
 
-		this.checkForUpdates()
+		if (watchEnabled) this.checkForUpdates()
 	}
 
 	public get setup(): boolean {
 		return this.baseHandle !== null
+	}
+
+	public dispose() {
+		if (this.checkForUpdateTimeout !== null) clearTimeout(this.checkForUpdateTimeout)
+
+		this.checkForUpdateTimeout = null
 	}
 
 	public setBaseHandle(handle: FileSystemDirectoryHandle) {
@@ -418,7 +426,7 @@ export class PWAFileSystem extends BaseFileSystem {
 			await this.checkForUpdate(path)
 		}
 
-		setTimeout(() => {
+		this.checkForUpdateTimeout = setTimeout(() => {
 			this.checkForUpdates()
 		}, 1000)
 	}
@@ -497,11 +505,5 @@ export class PWAFileSystem extends BaseFileSystem {
 
 	protected resolvePath(path: string) {
 		return resolve('/', path)
-	}
-}
-
-export class PWAEntry extends BaseEntry {
-	constructor(path: string, kind: 'file' | 'directory', public handle: FileSystemHandle) {
-		super(path, kind)
 	}
 }

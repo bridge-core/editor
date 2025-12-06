@@ -36,7 +36,7 @@ export function convertProject(projectInfo: ConvertableProjectInfo) {
 
 				if (!outputFolder) return
 
-				const comMojangFileSystem = new PWAFileSystem()
+				const comMojangFileSystem = new PWAFileSystem(false)
 				comMojangFileSystem.setBaseHandle(outputFolder)
 
 				if (outputFolder && (await comMojangFileSystem.ensurePermissions(outputFolder))) {
@@ -75,9 +75,11 @@ async function convertComMojangProject(convertableProjectInfo: ConvertableComMoj
 		{
 			author: (manifest?.metadata?.authors as string[] | undefined) ?? ['bridge'],
 			bpAsRpDependency:
-				convertableProjectInfo.packs.some((pack) => pack.type === 'behaviorPack') && convertableProjectInfo.packs.some((pack) => pack.type === 'resourcePack'),
+				convertableProjectInfo.packs.some((pack) => pack.type === 'behaviorPack') &&
+				convertableProjectInfo.packs.some((pack) => pack.type === 'resourcePack'),
 			rpAsBpDependency:
-				convertableProjectInfo.packs.some((pack) => pack.type === 'behaviorPack') && convertableProjectInfo.packs.some((pack) => pack.type === 'resourcePack'),
+				convertableProjectInfo.packs.some((pack) => pack.type === 'behaviorPack') &&
+				convertableProjectInfo.packs.some((pack) => pack.type === 'resourcePack'),
 			configurableFiles: [],
 			description: manifest?.header?.description ?? '',
 			icon: convertableProjectInfo.icon,
@@ -111,7 +113,9 @@ async function convertComMojangProject(convertableProjectInfo: ConvertableComMoj
 		await comMojangFileSystem.removeDirectory(pack.path)
 	}
 
-	ProjectManager.convertableProjects.splice(ProjectManager.convertableProjects.findIndex((project) => project.packs[0].uuid === convertableProjectInfo.packs[0].uuid))
+	ProjectManager.convertableProjects.splice(
+		ProjectManager.convertableProjects.findIndex((project) => project.packs[0].uuid === convertableProjectInfo.packs[0].uuid)
+	)
 	ProjectManager.updatedConvertableProjects.dispatch()
 
 	ProjectManager.addProject(projectInfo)
@@ -152,9 +156,11 @@ async function convertV1Project(convertableProjectInfo: ConvertableV1ProjectInfo
 		{
 			author: (manifest?.metadata?.authors as string[] | undefined) ?? ['bridge'],
 			bpAsRpDependency:
-				convertableProjectInfo.packs.some((pack) => pack.type === 'behaviorPack') && convertableProjectInfo.packs.some((pack) => pack.type === 'resourcePack'),
+				convertableProjectInfo.packs.some((pack) => pack.type === 'behaviorPack') &&
+				convertableProjectInfo.packs.some((pack) => pack.type === 'resourcePack'),
 			rpAsBpDependency:
-				convertableProjectInfo.packs.some((pack) => pack.type === 'behaviorPack') && convertableProjectInfo.packs.some((pack) => pack.type === 'resourcePack'),
+				convertableProjectInfo.packs.some((pack) => pack.type === 'behaviorPack') &&
+				convertableProjectInfo.packs.some((pack) => pack.type === 'resourcePack'),
 			configurableFiles: [],
 			description: manifest?.header?.description ?? '',
 			icon: convertableProjectInfo.icon,
@@ -188,7 +194,9 @@ async function convertV1Project(convertableProjectInfo: ConvertableV1ProjectInfo
 		await comMojangFileSystem.removeDirectory(pack.path)
 	}
 
-	ProjectManager.convertableProjects.splice(ProjectManager.convertableProjects.findIndex((project) => project.packs[0].uuid === convertableProjectInfo.packs[0].uuid))
+	ProjectManager.convertableProjects.splice(
+		ProjectManager.convertableProjects.findIndex((project) => project.packs[0].uuid === convertableProjectInfo.packs[0].uuid)
+	)
 	ProjectManager.updatedConvertableProjects.dispatch()
 
 	ProjectManager.addProject(projectInfo)

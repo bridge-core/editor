@@ -5,15 +5,16 @@ import { basename, join } from 'pathe'
 import { ProjectManager } from '@/libs/project/ProjectManager'
 import { FileImporter } from './FileImporter'
 import { DirectoryImporter } from './DirectoryImporter'
+import { BaseEntry } from '@/libs/fileSystem/BaseFileSystem'
 
-export async function importFromBrProject(arrayBuffer: ArrayBuffer, name: string) {
+export async function importFromBrProject(entry: BaseEntry) {
 	if (fileSystem instanceof PWAFileSystem && !fileSystem.setup) await selectOrLoadBridgeFolder()
 
 	console.time('[Import] .brproject')
 
-	const buffer = new Uint8Array(arrayBuffer)
+	const buffer = new Uint8Array(await entry.read())
 
-	const targetPath = join('/projects', name)
+	const targetPath = join('/projects', basename(entry.path, '.brproject'))
 	const projectPath = await fileSystem.findSuitableFolderName(targetPath)
 	const projectName = basename(projectPath)
 
@@ -37,11 +38,8 @@ export class BrProjectFileImporter extends FileImporter {
 		super(['.brproject'])
 	}
 
-	public async onImport(fileHandle: FileSystemFileHandle, basePath: string) {
-		await importFromBrProject(
-			await (await fileHandle.getFile()).arrayBuffer(),
-			basename(fileHandle.name, '.brproject')
-		)
+	public async onImport(entry: BaseEntry, basePath: string) {
+		await importFromBrProject(entry)
 	}
 }
 
@@ -50,12 +48,12 @@ export class BrProjectDirectoryImporter extends DirectoryImporter {
 	public name: string = 'fileDropper.importMethod.folder.project.name'
 	public description: string = 'fileDropper.importMethod.folder.project.description'
 
-	public async onImport(directoryHandle: FileSystemDirectoryHandle, basePath: string) {
-		const targetPath = join('/projects', directoryHandle.name)
+	public async onImport(directory: BaseEntry, basePath: string) {
+		const targetPath = join('/projects', basename(directory.path))
 		const projectPath = await fileSystem.findSuitableFolderName(targetPath)
 		const projectName = basename(projectPath)
 
-		await fileSystem.copyDirectoryHandle(projectPath, directoryHandle)
+		await fileSystem.copyDirectoryFromFileSystem('/', await directory.getFileSystem(), projectPath)
 
 		await ProjectManager.closeProject()
 		await ProjectManager.loadProjects()

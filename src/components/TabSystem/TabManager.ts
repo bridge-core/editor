@@ -80,6 +80,12 @@ export class TabManager {
 		}
 	}
 
+	public static async removeTabSafe(tab: Tab) {
+		for (const tabSystem of this.tabSystems.value) {
+			if (tabSystem.hasTab(tab)) await tabSystem.removeTabSafe(tab)
+		}
+	}
+
 	public static async clear() {
 		const tabSystems = TabManager.tabSystems.value
 
@@ -220,5 +226,13 @@ export class TabManager {
 		TabManager.tabSystems.value = [...TabManager.tabSystems.value]
 
 		this.focusTabSystem(TabManager.tabSystems.value.find((tabSystem) => tabSystem.id === state.focusedTabSystem) ?? null)
+	}
+
+	public static getTabSystemWithTab(tab: Tab): TabSystem | null {
+		for (const tabSystem of this.tabSystems.value) {
+			if (tabSystem.hasTab(tab)) return tabSystem
+		}
+
+		return null
 	}
 }
