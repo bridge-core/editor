@@ -16,6 +16,7 @@
 		"skip": "スキップ",
 		"save": "保存",
 		"shareFile": "共有",
+		"more": "もっと",
 		"selectFolder": "フォルダーを選択",
 		"fileName": "ファイル名",
 		"folderName": "フォルダー名",
@@ -202,6 +203,104 @@
 				"description": "設定ウィンドウを開きます"
 			}
 		},
+		"textEditor": {
+			"name": "テキストエディタ",
+			"undo": {
+				"name": "元に戻す",
+				"description": "最後の操作を元に戻します"
+			},
+			"redo": {
+				"name": "やり直し",
+				"description": "元に戻した操作を再実行します"
+			},
+			"copy": {
+				"name": "コピー",
+				"description": "選択したテキストをクリップボードにコピーします"
+			},
+			"cut": {
+				"name": "切り取り",
+				"description": "選択したテキストをコピーして削除します"
+			},
+			"paste": {
+				"name": "貼り付け",
+				"description": "クリップボードの内容を貼り付けます"
+			},
+			"goToDefinition": {
+				"name": "定義へ移動",
+				"description": "選択したシンボルの定義へ移動します"
+			},
+			"goToSymbol": {
+				"name": "シンボルへ移動",
+				"description": "移動先のシンボルを選択するダイアログを開きます"
+			},
+			"formatDocument": {
+				"name": "ドキュメントの整形",
+				"description": "現在開いているドキュメントを整形します"
+			},
+			"changeAllOccurrences": {
+				"name": "すべての出現箇所を変更",
+				"description": "選択したテキストがあるすべての箇所を変更します"
+			},
+			"documentationLookup": {
+				"name": "ドキュメントを表示",
+				"description": "関連するドキュメントを開きます"
+			}
+		},
+		"treeEditor": {
+			"name": "ツリーエディタ",
+			"undo": {
+				"name": "元に戻す",
+				"description": "最後の操作を元に戻します"
+			},
+			"redo": {
+				"name": "やり直し",
+				"description": "元に戻した操作を再実行します"
+			},
+			"copy": {
+				"name": "コピー",
+				"description": "選択した内容をクリップボードにコピーします"
+			},
+			"cut": {
+				"name": "切り取り",
+				"description": "選択した内容をコピーして削除します"
+			},
+			"paste": {
+				"name": "貼り付け",
+				"description": "クリップボードの内容を貼り付けます"
+			},
+			"delete": {
+				"name": "削除",
+				"description": "選択した内容を削除します"
+			},
+			"convertToObject": {
+				"name": "オブジェクトに変換",
+				"description": "選択した値をオブジェクトに変換します"
+			},
+			"convertToArray": {
+				"name": "配列に変換",
+				"description": "選択した値を配列に変換します"
+			},
+			"convertToNull": {
+				"name": "null に変換",
+				"description": "選択した値を null に変換します"
+			},
+			"convertToNumber": {
+				"name": "数値に変換",
+				"description": "選択した値を数値に変換します"
+			},
+			"convertToString": {
+				"name": "文字列に変換",
+				"description": "選択した値を文字列に変換します"
+			},
+			"convertToBoolean": {
+				"name": "真偽値に変換",
+				"description": "選択した値を true/false に変換します"
+			},
+			"documentationLookup": {
+				"name": "ドキュメントを表示",
+				"description": "関連するドキュメントを開きます"
+			}
+		},
 		"export": {
 			"brproject": {
 				"name": "bridge. プロジェクトとしてエクスポート",
@@ -347,7 +446,12 @@
 			}
 		},
 		"rebinding": "再割り当て",
+		"unbound": "未割り当て",
 		"tabActions": "タブの操作",
+		"unknown": {
+			"name": "不明なアクション",
+			"description": "このアクションは存在しません！"
+		},
 		"tabs": {
 			"close": {
 				"name": "タブを閉じる",
@@ -393,6 +497,9 @@
 		"edit": {
 			"name": "編集"
 		},
+		"settings": {
+			"name": "設定"
+		},
 		"download": {
 			"name": "ダウンロード"
 		},
@@ -417,6 +524,10 @@
 			"nextTab": {
 				"name": "次のタブ",
 				"description": "次のタブに切り替える"
+			},
+			"previousTab": {
+				"name": "前のタブ",
+				"description": "前のタブに切り替える"
 			}
 		},
 		"tools": {
@@ -475,6 +586,12 @@
 		}
 	},
 	"sidebar": {
+		"fileExplorer": {
+			"name": "ファイルエクスプローラー"
+		},
+		"findAndReplace": {
+			"name": "検索と置換"
+		},
 		"quickExport": {
 			"name": "クイックエクスポート"
 		},
@@ -581,6 +698,16 @@
 		"sidebar": {
 			"disabledItem": "このアイテムは無効です"
 		},
+		"reportError": {
+			"title": "エラーを報告する",
+			"explanation": "bridge. で次のエラーが発生しました：",
+			"discord": "Discord",
+			"github": "GitHub",
+			"copy": "コピー"
+		},
+		"about": {
+			"title": "このアプリについて"
+		},
 		"openFile": {
 			"title": "開く",
 			"search": "ファイルの検索...",
@@ -604,6 +731,37 @@
 			"bdsProject": "Bedrock Dedicated Server で使用するためのプロジェクトを設定する",
 			"create": "作成",
 			"saveCurrentProject": "新しいプロジェクトを作成する前に現在のプロジェクトを保存しますか？ 保存されていない変更点は失われてしまいます",
+			"icon": {
+				"label": "アイコン",
+				"description": "プロジェクトアイコン（任意）"
+			},
+			"name": {
+				"label": "名前",
+				"placeholder": "プロジェクト名",
+				"invalidLetters": "プロジェクト名に次の文字を含めることはできません: \"  \\ / : | < >  * ? ~",
+				"mustNotBeEmpty": "プロジェクト名を入力してください",
+				"endsInPeriod": "プロジェクト名はピリオドで終わることはできません"
+			},
+			"description": {
+				"label": "説明",
+				"placeholder": "プロジェクトの説明（任意）"
+			},
+			"namespace": {
+				"label": "名前空間",
+				"placeholder": "プロジェクトの名前空間",
+				"invalidCharacters": "プロジェクト名前空間には英数字とアンダースコア(_)のみを使用できます",
+				"mustNotBeEmpty": "プロジェクト名前空間を入力してください"
+			},
+			"author": {
+				"label": "作成者",
+				"placeholder": "プロジェクト作成者名（任意）"
+			},
+			"targetVersion": {
+				"label": "ターゲットバージョン"
+			},
+			"errors": {
+				"noPacks": "プロジェクトには少なくとも1つのパックを含める必要があります。"
+			},
 			"individualFiles": {
 				"name": "個別ファイル",
 				"file": {
@@ -808,6 +966,13 @@
 				"hideToolbarItems": {
 					"name": "ツールバーの項目を非表示にする",
 					"description": "MacOS で bridge. を快適に利用するためにすべてのツールバーのアイテムを新しいメニューボタンに移動します"
+				},
+				"fileExplorerIndentation": {
+					"name": "ファイルエクスプローラーのインデント",
+					"description": "ファイルエクスプローラー内のフォルダーのインデントを変更します"
+				},
+				"sidebarElementVisibility": {
+					"name": "サイドバー要素の表示"
 				}
 			},
 			"general": {
@@ -839,6 +1004,10 @@
 				"resetBridgeFolder": {
 					"name": "ルートフォルダーのリセット",
 					"description": "アプリをリセットして、bridge. v2のデフォルトのルートフォルダーを再び使用するようにします。"
+				},
+				"keepTabsOpen": {
+					"name": "タブを開いたままにする",
+					"description": "デフォルトでは、新しいタブを開くと、操作されていない前のタブが閉じられます"
 				}
 			},
 			"developer": {
@@ -854,6 +1023,10 @@
 				"forceDataDownload": {
 					"name": "強制データダウンロード",
 					"description": "キャッシュされたアプリデータを無視し、代わりに最新のデータをダウンロードします"
+				},
+				"dataDeveloperMode": {
+					"name": "データ開発者モード",
+					"description": "データキャッシュを無視し、組み込みパッケージから読み込みます"
 				}
 			},
 			"actions": {
@@ -864,6 +1037,10 @@
 				"defaultAuthor": {
 					"name": "デフォルトの著者",
 					"description": "新しいプロジェクトのデフォルトの著者を設定します"
+				},
+				"defaultNamespace": {
+					"name": "デフォルトの名前空間",
+					"description": "新しいプロジェクトのデフォルトの名前空間を設定します"
 				},
 				"loadComMojangProjects": {
 					"name": "com.mojang プロジェクトの読み込み",
@@ -876,9 +1053,18 @@
 				"addGeneratedWith": {
 					"name": "\"generated_with\"の追加",
 					"description": "プロジェクトのマニフェストに \"generated_with\" メタデータを追加します"
+				},
+				"clearOutputFolder": {
+					"name": "出力フォルダーをクリア",
+					"description": "現在のデフォルト出力フォルダを無視する。"
+				},
+				"outputFolder": {
+					"name": "出力フォルダー",
+					"description": "出力フォルダーをここにドロップしてください。"
 				}
 			},
 			"editor": {
+				"name": "エディタ",
 				"jsonEditor": {
 					"name": "JSON エディタ",
 					"description": "JSONファイルの編集方法を選択します"
@@ -927,6 +1113,14 @@
 				"showArrayIndices": {
 					"name": "配列のインデックスを表示する",
 					"description": "ツリーエディターで配列要素のインデックスを表示する"
+				},
+				"hideBrackets": {
+					"name": "ブラケットを隠す",
+					"description": "bridge. のツリーエディタ内でブラケットを隠します"
+				},
+				"formatOnSave": {
+					"name": "保存時にフォーマット",
+					"description": "ファイルを保存するときにテキストファイルをフォーマットします"
 				}
 			}
 		},
@@ -955,6 +1149,12 @@
 				"description1": "拡張機能",
 				"description2": "のマニフェストは無効です。この問題を解決するために、拡張機能の作者に連絡することを検討してください。"
 			}
+		},
+		"alert": {
+			"title": "警告"
+		},
+		"progress": {
+			"title": "読み込み中"
 		},
 		"pluginInstallLocation": {
 			"title": "インストール先の選択"
@@ -1013,6 +1213,10 @@
 					"name": "出力フォルダー",
 					"description": "このフォルダーを新しい出力フォルダーとして設定する"
 				},
+				"project": {
+					"name": "新規プロジェクト",
+					"description": "このフォルダーを新しいプロジェクトとしてインポートする"
+				},
 				"open": {
 					"name": "フォルダーを開く",
 					"description": "このフォルダーを bridge. のファイルエクスプローラで開きます"
@@ -1070,6 +1274,7 @@
 		"chooseGeometry": "ジオメトリの選択",
 		"chooseTexture": "テクスチャの選択",
 		"noGeometry": "このファイル内に有効なジオメトリが見つかりません。 JSON が有効であること、ファイル構造が正しいこと、および指定された識別子を持つジオメトリが存在することを確認してください。",
+		"noTextures": "このファイル内に有効なテクスチャが見つかりません。 JSON が有効であること、ファイル構造が正しいこと、および指定された識別子を持つテクスチャが存在することを確認してください。",
 		"lootTableSimulator": {
 			"emptyLootOutput": "出力が空です。実行して結果を出力してください。",
 			"data": {
@@ -1204,5 +1409,25 @@
 			"name": "コンパイラ",
 			"noLogs": "ログはありません"
 		}
+	},
+	"greet": {
+		"projects": "プロジェクト",
+		"noProjects": "まだプロジェクトがありません。",
+		"createOne": "作成する",
+		"pin": "ピン留め",
+		"unpin": "ピン留めを解除",
+		"noBridgeFolderSelected": "bridge. フォルダを選択する必要があります。",
+		"selectBridgeFolder": "bridge. フォルダを選択"
+	},
+	"convert": {
+		"confirmationMessage": {
+			"v1": "これは bridge. v1 プロジェクトです。「続行」をクリックすると、このプロジェクトは bridge. プロジェクトに変換され、bridge. projects フォルダに保存されます。",
+			"com": {
+				"mojang": "bridge. は com.mojang フォルダ内のプロジェクトを直接開くことをサポートしなくなりました。「続行」をクリックすると、このプロジェクトは bridge. プロジェクトに変換され、bridge. projects フォルダに保存されます。"
+			}
+		}
+	},
+	"projects": {
+		"loading": "プロジェクトを読み込んでいます..."
 	}
 }
