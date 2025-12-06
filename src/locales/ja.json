@@ -77,18 +77,6 @@
 		}
 	},
 	"fileType": {
-		"aimAssistCategories": "エイムアシストカテゴリー",
-		"aimAssistPreset": "エイムアシストプリセット",
-		"atmosphereSettings": "雰囲気設定",
-		"blockCulling": "ブロックカリング",
-		"cameraPreset": "カメラプリセット",
-		"craftingItemCatalog": "クラフティングアイテムカタログ",
-		"colorGradingSettings": "カラーグレーディング設定",
-		"dimension": "ディメンション",
-		"splashes": "水しぶき",
-		"shadowSettings": "シャドウ設定",
-		"structureSet": "ストラクチャーセット",
-		"templatePool": "テンプレートプール",
 		"manifest": "マニフェスト",
 		"animation": "アニメーション",
 		"animationController": "アニメーションコントローラー",
@@ -148,10 +136,6 @@
 	},
 	"actions": {
 		"name": "アクション",
-		"viewBridgeFolder": {
-			"name": "bridge. フォルダーを見る",
-			"description": "bridge. がプロジェクトを保存しているフォルダーを表示する"
-		},
 		"dash": {
 			"compileDefault": {
 				"name": "Dash",
@@ -394,191 +378,6 @@
 				"name": "分割画面",
 				"description": "分割画面でタブを表示する"
 			}
-		},
-		"about": {
-			"name": "About",
-			"description": "bridge. について"
-		},
-		"download": {
-			"name": "ダウンロード",
-			"description": "このファイルまたはフォルダーをダウンロードする"
-		},
-		"fullscreen": {
-			"name": "全画面表示",
-			"description": "全画面表示を切り替えます"
-		},
-		"viewConnectedFiles": {
-			"name": "ファイル内のコンテンツを見る",
-			"description": "ファイル内のコンテンツをすべて見る"
-		},
-		"viewExtensionsFolder": {
-			"name": "拡張機能フォルダーを表示する",
-			"description": "bridge. がグローバル拡張機能を保存しているフォルダーを表示します。"
-		},
-		"open": {
-			"name": "開く",
-			"description": "エディターでファイルを開く"
-		},
-		"openWith": {
-			"name": "開く...",
-			"description": "エディターでファイルを開く"
-		},
-		"openInSplitScreen": {
-			"name": "分割画面で開く",
-			"description": "ファイルを分割画面で開く"
-		},
-		"edit": {
-			"name": "編集",
-			"description": "ファイルまたはフォルダーを編集する"
-		},
-		"viewCompilerOutput": {
-			"name": "コンパイラの出力表示",
-			"view": "コンパイラの出力を見る",
-			"description": "このファイルのコンパイラ出力を表示する",
-			"fileMissing": "このファイルはまだコンパイルされていません"
-		},
-		"revealPath": {
-			"name": "ファイルパスの表示",
-			"description": "ファイルやフォルダーの場所を表示する"
-		},
-		"findInFolder": {
-			"name": "フォルダー内検索",
-			"description": "フォルダー内を検索する"
-		},
-		"newProject": {
-			"name": "新規プロジェクト",
-			"description": "新規 bridge. プロジェクトを作成します"
-		},
-		"newFile": {
-			"name": "新規ファイル",
-			"description": "新しいアドオン機能の作成"
-		},
-		"openFile": {
-			"name": "ファイルを開く",
-			"description": "現在のプロジェクトからファイルを開く"
-		},
-		"searchFile": {
-			"name": "ファイルを探す",
-			"description": "現在のプロジェクトからファイルを検索して開く"
-		},
-		"saveFile": {
-			"name": "ファイルを保存",
-			"description": "現在開いているファイルを保存する"
-		},
-		"closeFile": {
-			"name": "ファイルを閉じる",
-			"description": "現在開いているファイルを閉じる"
-		},
-		"settings": {
-			"name": "設定",
-			"description": "bridge. のアプリ設定を開く"
-		},
-		"cut": {
-			"name": "切り取り",
-			"description": "選択したテキストをクリップボードにコピーして切り取る"
-		},
-		"docs": {
-			"name": "ドキュメント",
-			"description": "Minecraft アドオンのドキュメントを開く"
-		},
-		"minecraftDocs": {
-			"name": "Minecraft ドキュメント",
-			"description": "Minecraft Bedrock Add-Onのドキュメントを開く"
-		},
-		"bugReports": {
-			"name": "バグレポート",
-			"description": "bridge. の問題を報告する"
-		},
-		"twitter": {
-			"name": "Twitter",
-			"description": "Twitter で bridge. をフォローする"
-		},
-		"reloadAutoCompletions": {
-			"name": "オートコンプリートの再読み込み",
-			"description": "すべてのオートコンプリートデータを再読み込みする"
-		},
-		"reloadExtensions": {
-			"name": "拡張機能の再読み込み",
-			"description": "すべての拡張機能を再読み込みする"
-		},
-		"moveToSplitScreen": {
-			"name": "分割画面へ移動",
-			"description": "分割画面を開きこのタブを移す"
-		},
-		"closeTabsToRight": {
-			"name": "右側を閉じる",
-			"description": "このタブの右側にあるすべてのタブを閉じる"
-		},
-		"clearAllNotifications": {
-			"name": "すべての通知を消去",
-			"description": "現在表示されているすべての通知を消去する"
-		},
-		"pluginInstallLocation": {
-			"global": {
-				"name": "グローバルにインストール",
-				"description": "すべてのプロジェクトで利用可能にします"
-			},
-			"local": {
-				"name": "ローカルにインストール",
-				"description": "追加したプロジェクトの中でのみ利用可能にします"
-			}
-		},
-		"toObject": {
-			"name": "オブジェクトに変換"
-		},
-		"toArray": {
-			"name": "配列に変換"
-		},
-		"documentationLookup": {
-			"name": "ドキュメントの表示",
-			"noDocumentation": "このドキュメントはありません: "
-		},
-		"toggleReadOnly": {
-			"name": "読み取り専用の切り替え",
-			"description": "現在開いているファイルの読み取り専用モードを切り替える"
-		},
-		"keepInTabSystem": {
-			"name": "タブを固定",
-			"description": "タブを固定します"
-		},
-		"importBrproject": {
-			"name": "プロジェクトのインポート",
-			"description": ".brproject ファイルからプロジェクトをインポートする"
-		},
-		"downloadFile": {
-			"name": "ファイルをダウンロード",
-			"description": "現在開いているファイルをダウンロードする"
-		},
-		"undo": {
-			"name": "元に戻す",
-			"description": "直前の操作を元に戻す"
-		},
-		"redo": {
-			"name": "やり直し",
-			"description": "直前の操作をやり直す"
-		},
-		"goToDefinition": {
-			"name": "定義へ移動",
-			"description": "選択したシンボルの定義に移動"
-		},
-		"goToSymbol": {
-			"name": "シンボルへ移動",
-			"description": "移動するシンボルを選択するダイアログを開く"
-		},
-		"formatDocument": {
-			"name": "ドキュメントのフォーマット",
-			"description": "現在開いているドキュメントをフォーマットする"
-		},
-		"changeAllOccurrences": {
-			"name": "すべての出現個所を変更",
-			"description": "選択されたテキストのすべての出現箇所を変更する"
-		},
-		"tgaMaskToggle": {
-			"name": "Alphaチャンネルの切替"
-		},
-		"recompileChanges": {
-			"name": "変更時にコンパイルする",
-			"description": "bridge. なしで編集されたすべてのファイルをコンパイルします ウォッチモードを無効にした後エディター自体で行われた変更はコンパイルされません"
 		}
 	},
 	"toolbar": {
@@ -776,29 +575,11 @@
 		"educationEdition": {
 			"name": "Education Edition の有効化",
 			"description": "物質還元レシピなどの教育機能で自動補完機能を有効にします。"
-		},
-		"experimentalCreatorCameraFeatures": {
-			"name": "実験的なクリエイターカメラ機能",
-			"description": "実験的なカメラプリセット機能に対する自動補完機能を有効にします。"
-		},
-		"dataDrivenJigsawStructures": {
-			"name": "データ駆動型ジグソー構造",
-			"description": "ジグソー構造、テンプレートプール、プロセッサーリスト、構造セットの作成を有効にします。"
-		},
-		"renderDragonFeatures": {
-			"name": "クリエイター向けRender Dragonの機能",
-			"description": "遅延レンダリング設定ファイルの作成を可能にします。"
 		}
 	},
 	"windows": {
 		"sidebar": {
 			"disabledItem": "このアイテムは無効です"
-		},
-		"error": {
-			"explanation": "bridge. で以下のエラーが発生しました"
-		},
-		"changelogWindow": {
-			"title": "What's new?"
 		},
 		"openFile": {
 			"title": "開く",
@@ -817,17 +598,6 @@
 			"omitPack": "省略可",
 			"selectedPack": "選択済み",
 			"title": "プロジェクトの作成",
-			"packIcon": "プロジェクトアイコン（任意)",
-			"projectName": {
-				"name": "プロジェクト名",
-				"invalidLetters": "使用できる文字は半角英数字のみです",
-				"mustNotBeEmpty": "プロジェクト名を入力する必要があります",
-				"endsInPeriod": "プロジェクト名の末尾にピリオドを使用することはできません"
-			},
-			"projectDescription": "プロジェクトの説明（任意)",
-			"projectPrefix": "プロジェクト名",
-			"projectAuthor": "プロジェクト作成者",
-			"projectTargetVersion": "プロジェクトの対象バージョン",
 			"rpAsBpDependency": "リソースパックをビヘイビアパックの依存関係として登録する",
 			"bpAsRpDependency": "ビヘイビアパックをリソースパックの依存関係として登録する",
 			"useLangForManifest": "マニフェストにパック名/説明文を直接追加する",
@@ -876,10 +646,6 @@
 					"soundDefinitions": {
 						"name": "sound_definitions.json",
 						"description": "プロジェクト内の他の場所で使用するサウンドファイルのIDを定義します。"
-					},
-					"splashes": {
-						"name": "splashes.json",
-						"description": "Minecraftのタイトル画面に表示されるスプラッシュメッセージの定義に使用されます。"
 					}
 				}
 			}
@@ -1058,10 +824,6 @@
 					"name": "Pack Spider",
 					"description": "Pack Spider はプロジェクト内のファイルを接続し、その接続を仮想ファイルシステムで表示します。"
 				},
-				"formatOnSave": {
-					"name": "保存時のフォーマット",
-					"description": "テキストファイルの保存時にフォーマットを行います"
-				},
 				"openLinksInBrowser": {
 					"name": "リンクをデフォルトのブラウザで開く",
 					"description": "ネイティブアプリのウィンドウではなく、デフォルトのブラウザでリンクを開きます"
@@ -1138,10 +900,6 @@
 					"name": "コンパクトなタブ",
 					"description": "タブをよりコンパクトに表示します"
 				},
-				"keepTabsOpen": {
-					"name": "タブを開いたままにする",
-					"description": "デフォルトでは新しいタブを開くと、それまで開いていたタブが操作されていない場合閉じられます"
-				},
 				"autoSaveChanges": {
 					"name": "変更を自動保存",
 					"description": "ファイルへの変更した場合、しばらくすると自動的に保存します"
@@ -1169,10 +927,6 @@
 				"showArrayIndices": {
 					"name": "配列のインデックスを表示する",
 					"description": "ツリーエディターで配列要素のインデックスを表示する"
-				},
-				"hideBracketsWithinTreeEditor": {
-					"name": "ブラケットを隠す",
-					"description": "ツリーエディターでブラケットを非表示にする"
 				}
 			}
 		},
