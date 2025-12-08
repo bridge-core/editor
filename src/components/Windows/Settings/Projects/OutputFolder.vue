@@ -47,6 +47,11 @@ function clearOutputFolder() {
 			<FileSystemDrop class="mb-8 h-48" :text="t('windows.settings.projects.outputFolder.description')" @drop="droppedOutputFolder" />
 		</div>
 
-		<TextButton @click="clearOutputFolder" :text="t('windows.settings.projects.clearOutputFolder.name')" class="mb-4" />
+		<TextButton
+			v-if="get('outputFolder')"
+			@click="clearOutputFolder"
+			:text="t('windows.settings.projects.clearOutputFolder.name')"
+			class="mb-4 ml-auto mr-auto block"
+		/>
 	</div>
 </template>
