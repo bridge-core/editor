@@ -39,6 +39,7 @@ export interface AutocompleteItem {
 export interface TextItem {
 	type: 'text'
 	label: string
+	description: string
 }
 
 export interface ToggleItem {
@@ -122,11 +123,13 @@ function setupProjectsCategory() {
 	SettingsWindow.addItem('projects', 'defaultAuthor', {
 		type: 'text',
 		label: 'windows.settings.projects.defaultAuthor.name',
+		description: 'windows.settings.projects.defaultAuthor.description',
 	})
 
 	SettingsWindow.addItem('projects', 'defaultNamespace', {
 		type: 'text',
 		label: 'windows.settings.projects.defaultNamespace.name',
+		description: 'windows.settings.projects.defaultNamespace.description',
 	})
 
 	SettingsWindow.addItem('projects', 'exportLabel', {

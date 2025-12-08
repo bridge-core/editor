@@ -152,12 +152,16 @@ const isMobile = useIsMobile()
 					</div>
 
 					<div v-if="item.type === 'text'" class="w-full">
-						<LabeledTextInput
-							class="mt-2 mb-4"
-							:label="item.label"
-							:model-value="get(id).toString()"
-							@update:model-value="(value: string | undefined) => Settings.set(id, value)"
-						/>
+						<div class="flex">
+							<LabeledTextInput
+								class="mt-2 mb-4 flex-grow max-w-96"
+								:label="item.label"
+								:model-value="get(id).toString()"
+								@update:model-value="(value: string | undefined) => Settings.set(id, value)"
+							/>
+
+							<p class="text-text-secondary ml-4 mt-7">{{ t(item.description) }}</p>
+						</div>
 					</div>
 
 					<div v-if="item.type === 'tab'">
