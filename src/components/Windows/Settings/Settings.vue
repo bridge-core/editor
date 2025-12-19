@@ -122,14 +122,19 @@ const isMobile = useIsMobile()
 						<component :is="item.component" :item="item" />
 					</div>
 
-					<LabeledDropdown
-						v-if="item.type === 'dropdown'"
-						class="mt-2 mb-4 flex-1"
-						:label="item.label"
-						:options="item.labels.value"
-						:model-value="item.labels.value[item.values.value.indexOf(get(id))]"
-						@submit="(value) => Settings.set(id, item.values.value[item.labels.value.indexOf(value)])"
-					/>
+					<div v-if="item.type === 'dropdown'" class="flex flex-1">
+						<div class="flex flex-1">
+							<LabeledDropdown
+								class="mt-2 mb-4 max-w-96 flex-1"
+								:label="item.label"
+								:options="item.labels.value"
+								:model-value="item.labels.value[item.values.value.indexOf(get(id))]"
+								@submit="(value) => Settings.set(id, item.values.value[item.labels.value.indexOf(value)])"
+							/>
+
+							<p class="text-text-secondary ml-4 self-center max-w-96">{{ t(item.description) }}</p>
+						</div>
+					</div>
 
 					<div v-if="item.type === 'toggle'" class="mt-2 mb-4">
 						<h2 class="mb-2 text-text font-theme">{{ t(item.label) }}</h2>
@@ -141,23 +146,31 @@ const isMobile = useIsMobile()
 						</div>
 					</div>
 
-					<div v-if="item.type === 'autocomplete'">
-						<LabeledAutocompleteInput
-							class="mt-2 mb-4"
-							:completions="item.completions.value"
-							:label="item.label"
-							:model-value="get(id).toString()"
-							@update:model-value="(value: string | undefined) => Settings.set(id, value)"
-						/>
+					<div v-if="item.type === 'autocomplete'" class="flex flex-1">
+						<div class="flex flex-1">
+							<LabeledAutocompleteInput
+								class="mt-2 mb-4 max-w-96 flex-1"
+								:completions="item.completions.value"
+								:label="item.label"
+								:model-value="get(id).toString()"
+								@update:model-value="(value: string | undefined) => Settings.set(id, value)"
+							/>
+
+							<p class="text-text-secondary ml-4 self-center max-w-96">{{ t(item.description) }}</p>
+						</div>
 					</div>
 
-					<div v-if="item.type === 'text'" class="w-full">
-						<LabeledTextInput
-							class="mt-2 mb-4"
-							:label="item.label"
-							:model-value="get(id).toString()"
-							@update:model-value="(value: string | undefined) => Settings.set(id, value)"
-						/>
+					<div v-if="item.type === 'text'" class="flex flex-1">
+						<div class="flex flex-1">
+							<LabeledTextInput
+								class="mt-2 mb-4 max-w-96 flex-1"
+								:label="item.label"
+								:model-value="get(id).toString()"
+								@update:model-value="(value: string | undefined) => Settings.set(id, value)"
+							/>
+
+							<p class="text-text-secondary ml-4 self-center max-w-96">{{ t(item.description) }}</p>
+						</div>
 					</div>
 
 					<div v-if="item.type === 'tab'">
