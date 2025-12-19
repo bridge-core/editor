@@ -10,6 +10,7 @@ import { CompletionItem, createSchema, Diagnostic } from '@/libs/jsonSchema/Sche
 import { Settings } from '@/libs/settings/Settings'
 import * as JSONC from 'jsonc-parser'
 import { interupt } from '@/libs/Interupt'
+import { TabManager } from '@/components/TabSystem/TabManager'
 
 export class TreeEditorTab extends FileTab {
 	public component: Component | null = TreeEditorTabComponent
@@ -18,6 +19,8 @@ export class TreeEditorTab extends FileTab {
 	public hasDocumentation = ref(false)
 
 	public tree: Ref<TreeElements> = ref(new ObjectElement(null))
+
+	private fileCache: string | null = null
 
 	public history: TreeEdit[] = []
 	public currentEditIndex = -1
@@ -87,6 +90,27 @@ export class TreeEditorTab extends FileTab {
 		if (!ProjectManager.currentProject) return
 		if (!(ProjectManager.currentProject instanceof BedrockProject)) return
 
+		this.disposables.push(
+			fileSystem.pathUpdated.on(async (path) => {
+				if (!path) return
+				if (path !== this.path) return
+
+				if (!(await fileSystem.exists(path))) {
+					await TabManager.removeTab(this)
+				} else if (!this.modified.value) {
+					const fileContent = await fileSystem.readFileText(this.path)
+
+					if (this.fileCache === fileContent) return
+
+					this.fileCache = fileContent
+
+					try {
+						this.tree.value = buildTree(JSONC.parse(fileContent))
+					} catch {}
+				}
+			})
+		)
+
 		const fileTypeData = ProjectManager.currentProject.fileTypeData
 
 		this.fileType = fileTypeData.get(this.path)
@@ -98,6 +122,8 @@ export class TreeEditorTab extends FileTab {
 		}
 
 		const fileContent = await fileSystem.readFileText(this.path)
+
+		this.fileCache = fileContent
 
 		try {
 			this.tree.value = buildTree(JSONC.parse(fileContent))
@@ -182,7 +208,11 @@ export class TreeEditorTab extends FileTab {
 		this.modified.value = false
 		this.icon.value = 'loading'
 
-		await fileSystem.writeFile(this.path, JSON.stringify(this.tree.value.toJson(), null, 2))
+		const content = JSON.stringify(this.tree.value.toJson(), null, 2)
+
+		this.fileCache = content
+
+		await fileSystem.writeFile(this.path, content)
 
 		this.icon.value = this.fileTypeIcon
 	}

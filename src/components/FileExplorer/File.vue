@@ -15,6 +15,7 @@ import { useFileActions } from '@/libs/actions/file/FileActionManager'
 import { ProjectManager } from '@/libs/project/ProjectManager'
 import { BedrockProject } from '@/libs/project/BedrockProject'
 import { tauriBuild } from '@/libs/tauri/Tauri'
+import { BaseEntry } from '@/libs/fileSystem/BaseFileSystem'
 
 const contextMenu: Ref<typeof FreeContextMenu | null> = ref(null)
 
@@ -39,7 +40,7 @@ const props = defineProps({
 
 function dragStart() {
 	requestAnimationFrame(() => {
-		FileExplorer.draggedItem.value = { kind: 'file', path: props.path }
+		FileExplorer.draggedItem.value = new BaseEntry(props.path, 'file')
 	})
 }
 

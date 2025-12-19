@@ -7,6 +7,7 @@ import { TabTypes } from './TabTypes'
 import { ProjectManager } from '@/libs/project/ProjectManager'
 import { Disposable, disposeAll } from '@/libs/disposeable/Disposeable'
 import { Event } from '@/libs/event/Event'
+import { fileSystem } from '@/libs/fileSystem/FileSystem'
 
 type TabManagerRecoveryState = { tabSystems: TabSystemRecoveryState[]; focusedTabSystem: string }
 
@@ -125,6 +126,8 @@ export class TabManager {
 	}
 
 	public static async openFile(path: string) {
+		if (!(await fileSystem.exists(path))) return
+
 		for (const tabSystem of TabManager.tabSystems.value) {
 			for (const tab of tabSystem.tabs.value) {
 				if (tab instanceof FileTab && tab.is(path)) {
