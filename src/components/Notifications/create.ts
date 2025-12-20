@@ -13,9 +13,6 @@ export function createNotification(config: INotificationConfig) {
 }
 
 export function clearAllNotifications() {
-	// @ts-expect-error
-	if (typeof navigator.clearAppBadge === 'function') navigator.clearAppBadge()
-
 	for (const [key] of Object.entries(NotificationStore)) {
 		Vue.delete(NotificationStore, key)
 	}

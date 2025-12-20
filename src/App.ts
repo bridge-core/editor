@@ -277,10 +277,6 @@ export class App {
 			`--- Running bridge. ${appVersion} on a "${platform()}" machine ---`
 		)
 		console.time('[APP] beforeStartUp()')
-		// @ts-expect-error
-		if (navigator.clearAppBadge)
-			// @ts-expect-error
-			navigator.clearAppBadge()
 
 		setupSidebar()
 		setupDefaultMenus(this)
