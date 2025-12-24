@@ -1060,7 +1060,13 @@
 				},
 				"outputFolder": {
 					"name": "Output Folder",
-					"description": "Drop your output folder here."
+					"button": "Select Output Folder",
+					"description": "Default output folder projects will compile to.",
+					"warning": {
+						"notSupported": "This platform does not support selecting an output folder.",
+						"notSet": "You have no default output folder set!",
+						"overwritten": "The default output folder is being overwritten by a project ouput folder."
+					}
 				}
 			},
 			"editor": {
