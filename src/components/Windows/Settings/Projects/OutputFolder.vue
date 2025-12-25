@@ -6,7 +6,7 @@ import Info from '@/components/Common/Info.vue'
 import { Settings } from '@/libs/settings/Settings'
 import { useTranslate } from '@/libs/locales/Locales'
 import { useUsingProjectOutputFolder } from '@/libs/project/ProjectManager'
-import { pickDirectory } from '@/libs/fileSystem/FileSystem'
+import { ImportedDirectoryEntry, pickDirectory } from '@/libs/fileSystem/FileSystem'
 import { tauriBuild } from '@/libs/tauri/Tauri'
 import { TauriFileSystem } from '@/libs/fileSystem/TauriFileSystem'
 
@@ -22,9 +22,9 @@ async function selectOutputFolder() {
 
 	const directory = await pickDirectory()
 
-	if (!(directory instanceof TauriFileSystem)) return
+	if (!directory) return
 
-	Settings.set('outputFolder', { type: 'tauri', path: directory.basePath })
+	Settings.set('outputFolder', { type: 'tauri', path: directory.path })
 }
 
 function clearOutputFolder() {
@@ -54,7 +54,7 @@ function clearOutputFolder() {
 			/>
 		</div>
 
-		<div class="flex mb-4">
+		<div class="flex mb-4 mt-4">
 			<TextButton :text="t('windows.settings.projects.outputFolder.button')" @click="selectOutputFolder" :enabled="tauriBuild" />
 
 			<p class="text-text-secondary ml-4 self-center max-w-96">{{ t('windows.settings.projects.outputFolder.description') }}</p>
