@@ -1,18 +1,20 @@
 <script setup lang="ts">
 import SidebarWindow from '@/components/Windows/SidebarWindow.vue'
 import Icon from '@/components/Common/Icon.vue'
-import TextButton from '@/components/Common/Button.vue'
+import TextButton from '@/components/Common/TextButton.vue'
 import Info from '@/components/Common/Info.vue'
+import Warning from '@/components/Common/Warning.vue'
+import Action from '@/components/Common/Action.vue'
 
 import { useTranslate } from '@/libs/locales/Locales'
 import { ref } from 'vue'
 import { BedrockProject } from '@/libs/project/BedrockProject'
-import FileSystemDrop from '@/components/Common/FileSystemDrop.vue'
 import { ProjectManager, useUsingProjectOutputFolder } from '@/libs/project/ProjectManager'
 import { CompilerWindow } from './CompilerWindow'
 import { Windows } from '../Windows'
 import { useIsMobile } from '@/libs/Mobile'
-import Action from '@/components/Common/Action.vue'
+import { tauriBuild } from '@/libs/tauri/Tauri'
+import { pickDirectory } from '@/libs/fileSystem/FileSystem'
 
 const t = useTranslate()
 
@@ -47,15 +49,15 @@ const categories: {
 
 const selectedCategory = ref(categories[0].id)
 
-async function droppedOutputFolder(items: DataTransferItemList) {
+async function selectOutputFolder() {
 	if (!ProjectManager.currentProject) return
+	if (!tauriBuild) return
 
-	const fileHandle = await items[0].getAsFileSystemHandle()
+	const directory = await pickDirectory()
 
-	if (!fileHandle) return
-	if (!(fileHandle instanceof FileSystemDirectoryHandle)) return
+	if (!directory) return
 
-	await ProjectManager.currentProject.setLocalProjectFolderHandle(fileHandle)
+	await ProjectManager.currentProject.setLocalOutputFolderData({ type: 'tauri', path: directory.path })
 }
 
 const isMobile = useIsMobile()
@@ -93,7 +95,10 @@ const isMobile = useIsMobile()
 			</div>
 		</template>
 		<template #content>
-			<div class="max-w-[64rem] w-[50vw] h-[38rem] flex flex-col overflow-y-auto p-3 pt-0" :class="{ 'w-full': isMobile, 'h-full': isMobile }">
+			<div
+				class="max-w-[64rem] w-[50vw] h-[38rem] flex flex-col overflow-y-auto p-3 pt-0"
+				:class="{ 'w-full': isMobile, 'h-full': isMobile }"
+			>
 				<div v-if="selectedCategory === 'general'">
 					<TextButton
 						text="Compile"
@@ -105,20 +110,44 @@ const isMobile = useIsMobile()
 
 				<div v-if="selectedCategory === 'profiles'">
 					<div class="flex flex-col gap-3">
-						<Action v-for="action in (ProjectManager.currentProject as BedrockProject).dashService.profiles" :action="action" class="w-full" />
+						<Action
+							v-for="action in (ProjectManager.currentProject as BedrockProject).dashService.profiles"
+							:action="action"
+							class="w-full"
+						/>
 					</div>
 				</div>
 
 				<div v-if="selectedCategory === 'outputFolder'">
-					<Info v-if="usingProjectOutputFolder" text="This project is using a local project folder." class="mt-4 mb-4 ml-auto mr-auto" />
+					<div v-if="!tauriBuild">
+						<Warning :text="t('projects.outputFolder.warning.notSupported')" class="mt-4 mb-4 mr-auto" />
+					</div>
 
-					<Info v-else text="This project not is using a local project folder." class="mt-4 mb-4 ml-auto mr-auto" />
+					<div v-else>
+						<Info v-if="usingProjectOutputFolder" :text="t('projects.outputFolder.warning.using')" class="mt-4 mb-4" />
 
-					<FileSystemDrop class="mt-8 mb-8 w-full h-48" text="Drop your project output folder here." @drop="droppedOutputFolder" />
+						<Info v-else :text="t('projects.outputFolder.warning.notUsing')" class="mt-4 mb-4" />
+					</div>
 
-					<div class="flex gap-6 items-center">
-						<TextButton text="Clear Output Folder" @click="ProjectManager.currentProject!.clearLocalProjectFolder()" />
-						<p class="text-text-secondary">{{ t('Forget the current project output folder.') }}</p>
+					<div class="flex mb-4 mt-4">
+						<TextButton :text="t('projects.outputFolder.button')" @click="selectOutputFolder" :enabled="tauriBuild" />
+
+						<p class="text-text-secondary ml-4 self-center max-w-96">
+							{{ t('projects.outputFolder.description') }}
+						</p>
+					</div>
+
+					<div class="flex mb-4">
+						<TextButton
+							@click="ProjectManager.currentProject!.clearLocalProjectFolder()"
+							:text="t('projects.clearOutputFolder.name')"
+							class="block"
+							:enabled="console.log(usingProjectOutputFolder) ?? usingProjectOutputFolder"
+						/>
+
+						<p class="text-text-secondary ml-4 self-center max-w-96">
+							{{ t('projects.clearOutputFolder.description') }}
+						</p>
 					</div>
 				</div>
 

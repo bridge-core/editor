@@ -1435,6 +1435,19 @@
 		}
 	},
 	"projects": {
-		"loading": "Loading project..."
+		"loading": "Loading project...",
+		"clearOutputFolder": {
+			"name": "Clear Project Output Folder",
+			"description": "Forget the current project output folder."
+		},
+		"outputFolder": {
+			"button": "Select Project Output Folder",
+			"description": "Output folder this project will compile to.",
+			"warning": {
+				"notSupported": "This platform does not support selecting an output folder.",
+				"using": "This project is using a local project folder.",
+				"notUsing": "This project is not using a local project folder."
+			}
+		}
 	}
 }
