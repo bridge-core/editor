@@ -12,6 +12,8 @@ import { Data } from '@/libs/data/Data'
 import { LangData } from '@/libs/data/bedrock/LangData'
 import { CommandData } from '@/libs/data/bedrock/CommandData'
 import { SnippetManager } from '@/libs/snippets/SnippetManager'
+import { fileSystem } from '@/libs/fileSystem/FileSystem'
+import { join } from 'pathe'
 
 export class BedrockProject extends Project {
 	public packDefinitions: IPackType[] = []
@@ -25,6 +27,13 @@ export class BedrockProject extends Project {
 	public dashService = new DashService(this)
 	public requirementsMatcher = new RequirementsMatcher(this)
 	public snippetLoader = new SnippetManager()
+
+	constructor(name: string) {
+		super(name)
+
+		fileSystem.ingorePath(join(this.path, '.bridge/.dash.development.json'))
+		fileSystem.ingorePath(join(this.path, 'builds/'))
+	}
 
 	public async load() {
 		await super.load()

@@ -269,6 +269,7 @@ export class ProjectManager {
 		await this.cacheFileSystem.writeFileJson('projects.json', this.projects, false)
 	}
 
+	// TODO: This won't work with the new output folder changes
 	private static async loadConvertableProjects() {
 		ProjectManager.convertableProjects = []
 
