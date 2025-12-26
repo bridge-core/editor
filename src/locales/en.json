@@ -628,6 +628,10 @@
 			},
 			"actions": {
 				"runLastProfile": "Run Last Profile"
+			},
+			"build": {
+				"name": "Build",
+				"description": "Run the default build profile"
 			}
 		},
 		"extensions": {

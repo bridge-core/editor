@@ -100,12 +100,18 @@ const isMobile = useIsMobile()
 				:class="{ 'w-full': isMobile, 'h-full': isMobile }"
 			>
 				<div v-if="selectedCategory === 'general'">
-					<TextButton
-						text="Compile"
-						@click="() =>
+					<div class="flex">
+						<TextButton
+							:text="t('sidebar.compiler.build.name')"
+							@click="() =>
 							(ProjectManager.currentProject as BedrockProject).dashService.build()
 						"
-					/>
+						/>
+
+						<p class="font-theme text-text-secondary ml-4 self-center max-w-96">
+							{{ t('sidebar.compiler.build.description') }}
+						</p>
+					</div>
 				</div>
 
 				<div v-if="selectedCategory === 'profiles'">
@@ -145,7 +151,7 @@ const isMobile = useIsMobile()
 							:enabled="console.log(usingProjectOutputFolder) ?? usingProjectOutputFolder"
 						/>
 
-						<p class="text-text-secondary ml-4 self-center max-w-96">
+						<p class="font-theme text-text-secondary ml-4 self-center max-w-96">
 							{{ t('projects.clearOutputFolder.description') }}
 						</p>
 					</div>
