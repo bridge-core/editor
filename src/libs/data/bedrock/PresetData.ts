@@ -125,28 +125,21 @@ export class PresetData implements Disposable {
 							if (typeof data !== 'string') {
 								await fileSystem.writeFile(
 									filePath,
-									JSON.stringify(deepMerge(JSON.parse(existingContent), JSON.parse(data)), null, '\t')
+									JSON.stringify(deepMerge(JSON.parse(existingContent), data), null, '\t')
 								)
 							} else {
 								await fileSystem.writeFile(filePath, `${existingContent}\n${data}`)
 							}
 						} else {
-							await fileSystem.writeFile(
-								filePath,
-								typeof data === 'string' ? data : JSON.stringify(data, null, '\t')
-							)
+							await fileSystem.writeFile(filePath, typeof data === 'string' ? data : JSON.stringify(data, null, '\t'))
 						}
 					},
 					loadPresetFile: async (path: string) => {
 						return {
 							name: basename(path),
-							content: await Data.getRaw(
-								join(dirname(presetPath.substring('file:///data/'.length)), path)
-							),
+							content: await Data.getRaw(join(dirname(presetPath.substring('file:///data/'.length)), path)),
 							async text() {
-								return await Data.getText(
-									join(dirname(presetPath.substring('file:///data/'.length)), path)
-								)
+								return await Data.getText(join(dirname(presetPath.substring('file:///data/'.length)), path))
 							},
 						}
 					},
@@ -293,16 +286,13 @@ export class PresetData implements Disposable {
 							if (typeof data !== 'string') {
 								await fileSystem.writeFile(
 									filePath,
-									JSON.stringify(deepMerge(JSON.parse(existingContent), JSON.parse(data)), null, '\t')
+									JSON.stringify(deepMerge(JSON.parse(existingContent), data), null, '\t')
 								)
 							} else {
 								await fileSystem.writeFile(filePath, `${existingContent}\n${data}`)
 							}
 						} else {
-							await fileSystem.writeFile(
-								filePath,
-								typeof data === 'string' ? data : JSON.stringify(data, null, '\t')
-							)
+							await fileSystem.writeFile(filePath, typeof data === 'string' ? data : JSON.stringify(data, null, '\t'))
 						}
 					},
 					loadPresetFile: async (path: string) => {
