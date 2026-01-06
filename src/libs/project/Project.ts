@@ -13,6 +13,8 @@ import { Windows } from '@/components/Windows/Windows'
 import { AsyncDisposable, Disposable, disposeAll } from '@/libs/disposeable/Disposeable'
 import { Event } from '@/libs/event/Event'
 import { NotificationSystem } from '@/components/Notifications/NotificationSystem'
+import { tauriBuild } from '@/libs/tauri/Tauri'
+import { TauriFileSystem } from '@/libs/fileSystem/TauriFileSystem'
 
 export class Project implements AsyncDisposable {
 	public path: string
@@ -27,7 +29,7 @@ export class Project implements AsyncDisposable {
 
 	public usingProjectOutputFolderChanged: Event<undefined> = new Event()
 
-	private projectOutputFolderHandleKey: string = ''
+	private projectOutputFolderDataKey: string = ''
 	private usingProjectOutputFolderKey: string = ''
 
 	private disposables: Disposable[] = []
@@ -35,17 +37,13 @@ export class Project implements AsyncDisposable {
 	constructor(public name: string) {
 		this.path = join('/projects', this.name)
 
-		this.projectOutputFolderHandleKey = `projectOutputFolderHandle-${this.name}`
+		this.projectOutputFolderDataKey = `projectOutputFolderHandle-${this.name}`
 		this.usingProjectOutputFolderKey = `usingProjectFolder-${this.name}`
 
 		fileSystem.watch(this.path)
 		fileSystem.ingorePath(join(this.path, '.git'))
-		fileSystem.ingorePath(join(this.path, '.bridge/.dash.development.json'))
-		fileSystem.ingorePath(join(this.path, 'builds/'))
 
-		if (!(this.outputFileSystem instanceof LocalFileSystem)) return
-
-		this.outputFileSystem.setRootName(this.name)
+		if (this.outputFileSystem instanceof LocalFileSystem) this.outputFileSystem.setRootName(this.name)
 	}
 
 	public async load() {
@@ -69,9 +67,6 @@ export class Project implements AsyncDisposable {
 		}
 
 		this.disposables.push(Settings.updated.on(this.settingsChanged.bind(this)))
-
-		this.usingProjectOutputFolder = (await get(this.usingProjectOutputFolderKey)) ?? false
-		this.usingProjectOutputFolderChanged.dispatch()
 
 		await this.setupOutputFileSystem()
 
@@ -99,32 +94,6 @@ export class Project implements AsyncDisposable {
 		return join(this.path ?? '', (<any>this.config.packs)[packId], path)
 	}
 
-	public async getLocalProjectFolderHandle(): Promise<FileSystemDirectoryHandle | undefined> {
-		return await get(this.projectOutputFolderHandleKey)
-	}
-
-	public async setLocalProjectFolderHandle(handle: FileSystemDirectoryHandle) {
-		await set(this.projectOutputFolderHandleKey, handle)
-
-		this.usingProjectOutputFolder = await this.setOutputFolderHandle(handle)
-
-		await set(this.usingProjectOutputFolderKey, this.usingProjectOutputFolder)
-
-		this.usingProjectOutputFolderChanged.dispatch()
-	}
-
-	public async clearLocalProjectFolder() {
-		if (!this.usingProjectOutputFolder) return
-
-		this.usingProjectOutputFolder = false
-
-		this.usingProjectOutputFolderChanged.dispatch()
-
-		await set(this.projectOutputFolderHandleKey, undefined)
-
-		await this.setupOutputFileSystem()
-	}
-
 	public async saveTabManagerState(state: any) {
 		await set(`tabManagerState-${this.name}`, JSON.stringify(state))
 	}
@@ -141,75 +110,48 @@ export class Project implements AsyncDisposable {
 		return null
 	}
 
+	protected async setupOutputFileSystem() {
+		if (!tauriBuild) return
+
+		this.usingProjectOutputFolder = (await get(this.usingProjectOutputFolderKey)) ?? false
+		this.usingProjectOutputFolderChanged.dispatch()
+
+		let outputFolderData = Settings.get('outputFolder')
+
+		if (this.usingProjectOutputFolder) outputFolderData = (await get(this.projectOutputFolderDataKey)) ?? outputFolderData
+
+		if (!outputFolderData) return
+		if ((outputFolderData as { type: string }).type !== 'tauri') return
+
+		const fileSystem = new TauriFileSystem()
+		fileSystem.setBasePath((outputFolderData as { type: string; path: string }).path)
+
+		await this.setOutputFileSystem(fileSystem)
+	}
+
 	protected async setOutputFileSystem(fileSystem: BaseFileSystem) {
 		this.outputFileSystem = fileSystem
+	}
+
+	public async setLocalOutputFolderData(data: unknown) {
+		await set(this.projectOutputFolderDataKey, data)
+
+		await set(this.usingProjectOutputFolderKey, true)
+
+		await this.setupOutputFileSystem()
+	}
+
+	public async clearLocalProjectFolder() {
+		if (!this.usingProjectOutputFolder) return
+
+		await set(this.usingProjectOutputFolderKey, false)
+
+		await this.setupOutputFileSystem()
 	}
 
 	protected async settingsChanged(event: unknown) {
 		if ((event as { id: string; value: unknown }).id !== 'outputFolder') return
 
-		if (!(fileSystem instanceof PWAFileSystem)) return
-
-		if (this.usingProjectOutputFolder) return
-
 		await this.setupOutputFileSystem()
-	}
-
-	private async setOutputFolderHandle(handle: FileSystemDirectoryHandle): Promise<boolean> {
-		const newOutputFileSystem = new PWAFileSystem(false)
-		newOutputFileSystem.setBaseHandle(handle)
-
-		if (!(await newOutputFileSystem.ensurePermissions(handle))) return false
-
-		await this.setOutputFileSystem(newOutputFileSystem)
-
-		return true
-	}
-
-	private async setupOutputFileSystem() {
-		if (fileSystem instanceof PWAFileSystem) await this.setupOutputFileSystemPWA()
-	}
-
-	private async setupOutputFileSystemPWA() {
-		const localProjectFolder = await this.getLocalProjectFolderHandle()
-
-		let newOutputFolderHandle: FileSystemDirectoryHandle | undefined = this.usingProjectOutputFolder
-			? localProjectFolder
-			: Settings.get('outputFolder')
-
-		let newOutputFileSystem = new PWAFileSystem(false)
-
-		if (newOutputFolderHandle && (await newOutputFileSystem.ensurePermissions(newOutputFolderHandle))) {
-			if (this.outputFileSystem instanceof PWAFileSystem && newOutputFolderHandle === this.outputFileSystem.baseHandle) return
-
-			newOutputFileSystem.setBaseHandle(newOutputFolderHandle)
-
-			await this.setOutputFileSystem(newOutputFileSystem)
-
-			return
-		}
-
-		this.usingProjectOutputFolder = false
-
-		await set(this.usingProjectOutputFolderKey, false)
-
-		this.usingProjectOutputFolderChanged.dispatch()
-
-		NotificationSystem.addNotification(
-			'warning',
-			() => {
-				Windows.open(
-					new ConfirmWindow('You have not set up your output folder yet. Do you want to set it up now?', () =>
-						SettingsWindow.open('projects')
-					)
-				)
-			},
-			'warning'
-		)
-
-		const localFileSystem = new LocalFileSystem()
-		localFileSystem.setRootName(this.name)
-
-		this.setOutputFileSystem(localFileSystem)
 	}
 }

@@ -1,12 +1,14 @@
 <script setup lang="ts">
 import Warning from '@/components/Common/Warning.vue'
 import TextButton from '@/components/Common/TextButton.vue'
-
-import FileSystemDrop from '@/components/Common/FileSystemDrop.vue'
 import Info from '@/components/Common/Info.vue'
+
 import { Settings } from '@/libs/settings/Settings'
 import { useTranslate } from '@/libs/locales/Locales'
 import { useUsingProjectOutputFolder } from '@/libs/project/ProjectManager'
+import { ImportedDirectoryEntry, pickDirectory } from '@/libs/fileSystem/FileSystem'
+import { tauriBuild } from '@/libs/tauri/Tauri'
+import { TauriFileSystem } from '@/libs/fileSystem/TauriFileSystem'
 
 const t = useTranslate()
 
@@ -15,43 +17,58 @@ defineProps(['item'])
 const get = Settings.useGet()
 const usingProjectOutputFolder = useUsingProjectOutputFolder()
 
-async function droppedOutputFolder(items: DataTransferItemList) {
-	let directoryHandle = null
+async function selectOutputFolder() {
+	if (!tauriBuild) return
 
-	try {
-		directoryHandle = await items[0].getAsFileSystemHandle()
-	} catch {}
+	const directory = await pickDirectory()
 
-	if (!directoryHandle) return
-	if (!(directoryHandle instanceof FileSystemDirectoryHandle)) return
+	if (!directory) return
 
-	Settings.set('outputFolder', directoryHandle)
+	Settings.set('outputFolder', { type: 'tauri', path: directory.path })
 }
 
 function clearOutputFolder() {
+	if (!Settings.get('outputFolder')) return
+
 	Settings.set('outputFolder', undefined)
 }
 </script>
 
 <template>
 	<div class="w-full">
-		<div class="w-full">
-			<Warning v-if="!get('outputFolder')" text="You have no default output folder set!" class="mt-4 mb-4 ml-auto mr-auto" />
+		<div v-if="!tauriBuild">
+			<Warning :text="t('windows.settings.projects.outputFolder.warning.notSupported')" class="mt-4 mb-4 mr-auto" />
+		</div>
+
+		<div v-else>
+			<Warning
+				v-if="!get('outputFolder')"
+				:text="t('windows.settings.projects.outputFolder.warning.notSet')"
+				class="mt-4 mb-4 mr-auto"
+			/>
 
 			<Info
 				v-if="usingProjectOutputFolder"
-				text="The default output folder is being overwritten by a project ouput folder."
-				class="mt-4 mb-4 ml-auto mr-auto"
+				:text="t('windows.settings.projects.outputFolder.warning.overwritten')"
+				class="mt-4 mb-4 mr-auto"
 			/>
-
-			<FileSystemDrop class="mb-8 h-48" :text="t('windows.settings.projects.outputFolder.description')" @drop="droppedOutputFolder" />
 		</div>
 
-		<TextButton
-			v-if="get('outputFolder')"
-			@click="clearOutputFolder"
-			:text="t('windows.settings.projects.clearOutputFolder.name')"
-			class="mb-4 ml-auto mr-auto block"
-		/>
+		<div class="flex mb-4 mt-4">
+			<TextButton :text="t('windows.settings.projects.outputFolder.button')" @click="selectOutputFolder" :enabled="tauriBuild" />
+
+			<p class="text-text-secondary ml-4 self-center max-w-96">{{ t('windows.settings.projects.outputFolder.description') }}</p>
+		</div>
+
+		<div class="flex mb-4">
+			<TextButton
+				@click="clearOutputFolder"
+				:text="t('windows.settings.projects.clearOutputFolder.name')"
+				class="block"
+				:enabled="!!get('outputFolder')"
+			/>
+
+			<p class="text-text-secondary ml-4 self-center max-w-96">{{ t('windows.settings.projects.clearOutputFolder.description') }}</p>
+		</div>
 	</div>
 </template>

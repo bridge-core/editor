@@ -628,6 +628,10 @@
 			},
 			"actions": {
 				"runLastProfile": "Run Last Profile"
+			},
+			"build": {
+				"name": "Build",
+				"description": "Run the default build profile"
 			}
 		},
 		"extensions": {
@@ -1060,7 +1064,13 @@
 				},
 				"outputFolder": {
 					"name": "Output Folder",
-					"description": "Drop your output folder here."
+					"button": "Select Output Folder",
+					"description": "Default output folder projects will compile to.",
+					"warning": {
+						"notSupported": "This platform does not support selecting an output folder.",
+						"notSet": "You have no default output folder set!",
+						"overwritten": "The default output folder is being overwritten by a project ouput folder."
+					}
 				}
 			},
 			"editor": {
@@ -1429,6 +1439,19 @@
 		}
 	},
 	"projects": {
-		"loading": "Loading project..."
+		"loading": "Loading project...",
+		"clearOutputFolder": {
+			"name": "Clear Project Output Folder",
+			"description": "Forget the current project output folder."
+		},
+		"outputFolder": {
+			"button": "Select Project Output Folder",
+			"description": "Output folder this project will compile to.",
+			"warning": {
+				"notSupported": "This platform does not support selecting an output folder.",
+				"using": "This project is using a local project folder.",
+				"notUsing": "This project is not using a local project folder."
+			}
+		}
 	}
 }

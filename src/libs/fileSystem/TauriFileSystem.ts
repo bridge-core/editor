@@ -7,7 +7,8 @@ import { invoke } from '@tauri-apps/api'
 import * as JSONC from 'jsonc-parser'
 
 export class TauriFileSystem extends BaseFileSystem {
-	private basePath: string | null = null
+	public basePath: string | null = null
+
 	private textEncoder = new TextEncoder()
 
 	public setBasePath(newPath: string) {

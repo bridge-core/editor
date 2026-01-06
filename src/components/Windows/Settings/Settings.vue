@@ -132,7 +132,7 @@ const isMobile = useIsMobile()
 								@submit="(value) => Settings.set(id, item.values.value[item.labels.value.indexOf(value)])"
 							/>
 
-							<p class="text-text-secondary ml-4 self-center max-w-96">{{ t(item.description) }}</p>
+							<p class="font-theme text-text-secondary ml-4 self-center max-w-96">{{ t(item.description) }}</p>
 						</div>
 					</div>
 
@@ -142,7 +142,7 @@ const isMobile = useIsMobile()
 						<div class="flex">
 							<Switch :model-value="get(id)" @update:model-value="(value) => Settings.set(id, value)" />
 
-							<p class="text-text-secondary ml-4">{{ t(item.description) }}</p>
+							<p class="font-theme text-text-secondary ml-4">{{ t(item.description) }}</p>
 						</div>
 					</div>
 
@@ -156,7 +156,7 @@ const isMobile = useIsMobile()
 								@update:model-value="(value: string | undefined) => Settings.set(id, value)"
 							/>
 
-							<p class="text-text-secondary ml-4 self-center max-w-96">{{ t(item.description) }}</p>
+							<p class="font-theme text-text-secondary ml-4 self-center max-w-96">{{ t(item.description) }}</p>
 						</div>
 					</div>
 
@@ -169,7 +169,7 @@ const isMobile = useIsMobile()
 								@update:model-value="(value: string | undefined) => Settings.set(id, value)"
 							/>
 
-							<p class="text-text-secondary ml-4 self-center max-w-96">{{ t(item.description) }}</p>
+							<p class="font-theme text-text-secondary ml-4 self-center max-w-96">{{ t(item.description) }}</p>
 						</div>
 					</div>
 
@@ -193,7 +193,7 @@ const isMobile = useIsMobile()
 								</button>
 							</div>
 
-							<p class="text-text-secondary mr-6">
+							<p class="font-theme text-text-secondary mr-6">
 								{{ t(item.description) }}
 							</p>
 						</div>
