@@ -146,6 +146,124 @@ const completionItemProvider: languages.CompletionItemProvider = {
 	},
 }
 
+const signatureHelpProvider: languages.SignatureHelpProvider = {
+	signatureHelpTriggerCharacters: ['\n', ' '],
+	signatureHelpRetriggerCharacters: ['\n', ' '],
+	provideSignatureHelp: async (
+		model: editor.ITextModel,
+		position: Position,
+		token: CancellationToken,
+		context: languages.SignatureHelpContext
+	) => {
+		// Get the commandData instance so we can access command schema data
+		const app = await App.getApp()
+		if (!(app.project instanceof BedrockProject)) return
+
+		await app.project.commandData.fired
+
+		const commandData = app.project.commandData
+
+		// Generate available signatures for the command on this line and figure out where the cursor is inside of the command
+		let signatures: languages.SignatureInformation[] = []
+		let signatureIndex = 0
+		let parameterIndex = 0
+
+		let lineContent = ''
+		try {
+			lineContent = model.getLineContent(position.lineNumber)
+		} catch {}
+
+		const { tokens } = tokenizeCommand(lineContent)
+
+		const commandName = tokens[0].word
+		if (commandName) {
+			const definitions = await commandData.getCommandDefinitions(
+				commandName,
+				false
+			)
+
+			for (const [defIndex, def] of definitions.entries()) {
+				const signatureParts: {
+					signature: string
+					documentation?: string
+				}[] = [{ signature: `/${commandName}` }]
+
+				for (const arg of def.arguments ?? []) {
+					// If there is an argument name, create the signature using this name and the type (assumed string if not specified)
+					// TODO - better display coordinate signatures, currently they can display as 3 args but they count as one
+					if (arg.argumentName) {
+						signatureParts.push({
+							signature: arg.isOptional
+								? `[${arg.argumentName}: ${
+										arg.type ?? 'string'
+								  }]`
+								: `<${arg.argumentName}: ${
+										arg.type ?? 'string'
+								  }>`,
+							documentation: arg.description,
+						})
+					} else if (
+						// Otherwise, if there is no argument name, but there is a single enum value for this argument just show the only valid value in the signature
+						arg.additionalData?.values &&
+						arg.additionalData?.values.length === 1
+					) {
+						signatureParts.push({
+							signature: arg.additionalData.values[0],
+						})
+					}
+				}
+				signatures.push({
+					label: signatureParts
+						.map((part) => part.signature)
+						.join(' '),
+					documentation: def.description,
+					parameters: signatureParts.map((part) => ({
+						label: part.signature,
+						documentation: part.documentation,
+					})),
+				})
+
+				// Figure out which argument the cursor is placed on
+				for (const [tokenIndex, token] of tokens.entries()) {
+					console.log(
+						token,
+						tokenIndex,
+						tokenIndex + 1 === tokens.length &&
+							position.column >= token.startColumn
+					)
+					if (
+						tokenIndex + 1 === tokens.length &&
+						position.column >= token.startColumn
+					) {
+						parameterIndex = tokenIndex
+						break
+					}
+					if (
+						position.column >= token.startColumn &&
+						position.column <= token.endColumn
+					) {
+						parameterIndex = tokenIndex
+						break
+					}
+				}
+
+				// TODO - Find out which signature to use
+				// We should probably update this to borrow logic from the function validator
+				// The validator should be updated so that parsing a command also returns which schema definition(s) passed validation
+			}
+		}
+
+		return {
+			dispose: () => {},
+			value: {
+				signatures,
+				activeParameter: parameterIndex,
+				activeSignature: signatureIndex,
+			},
+		}
+	},
+}
+
 const loadCommands = async (lang: McfunctionLanguage) => {
 	const app = await App.getApp()
 	await app.projectManager.fired
@@ -179,6 +297,7 @@ export class McfunctionLanguage extends Language {
 			config,
 			tokenProvider,
 			completionItemProvider,
+			signatureHelpProvider,
 		})
 
 		let loadedProject: Project | null = null
