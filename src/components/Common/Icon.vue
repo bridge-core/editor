@@ -78,7 +78,7 @@ const mdiMap: { [key: string]: string | undefined } = {
 	'mdi-file-image-outline': 'image',
 }
 
-defineProps({
+const props = defineProps({
 	icon: {
 		type: String,
 		required: true,
@@ -86,15 +86,20 @@ defineProps({
 	color: {
 		type: String,
 	},
+	fallback: {
+		type: String,
+	},
 })
 
-function resolveLegacyIcons(icon: string) {
+function resolveLegacyIcons(icon: string | undefined) {
+	if (!icon) return props.fallback ?? 'help'
+
 	if (mdiMap[icon]) return mdiMap[icon]
 
 	if (icon.startsWith('mdi-')) {
 		console.warn(`Mdi icon with no override: ${icon}!`)
 
-		return 'help'
+		return props.fallback ?? 'help'
 	}
 
 	return icon
