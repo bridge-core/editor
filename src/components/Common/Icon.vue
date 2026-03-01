@@ -74,6 +74,8 @@ const mdiMap: { [key: string]: string | undefined } = {
 	'mdi-axe': 'swords',
 	'mdi-circle': 'motion_blur',
 	'mdi-puzzle': 'extension',
+	'mdi-timer': 'timer',
+	'mdi-file-image-outline': 'image',
 }
 
 defineProps({
@@ -89,7 +91,11 @@ defineProps({
 function resolveLegacyIcons(icon: string) {
 	if (mdiMap[icon]) return mdiMap[icon]
 
-	if (icon.startsWith('mdi-')) return 'help'
+	if (icon.startsWith('mdi-')) {
+		console.warn(`Mdi icon with no override: ${icon}!`)
+
+		return 'help'
+	}
 
 	return icon
 }
