@@ -76,7 +76,6 @@ const ignoredProperties = [
 	'maxLength',
 	'multipleOf',
 	'markdownDescription',
-	'deprecationMessage',
 ]
 
 export function createSchema(part: JsonObject, requestSchema: (path: string) => JsonObject | undefined, path: string = '/') {
@@ -528,6 +527,14 @@ export class ValueSchema extends Schema {
 					return diagnostics
 				}
 			}
+		}
+
+		if ('deprecationMessage' in this.part) {
+			diagnostics.push({
+				severity: 'warning',
+				message: this.part.deprecationMessage as string,
+				path: this.path,
+			})
 		}
 
 		return diagnostics
