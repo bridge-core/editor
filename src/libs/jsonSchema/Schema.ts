@@ -13,7 +13,10 @@ export interface CompletionItem {
 }
 
 export abstract class Schema {
-	public constructor(public requestSchema: (path: string) => JsonObject | undefined, public path: string) {}
+	public constructor(
+		public requestSchema: (path: string) => JsonObject | undefined,
+		public path: string
+	) {}
 
 	public abstract validate(value: unknown): Diagnostic[]
 
@@ -64,13 +67,9 @@ const ignoredProperties = [
 	'description',
 	'$schema',
 	'$id',
-	// TODO: Proper implementation of these fields
 	'definitions',
-	'min',
-	'max',
-	'maxItems',
-	'minItems',
 	'examples',
+	// TODO: Proper implementation of these fields
 	'minimum',
 	'maximum',
 	'format',
@@ -80,11 +79,7 @@ const ignoredProperties = [
 	'deprecationMessage',
 ]
 
-export function createSchema(
-	part: JsonObject,
-	requestSchema: (path: string) => JsonObject | undefined,
-	path: string = '/'
-) {
+export function createSchema(part: JsonObject, requestSchema: (path: string) => JsonObject | undefined, path: string = '/') {
 	if ('$ref' in part) return new RefSchema(part, requestSchema, path)
 
 	if ('if' in part) return new IfSchema(part, requestSchema, path)
@@ -453,8 +448,7 @@ export class ValueSchema extends Schema {
 
 				for (const property of properties) {
 					if (!definedProperties.includes(property)) {
-						let matchesPatterns =
-							definedPatterns.find((pattern) => new RegExp(pattern).test(property)) !== undefined
+						let matchesPatterns = definedPatterns.find((pattern) => new RegExp(pattern).test(property)) !== undefined
 
 						if (!matchesPatterns && !additionalProperties) {
 							// TODO: Proper message
@@ -469,9 +463,7 @@ export class ValueSchema extends Schema {
 					} else {
 						const schema = createSchema(
 							(propertyDefinitions[property] as JsonObject) ??
-								patternDefinitions[
-									definedPatterns.find((pattern) => new RegExp(pattern).test(property))!
-								],
+								patternDefinitions[definedPatterns.find((pattern) => new RegExp(pattern).test(property))!],
 							this.requestSchema,
 							this.path + property + '/'
 						)
@@ -489,6 +481,28 @@ export class ValueSchema extends Schema {
 
 					diagnostics = diagnostics.concat(schema.validate(value[index]))
 				}
+			}
+
+			if ('minItems' in this.part) {
+				const minimum = this.part.items as number
+
+				if (value.length < minimum)
+					diagnostics.push({
+						severity: 'warning',
+						message: `Minimum ${minimum} values, have ${value.length}.`,
+						path: this.path,
+					})
+			}
+
+			if ('maxItems' in this.part) {
+				const maximum = this.part.items as number
+
+				if (value.length < maximum)
+					diagnostics.push({
+						severity: 'warning',
+						message: `Maximum ${maximum} values, have ${value.length}.`,
+						path: this.path,
+					})
 			}
 		} else {
 			if (this.part.enum) {
@@ -552,7 +566,7 @@ export class ValueSchema extends Schema {
 										label: property,
 										type: 'value',
 										value: property,
-									} as CompletionItem)
+									}) as CompletionItem
 							)
 							.filter((completion) => !((completion.value as string) in (value as JsonObject)))
 					)
@@ -566,9 +580,7 @@ export class ValueSchema extends Schema {
 							this.path + property + '/'
 						)
 
-						completions = completions.concat(
-							schema.getCompletionItems((value as JsonObject)[property], path)
-						)
+						completions = completions.concat(schema.getCompletionItems((value as JsonObject)[property], path))
 					}
 				}
 			}
@@ -597,7 +609,7 @@ export class ValueSchema extends Schema {
 										type: 'value',
 										label: value?.toString() ?? 'undefined',
 										value: value,
-									} as CompletionItem)
+									}) as CompletionItem
 							)
 							.filter((completion) => completion.value !== value)
 					)
