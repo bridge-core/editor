@@ -60,6 +60,9 @@ const validPartProperties = [
 	'pattern',
 	'default',
 	'doNotSuggest',
+	'minItems',
+	'maxItems',
+	'deprecationMessage',
 ]
 
 const ignoredProperties = [
