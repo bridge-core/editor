@@ -58,7 +58,20 @@ const categories: ComputedRef<{ [key: string]: string[] }> = computed(() => {
 })
 
 const validationError: ComputedRef<string | null> = computed(() => {
-	// selectedPreset
+	if(!selectedPreset.value) return null
+
+	for(const [fieldName, fieldId, fieldOptions] of selectedPreset.value.fields) {
+		if(!fieldOptions.validate) continue
+
+		for(const rule of fieldOptions.validate) {
+			const validate = PresetsWindow.validationRules[rule]
+			const value = createPresetOptions.value[fieldId] ?? ''
+			
+			const result = validate(value)
+
+			if(result) return result 
+		}
+	}
 
 	return null
 })

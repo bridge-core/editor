@@ -1406,7 +1406,11 @@
 			"tokens": {
 				"selectorArgument": "selector argument"
 			}
-		}
+		},
+		"invalidLetters": "Must not contain special characters",
+		"mustNotBeEmpty": "Must not be empty",
+		"mustBeLowercase": "Must be lowercase",
+		"mustBeNumeric": "Must be a number"
 	},
 	"bottomPanel": {
 		"terminal": {
