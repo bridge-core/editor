@@ -8,6 +8,7 @@ import { computed, onMounted, Ref, ref } from 'vue'
 import { TreeEditorTab } from '../TreeEditorTab'
 import { TreeElements, ObjectElement, ArrayElement, MoveEdit } from '../Tree'
 import { Settings } from '@/libs/settings/Settings'
+import { event } from '@tauri-apps/api'
 
 const get = Settings.useGet()
 
@@ -232,10 +233,11 @@ defineExpose({ open })
 					'--color': propertySelected ? 'var(--theme-color-backgroundSecondary)' : 'none',
 				}"
 				@click="typeof elementKey === 'string' ? clickProperty() : undefined"
-				@contextmenu.stop.prevent="
-					typeof elementKey === 'string'
-						? (event: MouseEvent) => emit('opencontextmenu', { selection: { type: 'property', tree }, event })
-						: undefined
+				@contextmenu.prevent.stop="
+					(event: MouseEvent) =>
+						typeof elementKey === 'string'
+							? emit('opencontextmenu', { selection: { type: 'property', tree }, event })
+							: undefined
 				"
 			>
 				<Icon
@@ -307,7 +309,7 @@ defineExpose({ open })
 					'--color': valueSelected ? 'var(--theme-color-backgroundSecondary)' : 'none',
 				}"
 				@click="editor.select(tree)"
-				@contextmenu.stop="(event: MouseEvent) => emit('opencontextmenu', {selection: { type: 'value', tree }, event})"
+				@contextmenu.stop.prevent="(event: MouseEvent) => emit('opencontextmenu', {selection: { type: 'value', tree }, event})"
 				>{{ get('hideBrackets') ? '' : tree instanceof ObjectElement ? '}' : ']' }}</span
 			>
 		</div>
