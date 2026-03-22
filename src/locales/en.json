@@ -1357,7 +1357,8 @@
 			"addValue": "Add Value",
 			"forceValue": "Force Value",
 			"edit": "Edit",
-			"childHasError": "One or more children have diagnostics"
+			"childHasError": "One or more children have diagnostics",
+			"convert": "Convert"
 		},
 		"langValidation": {
 			"noValue": {
@@ -1406,7 +1407,11 @@
 			"tokens": {
 				"selectorArgument": "selector argument"
 			}
-		}
+		},
+		"invalidLetters": "Must not contain special characters",
+		"mustNotBeEmpty": "Must not be empty",
+		"mustBeLowercase": "Must be lowercase",
+		"mustBeNumeric": "Must be a number"
 	},
 	"bottomPanel": {
 		"terminal": {
