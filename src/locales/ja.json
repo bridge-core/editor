@@ -628,6 +628,10 @@
 			},
 			"actions": {
 				"runLastProfile": "最新のプロファイルを実行する"
+			},
+			"build": {
+				"name": "ビルド",
+				"description": "デフォルトのビルドプロファイルを実行する"
 			}
 		},
 		"extensions": {
@@ -1060,7 +1064,13 @@
 				},
 				"outputFolder": {
 					"name": "出力フォルダー",
-					"description": "出力フォルダーをここにドロップしてください。"
+					"button": "出力フォルダーを選択",
+					"description": "出力フォルダーをここにドロップしてください。",
+					"warning": {
+						"notSupported": "このプラットフォームでは、出力フォルダの選択はサポートされていません",
+						"notSet": "デフォルトの出力フォルダが設定されていません！",
+						"overwritten": "デフォルトの出力フォルダが、プロジェクトの出力フォルダによって上書きされています"
+					}
 				}
 			},
 			"editor": {
@@ -1347,6 +1357,7 @@
 			"addArray": "配列の追加",
 			"addValue": "値の追加",
 			"forceValue": "必須",
+			"convert": "変換",
 			"edit": "編集",
 			"childHasError": "子要素に1件以上の問題があります"
 		},
@@ -1397,7 +1408,11 @@
 			"tokens": {
 				"selectorArgument": "セレクター引数"
 			}
-		}
+		},
+		"invalidLetters": "特殊文字を含んではいけません",
+		"mustNotBeEmpty": "空欄にしてはいけません",
+		"mustBeLowercase": "小文字で入力してください",
+		"mustBeNumeric": "数字でなければなりません"
 	},
 	"bottomPanel": {
 		"terminal": {
@@ -1430,6 +1445,19 @@
 		}
 	},
 	"projects": {
+		"clearOutputFolder": {
+			"name": "プロジェクトの出力フォルダをクリアする",
+			"description": "現在のプロジェクトの出力フォルダは無視してください"
+		},
+		"outputFolder": {
+			"button": "プロジェクトの出力フォルダを選択してください",
+			"description": "このプロジェクトのコンパイル結果が保存される出力フォルダ",
+			"warning": {
+				"notSupported": "このプラットフォームでは、出力フォルダの選択はサポートされていません",
+				"using": "このプロジェクトでは、ローカルのプロジェクトフォルダを使用しています",
+				"notUsing": "このプロジェクトでは、ローカルのプロジェクトフォルダを使用していません"
+			}
+		},
 		"loading": "プロジェクトを読み込んでいます..."
 	}
 }
