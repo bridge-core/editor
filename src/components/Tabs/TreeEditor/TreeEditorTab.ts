@@ -432,12 +432,16 @@ export class TreeEditorTab extends FileTab {
 				this.edit(new ReplaceEdit(treeSelection.tree, insertElement, () => {}))
 			} else {
 				if (!(insertElement instanceof ObjectElement)) return
-				if (!(treeSelection.tree instanceof ObjectElement)) return
 
-				for (const key of Object.keys(insertElement.children)) {
-					const childElement = buildTree(json[key], treeSelection.tree)
-					childElement.key = key
-					this.edit(new AddPropertyEdit(treeSelection.tree, key, childElement))
+				if (treeSelection.tree instanceof ObjectElement) {
+					for (const key of Object.keys(insertElement.children)) {
+						const childElement = buildTree(json[key], treeSelection.tree)
+						childElement.key = key
+						this.edit(new AddPropertyEdit(treeSelection.tree, key, childElement))
+					}
+				} else if (treeSelection.tree instanceof ArrayElement) {
+					insertElement.key = treeSelection.tree.children.length
+					this.edit(new AddElementEdit(treeSelection.tree, insertElement))
 				}
 			}
 
