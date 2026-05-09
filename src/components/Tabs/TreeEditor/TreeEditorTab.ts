@@ -5,7 +5,19 @@ import { BedrockProject } from '@/libs/project/BedrockProject'
 import { ProjectManager } from '@/libs/project/ProjectManager'
 import { FileTab } from '@/components/TabSystem/FileTab'
 import { Disposable, disposeAll } from '@/libs/disposeable/Disposeable'
-import { buildTree, ObjectElement, ParentElements, TreeEdit, TreeElements, TreeSelection } from './Tree'
+import {
+	AddElementEdit,
+	AddPropertyEdit,
+	ArrayElement,
+	buildTree,
+	DeleteElementEdit,
+	ObjectElement,
+	ParentElements,
+	TreeEdit,
+	TreeElements,
+	TreeSelection,
+	ValueElement,
+} from './Tree'
 import { CompletionItem, createSchema, Diagnostic } from '@/libs/jsonSchema/Schema'
 import { Settings } from '@/libs/settings/Settings'
 import * as JSONC from 'jsonc-parser'
@@ -256,6 +268,118 @@ export class TreeEditorTab extends FileTab {
 		if (Settings.get('autoSaveChanges')) {
 			this.interruptAutoSave.invoke()
 		}
+	}
+
+	public async copy() {
+		console.log(this.contextTree.value, this.selectedTree.value)
+
+		const tree = this.contextTree.value?.tree ?? this.selectedTree.value?.tree
+
+		if (!tree) return
+
+		const content = JSON.stringify(tree.toJson(), null, 2)
+
+		console.log(content)
+
+		const clipboardItem = new ClipboardItem({
+			['text/plain']: content,
+		})
+
+		await navigator.clipboard.write([clipboardItem])
+	}
+
+	public async cut() {
+		console.log(this.contextTree.value, this.selectedTree.value)
+
+		const tree = this.contextTree.value?.tree ?? this.selectedTree.value?.tree
+
+		if (!tree) return
+
+		const content = JSON.stringify(tree.toJson(), null, 2)
+
+		console.log(content)
+
+		const clipboardItem = new ClipboardItem({
+			['text/plain']: content,
+		})
+
+		await navigator.clipboard.write([clipboardItem])
+
+		this.edit(new DeleteElementEdit(tree))
+	}
+
+	private convertToMatchingType(value: string, types: string[]): any {
+		if (types.includes('number') || (types.includes('integer') && /^-?([0-9]*[.])?[0-9]+$/.test(value))) {
+			return parseFloat(value)
+		}
+
+		if (types.includes('boolean')) {
+			if (value === 'true') return true
+
+			if (value === 'false') return false
+		}
+
+		return value
+	}
+
+	private add(value: string) {
+		if (!this.selectedTree.value) return
+
+		const selectedTree = this.selectedTree.value
+
+		if (selectedTree.tree instanceof ObjectElement) {
+			let addValue: TreeElements = new ObjectElement(selectedTree.tree, value)
+
+			if (Settings.get('bridgePredictions')) {
+				const path = this.getTreeSchemaPath(selectedTree.tree) + value + '/'
+				const types = this.getTypes(path)
+				if (types[0] === 'number') {
+					addValue = new ValueElement(selectedTree.tree, value, 1)
+				} else if (types[0] === 'string') {
+					addValue = new ValueElement(selectedTree.tree, value, '')
+				} else if (types[0] === 'integer') {
+					addValue = new ValueElement(selectedTree.tree, value, 1)
+				} else if (types[0] === 'boolean') {
+					addValue = new ValueElement(selectedTree.tree, value, true)
+				} else if (types[0] === 'array') {
+					addValue = new ArrayElement(selectedTree.tree, value)
+				}
+			}
+
+			this.edit(new AddPropertyEdit(selectedTree.tree, value, addValue))
+		}
+
+		if (selectedTree.tree instanceof ArrayElement) {
+			let elementValue = value
+
+			// TODO: If adding an object with a property with the same name as value is valid, add that instead
+			if (Settings.get('bridgePredictions')) {
+				const path = this.getTreeSchemaPath(selectedTree.tree) + 'any_index/'
+				const types = this.getTypes(path)
+
+				elementValue = this.convertToMatchingType(value, types)
+			}
+
+			this.edit(
+				new AddElementEdit(selectedTree.tree, new ValueElement(selectedTree.tree, selectedTree.tree.children.length, elementValue))
+			)
+		}
+	}
+
+	public async paste() {
+		const clipboardItems = await navigator.clipboard.read()
+
+		console.log(clipboardItems)
+
+		const textItem = clipboardItems.find((item) => item.types.includes('text/plain'))
+
+		if (!textItem) return
+
+		const text = await (await textItem.getType('text/plain')).text()
+
+		console.log(text)
+
+		this.add(text)
 	}
 
 	public undo() {

@@ -1104,68 +1104,68 @@ function setupJsonTreeActions() {
 		})
 	)
 
-	// const copy = ActionManager.addAction(
-	// 	new Action({
-	// 		id: 'treeEditor.copy',
-	// 		trigger: () => {
-	// 			const focusedTab = TabManager.getFocusedTab()
+	const copy = ActionManager.addAction(
+		new Action({
+			id: 'treeEditor.copy',
+			trigger: () => {
+				const focusedTab = TabManager.getFocusedTab()
 
-	// 			if (focusedTab === null) return
+				if (focusedTab === null) return
 
-	// 			if (!(focusedTab instanceof TreeEditorTab)) return
+				if (!(focusedTab instanceof TreeEditorTab)) return
 
-	// 			focusedTab.copy()
-	// 		},
-	// 		keyBinding: 'Ctrl + C',
-	// 		name: 'actions.treeEditor.copy.name',
-	// 		description: 'actions.treeEditor.copy.description',
-	// 		icon: 'content_copy',
-	// 		visible: false,
-	// 		category: 'actions.treeEditor.name',
-	// 	})
-	// )
+				focusedTab.copy()
+			},
+			keyBinding: 'Ctrl + C',
+			name: 'actions.treeEditor.copy.name',
+			description: 'actions.treeEditor.copy.description',
+			icon: 'content_copy',
+			visible: false,
+			category: 'actions.treeEditor.name',
+		})
+	)
 
-	// const paste = ActionManager.addAction(
-	// 	new Action({
-	// 		id: 'treeEditor.paste',
-	// 		trigger: () => {
-	// 			const focusedTab = TabManager.getFocusedTab()
+	const paste = ActionManager.addAction(
+		new Action({
+			id: 'treeEditor.paste',
+			trigger: () => {
+				const focusedTab = TabManager.getFocusedTab()
 
-	// 			if (focusedTab === null) return
+				if (focusedTab === null) return
 
-	// 			if (!(focusedTab instanceof TreeEditorTab)) return
+				if (!(focusedTab instanceof TreeEditorTab)) return
 
-	// 			focusedTab.paste()
-	// 		},
-	// 		keyBinding: 'Ctrl + V',
-	// 		name: 'actions.treeEditor.paste.name',
-	// 		description: 'actions.treeEditor.paste.description',
-	// 		icon: 'content_paste',
-	// 		visible: false,
-	// 		category: 'actions.treeEditor.name',
-	// 	})
-	// )
+				focusedTab.paste()
+			},
+			keyBinding: 'Ctrl + V',
+			name: 'actions.treeEditor.paste.name',
+			description: 'actions.treeEditor.paste.description',
+			icon: 'content_paste',
+			visible: false,
+			category: 'actions.treeEditor.name',
+		})
+	)
 
-	// const cut = ActionManager.addAction(
-	// 	new Action({
-	// 		id: 'treeEditor.cut',
-	// 		trigger: () => {
-	// 			const focusedTab = TabManager.getFocusedTab()
+	const cut = ActionManager.addAction(
+		new Action({
+			id: 'treeEditor.cut',
+			trigger: () => {
+				const focusedTab = TabManager.getFocusedTab()
 
-	// 			if (focusedTab === null) return
+				if (focusedTab === null) return
 
-	// 			if (!(focusedTab instanceof TreeEditorTab)) return
+				if (!(focusedTab instanceof TreeEditorTab)) return
 
-	// 			focusedTab.cut()
-	// 		},
-	// 		keyBinding: 'Ctrl + X',
-	// 		name: 'actions.treeEditor.cut.name',
-	// 		description: 'actions.treeEditor.cut.description',
-	// 		icon: 'content_cut',
-	// 		visible: false,
-	// 		category: 'actions.treeEditor.name',
-	// 	})
-	// )
+				focusedTab.cut()
+			},
+			keyBinding: 'Ctrl + X',
+			name: 'actions.treeEditor.cut.name',
+			description: 'actions.treeEditor.cut.description',
+			icon: 'content_cut',
+			visible: false,
+			category: 'actions.treeEditor.name',
+		})
+	)
 
 	const deleteAction = ActionManager.addAction(
 		new Action({
@@ -1455,6 +1455,9 @@ function setupJsonTreeActions() {
 	)
 
 	for (const action of [
+		copy,
+		cut,
+		paste,
 		undo,
 		redo,
 		deleteAction,
