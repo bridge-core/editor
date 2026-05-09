@@ -272,15 +272,20 @@ export class TreeEditorTab extends FileTab {
 	}
 
 	public async copy() {
-		console.log(this.contextTree.value, this.selectedTree.value)
+		const treeSelection = this.contextTree.value ?? this.selectedTree.value
 
-		const tree = this.contextTree.value?.tree ?? this.selectedTree.value?.tree
+		if (!treeSelection) return
 
-		if (!tree) return
+		let json = treeSelection.tree.toJson()
 
-		const content = JSON.stringify(tree.toJson(), null, 2)
+		if (treeSelection.type === 'property') {
+			const newObject: any = {}
+			newObject[treeSelection.tree.key as string] = json
 
-		console.log(content)
+			json = newObject
+		}
+
+		const content = JSON.stringify(json, null, 2)
 
 		const clipboardItem = new ClipboardItem({
 			['text/plain']: content,
@@ -290,15 +295,20 @@ export class TreeEditorTab extends FileTab {
 	}
 
 	public async cut() {
-		console.log(this.contextTree.value, this.selectedTree.value)
+		const treeSelection = this.contextTree.value ?? this.selectedTree.value
 
-		const tree = this.contextTree.value?.tree ?? this.selectedTree.value?.tree
+		if (!treeSelection) return
 
-		if (!tree) return
+		let json = treeSelection.tree.toJson()
 
-		const content = JSON.stringify(tree.toJson(), null, 2)
+		if (treeSelection.type === 'property') {
+			const newObject: any = {}
+			newObject[treeSelection.tree.key as string] = json
 
-		console.log(content)
+			json = newObject
+		}
+
+		const content = JSON.stringify(json, null, 2)
 
 		const clipboardItem = new ClipboardItem({
 			['text/plain']: content,
@@ -306,7 +316,7 @@ export class TreeEditorTab extends FileTab {
 
 		await navigator.clipboard.write([clipboardItem])
 
-		this.edit(new DeleteElementEdit(tree))
+		this.edit(new DeleteElementEdit(treeSelection.tree))
 	}
 
 	private convertToMatchingType(value: string, types: string[]): any {
@@ -379,6 +389,15 @@ export class TreeEditorTab extends FileTab {
 		const text = await (await textItem.getType('text/plain')).text()
 
 		console.log(text)
+
+		const treeSelection = this.contextTree.value ?? this.selectedTree.value
+
+		console.log(this.contextTree.value)
+		console.log(this.selectedTree.value)
+
+		if (!treeSelection) return
+
+		console.log(treeSelection)
 
 		this.add(text)
 	}
