@@ -11,8 +11,11 @@ import {
 	ArrayElement,
 	buildTree,
 	DeleteElementEdit,
+	ModifyPropertyKeyEdit,
+	ModifyValueEdit,
 	ObjectElement,
 	ParentElements,
+	ReplaceEdit,
 	TreeEdit,
 	TreeElements,
 	TreeSelection,
@@ -333,54 +336,78 @@ export class TreeEditorTab extends FileTab {
 		return value
 	}
 
-	private add(value: string) {
-		if (!this.selectedTree.value) return
+	private addTree(treeSelection: TreeSelection, value: string) {
+		if (treeSelection === null) return
 
-		const selectedTree = this.selectedTree.value
-
-		if (selectedTree.tree instanceof ObjectElement) {
-			let addValue: TreeElements = new ObjectElement(selectedTree.tree, value)
+		if (treeSelection.tree instanceof ObjectElement) {
+			let addValue: TreeElements = new ObjectElement(treeSelection.tree, value)
 
 			if (Settings.get('bridgePredictions')) {
-				const path = this.getTreeSchemaPath(selectedTree.tree) + value + '/'
+				const path = this.getTreeSchemaPath(treeSelection.tree) + value + '/'
 				const types = this.getTypes(path)
 				if (types[0] === 'number') {
-					addValue = new ValueElement(selectedTree.tree, value, 1)
+					addValue = new ValueElement(treeSelection.tree, value, 1)
 				} else if (types[0] === 'string') {
-					addValue = new ValueElement(selectedTree.tree, value, '')
+					addValue = new ValueElement(treeSelection.tree, value, '')
 				} else if (types[0] === 'integer') {
-					addValue = new ValueElement(selectedTree.tree, value, 1)
+					addValue = new ValueElement(treeSelection.tree, value, 1)
 				} else if (types[0] === 'boolean') {
-					addValue = new ValueElement(selectedTree.tree, value, true)
+					addValue = new ValueElement(treeSelection.tree, value, true)
 				} else if (types[0] === 'array') {
-					addValue = new ArrayElement(selectedTree.tree, value)
+					addValue = new ArrayElement(treeSelection.tree, value)
 				}
 			}
 
-			this.edit(new AddPropertyEdit(selectedTree.tree, value, addValue))
+			this.edit(new AddPropertyEdit(treeSelection.tree, value, addValue))
 		}
 
-		if (selectedTree.tree instanceof ArrayElement) {
+		if (treeSelection.tree instanceof ArrayElement) {
 			let elementValue = value
 
 			// TODO: If adding an object with a property with the same name as value is valid, add that instead
 			if (Settings.get('bridgePredictions')) {
-				const path = this.getTreeSchemaPath(selectedTree.tree) + 'any_index/'
+				const path = this.getTreeSchemaPath(treeSelection.tree) + 'any_index/'
 				const types = this.getTypes(path)
 
 				elementValue = this.convertToMatchingType(value, types)
 			}
 
 			this.edit(
-				new AddElementEdit(selectedTree.tree, new ValueElement(selectedTree.tree, selectedTree.tree.children.length, elementValue))
+				new AddElementEdit(
+					treeSelection.tree,
+					new ValueElement(treeSelection.tree, treeSelection.tree.children.length, elementValue)
+				)
 			)
+		}
+	}
+
+	private editTree(treeSelection: TreeSelection, value: string) {
+		if (treeSelection === null) return
+
+		if (treeSelection.type === 'property') {
+			this.edit(new ModifyPropertyKeyEdit(treeSelection.tree.parent as ObjectElement, treeSelection.tree.key as string, value))
+
+			return
+		} else {
+			if (treeSelection.tree instanceof ValueElement) {
+				let elementValue = value
+
+				if (Settings.get('bridgePredictions')) {
+					const path = this.getTreeSchemaPath(treeSelection.tree)
+					const types = this.getTypes(path)
+
+					elementValue = this.convertToMatchingType(value, types)
+				}
+
+				this.edit(new ModifyValueEdit(treeSelection.tree, elementValue))
+
+				return
+			}
 		}
 	}
 
 	public async paste() {
 		const clipboardItems = await navigator.clipboard.read()
-
-		console.log(clipboardItems)
 
 		const textItem = clipboardItems.find((item) => item.types.includes('text/plain'))
 
@@ -388,18 +415,40 @@ export class TreeEditorTab extends FileTab {
 
 		const text = await (await textItem.getType('text/plain')).text()
 
-		console.log(text)
+		let json = null
+
+		try {
+			json = JSONC.parse(text)
+		} catch {}
 
 		const treeSelection = this.contextTree.value ?? this.selectedTree.value
 
-		console.log(this.contextTree.value)
-		console.log(this.selectedTree.value)
-
 		if (!treeSelection) return
 
-		console.log(treeSelection)
+		if (json) {
+			const insertElement = buildTree(json)
 
-		this.add(text)
+			if (treeSelection.type === 'value') {
+				this.edit(new ReplaceEdit(treeSelection.tree, insertElement, () => {}))
+			} else {
+				if (!(insertElement instanceof ObjectElement)) return
+				if (!(treeSelection.tree instanceof ObjectElement)) return
+
+				for (const key of Object.keys(insertElement.children)) {
+					const childElement = buildTree(json[key], treeSelection.tree)
+					childElement.key = key
+					this.edit(new AddPropertyEdit(treeSelection.tree, key, childElement))
+				}
+			}
+
+			return
+		}
+
+		if (treeSelection.type === 'value') {
+			this.editTree(treeSelection, text)
+		} else {
+			this.addTree(treeSelection, text)
+		}
 	}
 
 	public undo() {
