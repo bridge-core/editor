@@ -23,6 +23,7 @@ import { Settings } from '@/libs/settings/Settings'
 import * as JSONC from 'jsonc-parser'
 import { interupt } from '@/libs/Interupt'
 import { TabManager } from '@/components/TabSystem/TabManager'
+import { viewDocumentation } from '@/libs/Documentation'
 
 export class TreeEditorTab extends FileTab {
 	public component: Component | null = TreeEditorTabComponent
@@ -553,6 +554,39 @@ export class TreeEditorTab extends FileTab {
 		this.parentCompletions.value = valueSchema.getCompletionItems(this.tree.value.toJson(), parentPath)
 
 		console.timeEnd('Completions')
+	}
+
+	private getNextQuote(line: string) {
+		for (let i = -1; i < line.length; i++) {
+			if (line[i] === '"') return i
+		}
+		return line.length
+	}
+
+	private getPreviousQuote(line: string) {
+		for (let i = -2; i > 0; i--) {
+			if (line[i] === '"') return i + 1
+		}
+		return 0
+	}
+
+	public async viewDocumentation() {
+		const tree = this.contextTree.value?.tree ?? this.selectedTree.value?.tree
+
+		if (!tree) return
+
+		if (!this.fileType.documentation) return
+
+		const text = JSON.stringify(tree.toJson())
+
+		const wordStart = this.getPreviousQuote(text)
+		const wordEnd = this.getNextQuote(text)
+
+		const word = text.substring(wordStart, wordEnd)
+
+		if (!word) return
+
+		await viewDocumentation(this.fileType, word)
 	}
 
 	private interruptAutoSave = interupt(() => {

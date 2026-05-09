@@ -1192,24 +1192,24 @@ function setupJsonTreeActions() {
 		})
 	)
 
-	// const viewDocumentation = ActionManager.addAction(
-	// 	new Action({
-	// 		id: 'treeEditor.viewDocumentation',
-	// 		trigger: () => {
-	// 			const focusedTab = TabManager.getFocusedTab()
+	const viewDocumentation = ActionManager.addAction(
+		new Action({
+			id: 'treeEditor.viewDocumentation',
+			trigger: () => {
+				const focusedTab = TabManager.getFocusedTab()
 
-	// 			if (focusedTab === null) return
+				if (focusedTab === null) return
 
-	// 			if (!(focusedTab instanceof TextTab)) return
+				if (!(focusedTab instanceof TreeEditorTab)) return
 
-	// 			focusedTab.viewDocumentation()
-	// 		},
-	// 		name: 'actions.treeEditor.documentationLookup.name',
-	// 		description: 'actions.treeEditor.documentationLookup.description',
-	// 		icon: 'menu_book',
-	// 		category: 'actions.treeEditor.name',
-	// 	})
-	// )
+				focusedTab.viewDocumentation()
+			},
+			name: 'actions.treeEditor.documentationLookup.name',
+			description: 'actions.treeEditor.documentationLookup.description',
+			icon: 'menu_book',
+			category: 'actions.treeEditor.name',
+		})
+	)
 
 	const convertToObject = ActionManager.addAction(
 		new Action({
@@ -1467,6 +1467,7 @@ function setupJsonTreeActions() {
 		convertToNumber,
 		convertToString,
 		convertToBoolean,
+		viewDocumentation,
 	]) {
 		TabManager.focusedTabSystemChanged.on(() => {
 			action.setVisible(
