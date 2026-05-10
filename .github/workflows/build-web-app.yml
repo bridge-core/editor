@@ -17,7 +17,7 @@ concurrency:
 
 jobs:
     build-and-deploy:
-        if: ${{ !github.event.release.prerelease || github.event_name == 'workflow_dispatch' }}
+        if: ${{ !github.event.release.prerelease }}
         environment:
             name: github-pages
             url: ${{ steps.deployment.outputs.page_url }}
