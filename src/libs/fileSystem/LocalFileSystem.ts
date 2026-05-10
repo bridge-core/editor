@@ -25,6 +25,7 @@ export class LocalFileSystem extends BaseFileSystem {
 		// @ts-ignore TS being weird about errors
 		if (data instanceof Uint8Array) return data.buffer
 
+		// @ts-ignore array buffer yes....
 		return this.textEncoder.encode(data).buffer
 	}
 
