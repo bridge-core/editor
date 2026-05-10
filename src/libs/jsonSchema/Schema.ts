@@ -79,6 +79,7 @@ const ignoredProperties = [
 	'maxLength',
 	'multipleOf',
 	'markdownDescription',
+	'propertyNames',
 ]
 
 export function createSchema(part: JsonObject, requestSchema: (path: string) => JsonObject | undefined, path: string = '/') {

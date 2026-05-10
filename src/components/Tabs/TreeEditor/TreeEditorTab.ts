@@ -199,6 +199,8 @@ export class TreeEditorTab extends FileTab {
 		watch(this.expandedPaths, () => {
 			this.debouncedSaveState.invoke()
 		})
+
+		this.expand(this.tree.value, '/')
 	}
 
 	public async destroy() {
@@ -666,6 +668,22 @@ export class TreeEditorTab extends FileTab {
 		if (!word) return
 
 		await viewDocumentation(this.fileType, word)
+	}
+
+	private expand(tree: TreeElements, path: string) {
+		if (tree instanceof ObjectElement) {
+			this.expandedPaths.value.push(path)
+
+			for (const [key, child] of Object.entries(tree.children)) {
+				this.expand(child, path + key + '/')
+			}
+		} else if (tree instanceof ArrayElement) {
+			this.expandedPaths.value.push(path)
+
+			for (let index = 0; index < tree.children.length; index++) {
+				this.expand(tree.children[index], path + index.toString() + '/')
+			}
+		}
 	}
 
 	private debouncedSaveState = debounce(() => {
