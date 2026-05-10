@@ -27,6 +27,7 @@ import * as JSONC from 'jsonc-parser'
 import { interupt } from '@/libs/Interupt'
 import { TabManager } from '@/components/TabSystem/TabManager'
 import { viewDocumentation } from '@/libs/Documentation'
+import { debounce } from '@/libs/Debounce'
 
 export class TreeEditorTab extends FileTab {
 	public component: Component | null = TreeEditorTabComponent
@@ -35,6 +36,8 @@ export class TreeEditorTab extends FileTab {
 	public hasDocumentation = ref(false)
 
 	public tree: Ref<TreeElements> = ref(new ObjectElement(null))
+
+	public expandedPaths: Ref<string[]> = ref([])
 
 	private fileCache: string | null = null
 
@@ -192,6 +195,10 @@ export class TreeEditorTab extends FileTab {
 				if (event.id === 'inlineDiagnostics') this.validate()
 			})
 		)
+
+		watch(this.expandedPaths, () => {
+			this.debouncedSaveState.invoke()
+		})
 	}
 
 	public async destroy() {
@@ -218,6 +225,18 @@ export class TreeEditorTab extends FileTab {
 		const schemaData = ProjectManager.currentProject.schemaData
 
 		schemaData.removeFileForUpdate(this.path)
+	}
+
+	public async getState(): Promise<any> {
+		return {
+			expanded: this.expandedPaths.value,
+		}
+	}
+
+	public async recover(state: any): Promise<void> {
+		if (!state) return
+
+		this.expandedPaths.value = state.expanded
 	}
 
 	public async save() {
@@ -660,6 +679,12 @@ export class TreeEditorTab extends FileTab {
 
 		await viewDocumentation(this.fileType, word)
 	}
+
+	private debouncedSaveState = debounce(() => {
+		if (!this.active) return
+
+		this.saveState()
+	}, 50)
 
 	private interruptAutoSave = interupt(() => {
 		this.save()
