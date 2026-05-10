@@ -7,6 +7,7 @@ import Editor from '@/components/Editor/Editor.vue'
 import Windows from '@/components/Windows/Windows.vue'
 import { ImporterManager } from '@/libs/import/ImporterManager'
 import { onMounted } from 'vue'
+import { ImportedDirectoryEntry, ImportedFileEntry } from '@/libs/fileSystem/FileSystem'
 
 setupBeforeComponents()
 
@@ -31,9 +32,13 @@ async function drop(event: DragEvent) {
 
 	for (const handle of handles) {
 		if (handle.kind === 'file') {
-			await ImporterManager.importFile(handle as FileSystemFileHandle)
+			await ImporterManager.importFile(await ImportedFileEntry.fromHandle(handle as FileSystemFileHandle))
 		} else {
-			await ImporterManager.importDirectory(handle as FileSystemDirectoryHandle)
+			const entry = await ImportedDirectoryEntry.fromHandle(handle as FileSystemDirectoryHandle)
+
+			if (!entry) return
+
+			await ImporterManager.importDirectory(entry)
 		}
 	}
 }
