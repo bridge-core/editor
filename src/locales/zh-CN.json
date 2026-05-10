@@ -841,7 +841,7 @@
 			"title": "项目文件夹",
 			"content": "bridge.需要访问其项目文件夹才能正常工作。"
 		},
-		"extensionStore": {
+		"extensionLibrary": {
 			"title": "扩展商店",
 			"searchExtensions": "搜索扩展...",
 			"deleteExtension": "删除扩展",

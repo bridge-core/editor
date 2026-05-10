@@ -1,100 +1,335 @@
+<script lang="ts" setup>
+import Icon from '@/components/Common/Icon.vue'
+import IconButton from '@/components/Common/IconButton.vue'
+import ContextMenu from '@/components/Common/ContextMenu.vue'
+import FreeContextMenu from '@/components/Common/FreeContextMenu.vue'
+import ActionContextMenuItem from '@/components/Common/ActionContextMenuItem.vue'
+import ContextMenuDivider from '@/components/Common/ContextMenuDivider.vue'
+import SubMenu from '@/components/Common/SubMenu.vue'
+import ContextMenuItem from '@/components/Common/ContextMenuItem.vue'
+
+import { TabSystem } from './TabSystem'
+import { FileTab } from './FileTab'
+import { Settings } from '@/libs/settings/Settings'
+import { TabManager } from './TabManager'
+import { computed, ComputedRef, Ref, ref, ShallowRef, shallowRef } from 'vue'
+import { ProjectManager } from '@/libs/project/ProjectManager'
+import { BedrockProject } from '@/libs/project/BedrockProject'
+import { useTabActions } from '@/libs/actions/tab/TabActionManager'
+import { ActionManager } from '@/libs/actions/ActionManager'
+import { useTranslate } from '@/libs/locales/Locales'
+import { Tab } from './Tab'
+
+const props = defineProps({
+	instance: {
+		type: TabSystem,
+		required: true,
+	},
+})
+
+const t = useTranslate()
+
+const get = Settings.useGet()
+
+const tabActions = useTabActions()
+
+const currentTabActions: ComputedRef<string[]> = computed(() => {
+	const selectedTab = props.instance.selectedTab.value
+
+	if (!selectedTab) return []
+
+	if (!(selectedTab instanceof FileTab)) return []
+
+	const path = selectedTab.path
+
+	if (!ProjectManager.currentProject || !(ProjectManager.currentProject instanceof BedrockProject)) return []
+
+	const fileType = ProjectManager.currentProject.fileTypeData.get(path)
+
+	if (!fileType) return []
+
+	return tabActions.value.filter((tabAction) => tabAction.fileTypes.includes(fileType.id)).map((tabAction) => tabAction.action)
+})
+
+const contextMenu: Ref<typeof FreeContextMenu | null> = ref(null)
+const contextMenuTab: ShallowRef<Tab | null> = shallowRef(null)
+const contextMenuTabActions: Ref<string[]> = ref([])
+
+function getTabFromTarget(target: HTMLElement): HTMLElement | null {
+	if (target.dataset.tab === 'tab') return target
+
+	if (target.parentElement) return getTabFromTarget(target.parentElement)
+
+	return null
+}
+
+function dragStart(event: DragEvent, tab: Tab) {
+	event.stopPropagation()
+
+	TabSystem.draggingTab.value = tab
+}
+
+function dragOver(event: DragEvent, tab: Tab) {
+	event.preventDefault()
+	event.stopPropagation()
+
+	if (!event.target) return
+
+	const bounds = (getTabFromTarget(event.target as HTMLElement) ?? (event.target as HTMLElement)).getBoundingClientRect()
+
+	const center = (bounds.left + bounds.right) / 2
+
+	TabSystem.dropTargetTab.value = tab
+	TabSystem.dropSide.value = event.clientX >= center ? 'right' : 'left'
+}
+
+function dragOverBack(event: DragEvent) {
+	event.preventDefault()
+	event.stopPropagation()
+
+	TabSystem.dropTargetTab.value = props.instance.tabs.value[props.instance.tabs.value.length - 1] ?? null
+	TabSystem.dropSide.value = 'right'
+}
+
+async function drop(event: DragEvent) {
+	event.stopPropagation()
+
+	const dropTargetTab = TabSystem.dropTargetTab.value
+	const draggingTab = TabSystem.draggingTab.value
+
+	if (!dropTargetTab) return
+
+	if (!draggingTab) return
+
+	const dropIndex = props.instance.indexOfTab(dropTargetTab) + (TabSystem.dropSide.value === 'right' ? 1 : 0)
+
+	if (props.instance.hasTab(draggingTab)) {
+		props.instance.orderTab(draggingTab, dropIndex)
+	} else {
+		const sourceTabSystem = TabManager.getTabSystemWithTab(draggingTab)!
+
+		await sourceTabSystem.removeTabSafe(draggingTab)
+
+		await props.instance.addTab(draggingTab, true, draggingTab.temporary.value, dropIndex)
+	}
+}
+
+let dragLevel = 0
+
+function dragEnter(event: DragEvent) {
+	if (!event.target) return
+	if ((event.target as HTMLElement).dataset.ignoreDrag === 'true') return
+
+	dragLevel++
+}
+
+function dragExit(event: DragEvent) {
+	if (!event.target) return
+	if ((event.target as HTMLElement).dataset.ignoreDrag === 'true') return
+
+	dragLevel--
+
+	if (dragLevel === 0) TabSystem.dropTargetTab.value = null
+}
+
+function dragEnd(event: DragEvent) {
+	TabSystem.dropTargetTab.value = null
+	TabSystem.draggingTab.value = null
+	dragLevel = 0
+}
+</script>
+
 <template>
-	<div
-		v-if="tabSystem && tabSystem.shouldRender.value"
-		:style="{
-			'margin-right': '1px',
-			width: isMobile ? '100%' : 'calc(50% - 100px)',
-			height: isMobile ? '50%' : '100%',
-		}"
-	>
-		<TabBar :id="id" />
-		<keep-alive>
+	<div class="basis-0 min-w-0 flex-1 h-full border-background-secondary" @click="() => instance.focus()">
+		<div
+			class="flex gap-2 overflow-x-auto px-2 -mx-2"
+			:class="{ 'mb-2': currentTabActions.length === 0 }"
+			@dragover="dragOverBack"
+			@drop="drop"
+			@dragend="dragEnd"
+			@dragenter="dragEnter"
+			@dragexit="dragExit"
+		>
+			<div
+				class="flex px-2 -mx-2"
+				v-for="tab in instance.tabs.value"
+				draggable="true"
+				@dragstart="(event) => dragStart(event, tab)"
+				@dragover="(event) => dragOver(event, tab)"
+				@drop="drop"
+				@dragend="dragEnd"
+				@dragenter="dragEnter"
+				@dragexit="dragExit"
+				data-tab="tab"
+			>
+				<div
+					v-if="TabSystem.dropTargetTab.value?.id === tab.id && TabSystem.dropSide.value === 'left'"
+					class="self-stretch rounded my-1 bg-accent w-[2px] mr-[calc(0.25rem-1px)] ml-[calc(-0.25rem-1px)]"
+					data-ignore-drag="true"
+				></div>
+
+				<div
+					class="flex items-center gap-1 px-2 py-1 rounded cursor-pointer transition-[colors, border-color] duration-100 ease-out group border-2 border-background"
+					:class="{
+						'max-w-[12rem]': get('compactTabDesign'),
+						'bg-background-secondary':
+							instance.selectedTab.value === tab && TabManager.focusedTabSystem.value?.id === instance.id,
+						'bg-background-transparent hover:bg-background-secondary hover:border-background-secondary':
+							instance.selectedTab.value !== tab || TabManager.focusedTabSystem.value?.id !== instance.id,
+						'border-background-secondary': instance.selectedTab.value === tab,
+					}"
+					@click="() => instance.selectTab(tab)"
+					@contextmenu.prevent.stop="
+						(event) => {
+							contextMenuTab = tab
+
+							if (
+								tab instanceof FileTab &&
+								ProjectManager.currentProject &&
+								ProjectManager.currentProject instanceof BedrockProject
+							) {
+								const fileType = ProjectManager.currentProject.fileTypeData.get(tab.path)
+
+								if (fileType) {
+									contextMenuTabActions = tabActions
+										.filter((tabAction) => tabAction.fileTypes.includes(fileType.id))
+										.map((tabAction) => tabAction.action)
+								}
+							}
+
+							contextMenu?.open(event)
+						}
+					"
+				>
+					<div class="relative">
+						<div
+							v-if="tab instanceof FileTab && tab.modified.value"
+							class="bg-behaviorPack border-2 border-[var(--border-color)] w-3 h-3 rounded-full absolute right-[-0.25rem] top-1"
+							:style="{
+								'--border-color':
+									instance.selectedTab.value == tab
+										? 'var(--theme-color-backgroundSecondary)'
+										: 'var(--theme-color-background)',
+							}"
+						></div>
+
+						<Icon v-if="tab.icon" :icon="tab.icon.value ?? 'help'" class="text-base text-behaviorPack" />
+					</div>
+
+					<p
+						class="font-theme select-none overflow-hidden text-ellipsis whitespace-nowrap h-6 transition-colors duration-100 ease-out basis-0 grow"
+						:class="{
+							'text-text': instance.selectedTab.value === tab,
+							'text-text-secondary group-hover:text-text': instance.selectedTab.value !== tab,
+							italic: tab.temporary.value && !get('keepTabsOpen'),
+						}"
+					>
+						{{ tab.name.value ?? 'Tab' }}
+					</p>
+
+					<IconButton icon="close" class="text-base" @click.stop="() => instance.removeTabSafe(tab)" />
+				</div>
+
+				<div
+					v-if="TabSystem.dropTargetTab.value?.id === tab.id && TabSystem.dropSide.value === 'right'"
+					class="self-stretch rounded my-1 bg-accent w-[2px] mr-[calc(-0.25rem-1px)] ml-[calc(0.25rem-1px)]"
+					data-ignore-drag="true"
+				></div>
+			</div>
+		</div>
+
+		<div
+			v-if="currentTabActions.length === 1"
+			@click="ActionManager.trigger(currentTabActions[0], (<FileTab>instance.selectedTab.value!).path)"
+			class="flex items-center select-none cursor-pointer group mt-1 mb-2"
+		>
+			<Icon icon="arrow_right" class="text-primary group-hover:text-accent transition-colors duration-100 ease-in-out" />
+
+			<p class="text-sm text-text-secondary group-hover:text-accent transition-colors duration-100 ease-in-out">
+				{{ t(ActionManager.actions[currentTabActions[0]].name ?? 'actions.unknown.name') }}
+			</p>
+		</div>
+
+		<ContextMenu>
+			<template #main="{ toggle }">
+				<div
+					v-if="currentTabActions.length > 1"
+					@click="toggle"
+					class="flex items-center select-none cursor-pointer group mt-1 mb-2"
+				>
+					<Icon icon="arrow_right" class="text-primary group-hover:text-accent transition-colors duration-100 ease-in-out" />
+
+					<p class="text-sm text-text-secondary group-hover:text-accent transition-colors duration-100 ease-in-out">
+						{{ t('actions.tabActions') }}
+					</p>
+				</div>
+			</template>
+
+			<template #menu="{ close }">
+				<div class="w-56 bg-background-secondary rounded shadow-window overflow-hidden relative z-10">
+					<ActionContextMenuItem
+						v-for="action in currentTabActions"
+						:action="action"
+						:data="() => (<FileTab>instance.selectedTab.value!).path"
+						@click="close"
+					/>
+				</div>
+			</template>
+		</ContextMenu>
+
+		<div class="w-full tab-content">
 			<component
-				:is="tabSystem.currentComponent"
-				:key="`${tabSystem.uuid}.${
-					tabSystem.currentComponent.name ||
-					(tabSystem.selectedTab || {}).type ||
-					(tabSystem.selectedTab || {}).name
-				}`"
-				:style="`height: ${tabHeight}px; width: 100%;`"
-				:height="tabHeight"
-				:tab="tabSystem.selectedTab"
-				:id="id"
+				v-if="instance.selectedTab.value"
+				:instance="instance.selectedTab.value"
+				:is="instance.selectedTab.value.component"
+				:key="instance.selectedTab.value.id"
 			/>
-		</keep-alive>
+		</div>
+
+		<FreeContextMenu ref="contextMenu" v-slot="{ close }">
+			<ActionContextMenuItem action="tabs.close" :data="() => contextMenuTab!" @click.stop="close" />
+			<ActionContextMenuItem action="tabs.closeAll" @click.stop="close" />
+			<ActionContextMenuItem action="tabs.closeToRight" :data="() => contextMenuTab!" @click.stop="close" />
+			<ActionContextMenuItem action="tabs.closeSaved" @click.stop="close" />
+			<ActionContextMenuItem action="tabs.closeOther" :data="() => contextMenuTab!" @click.stop="close" />
+
+			<ContextMenuDivider />
+
+			<ActionContextMenuItem action="tabs.splitscreen" :data="() => contextMenuTab!" @click.stop="close" />
+			<ActionContextMenuItem
+				v-if="contextMenuTab!.temporary.value"
+				action="tabs.keepOpen"
+				:data="() => contextMenuTab!"
+				@click.stop="close"
+			/>
+
+			<ContextMenuDivider v-if="contextMenuTabActions.length > 0" />
+
+			<SubMenu v-if="contextMenuTabActions.length > 0">
+				<template #main="slotProps">
+					<ContextMenuItem icon="more_horiz" text="actions.more" @mouseenter="slotProps.show" @mouseleave="slotProps.hide" />
+				</template>
+
+				<template #menu="">
+					<ActionContextMenuItem
+						v-for="action in contextMenuTabActions"
+						:action="action"
+						@click="
+							() => {
+								ActionManager.trigger(action, (<FileTab>instance.selectedTab.value!).path)
+
+								close()
+							}
+						"
+					/>
+				</template>
+			</SubMenu>
+		</FreeContextMenu>
 	</div>
 </template>
 
-<script>
-import TabBar from '/@/components/TabSystem/TabBar.vue'
-import { App } from '/@/App'
-import { AppToolbarHeightMixin } from '/@/components/Mixins/AppToolbarHeight'
-import { useTabSystem } from '../Composables/UseTabSystem'
-import { toRefs, watch } from 'vue'
-
-export default {
-	name: 'TabSystem',
-	mixins: [AppToolbarHeightMixin],
-	props: {
-		id: {
-			type: Number,
-			default: 0,
-		},
-	},
-	setup(props) {
-		const { id } = toRefs(props)
-		const { tabSystem } = useTabSystem(id)
-
-		watch(tabSystem, () => {
-			if (!tabSystem.value) return
-
-			watch(tabSystem.value.shouldRender, () => {
-				App.getApp().then((app) => app.windowResize.dispatch())
-			})
-		})
-
-		return {
-			tabSystem,
-		}
-	},
-	components: {
-		TabBar,
-	},
-	data: () => ({
-		windowHeight: window.innerHeight,
-	}),
-	async mounted() {
-		const app = await App.getApp()
-		app.windowResize.on(this.updateWindowHeight)
-	},
-	async destroyed() {
-		const app = await App.getApp()
-		app.windowResize.off(this.updateWindowHeight)
-		app.windowResize.dispatch()
-	},
-	computed: {
-		tabBarHeight() {
-			if (!this.tabSystem?.selectedTab) return 0
-			return this.tabSystem?.selectedTab.actions.length > 0 ? 48 + 25 : 48
-		},
-		tabHeight() {
-			return (
-				(this.windowHeight - this.appToolbarHeightNumber) /
-					(this.tabSystem?.isSharingScreen.value && this.isMobile
-						? 2
-						: 1) -
-				this.tabBarHeight -
-				App.bottomPanel.currentHeight.value
-			)
-		},
-		isMobile() {
-			return this.$vuetify.breakpoint.mobile
-		},
-	},
-	methods: {
-		updateWindowHeight() {
-			this.windowHeight = window.innerHeight
-		},
-	},
+<style scoped>
+.tab-content {
+	height: calc(100% - 2.5rem - 0.5rem);
 }
-</script>
+</style>

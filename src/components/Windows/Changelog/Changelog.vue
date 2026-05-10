@@ -1,34 +1,31 @@
 <template>
-	<BaseWindow
-		windowTitle="windows.changelogWindow.title"
-		:isVisible="state.isVisible"
-		:hasMaximizeButton="false"
-		:isFullscreen="false"
-		:width="600"
-		:height="600"
-		@closeWindow="onClose"
-	>
-		<template #default>
-			<div class="mt-4 mb-2 d-flex align-center">
-				<v-icon color="primary" class="mr-2" large>mdi-update</v-icon>
-				<h1 class="text-xl font-semibold">v{{ window.version }}</h1>
-			</div>
-
-			<v-divider class="mb-4" />
-			<div class="changelog" v-html="window.changelog"></div>
-		</template>
-	</BaseWindow>
+	<Window :name="t('windows.changelogWindow.title')" @close="Windows.close(ChangelogWindow)">
+		<div class="w-full max-w-2xl overflow-auto h-[42rem] p-8" :class="{ 'h-full': isMobile }">
+			<div v-html="content" class="changelog" />
+		</div>
+	</Window>
 </template>
 
 <script lang="ts" setup>
-import BaseWindow from '/@/components/Windows/Layout/BaseWindow.vue'
+import Window from '@/components/Windows/Window.vue'
 
-const props = defineProps(['window'])
-const state = props.window.getState()
+import { onMounted, ref } from 'vue'
+import { baseUrl } from '@/libs/app/AppEnv'
+import { useTranslate } from '@/libs/locales/Locales'
+import { Windows } from '../Windows'
+import { ChangelogWindow } from './ChangelogWindow'
+import { useIsMobile } from '@/libs/Mobile'
 
-function onClose() {
-	props.window.close()
-}
+const t = useTranslate()
+
+const isMobile = useIsMobile()
+
+const content = ref('')
+
+onMounted(async () => {
+	const response = await fetch(baseUrl + 'changelog.html')
+	content.value = await response.text()
+})
 </script>
 
 <style>
@@ -36,34 +33,36 @@ function onClose() {
 	margin-bottom: 24px;
 }
 
-.changelog hr {
-	margin-bottom: 24px;
-}
-
 .changelog img {
 	max-width: 100%;
+
+	@apply mt-4 mb-4;
 }
 
 .changelog h1 {
-	@apply text-3xl font-bold;
+	@apply text-3xl font-bold mb-4 font-theme text-text;
 }
 .changelog h2 {
-	@apply text-2xl font-semibold;
+	@apply text-2xl font-semibold mb-2 font-theme text-text;
 }
 .changelog h3 {
-	@apply text-xl font-semibold;
+	@apply text-xl font-semibold mb-2 font-theme text-text;
 }
 .changelog h4 {
-	@apply text-lg font-medium;
+	@apply text-lg font-medium font-theme text-text;
 }
 .changelog h5 {
-	@apply text-base font-semibold;
+	@apply text-base font-semibold font-theme text-text;
 }
 .changelog h6 {
-	@apply text-base font-medium;
+	@apply text-base font-medium font-theme text-text;
 }
 
-.changelog li {
-	@apply list-disc;
+.changelog p {
+	@apply text-base font-normal mb-2 font-theme text-text;
+}
+
+.changelog hr {
+	@apply my-6 border-background-secondary;
 }
 </style>

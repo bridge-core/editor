@@ -1,0 +1,49 @@
+import { Runtime } from '@bridge-editor/js-runtime'
+import { compileScript, compileTemplate, parse } from '@vue/compiler-sfc'
+import { Component, defineComponent } from 'vue'
+import { fileSystem } from '@/libs/fileSystem/FileSystem'
+
+export async function compileSFC(path: string, runtime: Runtime): Promise<Component> {
+	const source = await fileSystem.readFileText(path)
+
+	const parseResult = parse(source)
+
+	const compiledScript: any = compileScript(parseResult.descriptor, {
+		id: path,
+		isProd: true,
+		templateOptions: {
+			compilerOptions: {
+				hmr: false,
+				mode: 'module',
+				inline: true,
+			},
+		},
+		inlineTemplate: true,
+	})
+
+	const templateResult = compileTemplate({
+		source,
+		filename: path,
+		id: path,
+		isProd: true,
+		compilerOptions: {
+			hmr: false,
+			mode: 'module',
+			inline: true,
+		},
+	})
+
+	runtime.clearCache()
+	const setupModule = await runtime.run(path, {}, compiledScript.content)
+
+	runtime.clearCache()
+	const renderModule = await runtime.run(path, {}, templateResult.code)
+
+	const componentOptions = setupModule.__default__
+
+	componentOptions.render = renderModule.render
+
+	const component = defineComponent(componentOptions)
+
+	return component
+}

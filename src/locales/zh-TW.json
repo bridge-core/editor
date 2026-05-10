@@ -392,7 +392,7 @@
 			"title": "專案資料夾",
 			"content": "bridge.必須存取專案資料夾"
 		},
-		"extensionStore": {
+		"extensionLibrary": {
 			"title": "擴充元件商店",
 			"searchExtensions": "搜尋擴充元件...",
 			"activateExtension": "啟用擴充元件",

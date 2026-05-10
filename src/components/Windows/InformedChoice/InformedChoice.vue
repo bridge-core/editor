@@ -1,49 +1,40 @@
-<template>
-	<BaseWindow
-		:windowTitle="window.title"
-		:isVisible="state.isVisible"
-		:hasCloseButton="!window.opts.isPersistent"
-		:hasMaximizeButton="false"
-		:percentageWidth="50"
-		:maxPercentageHeight="80"
-		:isPersistent="window.opts.isPersistent"
-		heightUnset
-		@closeWindow="onClose"
-	>
-		<template #default>
-			<InfoPanel
-				v-if="window.topPanel"
-				class="mb-2"
-				:infoPanel="window.topPanel"
-			/>
-
-			<ActionViewer
-				v-for="(action, id) in state.actionManager.state"
-				:key="id"
-				:action="action"
-				:hideTriggerButton="true"
-				v-ripple
-				@click.native="onClick(action)"
-				style="cursor: pointer"
-			/>
-		</template>
-	</BaseWindow>
-</template>
-
 <script lang="ts" setup>
-import BaseWindow from '/@/components/Windows/Layout/BaseWindow.vue'
-import ActionViewer from '/@/components/Actions/ActionViewer.vue'
-import InfoPanel from '/@/components/InfoPanel/InfoPanel.vue'
-import type { SimpleAction } from '../../Actions/SimpleAction'
+import Window from '@/components/Windows/Window.vue'
 
-const props = defineProps(['window'])
-const state = props.window.getState()
+import { useTranslate } from '@/libs/locales/Locales'
+import type { InformedChoiceWindow } from './InformedChoiceWindow'
+import { Windows } from '../Windows'
+import Icon from '@/components/Common/Icon.vue'
 
-function onClose() {
-	props.window.close()
-}
-function onClick(action: SimpleAction) {
-	props.window.close()
-	action.trigger()
+const t = useTranslate()
+
+const { window } = defineProps<{ window: InformedChoiceWindow }>()
+
+function cancel() {
+	window.cancel()
+
+	Windows.close(window)
 }
 </script>
+
+<template>
+	<Window :name="t(window.name)" @close="cancel">
+		<div class="p-4 pb-1 pt-0">
+			<p class="mb-4 max-w-sm font-theme flex flex-col gap-4">
+				<div v-for="choice in window.choices" class="bg-background-secondary p-4 rounded border-background hover:border-accent border-2 transition-colors duration-100 ease-out group cursor-pointer" @click="() => {
+					choice.choose()
+
+					Windows.close(window)
+				}">
+					<span class="flex gap-2 items-center mb-1">
+						<Icon :icon="choice.icon" class="text-primary"/>
+
+						<h1 class="font-theme font-bold text-lg">{{ t(choice.name) }}</h1>
+					</span>
+
+					<p class="font-theme">{{ t(choice.description) }}</p>
+				</div>
+			</p>
+		</div>
+	</Window>
+</template>

@@ -910,7 +910,7 @@
 			"title": "Project Map",
 			"content": "bridge. heeft toegang tot zijn projectmap nodig om correct te werken."
 		},
-		"extensionStore": {
+		"extensionLibrary": {
 			"title": "Uitbreiding Winkel",
 			"searchExtensions": "Extensie zoeken...",
 			"deleteExtension": "Extensie Verwijderen",

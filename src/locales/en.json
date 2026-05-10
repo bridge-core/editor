@@ -116,8 +116,8 @@
 		"clientManifest": "Client Manifest",
 		"skinManifest": "Skin Manifest",
 		"geometry": "Geometry",
-		"customCommand": "Command",
-		"customComponent": "Component",
+		"customCommand": "Dash Command",
+		"customComponent": "Dash Component",
 		"clientAnimation": "Client Animation",
 		"clientAnimationController": "Client Animation Controller",
 		"clientEntity": "Client Entity",
@@ -156,291 +156,351 @@
 	},
 	"actions": {
 		"name": "Actions",
-		"viewBridgeFolder": {
-			"name": "View bridge. Folder",
-			"description": "View the folder where bridge. stores your projects"
+		"rebinding": "Rebinding",
+		"unbound": "Unbound",
+		"more": "More",
+		"tabActions": "Tab Actions",
+		"unknown": {
+			"name": "Unkown Action",
+			"description": "This action is missing!"
 		},
-		"about": {
-			"name": "About",
-			"description": "About bridge."
+		"misc": {
+			"name": "Misc"
 		},
-		"launchMinecraft": {
-			"name": "Launch Minecraft",
-			"description": "Launch Minecraft to test your projects"
-		},
-		"download": {
-			"name": "Download",
-			"description": "Download this file or folder"
-		},
-		"fullscreen": {
-			"name": "Fullscreen",
-			"description": "Toggle fullscreen mode"
-		},
-		"viewConnectedFiles": {
-			"name": "View Connected Files",
-			"description": "View all files connected to this file"
-		},
-		"viewExtensionsFolder": {
-			"name": "View Extensions Folder",
-			"description": "View the folder where bridge. stores global extensions"
-		},
-		"open": {
-			"name": "Open",
-			"description": "Open the file in the editor"
-		},
-		"openWith": {
-			"name": "Open With",
-			"description": "Open the file in the editor"
-		},
-		"openInSplitScreen": {
-			"name": "Open in Split Screen",
-			"description": "Open the file in split screen mode"
-		},
-		"edit": {
-			"name": "Edit",
-			"description": "Edit the file or folder"
-		},
-		"delete": {
-			"name": "Delete",
-			"description": "Delete a file or folder",
-			"confirmText": "Are you sure that you want to delete ",
-			"noRestoring": "You won't be able to restore it later!"
-		},
-		"rename": {
-			"name": "Rename",
-			"description": "Rename a file",
-			"sameName": "Your new file name only differs in capitalization. This is not allowed on Windows."
-		},
-		"duplicate": {
-			"name": "Duplicate",
-			"description": "Duplicate a file"
-		},
-		"viewCompilerOutput": {
-			"name": "Compiler Output",
-			"view": "View Compiler Output",
-			"description": "View the current compiler output for this file",
-			"fileMissing": "It does not look like this file was compiled yet."
-		},
-		"revealPath": {
-			"name": "Reveal Path",
-			"description": "Reveals the location of a file or folder"
-		},
-		"revealInFileExplorer": {
-			"name": "Reveal in File Explorer",
-			"description": "Reveals the location of a file or folder in the file explorer"
-		},
-		"createFile": {
-			"name": "Create File",
-			"description": "Create a new file"
-		},
-		"importFile": {
-			"name": "Import File"
-		},
-		"createFolder": {
-			"name": "Create Folder",
-			"description": "Create a new folder"
-		},
-		"findInFolder": {
-			"name": "Find in Folder",
-			"description": "Search the contents of a folder"
-		},
-		"goHome": {
-			"name": "Go Home",
-			"description": "Go back to the home screen"
-		},
-		"newProject": {
-			"name": "New Project",
-			"description": "Create a new bridge. project"
-		},
-		"newFile": {
-			"name": "New File",
-			"description": "Create a new Add-On feature"
-		},
-		"openFile": {
-			"name": "Open File",
-			"description": "Open a file to edit it with bridge."
-		},
-		"openFolder": {
-			"name": "Open Folder",
-			"description": "Open a folder to edit it, set it as an output folder or trigger other actions"
-		},
-		"searchFile": {
-			"name": "Search File",
-			"description": "Search and open a file from the current project"
-		},
-		"saveFile": {
-			"name": "Save File",
-			"description": "Save the currently opened file"
-		},
-		"saveAs": {
-			"name": "Save As",
-			"description": "Save the currently opened file under a different name"
-		},
-		"saveAll": {
-			"name": "Save All",
-			"description": "Save all currently opened files"
-		},
-		"closeFile": {
-			"name": "Close File",
-			"description": "Close the currently opened file"
-		},
-		"settings": {
-			"name": "Settings",
-			"description": "Open bridge.'s app settings"
-		},
-		"extensions": {
-			"name": "Extensions",
-			"description": "Install and manage your installed extensions"
-		},
-		"copy": {
-			"name": "Copy",
-			"description": "Copy selected text to the clipboard"
-		},
-		"cut": {
-			"name": "Cut",
-			"description": "Copy selected text to the clipboard and remove it from the original context"
-		},
-		"paste": {
-			"name": "Paste",
-			"description": "Paste clipboard content"
-		},
-		"docs": {
-			"name": "Open bedrock.dev",
-			"description": "Opens the Minecraft Add-On documentation"
-		},
-		"minecraftDocs": {
-			"name": "Open Minecraft Documentation",
-			"description": "Opens the Minecraft Bedrock Add-On documentation"
-		},
-		"releases": {
-			"name": "Releases",
-			"description": "View the latest bridge. releases"
-		},
-		"bugReports": {
-			"name": "Bug Reports",
-			"description": "Report an issue with bridge."
-		},
-		"twitter": {
-			"name": "Twitter",
-			"description": "Follow bridge. on Twitter"
-		},
-		"extensionAPI": {
-			"name": "Extension API",
-			"description": "Read more about bridge.'s extension API"
-		},
-		"gettingStarted": {
-			"name": "Getting Started",
-			"description": "Read our guide on how to get started with bridge."
-		},
-		"faq": {
-			"name": "FAQ",
-			"description": "Read through frequently asked questions about developing Add-Ons with bridge."
-		},
-		"reloadAutoCompletions": {
-			"name": "Reload Auto-Completions",
-			"description": "Reloads all auto-completion data"
-		},
-		"reloadExtensions": {
-			"name": "Reload Extensions",
-			"description": "Reloads all extensions"
-		},
-		"moveToSplitScreen": {
-			"name": "Move to Split Screen",
-			"description": "Opens a split screen view and moves this tab to it"
-		},
-		"closeTab": {
-			"name": "Close Tab",
-			"description": "Close this tab"
-		},
-		"closeAll": {
-			"name": "Close All",
-			"description": "Close all tabs"
-		},
-		"closeTabsToRight": {
-			"name": "Close Tabs to the Right",
-			"description": "Close all tabs to the right-hand side of this tab"
-		},
-		"closeAllSaved": {
-			"name": "Close All Saved",
-			"description": "Close all saved tabs"
-		},
-		"closeOtherTabs": {
-			"name": "Close other Tabs",
-			"description": "Close all tabs except this tab"
-		},
-		"clearAllNotifications": {
-			"name": "Clear All Notifications",
-			"description": "Clears all current notifications"
-		},
-		"pluginInstallLocation": {
-			"global": {
-				"name": "Install Globally",
-				"description": "Global extensions are accessible in all of your projects"
+		"editor": {
+			"name": "Editor",
+			"goHome": {
+				"name": "Go Home",
+				"description": "Close the active project and return home"
 			},
-			"local": {
-				"name": "Install Locally",
-				"description": "Local extensions are only accessible inside of the projects you add them to"
+			"clearNotifications": {
+				"name": "Clear Notifications",
+				"description": "Clears all notifications in the sidebar"
+			},
+			"settings": {
+				"name": "Settings",
+				"description": "Opens the settings window"
+			},
+			"extensions": {
+				"name": "Extension Library",
+				"description": "Opens the extension library window"
+			},
+			"importProject": {
+				"name": "Import Project",
+				"description": "Import a new project"
+			},
+			"openFolder": {
+				"name": "Open Folder",
+				"description": "Open a folder"
+			},
+			"reloadEditor": {
+				"name": "Reload Editor",
+				"description": "Completely reloads the editor"
+			},
+			"nextTab": {
+				"name": "Next Tab",
+				"description": "Switch to the next tab"
+			},
+			"previousTab": {
+				"name": "Previous Tab",
+				"description": "Switch to the previous tab"
+			},
+			"closeTab": {
+				"name": "Close Tab",
+				"description": "Close the currently selected tab"
+			},
+			"launchMinecraft": {
+				"name": "Launch Minecraft",
+				"description": "Launch Minecraft to test your projects"
+			},
+			"revealBridgeFolder": {
+				"name": "Open bridge. Folder",
+				"description": "Opens the bridge. folder in your systems file explorer"
+			},
+			"revealOutputFolder": {
+				"name": "Open Output Folder",
+				"description": "Opens the current output folder in your systems file explorer"
+			},
+			"revealExtensionsFolder": {
+				"name": "Open Extensions Folder",
+				"description": "Opens the bridge. extensions folder in your systems file explorer"
 			}
 		},
-		"toObject": {
-			"name": "Transform to Object"
+		"files": {
+			"name": "Files",
+			"save": {
+				"name": "Save",
+				"description": "Save the current file"
+			},
+			"saveAs": {
+				"name": "Save As",
+				"description": "Save the current file with a new name"
+			},
+			"saveAll": {
+				"name": "Save All",
+				"description": "Save all unsaved files"
+			},
+			"createFile": {
+				"name": "Create File",
+				"description": "Create a new file"
+			},
+			"createFolder": {
+				"name": "Create Folder",
+				"description": "Create a new folder"
+			},
+			"delete": {
+				"name": "Delete",
+				"description": "Delete a file or folder"
+			},
+			"rename": {
+				"name": "Rename",
+				"description": "Rename a file or folder"
+			},
+			"duplicate": {
+				"name": "Duplicate",
+				"description": "Duplicate a file or folder"
+			},
+			"copy": {
+				"name": "Copy",
+				"description": "Copy a file or folder"
+			},
+			"paste": {
+				"name": "Paste",
+				"description": "Paste a file or folder"
+			},
+			"openToSide": {
+				"name": "Open To Side",
+				"description": "Opens the file in a side window"
+			},
+			"revealInFileExplorer": {
+				"name": "Reveal in File Explorer",
+				"description": "Opens the file or folder in your systems file explorer"
+			}
 		},
-		"toArray": {
-			"name": "Transform to Array"
+		"textEditor": {
+			"name": "Text Editor",
+			"undo": {
+				"name": "Undo",
+				"description": "Undo the last action"
+			},
+			"redo": {
+				"name": "Redo",
+				"description": "Redo the last action"
+			},
+			"copy": {
+				"name": "Copy",
+				"description": "Copy selected text to the clipboard"
+			},
+			"cut": {
+				"name": "Cut",
+				"description": "Copy selected text to the clipboard and delete it"
+			},
+			"paste": {
+				"name": "Paste",
+				"description": "Paste clipboard content"
+			},
+			"goToDefinition": {
+				"name": "Go to Definition",
+				"description": "Go to the definition of the selected symbol"
+			},
+			"goToSymbol": {
+				"name": "Go to Symbol",
+				"description": "Opens a dialog to select a symbol to go to"
+			},
+			"formatDocument": {
+				"name": "Format Document",
+				"description": "Format the currently opened document"
+			},
+			"changeAllOccurrences": {
+				"name": "Change All Occurrences",
+				"description": "Change all occurrences of the selected text"
+			},
+			"documentationLookup": {
+				"name": "View Documentation",
+				"description": "Opens relevant documentation"
+			}
 		},
-		"documentationLookup": {
-			"name": "View Documentation",
-			"noDocumentation": "No documentation available for"
+		"treeEditor": {
+			"name": "Tree Editor",
+			"undo": {
+				"name": "Undo",
+				"description": "Undo the last action"
+			},
+			"redo": {
+				"name": "Redo",
+				"description": "Redo the last action"
+			},
+			"copy": {
+				"name": "Copy",
+				"description": "Copy selected text to the clipboard"
+			},
+			"cut": {
+				"name": "Cut",
+				"description": "Copy selected text to the clipboard and delete it"
+			},
+			"paste": {
+				"name": "Paste",
+				"description": "Paste clipboard content"
+			},
+			"delete": {
+				"name": "Delete",
+				"description": "Delete selected text"
+			},
+			"convertToObject": {
+				"name": "Convert To Object",
+				"description": "Convert the selected value to an object"
+			},
+			"convertToArray": {
+				"name": "Convert To Array",
+				"description": "Convert the selected value to an array"
+			},
+			"convertToNull": {
+				"name": "Convert To Null",
+				"description": "Convert the selected value to null"
+			},
+			"convertToNumber": {
+				"name": "Convert To Number",
+				"description": "Convert the selected value to a number"
+			},
+			"convertToString": {
+				"name": "Convert To String",
+				"description": "Convert the selected value to a string"
+			},
+			"convertToBoolean": {
+				"name": "Convert To Boolean",
+				"description": "Convert the selected value to a boolean"
+			},
+			"documentationLookup": {
+				"name": "View Documentation",
+				"description": "Opens relevant documentation"
+			}
 		},
-		"toggleReadOnly": {
-			"name": "Toggle Read-Only Mode",
-			"description": "Toggle read-only mode for the currently opened file"
+		"export": {
+			"name": "Export",
+			"brproject": {
+				"name": "Export As bridge. Project",
+				"description": "Export the current project as a .brproject"
+			},
+			"mcaddon": {
+				"name": "Export As Add-On",
+				"description": "Export the current project as a .mcaddon"
+			},
+			"mcworld": {
+				"name": "Export As World",
+				"description": "Export the current project as a .mcworld"
+			},
+			"mctemplate": {
+				"name": "Export As Template",
+				"description": "Export the current project as a .mctemplate"
+			}
 		},
-		"keepInTabSystem": {
-			"name": "Keep in Tab System",
-			"description": "Converts this tab to a permanent tab"
+		"dash": {
+			"name": "Dash",
+			"compileDefault": {
+				"name": "Default Config",
+				"description": "Run bridge.'s compiler with the default compiler configuration that is part of your project's \"config.json\" file."
+			}
 		},
-		"importBrproject": {
-			"name": "Import Project",
-			"description": "Import a project from a .brproject file"
+		"project": {
+			"name": "Project",
+			"reload": {
+				"name": "Reload Project",
+				"description": "Reloads the currently loaded project"
+			},
+			"reloadExtensions": {
+				"name": "Reload Extensions",
+				"description": "Reloads all extensions"
+			},
+			"toggleFileExplorer": {
+				"name": "Toggle File Explorer",
+				"description": "Toggles the file explorer open or closed"
+			},
+			"newProject": {
+				"name": "New Project",
+				"description": "Opens the create project dialogue"
+			},
+			"importFile": {
+				"name": "Import File",
+				"description": "Import a file in the project"
+			},
+			"revealInFileExplorer": {
+				"name": "Open Project Folder",
+				"description": "Opens the project folder in your systems file explorer"
+			}
 		},
-		"downloadFile": {
-			"name": "Download File",
-			"description": "Download the currently opened file"
+		"help": {
+			"name": "Help",
+			"download": {
+				"name": "Download",
+				"description": "Opens the guide to download bridge. native"
+			},
+			"bedrockDevDocs": {
+				"name": "bedrock.dev Docs",
+				"description": "Opens the bedrock.dev docs in a new browser tab"
+			},
+			"creatorDocs": {
+				"name": "Minecraft Creator Docs",
+				"description": "Opens the Minecraft creator docs in a new browser tab"
+			},
+			"scriptingDocs": {
+				"name": "Scripting API Docs",
+				"description": "Opens the Minecraft creator docs for the scripting API in a new browser tab"
+			},
+			"gettingStarted": {
+				"name": "Getting Started",
+				"description": "Opens the bridge. getting started guide in a new browser tab"
+			},
+			"extensions": {
+				"name": "Extensions",
+				"description": "Opens the bridge. extensions guide in a new browser tab"
+			},
+			"faq": {
+				"name": "FAQ",
+				"description": "Opens the bridge. FAQ in a new browser tab"
+			},
+			"feedback": {
+				"name": "Feedback and Bug Reports",
+				"description": "Opens the editor issues on github"
+			},
+			"releases": {
+				"name": "Releases",
+				"description": "Opens the editor releases page on github"
+			},
+			"openChangelog": {
+				"name": "Open Changelog",
+				"description": "Opens the changelog for the current version of bridge."
+			}
 		},
-		"undo": {
-			"name": "Undo",
-			"description": "Undo the last action"
-		},
-		"redo": {
-			"name": "Redo",
-			"description": "Redo the last action"
-		},
-		"goToDefinition": {
-			"name": "Go to Definition",
-			"description": "Go to the definition of the selected symbol"
-		},
-		"goToSymbol": {
-			"name": "Go to Symbol",
-			"description": "Opens a dialog to select a symbol to go to"
-		},
-		"formatDocument": {
-			"name": "Format Document",
-			"description": "Format the currently opened document"
-		},
-		"changeAllOccurrences": {
-			"name": "Change All Occurrences",
-			"description": "Change all occurrences of the selected text"
-		},
-		"tgaMaskToggle": {
-			"name": "Show/Hide Alpha Mask"
-		},
-		"recompileChanges": {
-			"name": "Compile Changes",
-			"description": "Compile all files that were edited without bridge. This will not compile any changes made in the editor itself after disabling watch mode"
-		},
-		"more": {
-			"name": "More"
+		"tabs": {
+			"name": "Tabs",
+			"close": {
+				"name": "Close Tab",
+				"description": "Close the currently selected tab"
+			},
+			"closeAll": {
+				"name": "Close All Tabs",
+				"description": "Close all open tabs"
+			},
+			"closeToRight": {
+				"name": "Close to the Right",
+				"description": "Close all open tabs to the right of the currently selected tab"
+			},
+			"closeSaved": {
+				"name": "Close Saved",
+				"description": "Close all open unmodified tabs"
+			},
+			"closeOther": {
+				"name": "Close Other",
+				"description": "Close all other open tabs than the currently selected tab"
+			},
+			"splitscreen": {
+				"name": "Splitscreen Tab",
+				"description": "Moves tab into another tab system to the side"
+			},
+			"keepOpen": {
+				"name": "Keep Open",
+				"description": "Keep tab open"
+			}
 		}
 	},
 	"toolbar": {
@@ -458,6 +518,9 @@
 		},
 		"edit": {
 			"name": "Edit"
+		},
+		"settings": {
+			"name": "Settings"
 		},
 		"view": {
 			"name": "View",
@@ -542,6 +605,12 @@
 		}
 	},
 	"sidebar": {
+		"fileExplorer": {
+			"name": "File Explorer"
+		},
+		"findAndReplace": {
+			"name": "Find and Replace"
+		},
 		"quickExport": {
 			"name": "Quick Export"
 		},
@@ -578,6 +647,10 @@
 			},
 			"actions": {
 				"runLastProfile": "Run Last Profile"
+			},
+			"build": {
+				"name": "Build",
+				"description": "Run the default build profile"
 			}
 		},
 		"extensions": {
@@ -676,11 +749,15 @@
 		"sidebar": {
 			"disabledItem": "This item is disabled"
 		},
-		"error": {
-			"explanation": "bridge. encountered the following error:"
+		"reportError": {
+			"title": "Report Error",
+			"explanation": "bridge. encountered the following error:",
+			"discord": "Discord",
+			"github": "GitHub",
+			"copy": "Copy"
 		},
-		"changelogWindow": {
-			"title": "What's new?"
+		"about": {
+			"title": "About"
 		},
 		"openFile": {
 			"title": "Open",
@@ -699,17 +776,34 @@
 			"omitPack": "Omit",
 			"selectedPack": "Selected",
 			"title": "Create Project",
-			"packIcon": "Project Icon (optional)",
-			"projectName": {
-				"name": "Project Name",
+			"icon": {
+				"label": "Icon",
+				"placeholder": "Project Icon (optional)"
+			},
+			"name": {
+				"label": "Name",
+				"placeholder": "Project Name",
 				"invalidLetters": "Project name must not contain the following characters: \"  \\ / : | < >  * ? ~",
 				"mustNotBeEmpty": "You must enter a project name",
 				"endsInPeriod": "Project name cannot end with a period"
 			},
-			"projectDescription": "Project Description (optional)",
-			"projectPrefix": "Project Prefix",
-			"projectAuthor": "Project Author",
-			"projectTargetVersion": "Project Target Version",
+			"description": {
+				"label": "Description",
+				"placeholder": "Project Description (optional)"
+			},
+			"namespace": {
+				"label": "Namespace",
+				"placeholder": "Project Namespace",
+				"invalidCharacters": "Project namespace must only contain alphanumeric characters and underscores",
+				"mustNotBeEmpty": "You must enter a project namespace"
+			},
+			"author": {
+				"label": "Author",
+				"placeholder": "Project Author (optional)"
+			},
+			"targetVersion": {
+				"label": "Target Version"
+			},
 			"rpAsBpDependency": "Register resource pack as behavior pack dependency",
 			"bpAsRpDependency": "Register behavior pack as a resource pack dependency",
 			"useLangForManifest": "Add pack name/description directly to the manifest",
@@ -765,6 +859,9 @@
 						"description": "Used to define splash messages on the title screen"
 					}
 				}
+			},
+			"errors": {
+				"noPacks": "Your project must contain at least one pack"
 			}
 		},
 		"createPreset": {
@@ -925,6 +1022,13 @@
 				"hideToolbarItems": {
 					"name": "Hide Toolbar Items",
 					"description": "Make bridge. feel at home on MacOS: Move all toolbar items into a new menu button"
+				},
+				"fileExplorerIndentation": {
+					"name": "File Explorer Indentation",
+					"description": "Change the size of the indentation of directory entries in the file explorer"
+				},
+				"sidebarElementVisibility": {
+					"name": "Sidebar Elements"
 				}
 			},
 			"general": {
@@ -941,10 +1045,6 @@
 					"name": "Pack Spider",
 					"description": "Pack Spider connects files inside of your projects and presents the connections to you in a virtual file system"
 				},
-				"formatOnSave": {
-					"name": "Format On Save",
-					"description": "Formats your text files upon saving them"
-				},
 				"openLinksInBrowser": {
 					"name": "Open Links in Default Browser",
 					"description": "Open links inside of your default browser instead of a native app window"
@@ -960,6 +1060,10 @@
 				"resetBridgeFolder": {
 					"name": "Reset Root Folder",
 					"description": "Reset the app to use bridge. v2's default root folder again"
+				},
+				"keepTabsOpen": {
+					"name": "Keep Tabs Open",
+					"description": "By default, opening a new tab closes the previously opened tab if it was not interacted with"
 				}
 			},
 			"developer": {
@@ -975,6 +1079,10 @@
 				"forceDataDownload": {
 					"name": "Force Data Download",
 					"description": "Ignore the cached app data and instead download the latest data"
+				},
+				"dataDeveloperMode": {
+					"name": "Data Developer Mode",
+					"description": "Ignore the data cache and load from the built in packages"
 				}
 			},
 			"actions": {
@@ -985,6 +1093,10 @@
 				"defaultAuthor": {
 					"name": "Default Author",
 					"description": "The default author for new projects"
+				},
+				"defaultNamespace": {
+					"name": "Default Namespace",
+					"description": "The default namespace for new projects"
 				},
 				"loadComMojangProjects": {
 					"name": "Load com.mojang Projects",
@@ -997,9 +1109,24 @@
 				"addGeneratedWith": {
 					"name": "Add \"generated_with\"",
 					"description": "Add the \"generated_with\" metadata to your projects' manifests"
+				},
+				"clearOutputFolder": {
+					"name": "Clear Output Folder",
+					"description": "Forget the current default output folder."
+				},
+				"outputFolder": {
+					"name": "Output Folder",
+					"button": "Select Output Folder",
+					"description": "Default output folder projects will compile to.",
+					"warning": {
+						"notSupported": "This platform does not support selecting an output folder.",
+						"notSet": "You have no default output folder set!",
+						"overwritten": "The default output folder is being overwritten by a project ouput folder."
+					}
 				}
 			},
 			"editor": {
+				"name": "Editor",
 				"jsonEditor": {
 					"name": "JSON Editor",
 					"description": "Choose how you want to edit JSON files"
@@ -1019,10 +1146,6 @@
 				"compactTabDesign": {
 					"name": "Compact Tab Design",
 					"description": "Display tabs inside of the tab system in a more compact way"
-				},
-				"keepTabsOpen": {
-					"name": "Keep Tabs Open",
-					"description": "By default, opening a new tab closes the previously opened tab if it was not interacted with"
 				},
 				"autoSaveChanges": {
 					"name": "Auto Save Changes",
@@ -1052,9 +1175,13 @@
 					"name": "Show Array Indices",
 					"description": "Show indices for array elements inside of bridge.'s tree editor"
 				},
-				"hideBracketsWithinTreeEditor": {
+				"hideBrackets": {
 					"name": "Hide Brackets",
 					"description": "Hide brackets within bridge.'s tree editor"
+				},
+				"formatOnSave": {
+					"name": "Format On Save",
+					"description": "Formats your text files upon saving them"
 				}
 			}
 		},
@@ -1062,7 +1189,7 @@
 			"title": "Project Folder",
 			"content": "bridge. needs access to its project folder in order to work correctly."
 		},
-		"extensionStore": {
+		"extensionLibrary": {
 			"title": "Extension Store",
 			"searchExtensions": "Search Extension...",
 			"deleteExtension": "Delete Extension",
@@ -1089,6 +1216,8 @@
 		},
 		"unsavedFile": {
 			"description": "Do you want to save your changes to this file before closing it?",
+			"closeFile": "It looks like you have unsaved changes. Are you sure you want to close the window?",
+			"closeProject": "It looks like you have unsaved changes. Are you sure you want to close the project?",
 			"save": "Save & Close"
 		},
 		"browserUnsupported": {
@@ -1108,6 +1237,12 @@
 		"upgradeFs": {
 			"title": "Upgrade File System?",
 			"description": "Your browser now supports saving files directly to your computer. Do you want to upgrade now?"
+		},
+		"alert": {
+			"title": "Alert"
+		},
+		"progress": {
+			"title": "Loading"
 		}
 	},
 	"taskManager": {
@@ -1140,6 +1275,10 @@
 				"output": {
 					"name": "Output Folder",
 					"description": "Sets this folder as a new output folder"
+				},
+				"project": {
+					"name": "New Project",
+					"description": "Imports this folder as a new project"
 				},
 				"open": {
 					"name": "Open Folder",
@@ -1270,7 +1409,8 @@
 			"addValue": "Add Value",
 			"forceValue": "Force Value",
 			"edit": "Edit",
-			"childHasError": "One or more children have diagnostics"
+			"childHasError": "One or more children have diagnostics",
+			"convert": "Convert"
 		},
 		"langValidation": {
 			"noValue": {
@@ -1319,7 +1459,11 @@
 			"tokens": {
 				"selectorArgument": "selector argument"
 			}
-		}
+		},
+		"invalidLetters": "Must not contain special characters",
+		"mustNotBeEmpty": "Must not be empty",
+		"mustBeLowercase": "Must be lowercase",
+		"mustBeNumeric": "Must be a number"
 	},
 	"bottomPanel": {
 		"terminal": {
@@ -1335,7 +1479,36 @@
 		}
 	},
 	"greet": {
+		"projects": "Projects",
+		"noProjects": "You have no projects yet.",
+		"createOne": "Create one",
 		"pin": "Pin",
-		"unpin": "Unpin"
+		"unpin": "Unpin",
+		"noBridgeFolderSelected": "You need to select a bridge. folder.",
+		"selectBridgeFolder": "Select a bridge. folder"
+	},
+	"convert": {
+		"confirmationMessage": {
+			"v1": "This is a bridge. v1 project. If you click continue, the project will be converted to a bridge. project and stored in the bridge. projects folder.",
+			"com": {
+				"mojang": "bridge. no longer supports opening projects directly withing the com.mojang folder! If you click continue, the project will be converted to a bridge. project and stored in the bridge. projects folder."
+			}
+		}
+	},
+	"projects": {
+		"loading": "Loading project...",
+		"clearOutputFolder": {
+			"name": "Clear Project Output Folder",
+			"description": "Forget the current project output folder."
+		},
+		"outputFolder": {
+			"button": "Select Project Output Folder",
+			"description": "Output folder this project will compile to.",
+			"warning": {
+				"notSupported": "This platform does not support selecting an output folder.",
+				"using": "This project is using a local project folder.",
+				"notUsing": "This project is not using a local project folder."
+			}
+		}
 	}
 }

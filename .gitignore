@@ -3,7 +3,6 @@
 /compilerTypes
 
 node_modules/*
-!node_modules/vue-template-compiler
 
 # local env files
 .env
@@ -24,3 +23,7 @@ pnpm-debug.log*
 *.sln
 *.sw?
 todos.md
+
+public/changelog.html
+
+.direnv

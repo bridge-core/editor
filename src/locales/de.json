@@ -294,7 +294,7 @@
 			"title": "Projekte Ordner",
 			"content": "bridge. benötigt Zugriff auf deinen Projekteordner."
 		},
-		"extensionStore": {
+		"extensionLibrary": {
 			"title": "Erweiterungen",
 			"searchExtensions": "Suche Erweiterungen..."
 		},

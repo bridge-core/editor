@@ -1,9 +1,7 @@
-import { NewBaseWindow } from '../NewBaseWindow'
-import SocialsComponent from './Main.vue'
+import { Window } from '../Window'
+import Socials from './Socials.vue'
 
-export class SocialsWindow extends NewBaseWindow {
-	constructor() {
-		super(SocialsComponent)
-		this.defineWindow()
-	}
+export class SocialsWindow extends Window {
+	public static id = 'socials'
+	public static component = Socials
 }

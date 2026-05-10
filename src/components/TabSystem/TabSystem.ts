@@ -1,383 +1,293 @@
-import { Tab } from './CommonTab'
-import WelcomeScreen from './WelcomeScreen.vue'
-import { TextTab } from '../Editors/Text/TextTab'
-import Vue, { computed, Ref, ref } from 'vue'
-import { App } from '/@/App'
-import { UnsavedFileWindow } from '../Windows/UnsavedFile/UnsavedFile'
-import { Project } from '../Projects/Project/Project'
-import { OpenedFiles } from './OpenedFiles'
 import { v4 as uuid } from 'uuid'
-import { MonacoHolder } from './MonacoHolder'
-import { FileTab, TReadOnlyMode } from './FileTab'
-import { TabProvider } from './TabProvider'
-import { AnyFileHandle } from '../FileSystem/Types'
-import { IframeTab } from '../Editors/IframeTab/IframeTab'
+import { RecoveryState as TabRecoveryState, Tab, RecoveryState } from './Tab'
+import { ref, Ref, ShallowRef, shallowRef, watchEffect } from 'vue'
+import { Editor } from '@/components/Editor/Editor'
+import { Event } from '@/libs/event/Event'
+import { Disposable } from '@/libs/disposeable/Disposeable'
+import { TabTypes } from './TabTypes'
+import { FileTab } from './FileTab'
+import { Settings } from '@/libs/settings/Settings'
+import { Windows } from '../Windows/Windows'
+import { ConfirmWindow } from '../Windows/Confirm/ConfirmWindow'
 
-export interface IOpenTabOptions {
-	selectTab?: boolean
-	isTemporary?: boolean
-	readOnlyMode?: TReadOnlyMode
-}
+export type TabSystemRecoveryState = { id: string; selectedTab: string | null; tabs: TabRecoveryState[] }
 
-export class TabSystem extends MonacoHolder {
-	protected uuid = uuid()
-	public tabs = <Ref<Tab[]>>ref([])
-	protected _recentSelectedTab = <Ref<Tab | undefined>>ref(undefined)
-	protected _selectedTab = <Ref<Tab | undefined>>ref(undefined)
-	protected get tabTypes() {
-		return TabProvider.tabs
-	}
-	protected _isActive = ref(true)
-	public readonly openedFiles: OpenedFiles
+export class TabSystem {
+	public id = uuid()
+	// Monaco editor freezes browser when made deep reactive, so instead we make it shallow reactive
+	public tabs: ShallowRef<Tab[]> = shallowRef([])
+	public selectedTab: ShallowRef<Tab | null> = shallowRef(null)
 
-	get isActive() {
-		return this._isActive
-	}
-	public readonly shouldRender = computed(() => this.tabs.value.length > 0)
-	public readonly isSharingScreen = computed(() => {
-		const other = this.project.tabSystems.find(
-			(tabSystem) => tabSystem !== this
-		)
+	public savedState = new Event<void>()
+	public removedTab = new Event<void>()
+	public focused = new Event<void>()
 
-		return other?.shouldRender.value ?? false
-	})
-	get app() {
-		return this._app
-	}
-	get project() {
-		return this._project
-	}
+	public static draggingTab: ShallowRef<Tab | null> = shallowRef(null)
+	public static dropTargetTab: ShallowRef<Tab | null> = shallowRef(null)
+	public static dropSide: Ref<'right' | 'left'> = ref('right')
 
-	get hasUnsavedTabs() {
-		return this.tabs.value.some((tab) => tab.isUnsaved)
-	}
+	private tabSaveListenters: Record<string, Disposable> = {}
 
-	constructor(protected _project: Project, id = 0) {
-		super(_project.app)
+	public async addTab(tab: Tab, select = true, temporary = false, index?: number) {
+		if (this.hasTab(tab)) {
+			if (select) await this.selectTab(tab)
 
-		this.openedFiles = new OpenedFiles(
-			this,
-			_project.app,
-			`${_project.projectPath}/.bridge/openedFiles_${id}.json`
-		)
-	}
+			await this.saveState()
 
-	get recentSelectedTab() {
-		return this._recentSelectedTab.value
-	}
-
-	get selectedTab() {
-		return this._selectedTab.value
-	}
-	get currentComponent() {
-		return this._selectedTab.value?.component ?? WelcomeScreen
-	}
-	get projectRoot() {
-		return this.project.baseDirectory
-	}
-	get projectName() {
-		return this.project.name
-	}
-
-	async open(
-		fileHandle: AnyFileHandle,
-		{
-			selectTab = true,
-			readOnlyMode = 'off',
-			isTemporary = true,
-		}: IOpenTabOptions = {}
-	) {
-		const tab = await this.getTabFor(fileHandle, readOnlyMode)
-
-		// Default value is true so we only need to update if the caller wants to create a permanent tab
-		if (!isTemporary) tab.isTemporary = false
-
-		await this.add(tab, selectTab)
-		return tab
-	}
-	async openPath(path: string, options: IOpenTabOptions = {}) {
-		const fileHandle = await this.project.app.fileSystem.getFileHandle(path)
-
-		return await this.open(fileHandle, options)
-	}
-
-	protected async getTabFor(
-		fileHandle: AnyFileHandle,
-		readOnlyMode: TReadOnlyMode = 'off'
-	) {
-		let tab: Tab | undefined = undefined
-		for (const CurrentTab of this.tabTypes) {
-			if (await CurrentTab.is(fileHandle)) {
-				// @ts-ignore
-				tab = new CurrentTab(this, fileHandle, readOnlyMode)
-				break
-			}
-		}
-		// Default tab type: Text editor
-		if (!tab) tab = new TextTab(this, fileHandle, readOnlyMode)
-
-		return await tab.fired
-	}
-	async hasTab(tab: Tab) {
-		for (const currentTab of this.tabs.value) {
-			if (await currentTab.is(tab)) return true
+			return
 		}
 
-		return false
-	}
+		tab.temporary.value = temporary
 
-	async add(tab: Tab, selectTab = true, noTabExistanceCheck = false) {
-		await this.closeAllTemporary()
+		this.tabSaveListenters[tab.id] = tab.savedState.on(() => {
+			this.saveState()
+		})
 
-		if (!noTabExistanceCheck) {
-			for (const currentTab of this.tabs.value) {
-				if (await currentTab.is(tab)) {
-					// Trigger openWith event again for iframe tabs
-					if (
-						tab instanceof IframeTab &&
-						currentTab instanceof IframeTab
-					) {
-						currentTab.setOpenWithPayload(
-							tab.getOptions().openWithPayload
-						)
-					}
+		await tab.create()
 
-					tab.onDeactivate()
-					return selectTab ? currentTab.select() : currentTab
+		if (index === undefined) {
+			this.tabs.value.push(tab)
+		} else {
+			this.tabs.value.splice(index, 0, tab)
+		}
+
+		this.tabs.value = [...this.tabs.value]
+
+		if (select) await this.selectTab(tab)
+
+		await this.saveState()
+
+		if (temporary) {
+			const otherTemporaryTabs = this.tabs.value.filter((otherTab) => otherTab.temporary.value && otherTab.id !== tab.id)
+
+			for (const otherTab of otherTemporaryTabs) {
+				if (Settings.get('keepTabsOpen')) {
+					otherTab.temporary.value = false
+				} else {
+					if (otherTab.temporary.value) await this.removeTab(otherTab)
 				}
 			}
 		}
-
-		if (!tab.hasFired) await tab.fired
-
-		this.tabs.value = [...this.tabs.value, tab]
-		if (!tab.isForeignFile && !(tab instanceof FileTab && tab.isReadOnly))
-			await this.openedFiles.add(tab.getPath())
-
-		if (selectTab) tab.select()
-
-		this.project.updateTabFolders()
-
-		return tab
 	}
-	async remove(tab: Tab, destroyEditor = true, selectNewTab = true) {
-		tab.onDeactivate()
-		const tabIndex = this.tabs.value.findIndex((current) => current === tab)
-		if (tabIndex === -1) return
+
+	public async selectTab(tab: Tab) {
+		if (this.selectedTab.value?.id === tab.id) return
+
+		if (this.selectedTab.value !== null) {
+			this.selectedTab.value.active = false
+			await this.selectedTab.value.deactivate()
+		}
+
+		this.selectedTab.value = tab
+
+		Editor.showTabs()
+
+		tab.active = true
+		await tab.activate()
+
+		await this.saveState()
+	}
+
+	public async removeTab(tab: Tab) {
+		if (!this.hasTab(tab)) return
+
+		const selectedTab = this.selectedTab.value?.id === tab.id
+
+		if (selectedTab) {
+			tab.active = false
+			await tab.deactivate()
+		}
+
+		const tabIndex = this.indexOfTab(tab)
 
 		this.tabs.value.splice(tabIndex, 1)
-		if (destroyEditor) tab.onDestroy()
+		this.tabs.value = [...this.tabs.value]
 
-		if (selectNewTab && tab === this.selectedTab)
-			this.select(this.tabs.value[tabIndex === 0 ? 0 : tabIndex - 1])
-		if (!tab.isForeignFile) await this.openedFiles.remove(tab.getPath())
+		if (selectedTab) {
+			this.selectedTab.value = null
 
-		this.project.updateTabFolders()
-
-		return tab
-	}
-	async close(tab = this.selectedTab, checkUnsaved = true) {
-		if (!tab) return false
-
-		if (checkUnsaved && tab.isUnsaved) {
-			const unsavedWin = new UnsavedFileWindow(tab)
-
-			return (await unsavedWin.fired) !== 'cancel'
-		} else {
-			await this.remove(tab)
-			return true
-		}
-	}
-	async closeTabWithHandle(fileHandle: AnyFileHandle) {
-		const tab = await this.getTab(fileHandle)
-		if (tab) this.close(tab)
-	}
-
-	/**
-	 * Select next tab
-	 */
-	async selectNextTab() {
-		const tabs = this.tabs.value
-		if (tabs.length === 0) return
-
-		const selectedTab = this.selectedTab
-		if (!selectedTab) return
-
-		const index = tabs.indexOf(selectedTab)
-		const nextTab = tabs[index + 1] ?? tabs[0]
-
-		await nextTab.select()
-	}
-	/**
-	 * Select previous tab
-	 */
-	async selectPreviousTab() {
-		const tabs = this.tabs.value
-		if (tabs.length === 0) return
-
-		const selectedTab = this.selectedTab
-		if (!selectedTab) return
-
-		const index = tabs.indexOf(selectedTab)
-		const previousTab = tabs[index - 1] ?? tabs[tabs.length - 1]
-
-		await previousTab.select()
-	}
-
-	async hasRecentTab() {
-		return this.recentSelectedTab !== undefined
-	}
-
-	async selectRecentTab() {
-		const tabs = this.tabs.value
-		if (tabs.length === 0) return
-
-		const recentTab = this.recentSelectedTab
-		if (!recentTab) return
-
-		await recentTab.select()
-	}
-
-	async saveRecentTab(tab?: Tab) {
-		this._recentSelectedTab.value = tab
-	}
-
-	async select(tab?: Tab) {
-		if (this.isActive.value !== !!tab) this.setActive(!!tab)
-
-		if (this.app.mobile.isCurrentDevice()) App.sidebar.hide()
-		if (tab?.isSelected) return
-
-		this.selectedTab?.onDeactivate()
-		if (tab && tab !== this.selectedTab && this.project.isActiveProject) {
-			App.eventSystem.dispatch('currentTabSwitched', tab)
+			if (this.tabs.value.length != 0) await this.selectTab(this.tabs.value[Math.max(tabIndex - 1, 0)])
 		}
 
-		this.saveRecentTab(this.selectedTab)
-		this._selectedTab.value = tab
+		await tab.destroy()
 
-		// Next steps don't need to be done if we simply unselect tab
+		this.tabSaveListenters[tab.id].dispose()
+		delete this.tabSaveListenters[tab.id]
+
+		if (this.tabs.value.length === 0) Editor.hideTabs()
+
+		await this.saveState()
+
+		this.removedTab.dispatch()
+	}
+
+	// TODO: Changet he tab API so that there is a seperation between creating the tab ui and creating the tab so we can support moving tabs without saving them
+	public async removeTabSafe(tab: Tab) {
+		if (!this.hasTab(tab)) return
+
+		if (tab instanceof FileTab && tab.modified.value) {
+			if (
+				!(await new Promise<boolean>((resolve) => {
+					Windows.open(
+						new ConfirmWindow(
+							`windows.unsavedFile.closeFile`,
+							() => resolve(true),
+							() => resolve(false)
+						)
+					)
+				}))
+			)
+				return
+		}
+
+		await this.removeTab(tab)
+	}
+
+	public orderTab(tab: Tab, index: number) {
+		const currentIndex = this.tabs.value.findIndex((otherTab) => otherTab.id === tab.id)
+
+		this.tabs.value.splice(currentIndex, 1)
+
+		this.tabs.value.splice(index > currentIndex ? index - 1 : index, 0, tab)
+
+		this.tabs.value = [...this.tabs.value]
+	}
+
+	public async clear() {
+		for (const tab of this.tabs.value) {
+			if (this.selectedTab.value?.id === tab.id) {
+				tab.active = false
+				await tab.deactivate()
+			}
+
+			await tab.destroy()
+
+			this.tabSaveListenters[tab.id].dispose()
+			delete this.tabSaveListenters[tab.id]
+		}
+
+		this.tabs.value = []
+		this.selectedTab.value = null
+	}
+
+	public async saveState() {
+		this.savedState.dispatch()
+	}
+
+	public async getTabRecoveryState(tab: Tab): Promise<RecoveryState> {
+		if (tab instanceof FileTab)
+			return {
+				id: tab.id,
+				path: tab.path,
+				state: (await tab.getState()) ?? null,
+				temporary: tab.temporary.value,
+				type: tab.constructor.name,
+			}
+
+		return {
+			id: tab.id,
+			state: (await tab.getState()) ?? null,
+			temporary: tab.temporary.value,
+			type: tab.constructor.name,
+		}
+	}
+
+	public async getRecoveryState(): Promise<TabSystemRecoveryState> {
+		return {
+			id: this.id,
+			selectedTab: this.selectedTab.value ? this.selectedTab.value.id : null,
+			tabs: await Promise.all(this.tabs.value.map((tab) => this.getTabRecoveryState(tab))),
+		}
+	}
+
+	public async applyRecoverState(recoveryState: TabSystemRecoveryState) {
+		this.id = recoveryState.id
+
+		this.tabs.value = []
+
+		for (const tabRecoveryState of recoveryState.tabs) {
+			const tabType = TabTypes.getType(tabRecoveryState.type)
+
+			if (tabType === null) continue
+
+			if (tabType.prototype instanceof FileTab) {
+				const tab = new (tabType as typeof FileTab)(tabRecoveryState.path)
+
+				tab.id = tabRecoveryState.id
+				tab.temporary.value = tabRecoveryState.temporary
+
+				this.tabSaveListenters[tab.id] = tab.savedState.on(() => {
+					this.saveState()
+				})
+
+				await tab.create()
+				await tab.recover(tabRecoveryState.state)
+
+				this.tabs.value.push(tab)
+			} else {
+				const tab = new (tabType as typeof Tab)()
+
+				tab.id = tabRecoveryState.id
+				tab.temporary.value = tabRecoveryState.temporary
+
+				this.tabSaveListenters[tab.id] = tab.savedState.on(() => {
+					this.saveState()
+				})
+
+				await tab.create()
+				await tab.recover(tabRecoveryState.state)
+
+				this.tabs.value.push(tab)
+			}
+		}
+
+		this.tabs.value = [...this.tabs.value]
+
+		this.selectedTab.value = this.tabs.value.find((tab) => tab.id === recoveryState.selectedTab) ?? null
+
+		if (this.selectedTab.value === null) return
+
+		this.selectedTab.value.active = true
+		await this.selectedTab.value.activate()
+	}
+
+	public focus() {
+		this.focused.dispatch()
+	}
+
+	public async nextTab() {
+		const tab = this.selectedTab.value
+
 		if (!tab) return
 
-		await this.selectedTab?.onActivate()
+		const index = this.indexOfTab(tab)
 
-		Vue.nextTick(async () => {
-			this._monacoEditor?.layout()
-		})
-	}
-	async save(tab = this.selectedTab) {
-		if (!tab || (tab instanceof FileTab && tab.isReadOnly)) return
-		tab?.setIsLoading(true)
+		if (index === -1) return
 
-		// Save whether the tab was selected previously for use later
-		const tabWasActive = this.selectedTab === tab
+		const nextIndex = index < this.tabs.value.length - 1 ? index + 1 : 0
 
-		// We need to select the tab before saving to format it correctly
-		const selectedTab = this.selectedTab
-		if (selectedTab !== tab) await this.select(tab)
-
-		if (tab instanceof FileTab) await tab.save()
-
-		// Select the previously selected tab again
-		if (selectedTab !== tab) await this.select(selectedTab)
-
-		if (!tab.isForeignFile && tab instanceof FileTab) {
-			this.project.beforeFileSave.dispatch(
-				tab.getPath(),
-				await tab.getFile()
-			)
-
-			await this.project.updateFile(tab.getPath())
-
-			this.project.fileSave.dispatch(tab.getPath(), await tab.getFile())
-
-			// Only refresh auto-completion content if tab is active
-			if (tabWasActive)
-				App.eventSystem.dispatch('refreshCurrentContext', tab.getPath())
-		}
-
-		tab.focus()
-		tab?.setIsLoading(false)
-	}
-	async saveAs() {
-		if (this.selectedTab instanceof FileTab) await this.selectedTab.saveAs()
-	}
-	async saveAll() {
-		const app = await App.getApp()
-		app.windows.loadingWindow.open()
-
-		for (const tab of this.tabs.value) {
-			if (tab.isUnsaved) await this.save(tab)
-		}
-
-		app.windows.loadingWindow.close()
-	}
-	async closeAllTemporary() {
-		for (const tab of [...this.tabs.value]) {
-			if (!tab.isTemporary) continue
-
-			await this.remove(tab, true, false)
-		}
+		await this.selectTab(this.tabs.value[nextIndex])
 	}
 
-	async activate() {
-		await this.openedFiles.restoreTabs()
+	public async previousTab() {
+		const tab = this.selectedTab.value
 
-		if (this.tabs.value.length > 0) this.setActive(true)
+		if (!tab) return
 
-		if (!this.selectedTab && this.tabs.value.length > 0)
-			this.tabs.value[0].select()
+		const index = this.indexOfTab(tab)
 
-		await this.selectedTab?.onActivate()
-	}
-	deactivate() {
-		this.selectedTab?.onDeactivate()
-		this.dispose()
-	}
+		if (index === -1) return
 
-	setActive(isActive: boolean, updateProject = true) {
-		if (updateProject) this.project.setActiveTabSystem(this, !isActive)
-		if (isActive === this._isActive.value) return
+		const previousIndex = index > 0 ? index - 1 : this.tabs.value.length - 1
 
-		this._isActive.value = isActive
-
-		if (isActive && this._selectedTab && this.project.isActiveProject) {
-			App.eventSystem.dispatch('currentTabSwitched', this._selectedTab)
-		}
+		await this.selectTab(this.tabs.value[previousIndex])
 	}
 
-	async getTab(fileHandle: AnyFileHandle) {
-		for (const tab of this.tabs.value) {
-			if (
-				tab instanceof FileTab &&
-				(await tab.isForFileHandle(fileHandle))
-			)
-				return tab
-		}
+	public hasTab(tab: Tab): boolean {
+		return this.tabs.value.some((otherTab) => otherTab.id === tab.id)
 	}
-	closeTabs(predicate: (tab: Tab) => boolean) {
-		const tabs = [...this.tabs.value].reverse()
 
-		for (const tab of tabs) {
-			if (predicate(tab)) tab.close()
-		}
-	}
-	forceCloseTabs(predicate: (tab: Tab) => boolean) {
-		const tabs = [...this.tabs.value].reverse()
-
-		for (const tab of tabs) {
-			if (predicate(tab)) this.remove(tab)
-		}
-	}
-	has(predicate: (tab: Tab) => boolean) {
-		for (const tab of this.tabs.value) {
-			if (predicate(tab)) return true
-		}
-		return true
-	}
-	get(predicate: (tab: Tab) => boolean) {
-		for (const tab of this.tabs.value) {
-			if (predicate(tab)) return tab
-		}
+	public indexOfTab(tab: Tab): number {
+		return this.tabs.value.findIndex((otherTab) => otherTab.id === tab.id)
 	}
 }

@@ -1,29 +1,28 @@
-import { App } from '/@/App'
-import { BrowserUnsupportedWindow } from './BrowserUnsupported/BrowserUnsupported'
-import { ExtensionStoreWindow } from './ExtensionStore/ExtensionStore'
-import { LoadingWindow } from './LoadingWindow/LoadingWindow'
-import { CreatePresetWindow } from './Project/CreatePreset/PresetWindow'
-import { CreateProjectWindow } from '/@/components/Projects/CreateProject/CreateProject'
-import { ProjectChooserWindow } from '/@/components/Projects/ProjectChooser/ProjectChooser'
-import { SettingsWindow } from './Settings/SettingsWindow'
-import { ChangelogWindow } from '/@/components/Windows/Changelog/Changelog'
-import { SocialsWindow } from './Socials/SocialsWindow'
-import { CompilerWindow } from '../Compiler/Window/Window'
+import { ShallowRef, shallowRef } from 'vue'
+
+interface WindowProvider {
+	component: any
+	id: string
+}
 
 export class Windows {
-	settings: SettingsWindow
-	socialsWindow = new SocialsWindow()
-	projectChooser: ProjectChooserWindow
-	createProject = new CreateProjectWindow()
-	loadingWindow = new LoadingWindow()
-	createPreset = new CreatePresetWindow()
-	extensionStore = new ExtensionStoreWindow()
-	browserUnsupported = new BrowserUnsupportedWindow()
-	changelogWindow = new ChangelogWindow()
-	compilerWindow = new CompilerWindow()
+	public static openWindows: ShallowRef<WindowProvider[]> = shallowRef([])
 
-	constructor(protected app: App) {
-		this.settings = new SettingsWindow(app)
-		this.projectChooser = new ProjectChooserWindow(app)
+	public static open(window: WindowProvider) {
+		if (Windows.openWindows.value.includes(window)) return
+
+		Windows.openWindows.value.push(window)
+		Windows.openWindows.value = [...Windows.openWindows.value]
+	}
+
+	public static close(window: WindowProvider) {
+		if (!Windows.openWindows.value.includes(window)) return
+
+		Windows.openWindows.value.splice(Windows.openWindows.value.indexOf(window), 1)
+		Windows.openWindows.value = [...Windows.openWindows.value]
+	}
+
+	public static isOpen(window: WindowProvider) {
+		return Windows.openWindows.value.includes(window)
 	}
 }

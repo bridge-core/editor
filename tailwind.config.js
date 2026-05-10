@@ -1,50 +1,55 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-	content: ['./src/**/*.{html,tsx,vue}'],
+	content: ['./src/**/*.{html,vue}'],
 	darkMode: 'class',
 	theme: {
 		extend: {
-			keyframes: {
-				'fade-in': {
-					'0%': { opacity: '0%' },
-					'100%': { opacity: '100%' },
-				},
-				'scale-up': {
-					'0%': { transform: 'scale(0.5)' },
-					'95%': { transform: 'scale(1.05)' },
-					'100%': { transform: 'scale(1)' },
-				},
-				'fade-out': {
-					'0%': { opacity: '100%' },
-					'100%': { opacity: '0%' },
-				},
-				'scale-down': {
-					'0%': { transform: 'scale(1)' },
-					'100%': { transform: 'scale(0.5)' },
-				},
-			},
-			animation: {
-				'fade-in': 'fade-in 0.15s ease-in-out',
-				'scale-up': 'scale-up 0.15s ease-in-out',
-				'fade-in-and-scale-up':
-					'fade-in 0.15s ease-in-out, scale-up 0.15s ease-in-out',
-				'fade-out': 'fade-out 0.15s ease-in-out',
-				'scale-down': 'scale-down 0.15s ease-in-out',
-				'fade-out-and-scale-down':
-					'fade-out 0.15s ease-in-out, scale-down 0.15s ease-in-out',
-			},
-			backdropBlur: {
-				xs: '2px',
-			},
 			colors: {
-				'surface-dark': 'var(--v-toolbar-base)',
-				surface: 'var(--v-background-base)',
-				primary: 'var(--v-primary-base)',
-				error: 'var(--v-error-base)',
-				warning: 'var(--v-warning-base)',
-				info: 'var(--v-info-base)',
-				text: 'var(--v-text-base)',
-				accent: 'var(--v-accent-base)',
+				primary: 'var(--theme-color-primary)',
+
+				accent: 'var(--theme-color-accent)',
+				'accent-secondary': 'var(--theme-color-accentSecondary)',
+
+				background: 'var(--theme-color-background)',
+				'background-secondary': 'var(--theme-color-backgroundSecondary)',
+				'background-tertiary': 'var(--theme-color-backgroundTertiary)',
+
+				text: 'var(--theme-color-text)',
+				'text-secondary': 'var(--theme-color-textSecondary)',
+
+				behaviorPack: 'var(--theme-color-behaviorPack)',
+				resourcePack: 'var(--theme-color-resourcePack)',
+				skinPack: 'var(--theme-color-skinPack)',
+				worldTemplate: 'var(--theme-color-worldTemplate)',
+
+				warning: 'var(--theme-color-warning)',
+				info: 'var(--theme-color-info)',
+				error: 'var(--theme-color-error)',
+				success: 'var(--theme-color-success)',
+
+				toolbar: 'var(--theme-color-toolbar)',
+			},
+			height: {
+				toolbar: '1.5rem',
+				app: 'calc(100vh - 1.5rem)',
+			},
+			maxHeight: {
+				toolbar: '1.5rem',
+				app: 'calc(100vh - 1.5rem)',
+			},
+			spacing: {
+				toolbar: '1.5rem',
+			},
+			boxShadow: {
+				window: '0 0 16px -2px rgb(0, 0, 0, 0.4)',
+			},
+			fontSize: {
+				'theme-editor': 'var(--theme-font-size-editor)',
+			},
+			fontFamily: {
+				theme: 'var(--theme-font)',
+				'theme-editor': 'var(--theme-font-editor)',
+				inter: ['Inter', 'ui-sans-serif', 'system-ui', 'Segoe UI', 'Roboto', 'sans-serif'],
 			},
 		},
 	},

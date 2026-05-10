@@ -1,74 +1,40 @@
-#![cfg_attr(
-    all(not(debug_assertions), target_os = "windows"),
-    windows_subsystem = "windows"
-)]
+// Prevents additional console window on Windows in release, DO NOT REMOVE!!
+#![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
-use std::sync::Mutex;
+use std::sync::{Arc, Mutex};
 
 use notify::RecommendedWatcher;
-use tauri::{Manager, Menu};
-use terminal::AllTerminals;
+use tauri::Manager;
 use window_shadows::set_shadow;
-mod discord;
-mod fs_extra;
-mod terminal;
+
 mod watch;
-mod zip;
+mod fs_extra;
 
 fn main() {
-    let mut menu = Menu::os_default(&"bridge. v2");
+    let watcher_mutex: Arc<Mutex<Option<RecommendedWatcher>>> = Arc::new(Mutex::new(None));
 
-    if cfg!(target_os = "windows") {
-        menu = Menu::new()
-    }
-
+    let app_watcher_mutex = watcher_mutex.clone();
     tauri::Builder::default()
-        .manage::<AllTerminals>(AllTerminals(Default::default()))
-        .manage::<Mutex<Option<RecommendedWatcher>>>(Mutex::new(None))
-        .setup(|app| {
-            // `main` here is the window label; it is defined under `tauri.conf.json`
-            let main_window = app.get_window("main").unwrap();
-
-            if cfg!(target_os = "windows") {
-                set_shadow(&main_window, true).expect("Unable to set window shadow");
-            }
+        .manage(watcher_mutex)
+        .invoke_handler(tauri::generate_handler![watch::watch, watch::unwatch, fs_extra::reveal_in_file_explorer,])
+        .setup(move |app| {
+            let window = app.get_window("main").unwrap();
 
             #[cfg(debug_assertions)] // only include this code on debug builds
             {
-                main_window.open_devtools();
+                window.open_devtools();
+                // window.close_devtools();
             }
 
-            // Try to set Discord rich presence
-            match discord::set_rich_presence(&main_window) {
-                Ok(_) => {
-                    println!("Rich presence set!");
-                }
-                Err(e) => {
-                    println!("Error setting rich presence: {}", e);
-                }
-            };
+            if cfg!(target_os = "windows") {
+                set_shadow(&window, true).expect("Unable to set window shadow");
+            }
 
-            let watcher_state = app.state::<Mutex<Option<RecommendedWatcher>>>();
-
-            let mut watcher = watcher_state.lock().unwrap();
-
-            watcher.insert(watch::create_watcher(app.app_handle()));
+            let mut watcher = app_watcher_mutex.lock().unwrap();
+            *watcher = watch::setup_watcher(app.handle());
 
             Ok(())
         })
-        .menu(menu)
-        .invoke_handler(tauri::generate_handler![
-            fs_extra::reveal_in_file_explorer,
-            fs_extra::get_file_metadata,
-            fs_extra::copy_directory,
-            fs_extra::read_file,
-            terminal::execute_command,
-            terminal::kill_command,
-            zip::unzip_command,
-            zip::zip_command,
-            watch::watch_folder,
-            watch::unwatch_folder,
-        ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
