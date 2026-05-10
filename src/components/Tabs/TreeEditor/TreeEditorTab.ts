@@ -523,12 +523,6 @@ export class TreeEditorTab extends FileTab {
 		parents.reverse()
 
 		for (const element of parents) {
-			if (typeof element.key !== 'string') {
-				path += 'any_index/'
-
-				continue
-			}
-
 			path += element.key?.toString() + '/'
 		}
 
@@ -550,12 +544,6 @@ export class TreeEditorTab extends FileTab {
 		parents.reverse()
 
 		for (const element of parents.slice(0, -1)) {
-			if (typeof element.key !== 'string') {
-				path += 'any_index/'
-
-				continue
-			}
-
 			path += element.key?.toString() + '/'
 		}
 

@@ -479,7 +479,7 @@ export class ValueSchema extends Schema {
 				const itemsDefinition: JsonObject = this.part.items as any
 
 				for (let index = 0; index < value.length; index++) {
-					const schema = createSchema(itemsDefinition, this.requestSchema, this.path + 'any_index/')
+					const schema = createSchema(itemsDefinition, this.requestSchema, this.path + index.toString() + '/')
 
 					diagnostics = diagnostics.concat(schema.validate(value[index]))
 				}
@@ -595,12 +595,17 @@ export class ValueSchema extends Schema {
 				}
 			}
 		} else if (Array.isArray(value)) {
-			if (path.startsWith(this.path + 'any_index/')) {
+			if (
+				(this.path.length < path.length && /^[0-9]+\//.test(path.substring(this.path.length))) ||
+				path.startsWith(this.path + 'any_index/')
+			) {
+				const arrayProperty = path.substring(this.path.length).split('/')[0]
+
 				if ('items' in this.part) {
 					const itemsDefinition: JsonObject = this.part.items as any
 
 					for (let index = 0; index < value.length; index++) {
-						const schema = createSchema(itemsDefinition, this.requestSchema, this.path + 'any_index/')
+						const schema = createSchema(itemsDefinition, this.requestSchema, this.path + arrayProperty.toString() + '/')
 
 						completions = completions.concat(schema.getCompletionItems(value[index], path))
 					}
@@ -687,12 +692,17 @@ export class ValueSchema extends Schema {
 				}
 			}
 		} else if (Array.isArray(value)) {
-			if (path.startsWith(this.path + 'any_index/')) {
+			if (
+				(this.path.length < path.length && /^[0-9]+\//.test(path.substring(this.path.length))) ||
+				path.startsWith(this.path + 'any_index/')
+			) {
+				const arrayProperty = path.substring(this.path.length).split('/')[0]
+
 				if ('items' in this.part) {
 					const itemsDefinition: JsonObject = this.part.items as any
 
 					for (let index = 0; index < value.length; index++) {
-						const schema = createSchema(itemsDefinition, this.requestSchema, this.path + 'any_index/')
+						const schema = createSchema(itemsDefinition, this.requestSchema, this.path + arrayProperty + '/')
 
 						types = types.concat(schema.getTypes(value[index], path))
 					}
