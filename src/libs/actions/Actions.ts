@@ -6,7 +6,7 @@ import { getClipboard, setClipboard } from '@/libs/Clipboard'
 import { BaseEntry } from '@/libs/fileSystem/BaseFileSystem'
 import { ActionManager } from './ActionManager'
 import { Action } from './Action'
-import { fileSystem } from '@/libs/fileSystem/FileSystem'
+import { fileSystem, pickDirectory, pickFile, pickFiles } from '@/libs/fileSystem/FileSystem'
 import { Windows } from '@/components/Windows/Windows'
 import { NotificationSystem } from '@/components/Notifications/NotificationSystem'
 import { TreeEditorTab } from '@/components/Tabs/TreeEditor/TreeEditorTab'
@@ -30,6 +30,7 @@ import { appVersion } from '@/libs/app/AppEnv'
 import { ImporterManager } from '@/libs/import/ImporterManager'
 import { tauriBuild } from '@/libs/tauri/Tauri'
 import { TauriFileSystem } from '@/libs/fileSystem/TauriFileSystem'
+import { LocaleManager } from '@/libs/locales/Locales'
 
 export function setupActions() {
 	setupFileTabActions()
@@ -142,7 +143,8 @@ function setupFileTabActions() {
 			action.setVisible(
 				TabManager.focusedTabSystem.value !== null &&
 					TabManager.focusedTabSystem.value.selectedTab.value !== null &&
-					TabManager.focusedTabSystem.value.selectedTab.value instanceof FileTab
+					TabManager.focusedTabSystem.value.selectedTab.value instanceof FileTab &&
+					TabManager.focusedTabSystem.value.selectedTab.value.canSave
 			)
 		})
 	}
@@ -211,28 +213,19 @@ function setupEditorActions() {
 		new Action({
 			id: 'editor.importProject',
 			trigger: async () => {
-				const files = await window.showOpenFilePicker({
-					multiple: false,
-					types: [
-						{
-							description: 'Choose a Project',
-							accept: {
-								'application/zip': ['.brproject', '.mcaddon', '.mcpack'],
-							},
-						},
-					],
+				// TODO: Translate
+				const file = await pickFile(LocaleManager.translate('Choose a Project'), {
+					'application/zip': ['.brproject', '.mcaddon', '.mcpack'],
 				})
 
-				if (!files) return
+				if (!file) return
 
-				const file = files[0]
-
-				if (file.name.endsWith('.mcaddon')) {
-					await importFromMcAddon(await (await file.getFile()).arrayBuffer(), basename(file.name, '.mcaddon'))
-				} else if (file.name.endsWith('.mcpack')) {
-					await importFromMcPack(await (await file.getFile()).arrayBuffer(), basename(file.name, '.mcpack'))
+				if (file.path.endsWith('.mcaddon')) {
+					await importFromMcAddon(file)
+				} else if (file.path.endsWith('.mcpack')) {
+					await importFromMcPack(file)
 				} else {
-					await importFromBrProject(await (await file.getFile()).arrayBuffer(), basename(file.name, '.brproject'))
+					await importFromBrProject(file)
 				}
 			},
 			name: 'actions.editor.importProject.name',
@@ -246,7 +239,7 @@ function setupEditorActions() {
 		new Action({
 			id: 'editor.openFolder',
 			trigger: async () => {
-				const directory = await window.showDirectoryPicker()
+				const directory = await pickDirectory()
 
 				if (!directory) return
 
@@ -321,7 +314,7 @@ function setupEditorActions() {
 
 				if (!tab) return
 
-				tabSystem.removeTab(tab)
+				tabSystem.removeTabSafe(tab)
 			},
 			name: 'actions.editor.closeTab.name',
 			description: 'actions.editor.closeTab.description',
@@ -485,14 +478,7 @@ function setupProjectActions() {
 			new Action({
 				id: 'project.importFile',
 				trigger: async () => {
-					const files = await window.showOpenFilePicker({
-						multiple: true,
-						types: [
-							{
-								description: 'Choose a File',
-							},
-						],
-					})
+					const files = await pickFiles(LocaleManager.translate('Choose a File'))
 
 					if (!files) return
 
@@ -743,13 +729,23 @@ function setupFileSystemActions() {
 		new Action({
 			id: 'files.createFile',
 			trigger: async (path: unknown) => {
-				if (typeof path !== 'string') return
+				if (typeof path !== 'string' && path !== undefined) return
 
-				Windows.open(
-					new PromptWindow('Create File', 'File Name', 'File Name', (name) => {
-						fileSystem.writeFile(join(path, name), '')
-					})
-				)
+				if (path === undefined) {
+					const currentPackPath = FileExplorer.selectedPackPath.value
+
+					Windows.open(
+						new PromptWindow('Create File', 'File Name', 'File Name', (name) => {
+							fileSystem.writeFile(join(currentPackPath, name), '')
+						})
+					)
+				} else {
+					Windows.open(
+						new PromptWindow('Create File', 'File Name', 'File Name', (name) => {
+							fileSystem.writeFile(join(path, name), '')
+						})
+					)
+				}
 			},
 			name: 'actions.files.createFile.name',
 			description: 'actions.files.createFile.description',
@@ -1108,68 +1104,68 @@ function setupJsonTreeActions() {
 		})
 	)
 
-	// const copy = ActionManager.addAction(
-	// 	new Action({
-	// 		id: 'treeEditor.copy',
-	// 		trigger: () => {
-	// 			const focusedTab = TabManager.getFocusedTab()
+	const copy = ActionManager.addAction(
+		new Action({
+			id: 'treeEditor.copy',
+			trigger: () => {
+				const focusedTab = TabManager.getFocusedTab()
 
-	// 			if (focusedTab === null) return
+				if (focusedTab === null) return
 
-	// 			if (!(focusedTab instanceof TreeEditorTab)) return
+				if (!(focusedTab instanceof TreeEditorTab)) return
 
-	// 			focusedTab.copy()
-	// 		},
-	// 		keyBinding: 'Ctrl + C',
-	// 		name: 'actions.treeEditor.copy.name',
-	// 		description: 'actions.treeEditor.copy.description',
-	// 		icon: 'content_copy',
-	// 		visible: false,
-	// 		category: 'actions.treeEditor.name',
-	// 	})
-	// )
+				focusedTab.copy()
+			},
+			keyBinding: 'Ctrl + C',
+			name: 'actions.treeEditor.copy.name',
+			description: 'actions.treeEditor.copy.description',
+			icon: 'content_copy',
+			visible: false,
+			category: 'actions.treeEditor.name',
+		})
+	)
 
-	// const paste = ActionManager.addAction(
-	// 	new Action({
-	// 		id: 'treeEditor.paste',
-	// 		trigger: () => {
-	// 			const focusedTab = TabManager.getFocusedTab()
+	const paste = ActionManager.addAction(
+		new Action({
+			id: 'treeEditor.paste',
+			trigger: () => {
+				const focusedTab = TabManager.getFocusedTab()
 
-	// 			if (focusedTab === null) return
+				if (focusedTab === null) return
 
-	// 			if (!(focusedTab instanceof TreeEditorTab)) return
+				if (!(focusedTab instanceof TreeEditorTab)) return
 
-	// 			focusedTab.paste()
-	// 		},
-	// 		keyBinding: 'Ctrl + V',
-	// 		name: 'actions.treeEditor.paste.name',
-	// 		description: 'actions.treeEditor.paste.description',
-	// 		icon: 'content_paste',
-	// 		visible: false,
-	// 		category: 'actions.treeEditor.name',
-	// 	})
-	// )
+				focusedTab.paste()
+			},
+			keyBinding: 'Ctrl + V',
+			name: 'actions.treeEditor.paste.name',
+			description: 'actions.treeEditor.paste.description',
+			icon: 'content_paste',
+			visible: false,
+			category: 'actions.treeEditor.name',
+		})
+	)
 
-	// const cut = ActionManager.addAction(
-	// 	new Action({
-	// 		id: 'treeEditor.cut',
-	// 		trigger: () => {
-	// 			const focusedTab = TabManager.getFocusedTab()
+	const cut = ActionManager.addAction(
+		new Action({
+			id: 'treeEditor.cut',
+			trigger: () => {
+				const focusedTab = TabManager.getFocusedTab()
 
-	// 			if (focusedTab === null) return
+				if (focusedTab === null) return
 
-	// 			if (!(focusedTab instanceof TreeEditorTab)) return
+				if (!(focusedTab instanceof TreeEditorTab)) return
 
-	// 			focusedTab.cut()
-	// 		},
-	// 		keyBinding: 'Ctrl + X',
-	// 		name: 'actions.treeEditor.cut.name',
-	// 		description: 'actions.treeEditor.cut.description',
-	// 		icon: 'content_cut',
-	// 		visible: false,
-	// 		category: 'actions.treeEditor.name',
-	// 	})
-	// )
+				focusedTab.cut()
+			},
+			keyBinding: 'Ctrl + X',
+			name: 'actions.treeEditor.cut.name',
+			description: 'actions.treeEditor.cut.description',
+			icon: 'content_cut',
+			visible: false,
+			category: 'actions.treeEditor.name',
+		})
+	)
 
 	const deleteAction = ActionManager.addAction(
 		new Action({
@@ -1196,24 +1192,24 @@ function setupJsonTreeActions() {
 		})
 	)
 
-	// const viewDocumentation = ActionManager.addAction(
-	// 	new Action({
-	// 		id: 'treeEditor.viewDocumentation',
-	// 		trigger: () => {
-	// 			const focusedTab = TabManager.getFocusedTab()
+	const viewDocumentation = ActionManager.addAction(
+		new Action({
+			id: 'treeEditor.viewDocumentation',
+			trigger: () => {
+				const focusedTab = TabManager.getFocusedTab()
 
-	// 			if (focusedTab === null) return
+				if (focusedTab === null) return
 
-	// 			if (!(focusedTab instanceof TextTab)) return
+				if (!(focusedTab instanceof TreeEditorTab)) return
 
-	// 			focusedTab.viewDocumentation()
-	// 		},
-	// 		name: 'actions.treeEditor.documentationLookup.name',
-	// 		description: 'actions.treeEditor.documentationLookup.description',
-	// 		icon: 'menu_book',
-	// 		category: 'actions.treeEditor.name',
-	// 	})
-	// )
+				focusedTab.viewDocumentation()
+			},
+			name: 'actions.treeEditor.documentationLookup.name',
+			description: 'actions.treeEditor.documentationLookup.description',
+			icon: 'menu_book',
+			category: 'actions.treeEditor.name',
+		})
+	)
 
 	const convertToObject = ActionManager.addAction(
 		new Action({
@@ -1459,6 +1455,9 @@ function setupJsonTreeActions() {
 	)
 
 	for (const action of [
+		copy,
+		cut,
+		paste,
 		undo,
 		redo,
 		deleteAction,
@@ -1468,6 +1467,7 @@ function setupJsonTreeActions() {
 		convertToNumber,
 		convertToString,
 		convertToBoolean,
+		viewDocumentation,
 	]) {
 		TabManager.focusedTabSystemChanged.on(() => {
 			action.setVisible(
@@ -1618,7 +1618,7 @@ function setupTabActions() {
 			trigger: (data: unknown) => {
 				if (!(data instanceof Tab)) return
 
-				TabManager.removeTab(data)
+				TabManager.removeTabSafe(data)
 			},
 			name: 'actions.tabs.close.name',
 			description: 'actions.tabs.close.description',
@@ -1639,7 +1639,7 @@ function setupTabActions() {
 					const tabs = [...tabSystem.tabs.value]
 
 					for (const tab of tabs) {
-						await TabManager.removeTab(tab)
+						await TabManager.removeTabSafe(tab)
 					}
 				}
 			},
@@ -1672,7 +1672,7 @@ function setupTabActions() {
 
 							if (!active) continue
 
-							await TabManager.removeTab(tab)
+							await TabManager.removeTabSafe(tab)
 						}
 
 						break
@@ -1724,7 +1724,7 @@ function setupTabActions() {
 					for (const tab of tabs) {
 						if (tab.id === data.id) continue
 
-						await TabManager.removeTab(tab)
+						await TabManager.removeTabSafe(tab)
 					}
 				}
 			},
@@ -1751,7 +1751,7 @@ function setupTabActions() {
 
 				if (!otherTabSystem) return
 
-				await TabManager.removeTab(tab)
+				await TabManager.removeTabSafe(tab)
 
 				TabManager.focusTabSystem(otherTabSystem)
 

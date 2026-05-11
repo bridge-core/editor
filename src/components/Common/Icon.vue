@@ -24,16 +24,61 @@ const mdiMap: { [key: string]: string | undefined } = {
 	'mdi-earth-box': 'public',
 	'mdi-alarm': 'alarm',
 	'mdi-school-outline': 'school',
-	'mdi-ab-testing': 'help',
-	'mdi-alpha-m': 'help',
+	'mdi-ab-testing': 'science',
+	'mdi-alpha-m': 'metro',
 	'mdi-alpha-m-box-outline': 'data_object',
 	'mdi-web': 'language',
 	'mdi-tools': 'construction',
 	'mdi-skull-outline': 'skull',
 	'mdi-language-javascript': 'javascript',
+	'mdi-cube-outline': 'deployed_code',
+	'mdi-panda': 'pets',
+	'mdi-pig': 'savings',
+	'mdi-fish': 'phishing',
+	'mdi-cow': 'pets',
+	'mdi-spider': 'pest_control',
+	'mdi-ghost-outline': 'motion_blur',
+	'mdi-paw': 'pets',
+	'mdi-fishbowl': 'phishing',
+	'mdi-egg-outline': 'egg',
+	'mdi-flower': 'deceased',
+	'mdi-map-plus': 'map',
+	'mdi-cube-scan': 'view_in_ar',
+	'mdi-movie-open-outline': 'movie',
+	'mdi-forum': 'forum',
+	'mdi-weather-fog': 'foggy',
+	'mdi-book-outline': 'book',
+	'mdi-pentagon-outline': 'pentagon',
+	'mdi-movie-search-outline': 'movie',
+	'mdi-island': 'landscape_2',
+	'mdi-function': 'function',
+	'mdi-package-variant': 'orders',
+	'mdi-sword': 'swords',
+	'mdi-test-tube': 'labs',
+	'mdi-snowflake': 'ac_unit',
+	'mdi-google-controller': 'stadia_controller',
+	'mdi-hat-fedora': 'chef_hat',
+	'mdi-camera': 'photo_camera',
+	'mdi-texture': 'texture',
+	'mdi-castle': 'castle',
+	'mdi-crosshairs': 'filter_center_focus',
+	'mdi-library-shelves': 'shelves',
+	'mdi-view-list': 'list',
+	'mdi-window-maximize': 'ad',
+	'mdi-store-outline': 'store',
+	'mdi-script-text-outline': 'code_blocks',
+	'mdi-food-apple-outline': 'nutrition',
+	'mdi-shovel': 'swords',
+	'mdi-pickaxe': 'swords',
+	'mdi-hanger': 'checkroom',
+	'mdi-axe': 'swords',
+	'mdi-circle': 'motion_blur',
+	'mdi-puzzle': 'extension',
+	'mdi-timer': 'timer',
+	'mdi-file-image-outline': 'image',
 }
 
-defineProps({
+const props = defineProps({
 	icon: {
 		type: String,
 		required: true,
@@ -41,12 +86,21 @@ defineProps({
 	color: {
 		type: String,
 	},
+	fallback: {
+		type: String,
+	},
 })
 
-function resolveLegacyIcons(icon: string) {
+function resolveLegacyIcons(icon: string | undefined) {
+	if (!icon) return props.fallback ?? 'help'
+
 	if (mdiMap[icon]) return mdiMap[icon]
 
-	if (icon.startsWith('mdi-')) return 'help'
+	if (icon.startsWith('mdi-')) {
+		console.warn(`Mdi icon with no override: ${icon}!`)
+
+		return props.fallback ?? 'help'
+	}
 
 	return icon
 }

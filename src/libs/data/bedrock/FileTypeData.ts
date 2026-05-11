@@ -1,9 +1,10 @@
-import { extname, join, sep } from 'pathe'
+import { basename, extname, join, sep } from 'pathe'
 import { hasAnyPath, isMatch } from 'bridge-common-utils'
 import { ProjectManager } from '@/libs/project/ProjectManager'
 import { Data } from '@/libs/data/Data'
 import { TPackTypeId } from 'mc-project-core'
 import * as JSONC from 'jsonc-parser'
+import { BaseEntry } from '@/libs/fileSystem/BaseFileSystem'
 
 /**
  * Handles determining the file types of a files and providing the file definition data associated with those file types
@@ -85,7 +86,7 @@ export class FileTypeData {
 		return null
 	}
 
-	public async guessFolder(fileHandle: FileSystemFileHandle): Promise<string | null> {
+	public async guessFolder(entry: BaseEntry): Promise<string | null> {
 		// Helper function
 		const getStartPath = (scope: string | string[], packId: TPackTypeId) => {
 			let startPath = Array.isArray(scope) ? scope[0] : scope
@@ -96,7 +97,7 @@ export class FileTypeData {
 			return join(packPath, startPath)
 		}
 
-		const extension = `.${fileHandle.name.split('.').pop()!}`
+		const extension = `.${basename(entry.path).split('.').pop()!}`
 		// 1. Guess based on file extension
 		const validTypes = this.fileTypes.filter(({ detect }) => {
 			if (!detect || !detect.scope) return false
@@ -116,10 +117,9 @@ export class FileTypeData {
 		if (extension !== '.json') return null
 
 		// 2. Guess based on json file content
-		const file = await fileHandle.getFile()
 		let json: any
 		try {
-			json = JSONC.parse(await file.text())
+			json = JSONC.parse(await entry.readText())
 		} catch {
 			return null
 		}
@@ -128,6 +128,7 @@ export class FileTypeData {
 			if (typeof type === 'string' && type !== 'json') continue
 
 			const { scope, fileContent, packType = 'behaviorPack' } = detect ?? {}
+
 			if (!scope || !fileContent) continue
 
 			if (!hasAnyPath(json, fileContent)) continue

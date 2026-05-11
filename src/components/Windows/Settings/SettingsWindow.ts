@@ -26,6 +26,7 @@ export interface CustomItem {
 export interface DropdownItem {
 	type: 'dropdown'
 	label: string
+	description: string
 	values: ComputedRef<string[]>
 	labels: ComputedRef<string[]>
 }
@@ -33,12 +34,14 @@ export interface DropdownItem {
 export interface AutocompleteItem {
 	type: 'autocomplete'
 	label: string
+	description: string
 	completions: ComputedRef<CompletionItem[]>
 }
 
 export interface TextItem {
 	type: 'text'
 	label: string
+	description: string
 }
 
 export interface ToggleItem {
@@ -122,11 +125,13 @@ function setupProjectsCategory() {
 	SettingsWindow.addItem('projects', 'defaultAuthor', {
 		type: 'text',
 		label: 'windows.settings.projects.defaultAuthor.name',
+		description: 'windows.settings.projects.defaultAuthor.description',
 	})
 
 	SettingsWindow.addItem('projects', 'defaultNamespace', {
 		type: 'text',
 		label: 'windows.settings.projects.defaultNamespace.name',
+		description: 'windows.settings.projects.defaultNamespace.description',
 	})
 
 	SettingsWindow.addItem('projects', 'exportLabel', {
@@ -161,6 +166,7 @@ function setupGeneralCategory() {
 	SettingsWindow.addItem('general', 'language', {
 		type: 'dropdown',
 		label: 'windows.settings.general.language.name',
+		description: 'windows.settings.general.language.description',
 		values: computed(() => LocaleManager.getAvailableLanguages().map((language) => language.text)),
 		labels: computed(() => LocaleManager.getAvailableLanguages().map((language) => language.text)),
 	})
@@ -222,6 +228,7 @@ function setupAppearanceCategory() {
 	SettingsWindow.addItem('appearance', 'darkTheme', {
 		type: 'dropdown',
 		label: 'windows.settings.appearance.darkTheme.name',
+		description: 'windows.settings.appearance.darkTheme.description',
 		values: computed(() => darkThemes.value.map((theme) => theme.id)),
 		labels: computed(() => darkThemes.value.map((theme) => theme.name)),
 	})
@@ -229,6 +236,7 @@ function setupAppearanceCategory() {
 	SettingsWindow.addItem('appearance', 'lightTheme', {
 		type: 'dropdown',
 		label: 'windows.settings.appearance.lightTheme.name',
+		description: 'windows.settings.appearance.lightTheme.description',
 		values: computed(() => lightThemes.value.map((theme) => theme.id)),
 		labels: computed(() => lightThemes.value.map((theme) => theme.name)),
 	})
@@ -241,6 +249,7 @@ function setupAppearanceCategory() {
 	SettingsWindow.addItem('appearance', 'font', {
 		type: 'dropdown',
 		label: 'windows.settings.appearance.font.name',
+		description: 'windows.settings.appearance.font.description',
 		values: computed(() => [
 			'Inter',
 			'Roboto',
@@ -272,6 +281,7 @@ function setupAppearanceCategory() {
 	SettingsWindow.addItem('appearance', 'editorFont', {
 		type: 'dropdown',
 		label: 'windows.settings.appearance.editorFont.name',
+		description: 'windows.settings.appearance.editorFont.description',
 		values: computed(() => ['Roboto', 'Arial', 'Consolas', 'Menlo', 'Monaco', '"Courier New"', 'monospace']),
 		labels: computed(() => ['Roboto', 'Arial', 'Consolas', 'Menlo', 'Monaco', '"Courier New"', 'Monospace']),
 	})
@@ -279,6 +289,7 @@ function setupAppearanceCategory() {
 	SettingsWindow.addItem('appearance', 'editorFontSize', {
 		type: 'autocomplete',
 		label: 'windows.settings.appearance.editorFontSize.name',
+		description: 'windows.settings.appearance.editorFontSize.description',
 		completions: computed(() =>
 			[8, 10, 12, 14, 16, 18, 20].map((value) => ({
 				type: 'value',
@@ -347,6 +358,7 @@ function setupEditorCategory() {
 	SettingsWindow.addItem('editor', 'jsonEditor', {
 		type: 'dropdown',
 		label: 'windows.settings.editor.jsonEditor.name',
+		description: 'windows.settings.editor.jsonEditor.description',
 		labels: computed(() => ['Raw Text Editor', 'Tree Editor']),
 		values: computed(() => ['text', 'tree']),
 	})
@@ -383,6 +395,7 @@ function setupEditorCategory() {
 	SettingsWindow.addItem('editor', 'wordWrapColumns', {
 		type: 'autocomplete',
 		label: 'windows.settings.editor.wordWrapColumns.name',
+		description: 'windows.settings.editor.wordWrapColumns.description',
 		completions: computed(() =>
 			[40, 60, 80, 100, 120, 160].map((value) => ({
 				type: 'value',

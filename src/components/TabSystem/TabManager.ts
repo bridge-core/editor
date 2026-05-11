@@ -7,6 +7,7 @@ import { TabTypes } from './TabTypes'
 import { ProjectManager } from '@/libs/project/ProjectManager'
 import { Disposable, disposeAll } from '@/libs/disposeable/Disposeable'
 import { Event } from '@/libs/event/Event'
+import { fileSystem } from '@/libs/fileSystem/FileSystem'
 
 type TabManagerRecoveryState = { tabSystems: TabSystemRecoveryState[]; focusedTabSystem: string }
 
@@ -80,6 +81,12 @@ export class TabManager {
 		}
 	}
 
+	public static async removeTabSafe(tab: Tab) {
+		for (const tabSystem of this.tabSystems.value) {
+			if (tabSystem.hasTab(tab)) await tabSystem.removeTabSafe(tab)
+		}
+	}
+
 	public static async clear() {
 		const tabSystems = TabManager.tabSystems.value
 
@@ -119,6 +126,8 @@ export class TabManager {
 	}
 
 	public static async openFile(path: string) {
+		if (!(await fileSystem.exists(path))) return
+
 		for (const tabSystem of TabManager.tabSystems.value) {
 			for (const tab of tabSystem.tabs.value) {
 				if (tab instanceof FileTab && tab.is(path)) {
@@ -220,5 +229,13 @@ export class TabManager {
 		TabManager.tabSystems.value = [...TabManager.tabSystems.value]
 
 		this.focusTabSystem(TabManager.tabSystems.value.find((tabSystem) => tabSystem.id === state.focusedTabSystem) ?? null)
+	}
+
+	public static getTabSystemWithTab(tab: Tab): TabSystem | null {
+		for (const tabSystem of this.tabSystems.value) {
+			if (tabSystem.hasTab(tab)) return tabSystem
+		}
+
+		return null
 	}
 }

@@ -2,14 +2,12 @@
 import Icon from '@/components/Common/Icon.vue'
 import File from './File.vue'
 import FreeContextMenu from '@/components/Common/FreeContextMenu.vue'
-import ContextMenuItem from '@/components/Common/ContextMenuItem.vue'
 import ActionContextMenuItem from '@/components/Common/ActionContextMenuItem.vue'
 
 import { Ref, computed, onMounted, onUnmounted, ref, watch } from 'vue'
 import { basename, dirname, join } from 'pathe'
 import { BaseEntry } from '@/libs/fileSystem/BaseFileSystem'
 import { fileSystem } from '@/libs/fileSystem/FileSystem'
-import { ActionManager } from '@/libs/actions/ActionManager'
 import { Disposable } from '@/libs/disposeable/Disposeable'
 import { FileExplorer } from './FileExplorer'
 import { Settings } from '@/libs/settings/Settings'
@@ -83,7 +81,7 @@ let expandTimeout: number | null = null
 
 function dragStart() {
 	requestAnimationFrame(() => {
-		FileExplorer.draggedItem.value = { kind: 'directory', path: props.path }
+		FileExplorer.draggedItem.value = new BaseEntry(props.path, 'directory')
 	})
 }
 

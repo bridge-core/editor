@@ -75,7 +75,7 @@ const filteredExtensions = computed(() => {
 							:color="
 								ExtensionLibraryWindow.selectedTag.value === tag
 									? 'accent'
-									: ExtensionLibraryWindow.tags[tag].color ?? 'primary'
+									: (ExtensionLibraryWindow.tags[tag].color ?? 'primary')
 							"
 							class="text-base"
 						/>
@@ -101,7 +101,7 @@ const filteredExtensions = computed(() => {
 				>
 					<div class="flex justify-between mb-4">
 						<div class="flex gap-2">
-							<Icon :icon="'data_object'" color="primary" />
+							<Icon :icon="extension.icon" fallback="data_object" color="primary" />
 							<h1 class="font-theme font-bold">{{ extension.name }}</h1>
 						</div>
 

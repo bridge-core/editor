@@ -1,40 +1,35 @@
 <script lang="ts" setup>
-import Window from "@/components/Windows/Window.vue";
-import Icon from "@/components/Common/Icon.vue";
-import Switch from "@/components/Common/Switch.vue";
-import LabeledInput from "@/components/Common/LabeledInput.vue";
-import InformativeToggle from "@/components/Common/InformativeToggle.vue";
-import Expandable from "@/components/Common/Expandable.vue";
-import Dropdown from "@/components/Common/Legacy/LegacyDropdown.vue";
-import LabeledTextInput from "@/components/Common/LabeledTextInput.vue";
-import TextButton from "@/components/Common/TextButton.vue";
+import Window from '@/components/Windows/Window.vue'
+import Icon from '@/components/Common/Icon.vue'
+import Switch from '@/components/Common/Switch.vue'
+import LabeledInput from '@/components/Common/LabeledInput.vue'
+import InformativeToggle from '@/components/Common/InformativeToggle.vue'
+import Expandable from '@/components/Common/Expandable.vue'
+import Dropdown from '@/components/Common/Legacy/LegacyDropdown.vue'
+import TextButton from '@/components/Common/TextButton.vue'
 
-import { ComputedRef, Ref, computed, onMounted, ref, watch } from "vue";
-import { IPackType } from "mc-project-core";
-import { ProjectManager } from "@/libs/project/ProjectManager";
-import { ConfigurableFile } from "@/libs/project/create/files/configurable/ConfigurableFile";
-import {
-  FormatVersionDefinitions,
-  ExperimentalToggle,
-  useGetData,
-  Data,
-} from "@/libs/data/Data";
-import { v4 as uuid } from "uuid";
-import { useTranslate } from "@/libs/locales/Locales";
-import { fileSystem } from "@/libs/fileSystem/FileSystem";
-import { Windows } from "../Windows";
-import { CreateProjectWindow } from "./CreateProjectWindow";
-import { useIsMobile } from "@/libs/Mobile";
-import { packs } from "@/libs/project/Packs";
-import { Settings } from "@/libs/settings/Settings";
+import { ComputedRef, Ref, computed, onMounted, ref, watch } from 'vue'
+import { IPackType } from 'mc-project-core'
+import { ProjectManager } from '@/libs/project/ProjectManager'
+import { ConfigurableFile } from '@/libs/project/create/files/configurable/ConfigurableFile'
+import { FormatVersionDefinitions, ExperimentalToggle, useGetData, Data } from '@/libs/data/Data'
+import { v4 as uuid } from 'uuid'
+import { useTranslate } from '@/libs/locales/Locales'
+import { fileSystem } from '@/libs/fileSystem/FileSystem'
+import { Windows } from '../Windows'
+import { CreateProjectWindow } from './CreateProjectWindow'
+import { useIsMobile } from '@/libs/Mobile'
+import { packs } from '@/libs/project/Packs'
+import { Settings } from '@/libs/settings/Settings'
+import LabeledTextInput from '@/components/Common/LabeledTextInput.vue'
 
-const t = useTranslate();
-const getData = useGetData();
+const t = useTranslate()
+const getData = useGetData()
 
-const projectIconInput: Ref<HTMLInputElement | null> = ref(null);
+const projectIconInput: Ref<HTMLInputElement | null> = ref(null)
 
-const linkBehaviourPack = ref(false);
-const linkResourcePack = ref(false);
+const linkBehaviourPack = ref(false)
+const linkResourcePack = ref(false)
 
 function setLinkBehaviourPack(value: boolean) {
   if (!selectedPackTypes.value.find((pack) => pack.id === "behaviorPack"))

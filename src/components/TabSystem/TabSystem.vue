@@ -54,71 +54,187 @@ const currentTabActions: ComputedRef<string[]> = computed(() => {
 const contextMenu: Ref<typeof FreeContextMenu | null> = ref(null)
 const contextMenuTab: ShallowRef<Tab | null> = shallowRef(null)
 const contextMenuTabActions: Ref<string[]> = ref([])
+
+function getTabFromTarget(target: HTMLElement): HTMLElement | null {
+	if (target.dataset.tab === 'tab') return target
+
+	if (target.parentElement) return getTabFromTarget(target.parentElement)
+
+	return null
+}
+
+function dragStart(event: DragEvent, tab: Tab) {
+	event.stopPropagation()
+
+	TabSystem.draggingTab.value = tab
+}
+
+function dragOver(event: DragEvent, tab: Tab) {
+	event.preventDefault()
+	event.stopPropagation()
+
+	if (!event.target) return
+
+	const bounds = (getTabFromTarget(event.target as HTMLElement) ?? (event.target as HTMLElement)).getBoundingClientRect()
+
+	const center = (bounds.left + bounds.right) / 2
+
+	TabSystem.dropTargetTab.value = tab
+	TabSystem.dropSide.value = event.clientX >= center ? 'right' : 'left'
+}
+
+function dragOverBack(event: DragEvent) {
+	event.preventDefault()
+	event.stopPropagation()
+
+	TabSystem.dropTargetTab.value = props.instance.tabs.value[props.instance.tabs.value.length - 1] ?? null
+	TabSystem.dropSide.value = 'right'
+}
+
+async function drop(event: DragEvent) {
+	event.stopPropagation()
+
+	const dropTargetTab = TabSystem.dropTargetTab.value
+	const draggingTab = TabSystem.draggingTab.value
+
+	if (!dropTargetTab) return
+
+	if (!draggingTab) return
+
+	const dropIndex = props.instance.indexOfTab(dropTargetTab) + (TabSystem.dropSide.value === 'right' ? 1 : 0)
+
+	if (props.instance.hasTab(draggingTab)) {
+		props.instance.orderTab(draggingTab, dropIndex)
+	} else {
+		const sourceTabSystem = TabManager.getTabSystemWithTab(draggingTab)!
+
+		await sourceTabSystem.removeTabSafe(draggingTab)
+
+		await props.instance.addTab(draggingTab, true, draggingTab.temporary.value, dropIndex)
+	}
+}
+
+let dragLevel = 0
+
+function dragEnter(event: DragEvent) {
+	if (!event.target) return
+	if ((event.target as HTMLElement).dataset.ignoreDrag === 'true') return
+
+	dragLevel++
+}
+
+function dragExit(event: DragEvent) {
+	if (!event.target) return
+	if ((event.target as HTMLElement).dataset.ignoreDrag === 'true') return
+
+	dragLevel--
+
+	if (dragLevel === 0) TabSystem.dropTargetTab.value = null
+}
+
+function dragEnd(event: DragEvent) {
+	TabSystem.dropTargetTab.value = null
+	TabSystem.draggingTab.value = null
+	dragLevel = 0
+}
 </script>
 
 <template>
 	<div class="basis-0 min-w-0 flex-1 h-full border-background-secondary" @click="() => instance.focus()">
-		<div class="flex gap-2 overflow-x-auto" :class="{ 'mb-2': currentTabActions.length === 0 }">
+		<div
+			class="flex gap-2 overflow-x-auto px-2 -mx-2"
+			:class="{ 'mb-2': currentTabActions.length === 0 }"
+			@dragover="dragOverBack"
+			@drop="drop"
+			@dragend="dragEnd"
+			@dragenter="dragEnter"
+			@dragexit="dragExit"
+		>
 			<div
+				class="flex px-2 -mx-2"
 				v-for="tab in instance.tabs.value"
-				class="flex items-center gap-1 px-2 py-1 rounded cursor-pointer transition-[colors, border-color] duration-100 ease-out group border-2 border-background"
-				:class="{
-					'max-w-[12rem]': get('compactTabDesign'),
-					'bg-background-secondary': instance.selectedTab.value === tab && TabManager.focusedTabSystem.value?.id === instance.id,
-					'bg-background-transparent hover:bg-background-secondary hover:border-background-secondary':
-						instance.selectedTab.value !== tab || TabManager.focusedTabSystem.value?.id !== instance.id,
-					'border-background-secondary': instance.selectedTab.value === tab,
-				}"
-				@click="() => instance.selectTab(tab)"
-				@contextmenu.prevent.stop="
-					(event) => {
-						contextMenuTab = tab
-
-						if (
-							tab instanceof FileTab &&
-							ProjectManager.currentProject &&
-							ProjectManager.currentProject instanceof BedrockProject
-						) {
-							const fileType = ProjectManager.currentProject.fileTypeData.get(tab.path)
-
-							if (fileType) {
-								contextMenuTabActions = tabActions
-									.filter((tabAction) => tabAction.fileTypes.includes(fileType.id))
-									.map((tabAction) => tabAction.action)
-							}
-						}
-
-						contextMenu?.open(event)
-					}
-				"
+				draggable="true"
+				@dragstart="(event) => dragStart(event, tab)"
+				@dragover="(event) => dragOver(event, tab)"
+				@drop="drop"
+				@dragend="dragEnd"
+				@dragenter="dragEnter"
+				@dragexit="dragExit"
+				data-tab="tab"
 			>
-				<div class="relative">
-					<div
-						v-if="tab instanceof FileTab && tab.modified.value"
-						class="bg-behaviorPack border-2 border-[var(--border-color)] w-3 h-3 rounded-full absolute right-[-0.25rem] top-1"
-						:style="{
-							'--border-color':
-								instance.selectedTab.value == tab
-									? 'var(--theme-color-backgroundSecondary)'
-									: 'var(--theme-color-background)',
-						}"
-					></div>
+				<div
+					v-if="TabSystem.dropTargetTab.value?.id === tab.id && TabSystem.dropSide.value === 'left'"
+					class="self-stretch rounded my-1 bg-accent w-[2px] mr-[calc(0.25rem-1px)] ml-[calc(-0.25rem-1px)]"
+					data-ignore-drag="true"
+				></div>
 
-					<Icon v-if="tab.icon" :icon="tab.icon.value ?? 'help'" class="text-base text-behaviorPack" />
+				<div
+					class="flex items-center gap-1 px-2 py-1 rounded cursor-pointer transition-[colors, border-color] duration-100 ease-out group border-2 border-background"
+					:class="{
+						'max-w-[12rem]': get('compactTabDesign'),
+						'bg-background-secondary':
+							instance.selectedTab.value === tab && TabManager.focusedTabSystem.value?.id === instance.id,
+						'bg-background-transparent hover:bg-background-secondary hover:border-background-secondary':
+							instance.selectedTab.value !== tab || TabManager.focusedTabSystem.value?.id !== instance.id,
+						'border-background-secondary': instance.selectedTab.value === tab,
+					}"
+					@click="() => instance.selectTab(tab)"
+					@contextmenu.prevent.stop="
+						(event) => {
+							contextMenuTab = tab
+
+							if (
+								tab instanceof FileTab &&
+								ProjectManager.currentProject &&
+								ProjectManager.currentProject instanceof BedrockProject
+							) {
+								const fileType = ProjectManager.currentProject.fileTypeData.get(tab.path)
+
+								if (fileType) {
+									contextMenuTabActions = tabActions
+										.filter((tabAction) => tabAction.fileTypes.includes(fileType.id))
+										.map((tabAction) => tabAction.action)
+								}
+							}
+
+							contextMenu?.open(event)
+						}
+					"
+				>
+					<div class="relative">
+						<div
+							v-if="tab instanceof FileTab && tab.modified.value"
+							class="bg-behaviorPack border-2 border-[var(--border-color)] w-3 h-3 rounded-full absolute right-[-0.25rem] top-1"
+							:style="{
+								'--border-color':
+									instance.selectedTab.value == tab
+										? 'var(--theme-color-backgroundSecondary)'
+										: 'var(--theme-color-background)',
+							}"
+						></div>
+
+						<Icon v-if="tab.icon" :icon="tab.icon.value ?? 'help'" class="text-base text-behaviorPack" />
+					</div>
+
+					<p
+						class="font-theme select-none overflow-hidden text-ellipsis whitespace-nowrap h-6 transition-colors duration-100 ease-out basis-0 grow"
+						:class="{
+							'text-text': instance.selectedTab.value === tab,
+							'text-text-secondary group-hover:text-text': instance.selectedTab.value !== tab,
+							italic: tab.temporary.value && !get('keepTabsOpen'),
+						}"
+					>
+						{{ tab.name.value ?? 'Tab' }}
+					</p>
+
+					<IconButton icon="close" class="text-base" @click.stop="() => instance.removeTabSafe(tab)" />
 				</div>
 
-				<p
-					class="font-theme select-none overflow-hidden text-ellipsis whitespace-nowrap h-6 transition-colors duration-100 ease-out basis-0 grow"
-					:class="{
-						'text-text': instance.selectedTab.value === tab,
-						'text-text-secondary group-hover:text-text': instance.selectedTab.value !== tab,
-						italic: tab.temporary.value && !get('keepTabsOpen'),
-					}"
-				>
-					{{ tab.name.value ?? 'Tab' }}
-				</p>
-
-				<IconButton icon="close" class="text-base" @click.stop="() => instance.removeTab(tab)" />
+				<div
+					v-if="TabSystem.dropTargetTab.value?.id === tab.id && TabSystem.dropSide.value === 'right'"
+					class="self-stretch rounded my-1 bg-accent w-[2px] mr-[calc(-0.25rem-1px)] ml-[calc(0.25rem-1px)]"
+					data-ignore-drag="true"
+				></div>
 			</div>
 		</div>
 

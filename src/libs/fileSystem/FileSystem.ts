@@ -6,13 +6,17 @@ import { get, set } from 'idb-keyval'
 import { LocalFileSystem } from './LocalFileSystem'
 import { onMounted, onUnmounted, shallowRef, ShallowRef } from 'vue'
 import { Disposable } from '@/libs/disposeable/Disposeable'
+import { open } from '@tauri-apps/api/dialog'
+import { readBinaryFile } from '@tauri-apps/api/fs'
+import { basename, resolve } from 'pathe'
+import { MemoryFileSystem } from './MemoryFileSystem'
 
 export function getFileSystem(): BaseFileSystem {
 	if (tauriBuild) return new TauriFileSystem()
 
 	if (!supportsFileSystemApi()) return new LocalFileSystem()
 
-	return new PWAFileSystem()
+	return new PWAFileSystem(true)
 }
 
 export const fileSystem = getFileSystem()
@@ -144,4 +148,381 @@ export function useBridgeFolderUnloaded(): ShallowRef<boolean> {
 	})
 
 	return valueRef
+}
+
+export async function pickFile(
+	description?: string,
+	accept?: Record<MIMEType, FileExtension | FileExtension[]> | undefined
+): Promise<BaseEntry | null> {
+	if (tauriBuild) {
+		const extensions = []
+
+		if (accept) {
+			for (const acceptedExtensions of Object.values(accept)) {
+				for (const extension of Array.isArray(acceptedExtensions) ? acceptedExtensions : [acceptedExtensions]) {
+					extensions.push(extension)
+				}
+			}
+		}
+
+		const files = await open({
+			directory: false,
+			multiple: false,
+			filters:
+				accept === undefined
+					? undefined
+					: [
+							{
+								name: description ?? 'File',
+								extensions: extensions.map((extension) => extension.slice(1)),
+							},
+						],
+		})
+
+		if (!files) return null
+
+		const file = Array.isArray(files) ? files[0] : files
+
+		return new ImportedFileEntry(file, (await readBinaryFile(file)).buffer as ArrayBuffer)
+	} else if (window.showOpenFilePicker) {
+		let handles = null
+
+		try {
+			handles = await window.showOpenFilePicker({
+				types: [
+					{
+						description,
+						accept,
+					},
+				],
+			})
+		} catch {}
+
+		if (!handles) return null
+
+		const handle = handles[0]
+
+		if (!handle) return null
+
+		return new ImportedFileEntry('/' + handle.name, await (await handle.getFile()).arrayBuffer())
+	} else {
+		return new Promise((resolve) => {
+			const input = document.createElement('input')
+			input.type = 'file'
+
+			if (accept) {
+				const acceptedTypes = []
+
+				for (const [mimeType, extensions] of Object.entries(accept)) {
+					acceptedTypes.push(mimeType)
+
+					for (const extension of Array.isArray(extensions) ? extensions : [extensions]) {
+						acceptedTypes.push(extension)
+					}
+				}
+
+				input.accept = acceptedTypes.join(',')
+			}
+
+			input.onchange = async () => {
+				const file = input.files?.[0]
+
+				if (!file) {
+					resolve(null)
+
+					return
+				}
+
+				const reader = new FileReader()
+
+				reader.onload = () => {
+					resolve(new ImportedFileEntry('/' + file.name, reader.result as ArrayBuffer))
+				}
+
+				reader.onerror = () => {
+					resolve(null)
+				}
+
+				reader.readAsArrayBuffer(file)
+			}
+
+			input.oncancel = () => {
+				resolve(null)
+			}
+
+			input.click()
+		})
+	}
+}
+
+export async function pickFiles(
+	description?: string,
+	accept?: Record<MIMEType, FileExtension | FileExtension[]> | undefined
+): Promise<BaseEntry[] | null> {
+	if (tauriBuild) {
+		const extensions = []
+
+		if (accept) {
+			for (const acceptedExtensions of Object.values(accept)) {
+				for (const extension of Array.isArray(acceptedExtensions) ? acceptedExtensions : [acceptedExtensions]) {
+					extensions.push(extension)
+				}
+			}
+		}
+
+		const files = await open({
+			directory: false,
+			multiple: true,
+			filters:
+				accept === undefined
+					? undefined
+					: [
+							{
+								name: description ?? 'File',
+								extensions: extensions.map((extension) => extension.slice(1)),
+							},
+						],
+		})
+
+		if (!files) return null
+
+		const fileArray = Array.isArray(files) ? files : [files]
+
+		// @ts-ignore TS being weird about buffers
+		return await Promise.all(
+			fileArray.map(async (file) => new ImportedFileEntry(file, (await readBinaryFile(file)).buffer as ArrayBuffer))
+		)
+	} else if (window.showOpenFilePicker) {
+		let handles = null
+
+		try {
+			handles = await window.showOpenFilePicker({
+				types: [
+					{
+						description,
+						accept,
+					},
+				],
+			})
+		} catch {}
+
+		if (!handles) return null
+
+		return await Promise.all(
+			handles.map(async (handle) => new ImportedFileEntry('/' + handle.name, await (await handle.getFile()).arrayBuffer()))
+		)
+	} else {
+		return new Promise((resolve) => {
+			const input = document.createElement('input')
+			input.type = 'file'
+			input.multiple = true
+
+			if (accept) {
+				const acceptedTypes = []
+
+				for (const [mimeType, extensions] of Object.entries(accept)) {
+					acceptedTypes.push(mimeType)
+
+					for (const extension of Array.isArray(extensions) ? extensions : [extensions]) {
+						acceptedTypes.push(extension)
+					}
+				}
+
+				input.accept = acceptedTypes.join(',')
+			}
+
+			input.onchange = async () => {
+				const items = input.files
+
+				if (!items) {
+					resolve(null)
+
+					return
+				}
+
+				const files: File[] = []
+
+				for (const item of items) {
+					files.push(item)
+				}
+
+				const result: (BaseEntry | null)[] = await Promise.all(
+					files.map(
+						async (file) =>
+							await new Promise((resolveBuffer) => {
+								const reader = new FileReader()
+
+								reader.onload = () => {
+									resolveBuffer(new ImportedFileEntry('/' + file.name, reader.result as ArrayBuffer))
+								}
+
+								reader.onerror = () => {
+									resolveBuffer(null)
+								}
+
+								reader.readAsArrayBuffer(file)
+							})
+					)
+				)
+
+				if (result.includes(null)) {
+					resolve(null)
+				} else {
+					resolve(<BaseEntry[]>result)
+				}
+			}
+
+			input.oncancel = () => {
+				resolve(null)
+			}
+
+			input.click()
+		})
+	}
+}
+
+export async function pickDirectory(): Promise<ImportedDirectoryEntry | null> {
+	if (tauriBuild) {
+		const directory = await open({
+			directory: true,
+			multiple: false,
+		})
+
+		if (!directory) return null
+		if (typeof directory !== 'string') return null
+
+		const fileSystem = new TauriFileSystem()
+		fileSystem.setBasePath(directory)
+
+		return new ImportedDirectoryEntry(directory, fileSystem)
+	} else if (fileSystem instanceof PWAFileSystem) {
+		let handle = null
+
+		try {
+			handle = await window.showDirectoryPicker({
+				mode: 'readwrite',
+			})
+		} catch {}
+
+		if (!handle) return null
+
+		const fileSystem = new PWAFileSystem(false)
+		if (await fileSystem.ensurePermissions(handle)) {
+			fileSystem.setBaseHandle(handle)
+
+			return new ImportedDirectoryEntry('/' + handle.name, fileSystem)
+		}
+
+		return null
+	} else {
+		const fileSystem = new MemoryFileSystem()
+		let directoryName = null
+
+		const succeeded = await new Promise((resolveReads) => {
+			const input = document.createElement('input')
+			input.type = 'file'
+			input.webkitdirectory = true
+
+			input.onchange = async () => {
+				const files = input.files
+
+				if (!files) {
+					resolveReads(false)
+
+					return
+				}
+
+				for (const file of files) {
+					const data = await new Promise<ArrayBuffer | null>((resolveData) => {
+						const reader = new FileReader()
+
+						reader.onload = () => {
+							resolveData(reader.result as ArrayBuffer)
+						}
+
+						reader.onerror = () => {
+							resolveData(null)
+						}
+
+						reader.readAsArrayBuffer(file)
+					})
+
+					if (!data) {
+						resolveReads(false)
+
+						return
+					}
+
+					directoryName = file.webkitRelativePath.split('/')[0]
+
+					const path = file.webkitRelativePath.substring(directoryName.length)
+
+					await fileSystem.ensureDirectory(path)
+					await fileSystem.writeFile(path, data)
+				}
+
+				resolveReads(true)
+			}
+
+			input.oncancel = () => {
+				resolveReads(false)
+			}
+
+			input.click()
+		})
+
+		if (!succeeded) return null
+		if (!directoryName) return null
+
+		return new ImportedDirectoryEntry('/' + directoryName, fileSystem)
+	}
+}
+
+export class ImportedFileEntry extends BaseEntry {
+	private data: ArrayBuffer
+
+	constructor(path: string, data: ArrayBuffer) {
+		super(path, 'file')
+
+		this.data = data
+	}
+
+	public async read(): Promise<ArrayBuffer> {
+		return this.data
+	}
+
+	public async readText(): Promise<string> {
+		const decoder = new TextDecoder()
+
+		return decoder.decode(this.data)
+	}
+
+	public static async fromHandle(handle: FileSystemFileHandle): Promise<ImportedFileEntry> {
+		return new ImportedFileEntry('/' + handle.name, await (await handle.getFile()).arrayBuffer())
+	}
+}
+
+export class ImportedDirectoryEntry extends BaseEntry {
+	private fileSystem: BaseFileSystem
+
+	constructor(path: string, fileSystem: BaseFileSystem) {
+		super(path, 'directory')
+
+		this.fileSystem = fileSystem
+	}
+
+	public async getFileSystem(): Promise<BaseFileSystem> {
+		return this.fileSystem
+	}
+
+	public static async fromHandle(handle: FileSystemDirectoryHandle): Promise<ImportedDirectoryEntry | null> {
+		const fileSystem = new PWAFileSystem(false)
+		if (await fileSystem.ensurePermissions(handle)) {
+			fileSystem.setBaseHandle(handle)
+
+			return new ImportedDirectoryEntry('/' + handle.name, fileSystem)
+		}
+
+		return null
+	}
 }

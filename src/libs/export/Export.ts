@@ -6,7 +6,11 @@ import { LocaleManager } from '@/libs/locales/Locales'
 import { ProjectManager } from '@/libs/project/ProjectManager'
 import { fileSystem } from '@/libs/fileSystem/FileSystem'
 import { BedrockProject } from '@/libs/project/BedrockProject'
-import { appVersion, dashVersion } from '../app/AppEnv'
+import { appVersion, dashVersion } from '@/libs/app/AppEnv'
+import { LocalFileSystem } from '@/libs/fileSystem/LocalFileSystem'
+import { download } from '@/libs/Download'
+import { basename } from 'pathe'
+import { TauriFileSystem } from '@/libs/fileSystem/TauriFileSystem'
 
 export async function saveOrDownload(path: string, data: Uint8Array, fileSystem: BaseFileSystem) {
 	await fileSystem.writeFile(path, data)
@@ -14,7 +18,13 @@ export async function saveOrDownload(path: string, data: Uint8Array, fileSystem:
 	NotificationSystem.addNotification(
 		'download',
 		async () => {
-			Windows.open(new AlertWindow(`[${LocaleManager.translate('general.successfulExport.description')}: "${path}"]`))
+			if (fileSystem instanceof LocalFileSystem) {
+				download(basename(path), data)
+			} else if (fileSystem instanceof TauriFileSystem) {
+				fileSystem.revealInFileExplorer(path)
+			} else {
+				Windows.open(new AlertWindow(`[${LocaleManager.translate('general.successfulExport.description')}: "${path}"]`))
+			}
 		},
 		'success'
 	)

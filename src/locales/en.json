@@ -628,6 +628,10 @@
 			},
 			"actions": {
 				"runLastProfile": "Run Last Profile"
+			},
+			"build": {
+				"name": "Build",
+				"description": "Run the default build profile"
 			}
 		},
 		"extensions": {
@@ -1060,7 +1064,13 @@
 				},
 				"outputFolder": {
 					"name": "Output Folder",
-					"description": "Drop your output folder here."
+					"button": "Select Output Folder",
+					"description": "Default output folder projects will compile to.",
+					"warning": {
+						"notSupported": "This platform does not support selecting an output folder.",
+						"notSet": "You have no default output folder set!",
+						"overwritten": "The default output folder is being overwritten by a project ouput folder."
+					}
 				}
 			},
 			"editor": {
@@ -1154,6 +1164,8 @@
 		},
 		"unsavedFile": {
 			"description": "Do you want to save your changes to this file before closing it?",
+			"closeFile": "It looks like you have unsaved changes. Are you sure you want to close the window?",
+			"closeProject": "It looks like you have unsaved changes. Are you sure you want to close the project?",
 			"save": "Save & Close"
 		},
 		"browserUnsupported": {
@@ -1345,7 +1357,8 @@
 			"addValue": "Add Value",
 			"forceValue": "Force Value",
 			"edit": "Edit",
-			"childHasError": "One or more children have diagnostics"
+			"childHasError": "One or more children have diagnostics",
+			"convert": "Convert"
 		},
 		"langValidation": {
 			"noValue": {
@@ -1394,7 +1407,11 @@
 			"tokens": {
 				"selectorArgument": "selector argument"
 			}
-		}
+		},
+		"invalidLetters": "Must not contain special characters",
+		"mustNotBeEmpty": "Must not be empty",
+		"mustBeLowercase": "Must be lowercase",
+		"mustBeNumeric": "Must be a number"
 	},
 	"bottomPanel": {
 		"terminal": {
@@ -1427,6 +1444,19 @@
 		}
 	},
 	"projects": {
-		"loading": "Loading project..."
+		"loading": "Loading project...",
+		"clearOutputFolder": {
+			"name": "Clear Project Output Folder",
+			"description": "Forget the current project output folder."
+		},
+		"outputFolder": {
+			"button": "Select Project Output Folder",
+			"description": "Output folder this project will compile to.",
+			"warning": {
+				"notSupported": "This platform does not support selecting an output folder.",
+				"using": "This project is using a local project folder.",
+				"notUsing": "This project is not using a local project folder."
+			}
+		}
 	}
 }

@@ -4,6 +4,7 @@ import { ref, Ref } from 'vue'
 
 export class FileTab extends Tab {
 	public modified: Ref<boolean> = ref(false)
+	public canSave: boolean = true
 
 	constructor(public path: string) {
 		super()
@@ -23,10 +24,6 @@ export class FileTab extends Tab {
 		return false
 	}
 
-	public async create() {}
-	public async destroy() {}
-	public async activate() {}
-	public async deactivate() {}
 	public async save() {}
 	public async saveAs(savePath: string) {}
 }

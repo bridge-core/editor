@@ -1,8 +1,5 @@
 <script setup lang="ts">
 import Icon from '@/components/Common/Icon.vue'
-import { useTranslate } from '@/libs/locales/Locales'
-
-const t = useTranslate()
 
 defineProps({
 	text: {
@@ -19,7 +16,7 @@ defineProps({
 		<div class="flex items-center gap-1">
 			<Icon icon="info" class="text-base" />
 
-			<span>{{ t(text) }}</span>
+			<span>{{ text }}</span>
 		</div>
 	</div>
 </template>

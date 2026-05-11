@@ -17,7 +17,12 @@ import { ConvertableProjectInfo } from './ConvertComMojangProject'
 import { packs } from './Packs'
 import { ProgressWindow } from '@/components/Windows/Progress/ProgressWindow'
 import { Windows } from '@/components/Windows/Windows'
-import { createReactable } from '@/libs/event/React'
+import { createHeadlessReactable, createReactable } from '@/libs/event/React'
+import { TabManager } from '@/components/TabSystem/TabManager'
+import { FileTab } from '@/components/TabSystem/FileTab'
+import { ConfirmWindow } from '@/components/Windows/Confirm/ConfirmWindow'
+import { tauriBuild } from '@/libs/tauri/Tauri'
+import { TauriFileSystem } from '../fileSystem/TauriFileSystem'
 
 export interface ProjectInfo {
 	name: string
@@ -146,6 +151,25 @@ export class ProjectManager {
 	public static async closeProject() {
 		if (!this.currentProject) return
 
+		for (const tabSystem of TabManager.tabSystems.value) {
+			for (const tab of tabSystem.tabs.value) {
+				if (tab instanceof FileTab && tab.modified.value) {
+					if (
+						!(await new Promise<boolean>((resolve) => {
+							Windows.open(
+								new ConfirmWindow(
+									`windows.unsavedFile.closeFile`,
+									() => resolve(true),
+									() => resolve(false)
+								)
+							)
+						}))
+					)
+						return
+				}
+			}
+		}
+
 		await this.currentProject.dispose()
 
 		this.currentProject = null
@@ -252,20 +276,20 @@ export class ProjectManager {
 	private static async loadConvertableProjects() {
 		ProjectManager.convertableProjects = []
 
-		if (fileSystem instanceof PWAFileSystem) {
-			const outputFolder: FileSystemDirectoryHandle | undefined = Settings.get('outputFolder')
+		if (!tauriBuild) return
 
-			if (!outputFolder) return
+		const outputFolder = Settings.get('outputFolder')
 
-			const comMojangFileSystem = new PWAFileSystem()
-			comMojangFileSystem.setBaseHandle(outputFolder)
+		if (!outputFolder) return
 
-			if (outputFolder && (await comMojangFileSystem.ensurePermissions(outputFolder))) {
-				await ProjectManager.loadConvertableProjectsFromComMojang(comMojangFileSystem)
+		if ((outputFolder as { type: string }).type !== 'tauri') return
 
-				ProjectManager.updatedConvertableProjects.dispatch()
-			}
-		}
+		const comMojangFileSystem = new TauriFileSystem()
+		comMojangFileSystem.setBasePath((outputFolder as { type: 'tauri'; path: string }).path)
+
+		await ProjectManager.loadConvertableProjectsFromComMojang(comMojangFileSystem)
+
+		ProjectManager.updatedConvertableProjects.dispatch()
 	}
 
 	private static async loadConvertableProjectsFromComMojang(comMojangFileSystem: BaseFileSystem) {
@@ -376,6 +400,7 @@ export const useConvertableProjects = createReactable(ProjectManager.updatedConv
 ])
 
 export const useCurrentProject = createReactable(ProjectManager.updatedCurrentProject, () => ProjectManager.currentProject)
+export const useCurrentProjectHeadless = createHeadlessReactable(ProjectManager.updatedCurrentProject, () => ProjectManager.currentProject)
 
 export function useUsingProjectOutputFolder(): Ref<boolean> {
 	const usingProjectOutputFolder: Ref<boolean> = ref(false)
