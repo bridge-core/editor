@@ -102,6 +102,8 @@ export class Extension {
 
 				if (manifest.target !== 'v2.1') {
 					theme.colors.menuAlternate = theme.colors.sidebarNavigation
+					theme.colors.backgroundSecondary = theme.colors.sidebarNavigation
+					theme.colors.backgroundTertiary = theme.colors.expandedSidebar
 					theme.colors.accent = base.colors.text
 				}
 
