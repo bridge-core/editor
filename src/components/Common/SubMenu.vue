@@ -52,6 +52,17 @@ async function updatePosition() {
 	const menuTop = elementRect.top - basisRect.top
 
 	menu.value.style.top = `calc(${menuTop}px)`
+
+	const menuRect = menu.value.getBoundingClientRect()
+
+	if (menuRect.right > window.innerWidth) {
+		menu.value.style.left = `${window.innerWidth - basisRect.left - menuRect.width}px`
+		menu.value.style.top = `calc(${menuTop}px + 48px)`
+	}
+
+	const overflowY = Math.max(0, menuRect.bottom - window.innerHeight)
+
+	menu.value.style.translate = `0px -${overflowY}px`
 }
 
 onMounted(() => {
@@ -92,11 +103,17 @@ onUnmounted(() => {
 
 <style scoped>
 .v-enter-active {
-	transition: opacity 0.15s ease, scale 0.2s ease, translate 0.2s ease;
+	transition:
+		opacity 0.15s ease,
+		scale 0.2s ease,
+		translate 0.2s ease;
 }
 
 .v-leave-active {
-	transition: opacity 0.15s ease, scale 0.2s ease, translate 0.2s ease;
+	transition:
+		opacity 0.15s ease,
+		scale 0.2s ease,
+		translate 0.2s ease;
 }
 
 .v-enter-to,
