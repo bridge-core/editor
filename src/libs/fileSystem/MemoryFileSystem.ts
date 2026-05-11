@@ -24,6 +24,7 @@ export class MemoryFileSystem extends BaseFileSystem {
 
 		if (data instanceof ArrayBuffer) return data
 
+		// @ts-ignore array buffer yes....
 		return this.textEncoder.encode(data as string).buffer
 	}
 

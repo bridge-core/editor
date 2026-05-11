@@ -4,7 +4,7 @@ import TreeEditorValueElement from './TreeEditorValueElement.vue'
 import TreeEditorObjectElement from './TreeEditorContainerElement.vue'
 import HighlightedText from '../HighlightedText.vue'
 
-import { computed, onMounted, Ref, ref } from 'vue'
+import { computed, onMounted, Ref, ref, watch } from 'vue'
 import { TreeEditorTab } from '../TreeEditorTab'
 import { TreeElements, ObjectElement, ArrayElement, MoveEdit } from '../Tree'
 import { Settings } from '@/libs/settings/Settings'
@@ -22,7 +22,21 @@ const props = defineProps<{
 
 const emit = defineEmits(['opencontextmenu'])
 
-const isOpen = ref(false)
+const isOpen = computed(() => props.editor.expandedPaths.value.includes(props.path))
+
+function setOpen(value: boolean) {
+	if (value) {
+		if (!props.editor.expandedPaths.value.includes(props.path)) {
+			props.editor.expandedPaths.value.push(props.path)
+			props.editor.expandedPaths.value = [...props.editor.expandedPaths.value]
+		}
+	} else {
+		if (props.editor.expandedPaths.value.includes(props.path)) {
+			props.editor.expandedPaths.value.splice(props.editor.expandedPaths.value.indexOf(props.path), 1)
+			props.editor.expandedPaths.value = [...props.editor.expandedPaths.value]
+		}
+	}
+}
 
 //Proxies don't equal eachother so we use an uuid
 const propertySelected = computed(
@@ -48,19 +62,19 @@ function clickProperty() {
 
 	if (!Settings.get('automaticallyOpenTreeNodes')) return
 
-	isOpen.value = true
+	setOpen(true)
 }
 
 function clickValue() {
 	if (!(props.tree instanceof ObjectElement || props.tree instanceof ArrayElement)) return
 
-	isOpen.value = true
+	setOpen(true)
 }
 
 function toggleOpen() {
 	if (!(props.tree instanceof ObjectElement || props.tree instanceof ArrayElement)) return
 
-	isOpen.value = !isOpen.value
+	setOpen(!isOpen.value)
 }
 
 const propertyElement: Ref<HTMLDivElement> = <any>ref(null)
@@ -192,7 +206,7 @@ const hasChildDiagnostic = computed(() =>
 function open() {
 	if (!(props.tree instanceof ObjectElement || props.tree instanceof ArrayElement)) return
 
-	isOpen.value = true
+	setOpen(true)
 }
 defineExpose({ open })
 </script>
@@ -281,7 +295,7 @@ defineExpose({ open })
 					'--color': valueSelected ? 'var(--theme-color-backgroundSecondary)' : 'none',
 				}"
 				@click="editor.select(tree)"
-				@contextmenu.stop.prevent="(event: MouseEvent) => emit('opencontextmenu', {selection: { type: 'value', tree }, event})"
+				@contextmenu.stop.prevent="(event: MouseEvent) => emit('opencontextmenu', { selection: { type: 'value', tree }, event })"
 				>{{ get('hideBrackets') ? '' : tree instanceof ObjectElement ? '{' : '[' }}</span
 			>
 
@@ -309,7 +323,7 @@ defineExpose({ open })
 					'--color': valueSelected ? 'var(--theme-color-backgroundSecondary)' : 'none',
 				}"
 				@click="editor.select(tree)"
-				@contextmenu.stop.prevent="(event: MouseEvent) => emit('opencontextmenu', {selection: { type: 'value', tree }, event})"
+				@contextmenu.stop.prevent="(event: MouseEvent) => emit('opencontextmenu', { selection: { type: 'value', tree }, event })"
 				>{{ get('hideBrackets') ? '' : tree instanceof ObjectElement ? '}' : ']' }}</span
 			>
 		</div>

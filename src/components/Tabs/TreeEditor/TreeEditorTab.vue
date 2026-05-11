@@ -27,8 +27,6 @@ const t = useTranslate()
 
 const props = defineProps<{ instance: TreeEditorTab }>()
 
-const tabElement: Ref<HTMLDivElement | null> = ref(null)
-
 const contextMenu: Ref<typeof FreeContextMenu | null> = ref(null)
 
 function convertToMatchingType(value: string, types: string[]): any {
@@ -238,7 +236,6 @@ onMounted(() => {
 <template>
 	<div
 		class="w-full h-full"
-		ref="tabElement"
 		@contextmenu.prevent="
 			(event) => {
 				instance.contextTree.value = null
@@ -306,7 +303,12 @@ onMounted(() => {
 
 			<SubMenu>
 				<template #main="slotProps">
-					<ContextMenuItem icon="swap_horiz" text="editors.treeEditor.convert" @mouseenter="slotProps.show" @mouseleave="slotProps.hide" />
+					<ContextMenuItem
+						icon="swap_horiz"
+						text="editors.treeEditor.convert"
+						@mouseenter="slotProps.show"
+						@mouseleave="slotProps.hide"
+					/>
 				</template>
 
 				<template #menu="">

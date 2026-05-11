@@ -32,7 +32,7 @@ const keys = computed(() => (props.tree instanceof ObjectElement ? Object.keys(p
 			:tree="tree.children[index]"
 			:key="tree.children[index].id"
 			@opencontextmenu="(event) => emit('opencontextmenu', event)"
-			:path="path + 'any_index/'"
+			:path="path + index.toString() + '/'"
 		/>
 	</div>
 </template>

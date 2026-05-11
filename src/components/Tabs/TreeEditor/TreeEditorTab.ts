@@ -5,12 +5,29 @@ import { BedrockProject } from '@/libs/project/BedrockProject'
 import { ProjectManager } from '@/libs/project/ProjectManager'
 import { FileTab } from '@/components/TabSystem/FileTab'
 import { Disposable, disposeAll } from '@/libs/disposeable/Disposeable'
-import { buildTree, ObjectElement, ParentElements, TreeEdit, TreeElements, TreeSelection } from './Tree'
+import {
+	AddElementEdit,
+	AddPropertyEdit,
+	ArrayElement,
+	buildTree,
+	DeleteElementEdit,
+	ModifyPropertyKeyEdit,
+	ModifyValueEdit,
+	ObjectElement,
+	ParentElements,
+	ReplaceEdit,
+	TreeEdit,
+	TreeElements,
+	TreeSelection,
+	ValueElement,
+} from './Tree'
 import { CompletionItem, createSchema, Diagnostic } from '@/libs/jsonSchema/Schema'
 import { Settings } from '@/libs/settings/Settings'
 import * as JSONC from 'jsonc-parser'
 import { interupt } from '@/libs/Interupt'
 import { TabManager } from '@/components/TabSystem/TabManager'
+import { viewDocumentation } from '@/libs/Documentation'
+import { debounce } from '@/libs/Debounce'
 
 export class TreeEditorTab extends FileTab {
 	public component: Component | null = TreeEditorTabComponent
@@ -19,6 +36,8 @@ export class TreeEditorTab extends FileTab {
 	public hasDocumentation = ref(false)
 
 	public tree: Ref<TreeElements> = ref(new ObjectElement(null))
+
+	public expandedPaths: Ref<string[]> = ref([])
 
 	private fileCache: string | null = null
 
@@ -176,6 +195,12 @@ export class TreeEditorTab extends FileTab {
 				if (event.id === 'inlineDiagnostics') this.validate()
 			})
 		)
+
+		watch(this.expandedPaths, () => {
+			this.debouncedSaveState.invoke()
+		})
+
+		this.expand(this.tree.value, '/')
 	}
 
 	public async destroy() {
@@ -202,6 +227,18 @@ export class TreeEditorTab extends FileTab {
 		const schemaData = ProjectManager.currentProject.schemaData
 
 		schemaData.removeFileForUpdate(this.path)
+	}
+
+	public async getState(): Promise<any> {
+		return {
+			expanded: this.expandedPaths.value,
+		}
+	}
+
+	public async recover(state: any): Promise<void> {
+		if (!state) return
+
+		this.expandedPaths.value = state.expanded
 	}
 
 	public async save() {
@@ -258,6 +295,187 @@ export class TreeEditorTab extends FileTab {
 		}
 	}
 
+	public async copy() {
+		const treeSelection = this.contextTree.value ?? this.selectedTree.value
+
+		if (!treeSelection) return
+
+		let json = treeSelection.tree.toJson()
+
+		if (treeSelection.type === 'property') {
+			const newObject: any = {}
+			newObject[treeSelection.tree.key as string] = json
+
+			json = newObject
+		}
+
+		const content = JSON.stringify(json, null, 2)
+
+		const clipboardItem = new ClipboardItem({
+			['text/plain']: content,
+		})
+
+		await navigator.clipboard.write([clipboardItem])
+	}
+
+	public async cut() {
+		const treeSelection = this.contextTree.value ?? this.selectedTree.value
+
+		if (!treeSelection) return
+
+		let json = treeSelection.tree.toJson()
+
+		if (treeSelection.type === 'property') {
+			const newObject: any = {}
+			newObject[treeSelection.tree.key as string] = json
+
+			json = newObject
+		}
+
+		const content = JSON.stringify(json, null, 2)
+
+		const clipboardItem = new ClipboardItem({
+			['text/plain']: content,
+		})
+
+		await navigator.clipboard.write([clipboardItem])
+
+		this.edit(new DeleteElementEdit(treeSelection.tree))
+	}
+
+	private convertToMatchingType(value: string, types: string[]): any {
+		if (types.includes('number') || (types.includes('integer') && /^-?([0-9]*[.])?[0-9]+$/.test(value))) {
+			return parseFloat(value)
+		}
+
+		if (types.includes('boolean')) {
+			if (value === 'true') return true
+
+			if (value === 'false') return false
+		}
+
+		return value
+	}
+
+	private addTree(treeSelection: TreeSelection, value: string) {
+		if (treeSelection === null) return
+
+		if (treeSelection.tree instanceof ObjectElement) {
+			let addValue: TreeElements = new ObjectElement(treeSelection.tree, value)
+
+			if (Settings.get('bridgePredictions')) {
+				const path = this.getTreeSchemaPath(treeSelection.tree) + value + '/'
+				const types = this.getTypes(path)
+				if (types[0] === 'number') {
+					addValue = new ValueElement(treeSelection.tree, value, 1)
+				} else if (types[0] === 'string') {
+					addValue = new ValueElement(treeSelection.tree, value, '')
+				} else if (types[0] === 'integer') {
+					addValue = new ValueElement(treeSelection.tree, value, 1)
+				} else if (types[0] === 'boolean') {
+					addValue = new ValueElement(treeSelection.tree, value, true)
+				} else if (types[0] === 'array') {
+					addValue = new ArrayElement(treeSelection.tree, value)
+				}
+			}
+
+			this.edit(new AddPropertyEdit(treeSelection.tree, value, addValue))
+		}
+
+		if (treeSelection.tree instanceof ArrayElement) {
+			let elementValue = value
+
+			// TODO: If adding an object with a property with the same name as value is valid, add that instead
+			if (Settings.get('bridgePredictions')) {
+				const path = this.getTreeSchemaPath(treeSelection.tree) + 'any_index/'
+				const types = this.getTypes(path)
+
+				elementValue = this.convertToMatchingType(value, types)
+			}
+
+			this.edit(
+				new AddElementEdit(
+					treeSelection.tree,
+					new ValueElement(treeSelection.tree, treeSelection.tree.children.length, elementValue)
+				)
+			)
+		}
+	}
+
+	private editTree(treeSelection: TreeSelection, value: string) {
+		if (treeSelection === null) return
+
+		if (treeSelection.type === 'property') {
+			this.edit(new ModifyPropertyKeyEdit(treeSelection.tree.parent as ObjectElement, treeSelection.tree.key as string, value))
+
+			return
+		} else {
+			if (treeSelection.tree instanceof ValueElement) {
+				let elementValue = value
+
+				if (Settings.get('bridgePredictions')) {
+					const path = this.getTreeSchemaPath(treeSelection.tree)
+					const types = this.getTypes(path)
+
+					elementValue = this.convertToMatchingType(value, types)
+				}
+
+				this.edit(new ModifyValueEdit(treeSelection.tree, elementValue))
+
+				return
+			}
+		}
+	}
+
+	public async paste() {
+		const clipboardItems = await navigator.clipboard.read()
+
+		const textItem = clipboardItems.find((item) => item.types.includes('text/plain'))
+
+		if (!textItem) return
+
+		const text = await (await textItem.getType('text/plain')).text()
+
+		let json = null
+
+		try {
+			json = JSONC.parse(text)
+		} catch {}
+
+		const treeSelection = this.contextTree.value ?? this.selectedTree.value
+
+		if (!treeSelection) return
+
+		if (json) {
+			const insertElement = buildTree(json)
+
+			if (treeSelection.type === 'value') {
+				this.edit(new ReplaceEdit(treeSelection.tree, insertElement, () => {}))
+			} else {
+				if (!(insertElement instanceof ObjectElement)) return
+
+				if (treeSelection.tree instanceof ObjectElement) {
+					for (const key of Object.keys(insertElement.children)) {
+						const childElement = buildTree(json[key], treeSelection.tree)
+						childElement.key = key
+						this.edit(new AddPropertyEdit(treeSelection.tree, key, childElement))
+					}
+				} else if (treeSelection.tree instanceof ArrayElement) {
+					insertElement.key = treeSelection.tree.children.length
+					this.edit(new AddElementEdit(treeSelection.tree, insertElement))
+				}
+			}
+
+			return
+		}
+
+		if (treeSelection.type === 'value') {
+			this.editTree(treeSelection, text)
+		} else {
+			this.addTree(treeSelection, text)
+		}
+	}
+
 	public undo() {
 		if (this.currentEditIndex < 0) return
 
@@ -307,12 +525,6 @@ export class TreeEditorTab extends FileTab {
 		parents.reverse()
 
 		for (const element of parents) {
-			if (typeof element.key !== 'string') {
-				path += 'any_index/'
-
-				continue
-			}
-
 			path += element.key?.toString() + '/'
 		}
 
@@ -334,12 +546,6 @@ export class TreeEditorTab extends FileTab {
 		parents.reverse()
 
 		for (const element of parents.slice(0, -1)) {
-			if (typeof element.key !== 'string') {
-				path += 'any_index/'
-
-				continue
-			}
-
 			path += element.key?.toString() + '/'
 		}
 
@@ -430,6 +636,61 @@ export class TreeEditorTab extends FileTab {
 
 		console.timeEnd('Completions')
 	}
+
+	private getNextQuote(line: string) {
+		for (let i = -1; i < line.length; i++) {
+			if (line[i] === '"') return i
+		}
+		return line.length
+	}
+
+	private getPreviousQuote(line: string) {
+		for (let i = -2; i > 0; i--) {
+			if (line[i] === '"') return i + 1
+		}
+		return 0
+	}
+
+	public async viewDocumentation() {
+		const tree = this.contextTree.value?.tree ?? this.selectedTree.value?.tree
+
+		if (!tree) return
+
+		if (!this.fileType.documentation) return
+
+		const text = JSON.stringify(tree.toJson())
+
+		const wordStart = this.getPreviousQuote(text)
+		const wordEnd = this.getNextQuote(text)
+
+		const word = text.substring(wordStart, wordEnd)
+
+		if (!word) return
+
+		await viewDocumentation(this.fileType, word)
+	}
+
+	private expand(tree: TreeElements, path: string) {
+		if (tree instanceof ObjectElement) {
+			this.expandedPaths.value.push(path)
+
+			for (const [key, child] of Object.entries(tree.children)) {
+				this.expand(child, path + key + '/')
+			}
+		} else if (tree instanceof ArrayElement) {
+			this.expandedPaths.value.push(path)
+
+			for (let index = 0; index < tree.children.length; index++) {
+				this.expand(tree.children[index], path + index.toString() + '/')
+			}
+		}
+	}
+
+	private debouncedSaveState = debounce(() => {
+		if (!this.active) return
+
+		this.saveState()
+	}, 50)
 
 	private interruptAutoSave = interupt(() => {
 		this.save()

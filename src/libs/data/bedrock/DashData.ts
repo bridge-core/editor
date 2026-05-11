@@ -92,6 +92,7 @@ export class DashData implements Disposable {
 
 			const jsRuntime = new Runtime(fileSystem)
 
+			// @ts-ignore Strange imported nonsense
 			const loadedResult = await command.load(jsRuntime, path, 'client')
 			// NOTE: Dash compiler doesn't return a truthy value when the command loads so doing this a temporary fix untill I update the dash compiler again
 			const loadedCorrectly = loadedResult !== null && loadedResult !== false
@@ -126,6 +127,7 @@ export class DashData implements Disposable {
 
 			const jsRuntime = new Runtime(fileSystem)
 
+			// @ts-ignore strange imported nonsense
 			const loadedCorrectly = await component.load(jsRuntime, path, 'client')
 
 			if (!loadedCorrectly || !component.name || !component.getSchema()) {

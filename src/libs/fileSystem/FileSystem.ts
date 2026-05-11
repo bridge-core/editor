@@ -176,7 +176,7 @@ export async function pickFile(
 								name: description ?? 'File',
 								extensions: extensions.map((extension) => extension.slice(1)),
 							},
-					  ],
+						],
 		})
 
 		if (!files) return null
@@ -281,7 +281,7 @@ export async function pickFiles(
 								name: description ?? 'File',
 								extensions: extensions.map((extension) => extension.slice(1)),
 							},
-					  ],
+						],
 		})
 
 		if (!files) return null
@@ -496,6 +496,10 @@ export class ImportedFileEntry extends BaseEntry {
 
 		return decoder.decode(this.data)
 	}
+
+	public static async fromHandle(handle: FileSystemFileHandle): Promise<ImportedFileEntry> {
+		return new ImportedFileEntry('/' + handle.name, await (await handle.getFile()).arrayBuffer())
+	}
 }
 
 export class ImportedDirectoryEntry extends BaseEntry {
@@ -509,5 +513,16 @@ export class ImportedDirectoryEntry extends BaseEntry {
 
 	public async getFileSystem(): Promise<BaseFileSystem> {
 		return this.fileSystem
+	}
+
+	public static async fromHandle(handle: FileSystemDirectoryHandle): Promise<ImportedDirectoryEntry | null> {
+		const fileSystem = new PWAFileSystem(false)
+		if (await fileSystem.ensurePermissions(handle)) {
+			fileSystem.setBaseHandle(handle)
+
+			return new ImportedDirectoryEntry('/' + handle.name, fileSystem)
+		}
+
+		return null
 	}
 }

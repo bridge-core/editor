@@ -14,6 +14,7 @@ import { openUrl } from '@/libs/OpenUrl'
 import { debounce } from '@/libs/Debounce'
 import { interupt } from '@/libs/Interupt'
 import { TabManager } from '@/components/TabSystem/TabManager'
+import { viewDocumentation } from '@/libs/Documentation'
 
 export class TextTab extends FileTab {
 	public component: Component | null = TextTabComponent
@@ -364,10 +365,7 @@ export class TextTab extends FileTab {
 
 		if (!word) return
 
-		let url = this.fileType.documentation.baseUrl
-		if (word && (this.fileType.documentation.supportsQuerying ?? true)) url += `#${word}`
-
-		openUrl(url)
+		await viewDocumentation(this.fileType, word)
 	}
 
 	private async getJsonWordAtPosition(model: editor.ITextModel, position: Position) {
