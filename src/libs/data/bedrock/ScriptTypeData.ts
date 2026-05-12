@@ -1,7 +1,7 @@
 import { BedrockProject } from '@/libs/project/BedrockProject'
 import { Uri, languages } from 'monaco-editor'
 import { Data } from '@/libs/data/Data'
-import { fileSystem } from '@/libs/fileSystem/FileSystem'
+import { fileSystem, iterateDirectory } from '@/libs/fileSystem/FileSystem'
 import { Disposable, disposeAll } from '@/libs/disposeable/Disposeable'
 
 /**
@@ -31,6 +31,20 @@ export class ScriptTypeData implements Disposable {
 
 		this.appliedTypes = types
 
+		let builtTypes: any[] = []
+		builtTypes = builtTypes.concat(await this.buildManifestModuleTypes(types))
+		builtTypes = builtTypes.concat(await this.buildUserScriptTypes())
+
+		for (const builtType of builtTypes) {
+			const uri = Uri.file(builtType.location)
+
+			this.typeDisposables.push(languages.typescript.javascriptDefaults.addExtraLib(builtType.content, uri.toString()))
+
+			this.typeDisposables.push(languages.typescript.typescriptDefaults.addExtraLib(builtType.content, uri.toString()))
+		}
+	}
+
+	private async buildManifestModuleTypes(types: any[]): Promise<any[]> {
 		const behaviorPackPath = this.project.resolvePackPath('behaviorPack', 'manifest.json')
 		let behaviourManifest = {}
 
@@ -73,21 +87,32 @@ export class ScriptTypeData implements Disposable {
 			})
 		}
 
-		for (const builtType of builtTypes) {
-			const uri = Uri.file(builtType.location)
+		return builtTypes
+	}
 
-			this.typeDisposables.push(languages.typescript.javascriptDefaults.addExtraLib(builtType.content, uri.toString()))
+	private async buildUserScriptTypes(): Promise<any[]> {
+		const scriptsPath = this.project.resolvePackPath('behaviorPack', 'scripts')
+		const builtTypes: any[] = []
 
-			this.typeDisposables.push(languages.typescript.typescriptDefaults.addExtraLib(builtType.content, uri.toString()))
-		}
+		await iterateDirectory(fileSystem, scriptsPath, async (entry) => {
+			const location = entry.path
+			const content = await fileSystem.readFileText(entry.path)
+
+			builtTypes.push({
+				location,
+				content,
+			})
+		})
+
+		return builtTypes
 	}
 
 	private async pathUpdated(path: unknown) {
 		if (typeof path !== 'string') return
 
-		const behaviorPackPath = this.project.resolvePackPath('behaviorPack', 'manifest.json')
+		const manifestPath = this.project.resolvePackPath('behaviorPack', 'manifest.json')
 
-		if (path !== behaviorPackPath) return
+		if (path !== manifestPath) return
 
 		this.applyTypes(this.appliedTypes)
 	}
