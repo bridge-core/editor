@@ -199,8 +199,6 @@ export class TreeEditorTab extends FileTab {
 		watch(this.expandedPaths, () => {
 			this.debouncedSaveState.invoke()
 		})
-
-		this.expand(this.tree.value, '/')
 	}
 
 	public async destroy() {
