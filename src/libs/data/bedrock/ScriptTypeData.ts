@@ -1,5 +1,5 @@
 import { BedrockProject } from '@/libs/project/BedrockProject'
-import { Uri, languages } from 'monaco-editor'
+import { IDisposable, Uri, languages } from 'monaco-editor'
 import { Data } from '@/libs/data/Data'
 import { fileSystem, iterateDirectory } from '@/libs/fileSystem/FileSystem'
 import { Disposable, disposeAll } from '@/libs/disposeable/Disposeable'
@@ -10,7 +10,7 @@ import { Disposable, disposeAll } from '@/libs/disposeable/Disposeable'
 export class ScriptTypeData implements Disposable {
 	constructor(public project: BedrockProject) {}
 
-	private typeDisposables: any[] = []
+	private typeDisposables: IDisposable[] = []
 
 	private appliedTypes: any[] = []
 
@@ -21,6 +21,9 @@ export class ScriptTypeData implements Disposable {
 	}
 
 	public async dispose() {
+		for (const type of this.typeDisposables) {
+			type.dispose()
+		}
 		disposeAll(this.disposables)
 	}
 
@@ -32,8 +35,7 @@ export class ScriptTypeData implements Disposable {
 		this.appliedTypes = types
 
 		let builtTypes: any[] = []
-		builtTypes = builtTypes.concat(await this.buildManifestModuleTypes(types))
-		builtTypes = builtTypes.concat(await this.buildUserScriptTypes())
+		builtTypes = builtTypes.concat(await this.buildManifestModuleTypes(types), await this.buildUserScriptTypes())
 
 		for (const builtType of builtTypes) {
 			const uri = Uri.file(builtType.location)
