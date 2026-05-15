@@ -155,7 +155,7 @@ function drop(event: DragEvent) {
 
 <template>
 	<div
-		class="h-full mt-2 flex flex-col gap-2 flex-1"
+		class="h-full min-h-0 mt-2 flex flex-col gap-2 flex-1"
 		:class="{
 			'max-w-[14rem]': get('sidebarSize') === 'small' && !isMobile,
 			'max-w-[18rem]': get('sidebarSize') === 'normal' && !isMobile,
@@ -171,7 +171,7 @@ function drop(event: DragEvent) {
 			</p>
 		</div>
 
-		<div class="bg-background-secondary rounded flex-1 p-2">
+		<div class="bg-background-secondary rounded flex-1 min-h-0 p-2 flex flex-col">
 			<div class="flex gap-2 mb-2" v-if="currentProject">
 				<button
 					v-for="packDefinition in currentProjectPackDefinitions"
@@ -237,7 +237,13 @@ function drop(event: DragEvent) {
 				</ContextMenu>
 			</div>
 
-			<div class="h-full" @contextmenu.prevent="contextMenu?.open" @dragenter="dragEnter" @dragleave="dragLeave" @drop="drop">
+			<div
+				class="flex-1 min-h-0 overflow-y-auto"
+				@contextmenu.prevent="contextMenu?.open"
+				@dragenter="dragEnter"
+				@dragleave="dragLeave"
+				@drop="drop"
+			>
 				<div v-for="entry in orderedEntries" :key="entry.path">
 					<File
 						v-if="entry.kind === 'file'"
