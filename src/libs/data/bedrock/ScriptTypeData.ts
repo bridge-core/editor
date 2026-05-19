@@ -94,6 +94,10 @@ export class ScriptTypeData implements Disposable {
 
 	private async buildUserScriptTypes(): Promise<any[]> {
 		const scriptsPath = this.project.resolvePackPath('behaviorPack', 'scripts')
+
+		const scriptsPathExists = await fileSystem.exists(scriptsPath)
+		if (!scriptsPathExists) return []
+
 		const builtTypes: any[] = []
 
 		await iterateDirectory(fileSystem, scriptsPath, async (entry) => {
