@@ -223,8 +223,6 @@ async function indexDirectory(path: string, ignore: string[]) {
 	for (const entry of entries) {
 		if (ignore.includes(entry.path)) continue
 
-		console.log(entry.path)
-
 		if (entry.kind == 'directory') {
 			await indexDirectory(entry.path, ignore)
 		} else {
