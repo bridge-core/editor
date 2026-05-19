@@ -5,7 +5,11 @@ import { Disposable } from '@/libs/disposeable/Disposeable'
 export class WorkerFileSystemEntryPoint implements Disposable {
 	public boundOnWorkerMessage: (event: MessageEvent) => void
 
-	constructor(public worker: Worker, private fileSystem: BaseFileSystem, private name: string = 'fileSystem') {
+	constructor(
+		public worker: Worker,
+		private fileSystem: BaseFileSystem,
+		private name: string = 'fileSystem'
+	) {
 		this.boundOnWorkerMessage = this.onWorkerMessage.bind(this)
 
 		worker.addEventListener('message', this.boundOnWorkerMessage)
@@ -38,8 +42,10 @@ export class WorkerFileSystemEntryPoint implements Disposable {
 		}
 
 		if (event.data.action === 'readDirectoryEntries') {
+			const entries = await this.fileSystem.readDirectoryEntries(event.data.path)
+
 			this.worker.postMessage({
-				entries: await this.fileSystem.readDirectoryEntries(event.data.path),
+				entries,
 				id: event.data.id,
 				fileSystemName: this.name,
 			})
@@ -104,8 +110,6 @@ export class WorkerFileSystemEndPoint extends BaseFileSystem {
 	}
 
 	public async readDirectoryEntries(path: string): Promise<BaseEntry[]> {
-		// console.log('Worker read directory entries', path)
-
 		return (
 			await sendAndWait({
 				action: 'readDirectoryEntries',

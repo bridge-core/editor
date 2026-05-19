@@ -96,11 +96,11 @@ export class SchemaData implements Disposable {
 
 	private async indexerUpdated() {
 		for (const fileType of this.project.fileTypeData.fileTypes.map((fileType) => fileType.id)) {
-			const chachedData = this.project.indexerService.getCachedData(fileType)
+			const cachedData = this.project.indexerService.getCachedData(fileType)
 
-			if (chachedData === null) continue
+			if (cachedData === null) continue
 
-			const collectedData = chachedData.reduce((accumulator: any, currentObject: any) => {
+			const collectedData = cachedData.reduce((accumulator: any, currentObject: any) => {
 				for (const [key, value] of Object.entries(currentObject.data)) {
 					accumulator[key] = (accumulator[key] ?? []).concat(value)
 				}

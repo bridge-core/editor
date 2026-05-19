@@ -146,7 +146,7 @@ async function handleJsonInstructions(filePath: string, fileType: any, json: any
 	}
 
 	index[filePath] = {
-		fileType: fileType ? fileType.id : 'unkown',
+		fileType: fileType ? fileType.id : 'unknown',
 		data,
 	}
 }
@@ -172,7 +172,7 @@ async function handleScriptInstructions(path: string, fileType: any, text: strin
 		})
 
 	index[path] = {
-		fileType: fileType ? fileType.id : 'unkown',
+		fileType: fileType ? fileType.id : 'unknown',
 		data,
 	}
 }
@@ -212,14 +212,18 @@ async function indexFile(path: string) {
 	}
 
 	index[path] = {
-		fileType: fileType ? fileType.id : 'unkown',
+		fileType: fileType ? fileType.id : 'unknown',
 		data,
 	}
 }
 
 async function indexDirectory(path: string, ignore: string[]) {
-	for (const entry of await fileSystem.readDirectoryEntries(path)) {
-		if (ignore.includes(entry.path)) return
+	const entries = await fileSystem.readDirectoryEntries(path)
+
+	for (const entry of entries) {
+		if (ignore.includes(entry.path)) continue
+
+		console.log(entry.path)
 
 		if (entry.kind == 'directory') {
 			await indexDirectory(entry.path, ignore)
