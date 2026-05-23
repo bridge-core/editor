@@ -1,6 +1,12 @@
 import { App } from '/@/App'
 import { getLocation } from '/@/utils/monaco/getLocation'
-import type { editor, Position, Range } from 'monaco-editor'
+import type {
+	CancellationToken,
+	editor,
+	languages,
+	Position,
+	Range,
+} from 'monaco-editor'
 import { getJsonWordAtPosition } from '/@/utils/monaco/getJsonWord'
 import { tokenizeCommand } from 'bridge-common-utils'
 import { BedrockProject } from '/@/components/Projects/Project/BedrockProject'
@@ -25,12 +31,10 @@ export async function registerEmbeddedMcfunctionProvider() {
 			const currentTab = app.project.tabSystem?.selectedTab
 			if (!currentTab) return
 
-			const validCommands: Record<
-				string,
-				string[]
-			> = await app.dataLoader.readJSON(
-				`data/packages/minecraftBedrock/location/validCommand.json`
-			)
+			const validCommands: Record<string, string[]> =
+				await app.dataLoader.readJSON(
+					`data/packages/minecraftBedrock/location/validCommand.json`
+				)
 			const {
 				id,
 				meta: { commandsUseSlash } = { commandsUseSlash: false },
@@ -90,4 +94,21 @@ export async function registerEmbeddedMcfunctionProvider() {
 			}
 		},
 	})
+
+	// TODO
+	// languages.registerSignatureHelpProvider('json', {
+	// 	signatureHelpTriggerCharacters: ['\n', ' '],
+	// 	signatureHelpRetriggerCharacters: ['\n', ' '],
+	// 	provideSignatureHelp: async (
+	// 		model: editor.ITextModel,
+	// 		position: Position,
+	// 		token: CancellationToken,
+	// 		context: languages.SignatureHelpContext
+	// 	) => {
+	// 		return {
+	// 			dispose: () => {},
+	// 			value: {},
+	// 		}
+	// 	},
+	// })
 }
