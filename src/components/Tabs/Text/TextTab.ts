@@ -212,6 +212,10 @@ export class TextTab extends FileTab {
 
 		this.disposables.push(ThemeManager.themeChanged.on(this.updateEditorTheme.bind(this)))
 
+		// Minimizing can create weird orderings where two mounts are called before the first unmount
+		// is called which would duplicate the editor element and not properly dispose it
+		if (this.editor !== null) this.editor.dispose()
+
 		this.editor = monaco.create(element, {
 			fontFamily: Settings.get('editorFont'),
 			fontSize: Settings.get('editorFontSize'),
@@ -248,16 +252,20 @@ export class TextTab extends FileTab {
 		this.recoveryState = null
 	}
 
-	public unmountEditor() {
+	public unmountEditor(element: HTMLElement) {
+		if (element !== this.editor?.getDomNode()?.parentElement) return
+
 		this.savedViewState = this.editor?.saveViewState() ?? undefined
 
 		this.editor?.dispose()
+
+		this.editor = null
 	}
 
 	public async remountEditor() {
 		if (!this.lastEditorElement) return
 
-		await this.unmountEditor()
+		await this.unmountEditor(this.lastEditorElement)
 		await this.mountEditor(this.lastEditorElement)
 	}
 

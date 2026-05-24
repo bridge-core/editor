@@ -1,12 +1,10 @@
 <script setup lang="ts">
-import ContextMenuItem from '@/components/Common/ContextMenuItem.vue'
 import ActionContextMenuItem from '@/components/Common/ActionContextMenuItem.vue'
 import ContextMenuDivider from '@/components/Common/ContextMenuDivider.vue'
 
 import { Ref, onMounted, onUnmounted, ref } from 'vue'
 import { type TextTab } from './TextTab'
 import FreeContextMenu from '@/components/Common/FreeContextMenu.vue'
-import { ActionManager } from '@/libs/actions/ActionManager'
 
 const { instance }: { instance: TextTab } = <any>defineProps({
 	instance: {
@@ -29,6 +27,8 @@ const resizeObserver = new ResizeObserver(() => {
 	editorContainer.value.style.height = tabElement.value.getBoundingClientRect().height + 'px'
 })
 
+let mountedElement: null | HTMLDivElement = null
+
 onMounted(async () => {
 	if (!tabElement.value) return
 	if (!editorContainer.value) return
@@ -36,11 +36,15 @@ onMounted(async () => {
 
 	resizeObserver.observe(tabElement.value)
 
+	mountedElement = editorElement.value
+
 	await instance.mountEditor(editorElement.value)
 })
 
 onUnmounted(() => {
-	instance.unmountEditor()
+	if (!mountedElement) return
+
+	instance.unmountEditor(mountedElement)
 })
 </script>
 
