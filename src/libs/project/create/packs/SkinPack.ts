@@ -15,7 +15,7 @@ export class SkinPack extends Pack {
 
 		await createIcon(fileSystem, join(projectPath, 'SP/pack_icon.png'), config.icon)
 
-		await createLang(fileSystem, pathPack, config)
+		await createLang(fileSystem, pathPack, config, 'skinPack')
 
 		for (const file of this.configurableFiles) {
 			if (!config.configurableFiles.includes(file.id)) continue

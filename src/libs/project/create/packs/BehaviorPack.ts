@@ -9,18 +9,13 @@ import { TickFile } from '../files/configurable/behaviorPack/Tick'
 import { createLang } from '../files/Lang'
 
 export class BehaviourPack extends Pack {
-	public async create(
-		fileSystem: BaseFileSystem,
-		projectPath: string,
-		config: CreateProjectConfig,
-		packPath: string
-	) {
+	public async create(fileSystem: BaseFileSystem, projectPath: string, config: CreateProjectConfig, packPath: string) {
 		await fileSystem.makeDirectory(packPath)
 
 		await createManifest(fileSystem, join(projectPath, 'BP/manifest.json'), config, 'behaviorPack')
 		await createIcon(fileSystem, join(projectPath, 'BP/pack_icon.png'), config.icon)
 
-		await createLang(fileSystem, packPath, config)
+		await createLang(fileSystem, packPath, config, 'behaviorPack')
 
 		for (const file of this.configurableFiles) {
 			if (!config.configurableFiles.includes(file.id)) continue

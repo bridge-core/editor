@@ -21,7 +21,7 @@ export class ResourcePack extends Pack {
 
 		await createIcon(fileSystem, join(projectPath, 'RP/pack_icon.png'), config.icon)
 
-		await createLang(fileSystem, packPath, config)
+		await createLang(fileSystem, packPath, config, 'resourcePack')
 
 		for (const file of this.configurableFiles) {
 			if (!config.configurableFiles.includes(file.id)) continue
