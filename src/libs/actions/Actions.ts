@@ -43,8 +43,6 @@ export function setupActions() {
 
 	setupFileSystemActions()
 
-	setupTextEditorActions()
-
 	setupExportActions()
 
 	setupJsonTreeActions()
