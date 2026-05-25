@@ -296,6 +296,25 @@ export async function provideCompletionItems(
 						)
 					)
 				}
+
+				if (argumentType.type === 'command') {
+					const commands = commandData
+						.getCommands()
+						.filter(
+							(command, index, commands) =>
+								commands.findIndex((otherCommand) => command.commandName === otherCommand.commandName) === index
+						)
+
+					completions = completions.concat(
+						makeCompletions(
+							commands.map((command) => command.commandName),
+							commands.map((command) => command.description),
+							languages.CompletionItemKind.Keyword,
+							position,
+							context.token
+						)
+					)
+				}
 			}
 		}
 

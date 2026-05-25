@@ -1,6 +1,6 @@
 import { BedrockProject } from '@/libs/project/BedrockProject'
 import { ProjectManager } from '@/libs/project/ProjectManager'
-import { Argument, Command, SelectorArgument } from '@/libs/data/bedrock/CommandData'
+import { Argument, Command, CommandData, SelectorArgument } from '@/libs/data/bedrock/CommandData'
 
 export interface Token {
 	word: string
@@ -63,7 +63,7 @@ async function getCommandContext(line: string, cursor: number, tokenCursor: numb
 							({
 								...argument,
 								...customType,
-							} as Argument)
+							}) as Argument
 					)
 				}
 
@@ -144,7 +144,9 @@ async function getArgumentContext(
 		return [variation]
 	})
 
-	const basicVariations = variations.filter((variation) => variation.arguments[argumentIndex].type !== 'selector')
+	const basicVariations = variations.filter(
+		(variation) => !['selector', 'command', 'blockState'].includes(variation.arguments[argumentIndex].type)
+	)
 	const selectorVariations = variations.filter((variation) => variation.arguments[argumentIndex].type === 'selector')
 	const commandVariations = variations.filter((variation) => variation.arguments[argumentIndex].type === 'command')
 	const blockStateVariations = variations.filter((variation) => variation.arguments[argumentIndex].type === 'blockState')
@@ -491,6 +493,8 @@ async function getBlockStateContext(
  * @returns If the argument matches
  */
 function matchArgument(argument: Token, definition: any): boolean {
+	if (!(ProjectManager.currentProject instanceof BedrockProject)) throw new Error('The current project must be a bedrock project!')
+
 	if (definition === undefined) return false
 
 	if (definition.type === 'string') {
@@ -510,6 +514,10 @@ function matchArgument(argument: Token, definition: any): boolean {
 	if (definition.type === 'blockState' && /^(\[|[0-9]+)/.test(argument.word)) return true
 
 	if (definition.type === 'jsonData' && /^(\{|\[)/.test(argument.word)) return true
+
+	const commandData = ProjectManager.currentProject.commandData
+
+	if (definition.type === 'command' && commandData.getCommands().find((variation) => variation.commandName === argument.word)) return true
 
 	console.warn('Failed to match', argument, definition)
 
