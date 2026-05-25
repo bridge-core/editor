@@ -99,6 +99,7 @@ function validateProjectName(value: string): string | null {
 	if (value === '') return 'windows.createProject.name.mustNotBeEmpty'
 	if (value.match(/"|\\|\/|:|\||<|>|\*|\?|~/g) !== null) return 'windows.createProject.name.invalidLetters'
 	if (value.endsWith('.')) return 'windows.createProject.name.endsInPeriod'
+	if (ProjectManager.projects.find((project) => project.name === value)) return 'windows.createProject.name.alreadyExists'
 
 	return null
 }
@@ -121,6 +122,7 @@ const validationError: ComputedRef<string | null> = computed(() => {
 	if (projectName.value === '') return 'windows.createProject.name.mustNotBeEmpty'
 	if (projectName.value.match(/"|\\|\/|:|\||<|>|\*|\?|~/g) !== null) return 'windows.createProject.name.invalidLetters'
 	if (projectName.value.endsWith('.')) return 'windows.createProject.name.endsInPeriod'
+	if (ProjectManager.projects.find((project) => project.name === projectName.value)) return 'windows.createProject.name.alreadyExists'
 
 	if (projectNamespace.value.toLocaleLowerCase() !== projectNamespace.value) return 'windows.createProject.namespace.invalidCharacters'
 	if (projectNamespace.value.includes(' ')) return 'windows.createProject.namespace.invalidCharacters'
