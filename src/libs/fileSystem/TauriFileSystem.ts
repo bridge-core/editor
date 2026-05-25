@@ -218,7 +218,7 @@ export class TauriFileSystem extends BaseFileSystem {
 		try {
 			if (!(await this.exists(path))) return
 
-			await removeDir(join(this.basePath, path))
+			await removeDir(join(this.basePath, path), { recursive: true })
 		} catch (error) {
 			console.error(`Failed to remove directory "${path}"`)
 

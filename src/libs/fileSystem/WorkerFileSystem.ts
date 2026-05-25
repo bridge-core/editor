@@ -76,6 +76,24 @@ export class WorkerFileSystemEntryPoint implements Disposable {
 				fileSystemName: this.name,
 			})
 		}
+
+		if (event.data.action === 'removeFile') {
+			await this.fileSystem.removeFile(event.data.path)
+
+			this.worker.postMessage({
+				id: event.data.id,
+				fileSystemName: this.name,
+			})
+		}
+
+		if (event.data.action === 'removeDirectory') {
+			await this.fileSystem.removeDirectory(event.data.path)
+
+			this.worker.postMessage({
+				id: event.data.id,
+				fileSystemName: this.name,
+			})
+		}
 	}
 
 	public dispose() {
@@ -145,6 +163,30 @@ export class WorkerFileSystemEndPoint extends BaseFileSystem {
 		return (
 			await sendAndWait({
 				action: 'exists',
+				path,
+				fileSystemName: this.name,
+			})
+		).exists
+	}
+
+	public async removeFile(path: string) {
+		// console.log('Removing file', path)
+
+		return (
+			await sendAndWait({
+				action: 'removeFile',
+				path,
+				fileSystemName: this.name,
+			})
+		).exists
+	}
+
+	public async removeDirectory(path: string) {
+		// console.log('Removing directory', path)
+
+		return (
+			await sendAndWait({
+				action: 'removeDirectory',
 				path,
 				fileSystemName: this.name,
 			})
