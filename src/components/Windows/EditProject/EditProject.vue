@@ -5,19 +5,23 @@ import LabeledInput from '@/components/Common/LabeledInput.vue'
 import Dropdown from '@/components/Common/Legacy/LegacyDropdown.vue'
 import LabeledTextInput from '@/components/Common/LabeledTextInput.vue'
 import TextButton from '@/components/Common/TextButton.vue'
+import Expandable from '@/components/Common/Expandable.vue'
+import InformativeToggle from '@/components/Common/InformativeToggle.vue'
 
-import { ComputedRef, Ref, computed, ref } from 'vue'
-import { FormatVersionDefinitions } from '@/libs/data/Data'
+import { ComputedRef, Ref, computed, onMounted, ref } from 'vue'
+import { ExperimentalToggle, FormatVersionDefinitions, useGetData } from '@/libs/data/Data'
 import { EditProjectWindow } from './EditProjectWindow'
 import { useTranslate } from '@/libs/locales/Locales'
 import { Windows } from '../Windows'
 import { useIsMobile } from '@/libs/Mobile'
 import { ProjectInfo, ProjectManager } from '@/libs/project/ProjectManager'
+import { IPackType } from 'mc-project-core'
 
 const { window } = defineProps<{ window: EditProjectWindow }>() as { window: EditProjectWindow }
 
 const t = useTranslate()
 const isMobile = useIsMobile()
+const getData = useGetData()
 
 const projectInfo: ProjectInfo = window.projectInfo
 
@@ -27,32 +31,52 @@ const projectNamespace: Ref<string> = ref(projectInfo.config.namespace)
 const projectAuthor: Ref<string> = ref(projectInfo.config.author)
 const projectTargetVersion: Ref<string> = ref(projectInfo.config.targetVersion)
 
+const packTypes: Ref<IPackType[]> = ref([])
+const selectedPackTypes: Ref<IPackType[]> = ref([])
+
+const experimentalToggles: Ref<ExperimentalToggle[]> = ref([])
+const selectedExperimentalToggles: Ref<ExperimentalToggle[]> = ref([])
+
 const formatVersionDefinitions: Ref<FormatVersionDefinitions | null> = ref(null)
 
-function validateProjectName(value: string): string | null {
-  if (value === '') return 'windows.editProject.name.mustNotBeEmpty'
-  if (value.match(/"|\\|\/|:|\||<|>|\*|\?|~/g) !== null) return 'windows.editProject.name.invalidLetters'
-  if (value.endsWith('.')) return 'windows.editProject.name.endsInPeriod'
-  if (value !== projectInfo.name && ProjectManager.projects.find((project) => project.name === value)) return 'windows.editProject.name.alreadyExists'
+async function setup() {
+	packTypes.value = (await getData.value('packages/minecraftBedrock/packDefinitions.json')) || []
 
-  return null
+	experimentalToggles.value = (await getData.value('packages/minecraftBedrock/experimentalGameplay.json')) || []
+
+	formatVersionDefinitions.value = <FormatVersionDefinitions>await getData.value('packages/minecraftBedrock/formatVersions.json') || []
+
+	if (!formatVersionDefinitions.value) return
+
+	projectTargetVersion.value = formatVersionDefinitions.value.currentStable
+}
+
+function validateProjectName(value: string): string | null {
+	if (value === '') return 'windows.editProject.name.mustNotBeEmpty'
+	if (value.match(/"|\\|\/|:|\||<|>|\*|\?|~/g) !== null) return 'windows.editProject.name.invalidLetters'
+	if (value.endsWith('.')) return 'windows.editProject.name.endsInPeriod'
+	if (value !== projectInfo.name && ProjectManager.projects.find((project) => project.name === value))
+		return 'windows.editProject.name.alreadyExists'
+
+	return null
 }
 
 function validateProjectNamespace(value: string): string | null {
-  if (value.toLocaleLowerCase() !== value) return 'windows.editProject.namespace.invalidCharacters'
-  if (value.includes(' ')) return 'windows.editProject.namespace.invalidCharacters'
-  if (value.includes(':')) return 'windows.editProject.namespace.invalidCharacters'
-  if (value.match(/"|\\|\/|:|\||<|>|\*|\?|~/g) !== null) return 'windows.editProject.namespace.invalidCharacters'
-  if (value === '') return 'windows.editProject.namespace.mustNotBeEmpty'
+	if (value.toLocaleLowerCase() !== value) return 'windows.editProject.namespace.invalidCharacters'
+	if (value.includes(' ')) return 'windows.editProject.namespace.invalidCharacters'
+	if (value.includes(':')) return 'windows.editProject.namespace.invalidCharacters'
+	if (value.match(/"|\\|\/|:|\||<|>|\*|\?|~/g) !== null) return 'windows.editProject.namespace.invalidCharacters'
+	if (value === '') return 'windows.editProject.namespace.mustNotBeEmpty'
 
-  return null
+	return null
 }
 
 const validationError: ComputedRef<string | null> = computed(() => {
 	if (projectName.value === '') return 'windows.editProject.name.mustNotBeEmpty'
 	if (projectName.value.match(/"|\\|\/|:|\||<|>|\*|\?|~/g) !== null) return 'windows.editProject.name.invalidLetters'
 	if (projectName.value.endsWith('.')) return 'windows.editProject.name.endsInPeriod'
-	if (projectName.value !== projectInfo.name && ProjectManager.projects.find((project) => project.name === projectName.value)) return 'windows.editProject.name.alreadyExists'
+	if (projectName.value !== projectInfo.name && ProjectManager.projects.find((project) => project.name === projectName.value))
+		return 'windows.editProject.name.alreadyExists'
 
 	if (projectNamespace.value.toLocaleLowerCase() !== projectNamespace.value) return 'windows.editProject.namespace.invalidCharacters'
 	if (projectNamespace.value.includes(' ')) return 'windows.editProject.namespace.invalidCharacters'
@@ -63,11 +87,24 @@ const validationError: ComputedRef<string | null> = computed(() => {
 	return null
 })
 
-async function save() {
-  if (validationError.value !== null) return;
-
-  
+function selectExperimentalToggle(toggle: ExperimentalToggle) {
+  if (selectedExperimentalToggles.value.includes(toggle)) {
+    selectedExperimentalToggles.value.splice(
+      selectedExperimentalToggles.value.indexOf(toggle),
+      1
+    );
+    selectedExperimentalToggles.value = selectedExperimentalToggles.value;
+  } else {
+    selectedExperimentalToggles.value.push(toggle);
+    selectedExperimentalToggles.value = selectedExperimentalToggles.value;
+  }
 }
+
+async function save() {
+	if (validationError.value !== null) return
+}
+
+onMounted(setup)
 </script>
 
 <template>
@@ -147,6 +184,22 @@ async function save() {
 						</div>
 					</template>
 				</Dropdown>
+
+        <!-- Experiment Toggles -->
+        <Expandable :name="t('general.experimentalGameplay')" class="mt-6">
+          <div class="flex flex-wrap gap-2">
+            <InformativeToggle
+              v-for="toggle in experimentalToggles"
+              :icon="toggle.icon"
+              color="primary"
+              background="background"
+              :name="t(`experimentalGameplay.${toggle.id}.name`)"
+              :description="t(`experimentalGameplay.${toggle.id}.description`)"
+              :selected="selectedExperimentalToggles.includes(toggle)"
+              @click="selectExperimentalToggle(toggle)"
+            />
+          </div>
+        </Expandable>
 			</div>
 
 			<div class="mx-8 flex justify-between items-center">
@@ -163,3 +216,13 @@ async function save() {
 		</div>
 	</Window>
 </template>
+
+<style scoped>
+.max-width {
+  max-width: min(90vw, 67rem);
+}
+
+.light-scroll::-webkit-scrollbar-thumb {
+  background-color: var(--theme-color-backgroundTertiary);
+}
+</style>
