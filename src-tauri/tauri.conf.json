@@ -52,7 +52,7 @@
 				"signingIdentity": "-"
 			},
 			"resources": [],
-			"shortDescription": "",
+			"shortDescription": "bridge",
 			"targets": "all",
 			"windows": {
 				"certificateThumbprint": null,
