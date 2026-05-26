@@ -147,7 +147,7 @@ export class ProjectManager {
 		const projectPath = join('/projects', project)
 		const newProjectPath = join('/projects', config.name)
 
-		if (await fileSystem.exists(newProjectPath))
+		if (projectPath !== newProjectPath && (await fileSystem.exists(newProjectPath)))
 			throw new Error('Cannot create project! Another project with the same name already exists!')
 
 		const configPath = join(projectPath, 'config.json')
@@ -162,7 +162,7 @@ export class ProjectManager {
 
 		await fileSystem.writeFileJson(configPath, projectConfig, true)
 
-		await fileSystem.move(projectPath, newProjectPath)
+		if (projectPath !== newProjectPath) await fileSystem.move(projectPath, newProjectPath)
 
 		const index = this.projects.findIndex((projectInfo) => projectInfo.name === project)
 

@@ -40,6 +40,8 @@ async function setup() {
 
 	experimentalToggles.value = (await getData.value('packages/minecraftBedrock/experimentalGameplay.json')) || []
 
+  selectedExperimentalToggles.value = experimentalToggles.value.filter(toggle => (EditProjectWindow.projectInfo.config.experimentalGameplay ?? {})[toggle.id])
+
 	formatVersionDefinitions.value = <FormatVersionDefinitions>await getData.value('packages/minecraftBedrock/formatVersions.json') || []
 
 	if (!formatVersionDefinitions.value) return
