@@ -12,7 +12,7 @@ import { EditProjectWindow } from './EditProjectWindow'
 import { useTranslate } from '@/libs/locales/Locales'
 import { Windows } from '../Windows'
 import { useIsMobile } from '@/libs/Mobile'
-import { ProjectInfo } from '@/libs/project/ProjectManager'
+import { ProjectInfo, ProjectManager } from '@/libs/project/ProjectManager'
 
 const { window } = defineProps<{ window: EditProjectWindow }>() as { window: EditProjectWindow }
 
@@ -30,33 +30,35 @@ const projectTargetVersion: Ref<string> = ref(projectInfo.config.targetVersion)
 const formatVersionDefinitions: Ref<FormatVersionDefinitions | null> = ref(null)
 
 function validateProjectName(value: string): string | null {
-	if (value === '') return 'windows.editProject.name.mustNotBeEmpty'
-	if (value.match(/"|\\|\/|:|\||<|>|\*|\?|~/g) !== null) return 'windows.editProject.name.invalidLetters'
-	if (value.endsWith('.')) return 'windows.editProject.name.endsInPeriod'
+  if (value === '') return 'windows.editProject.name.mustNotBeEmpty'
+  if (value.match(/"|\\|\/|:|\||<|>|\*|\?|~/g) !== null) return 'windows.editProject.name.invalidLetters'
+  if (value.endsWith('.')) return 'windows.editProject.name.endsInPeriod'
+  if (value !== projectInfo.name && ProjectManager.projects.find((project) => project.name === value)) return 'windows.editProject.name.alreadyExists'
 
-	return null
+  return null
 }
 
 function validateProjectNamespace(value: string): string | null {
-	if (value.toLocaleLowerCase() !== value) return 'windows.editProject.namespace.invalidCharacters'
-	if (value.includes(' ')) return 'windows.editProject.namespace.invalidCharacters'
-	if (value.includes(':')) return 'windows.editProject.namespace.invalidCharacters'
-	if (value.match(/"|\\|\/|:|\||<|>|\*|\?|~/g) !== null) return 'windows.editProject.namespace.invalidCharacters'
-	if (value === '') return 'windows.editProject.namespace.mustNotBeEmpty'
+  if (value.toLocaleLowerCase() !== value) return 'windows.editProject.namespace.invalidCharacters'
+  if (value.includes(' ')) return 'windows.editProject.namespace.invalidCharacters'
+  if (value.includes(':')) return 'windows.editProject.namespace.invalidCharacters'
+  if (value.match(/"|\\|\/|:|\||<|>|\*|\?|~/g) !== null) return 'windows.editProject.namespace.invalidCharacters'
+  if (value === '') return 'windows.editProject.namespace.mustNotBeEmpty'
 
-	return null
+  return null
 }
 
 const validationError: ComputedRef<string | null> = computed(() => {
-	if (projectName.value === '') return 'windows.createProject.name.mustNotBeEmpty'
-	if (projectName.value.match(/"|\\|\/|:|\||<|>|\*|\?|~/g) !== null) return 'windows.createProject.name.invalidLetters'
-	if (projectName.value.endsWith('.')) return 'windows.createProject.name.endsInPeriod'
+	if (projectName.value === '') return 'windows.editProject.name.mustNotBeEmpty'
+	if (projectName.value.match(/"|\\|\/|:|\||<|>|\*|\?|~/g) !== null) return 'windows.editProject.name.invalidLetters'
+	if (projectName.value.endsWith('.')) return 'windows.editProject.name.endsInPeriod'
+	if (projectName.value !== projectInfo.name && ProjectManager.projects.find((project) => project.name === projectName.value)) return 'windows.editProject.name.alreadyExists'
 
-	if (projectNamespace.value.toLocaleLowerCase() !== projectNamespace.value) return 'windows.createProject.namespace.invalidCharacters'
-	if (projectNamespace.value.includes(' ')) return 'windows.createProject.namespace.invalidCharacters'
-	if (projectNamespace.value.includes(':')) return 'windows.createProject.namespace.invalidCharacters'
-	if (projectNamespace.value.match(/"|\\|\/|:|\||<|>|\*|\?|~/g) !== null) return 'windows.createProject.namespace.invalidCharacters'
-	if (projectNamespace.value === '') return 'windows.createProject.namespace.mustNotBeEmpty'
+	if (projectNamespace.value.toLocaleLowerCase() !== projectNamespace.value) return 'windows.editProject.namespace.invalidCharacters'
+	if (projectNamespace.value.includes(' ')) return 'windows.editProject.namespace.invalidCharacters'
+	if (projectNamespace.value.includes(':')) return 'windows.editProject.namespace.invalidCharacters'
+	if (projectNamespace.value.match(/"|\\|\/|:|\||<|>|\*|\?|~/g) !== null) return 'windows.editProject.namespace.invalidCharacters'
+	if (projectNamespace.value === '') return 'windows.editProject.namespace.mustNotBeEmpty'
 
 	return null
 })

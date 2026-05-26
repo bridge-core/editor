@@ -812,6 +812,40 @@
 				"noPacks": "Your project must contain at least one pack"
 			}
 		},
+		"editProject": {
+			"title": "Edit Project",
+			"name": {
+				"label": "Name",
+				"placeholder": "Project Name",
+				"invalidLetters": "Project name must not contain the following characters: \"  \\ / : | < >  * ? ~",
+				"mustNotBeEmpty": "You must enter a project name",
+				"endsInPeriod": "Project name cannot end with a period",
+				"alreadyExists": "Project with this name already exists"
+			},
+			"description": {
+				"label": "Description",
+				"placeholder": "Project Description (optional)"
+			},
+			"namespace": {
+				"label": "Namespace",
+				"placeholder": "Project Namespace",
+				"invalidCharacters": "Project namespace must only contain alphanumeric characters and underscores",
+				"mustNotBeEmpty": "You must enter a project namespace"
+			},
+			"author": {
+				"label": "Author",
+				"placeholder": "Project Author (optional)"
+			},
+			"targetVersion": {
+				"label": "Target Version"
+			},
+			"rpAsBpDependency": "Register resource pack as behavior pack dependency",
+			"bpAsRpDependency": "Register behavior pack as a resource pack dependency",
+			"save": "Save",
+			"errors": {
+				"noPacks": "Your project must contain at least one pack"
+			}
+		},
 		"createPreset": {
 			"title": "Create Preset",
 			"searchPresets": "Search presets...",
