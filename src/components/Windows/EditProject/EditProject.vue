@@ -99,6 +99,23 @@ function selectExperimentalToggle(toggle: ExperimentalToggle) {
 async function save() {
 	if (validationError.value !== null) return
 
+  ProjectManager.editProject(
+    EditProjectWindow.projectInfo.name,
+    {
+      name: projectName.value,
+      description: projectDescription.value,
+      namespace: projectNamespace.value,
+      author: projectAuthor.value,
+      targetVersion: projectTargetVersion.value,
+      experiments: Object.fromEntries(
+        experimentalToggles.value.map((toggle) => [
+          toggle.id,
+          selectedExperimentalToggles.value.includes(toggle),
+        ])
+      ),
+    }
+  );
+
   Windows.close(EditProjectWindow);
 }
 

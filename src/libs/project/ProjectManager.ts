@@ -103,7 +103,8 @@ export class ProjectManager {
 	public static async createProject(config: CreateProjectConfig, fileSystem: BaseFileSystem) {
 		//Bandaid Fix.
 		const projectPath = join('projects', config.name)
-		if(await fileSystem.exists(projectPath)) throw new Error("Cannot create project! Another project with the same name already exists!")
+		if (await fileSystem.exists(projectPath))
+			throw new Error('Cannot create project! Another project with the same name already exists!')
 
 		const packDefinitions: { id: string; defaultPackPath: string }[] = await Data.get('packages/minecraftBedrock/packDefinitions.json')
 		packDefinitions.push({
@@ -129,6 +130,48 @@ export class ProjectManager {
 		if (!projectInfo) throw new Error('Failed to create project!')
 
 		this.addProject(projectInfo)
+	}
+
+	public static async editProject(
+		project: string,
+		config: {
+			name: string
+			description: string
+			namespace: string
+			author: string | string[]
+			targetVersion: string
+			experiments: Record<string, boolean>
+		}
+	) {
+		//Bandaid Fix.
+		const projectPath = join('/projects', project)
+		const newProjectPath = join('/projects', config.name)
+
+		if (await fileSystem.exists(newProjectPath))
+			throw new Error('Cannot create project! Another project with the same name already exists!')
+
+		const configPath = join(projectPath, 'config.json')
+		const projectConfig = (await fileSystem.readFileJson(configPath)) as IConfigJson
+		projectConfig.name = config.name
+		projectConfig.description = config.description
+		projectConfig.namespace = config.namespace
+		// @ts-ignore weird typing from mc-core
+		projectConfig.author = Array.isArray(config.author) ? config.author : [config.author]
+		projectConfig.targetVersion = config.targetVersion
+		projectConfig.experimentalGameplay = config.experiments
+
+		await fileSystem.writeFileJson(configPath, projectConfig, true)
+
+		await fileSystem.move(projectPath, newProjectPath)
+
+		const index = this.projects.findIndex((projectInfo) => projectInfo.name === project)
+
+		this.projects[index].config = projectConfig
+		this.projects[index].name = config.name
+
+		this.updateProjectCache()
+
+		this.updatedProjects.dispatch()
 	}
 
 	public static async loadProject(name: string) {
