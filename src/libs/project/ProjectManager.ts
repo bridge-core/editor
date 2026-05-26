@@ -77,13 +77,20 @@ export class ProjectManager {
 
 		const foldersToLoad = items.filter((item) => item.kind === 'directory').map((item) => item.path)
 
-		this.projects = []
+		let promises: Promise<ProjectInfo | null>[] = foldersToLoad.map(
+			(path) =>
+				new Promise<ProjectInfo | null>(async (resolve) => {
+					const projectInfo = await this.getProjectInfo(path)
 
-		for (const path of foldersToLoad) {
-			const projectInfo = await this.getProjectInfo(path)
+					if (projectInfo) {
+						resolve(projectInfo)
+					} else {
+						resolve(null)
+					}
+				})
+		)
 
-			if (projectInfo) this.projects.push(projectInfo)
-		}
+		this.projects = (await Promise.all(promises)).filter((projectInfo) => projectInfo !== null)
 
 		this.updateProjectCache()
 
