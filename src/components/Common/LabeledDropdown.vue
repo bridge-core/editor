@@ -41,6 +41,12 @@ function click(event: Event) {
 }
 
 function interact(focus: () => void) {
+	if (expanded.value) {
+		expanded.value = false
+
+		return
+	}
+
 	focus()
 
 	expanded.value = true
@@ -67,13 +73,7 @@ onUnmounted(() => {
 
 <template>
 	<div ref="parent">
-		<LabeledInput
-			ref="labeledInput"
-			v-slot="{ focus }"
-			:label="t(label)"
-			class="bg-background flex-1"
-			:border-color="borderColor"
-		>
+		<LabeledInput ref="labeledInput" v-slot="{ focus }" :label="t(label)" class="bg-background flex-1" :border-color="borderColor">
 			<div class="flex gap-1">
 				<p @click="interact(focus)" class="font-theme flex-1">{{ model }}</p>
 
