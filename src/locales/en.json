@@ -743,6 +743,14 @@
 		"educationEdition": {
 			"name": "Enable Education Edition",
 			"description": "Enables auto-completions for education features such as material reducer recipes."
+		},
+		"experimentalCustomProjectileFeatures": {
+			"name": "Custom Projectile Features",
+			"description": "Enables auto-completions for experimental custom projectile features."
+		},
+		"experimentalVoxelShapeFeatures": {
+			"name": "Voxel Shape Features",
+			"description": "Enables auto-completions for experimental voxel shape features."
 		}
 	},
 	"windows": {
