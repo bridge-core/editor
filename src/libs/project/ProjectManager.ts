@@ -169,6 +169,20 @@ export class ProjectManager {
 		this.projects[index].config = projectConfig
 		this.projects[index].name = config.name
 
+		let favorites: string[] = []
+
+		try {
+			favorites = JSON.parse((await get('favoriteProjects')) as string)
+		} catch {}
+
+		if (favorites.includes(project)) {
+			favorites.splice(favorites.indexOf(project), 1)
+		}
+
+		favorites.push(config.name)
+
+		await set('favoriteProjects', JSON.stringify(favorites))
+
 		this.updateProjectCache()
 
 		this.updatedProjects.dispatch()
