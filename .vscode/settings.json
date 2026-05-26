@@ -4,5 +4,10 @@
 	},
 	"editor.defaultFormatter": "esbenp.prettier-vscode",
 	"editor.formatOnSave": true,
-	"rust-analyzer.linkedProjects": [".\\src-tauri\\Cargo.toml"]
+	"rust-analyzer.linkedProjects": [
+		".\\src-tauri\\Cargo.toml"
+	],
+	"[vue]": {
+		"editor.defaultFormatter": "Wscats.vue"
+	}
 }
