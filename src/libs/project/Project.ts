@@ -41,7 +41,7 @@ export class Project implements AsyncDisposable {
 		this.usingProjectOutputFolderKey = `usingProjectFolder-${this.name}`
 
 		fileSystem.watch(this.path)
-		fileSystem.ingorePath(join(this.path, '.git'))
+		fileSystem.ignorePath(join(this.path, '.git'))
 
 		if (this.outputFileSystem instanceof LocalFileSystem) this.outputFileSystem.setRootName(this.name)
 	}

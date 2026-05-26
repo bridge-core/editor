@@ -170,7 +170,7 @@ export class BaseFileSystem {
 		throw new Error('Not implemented!')
 	}
 
-	public async ingorePath(path: string) {
+	public async ignorePath(path: string) {
 		this.watchPathsToIgnore.push(path)
 	}
 
@@ -242,7 +242,10 @@ export type StreamableLike = {
 }
 
 export class BaseEntry {
-	constructor(public path: string, public kind: 'file' | 'directory') {}
+	constructor(
+		public path: string,
+		public kind: 'file' | 'directory'
+	) {}
 
 	public async read(): Promise<ArrayBuffer> {
 		throw new Error('readFile is not implemented on this entry!')

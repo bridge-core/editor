@@ -31,8 +31,8 @@ export class BedrockProject extends Project {
 	constructor(name: string) {
 		super(name)
 
-		fileSystem.ingorePath(join(this.path, '.bridge/.dash.development.json'))
-		fileSystem.ingorePath(join(this.path, 'builds/'))
+		fileSystem.ignorePath(join(this.path, '.bridge/.dash.development.json'))
+		fileSystem.ignorePath(join(this.path, 'builds/'))
 	}
 
 	public async load() {
