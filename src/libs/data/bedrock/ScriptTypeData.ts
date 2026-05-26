@@ -3,6 +3,7 @@ import { IDisposable, Uri, languages } from 'monaco-editor'
 import { Data } from '@/libs/data/Data'
 import { fileSystem, iterateDirectory } from '@/libs/fileSystem/FileSystem'
 import { Disposable, disposeAll } from '@/libs/disposeable/Disposeable'
+import { ProjectManager } from '@/libs/project/ProjectManager'
 
 /**
  * Attempts to detect the valid scripting types for the project and apply them to the monaco completions.
@@ -11,8 +12,6 @@ export class ScriptTypeData implements Disposable {
 	constructor(public project: BedrockProject) {}
 
 	private typeDisposables: IDisposable[] = []
-
-	private appliedTypes: any[] = []
 
 	private disposables: Disposable[] = []
 
@@ -27,12 +26,16 @@ export class ScriptTypeData implements Disposable {
 		disposeAll(this.disposables)
 	}
 
-	public async applyTypes(types: any[]) {
+	public async applyTypes() {
 		for (const type of this.typeDisposables) {
 			type.dispose()
 		}
 
-		this.appliedTypes = types
+		if (!ProjectManager.currentProject) return
+		if (!(ProjectManager.currentProject instanceof BedrockProject)) return
+
+		const fileTypeData = ProjectManager.currentProject.fileTypeData
+		const types = fileTypeData.fileTypes.find((type) => type.id === 'gameTest')?.types ?? []
 
 		let builtTypes: any[] = []
 		builtTypes = builtTypes.concat(await this.buildManifestModuleTypes(types), await this.buildUserScriptTypes())
@@ -120,6 +123,6 @@ export class ScriptTypeData implements Disposable {
 
 		if (path !== manifestPath) return
 
-		this.applyTypes(this.appliedTypes)
+		this.applyTypes()
 	}
 }

@@ -149,7 +149,7 @@ export class TextTab extends FileTab {
 
 		await schemaData.updateSchemaForFile(this.path, this.fileType?.id, this.fileType?.schema)
 
-		await scriptTypeData.applyTypes(this.fileType?.types ?? [])
+		await scriptTypeData.applyTypes()
 
 		this.icon.value = this.fileTypeIcon
 
