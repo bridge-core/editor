@@ -14,22 +14,18 @@ import { EditProjectWindow } from './EditProjectWindow'
 import { useTranslate } from '@/libs/locales/Locales'
 import { Windows } from '../Windows'
 import { useIsMobile } from '@/libs/Mobile'
-import { ProjectInfo, ProjectManager } from '@/libs/project/ProjectManager'
+import { ProjectManager } from '@/libs/project/ProjectManager'
 import { IPackType } from 'mc-project-core'
-
-const { window } = defineProps<{ window: EditProjectWindow }>() as { window: EditProjectWindow }
 
 const t = useTranslate()
 const isMobile = useIsMobile()
 const getData = useGetData()
 
-const projectInfo: ProjectInfo = window.projectInfo
-
-const projectName: Ref<string> = ref(projectInfo.config.name)
-const projectDescription: Ref<string> = ref(projectInfo.config.description)
-const projectNamespace: Ref<string> = ref(projectInfo.config.namespace)
-const projectAuthor: Ref<string> = ref(projectInfo.config.author)
-const projectTargetVersion: Ref<string> = ref(projectInfo.config.targetVersion)
+const projectName: Ref<string> = ref(EditProjectWindow.projectInfo.config.name)
+const projectDescription: Ref<string> = ref(EditProjectWindow.projectInfo.config.description)
+const projectNamespace: Ref<string> = ref(EditProjectWindow.projectInfo.config.namespace)
+const projectAuthor: Ref<string> = ref(EditProjectWindow.projectInfo.config.author)
+const projectTargetVersion: Ref<string> = ref(EditProjectWindow.projectInfo.config.targetVersion)
 
 const packTypes: Ref<IPackType[]> = ref([])
 const selectedPackTypes: Ref<IPackType[]> = ref([])
@@ -55,7 +51,7 @@ function validateProjectName(value: string): string | null {
 	if (value === '') return 'windows.editProject.name.mustNotBeEmpty'
 	if (value.match(/"|\\|\/|:|\||<|>|\*|\?|~/g) !== null) return 'windows.editProject.name.invalidLetters'
 	if (value.endsWith('.')) return 'windows.editProject.name.endsInPeriod'
-	if (value !== projectInfo.name && ProjectManager.projects.find((project) => project.name === value))
+	if (value !== EditProjectWindow.projectInfo.name && ProjectManager.projects.find((project) => project.name === value))
 		return 'windows.editProject.name.alreadyExists'
 
 	return null
@@ -75,7 +71,7 @@ const validationError: ComputedRef<string | null> = computed(() => {
 	if (projectName.value === '') return 'windows.editProject.name.mustNotBeEmpty'
 	if (projectName.value.match(/"|\\|\/|:|\||<|>|\*|\?|~/g) !== null) return 'windows.editProject.name.invalidLetters'
 	if (projectName.value.endsWith('.')) return 'windows.editProject.name.endsInPeriod'
-	if (projectName.value !== projectInfo.name && ProjectManager.projects.find((project) => project.name === projectName.value))
+	if (projectName.value !== EditProjectWindow.projectInfo.name && ProjectManager.projects.find((project) => project.name === projectName.value))
 		return 'windows.editProject.name.alreadyExists'
 
 	if (projectNamespace.value.toLocaleLowerCase() !== projectNamespace.value) return 'windows.editProject.namespace.invalidCharacters'
@@ -102,13 +98,15 @@ function selectExperimentalToggle(toggle: ExperimentalToggle) {
 
 async function save() {
 	if (validationError.value !== null) return
+
+  Windows.close(EditProjectWindow);
 }
 
 onMounted(setup)
 </script>
 
 <template>
-	<Window :name="t('windows.editProject.title')" @close="Windows.close(window)">
+	<Window :name="t('windows.editProject.title')" @close="Windows.close(EditProjectWindow)">
 		<div class="flex flex-col pb-8 grow" :class="{ 'h-[42.5rem] max-width': !isMobile }">
 			<div class="overflow-auto p-4 pt-0 m-4 mt-2 basis-0 grow">
 				<!-- Name -->

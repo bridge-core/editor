@@ -50,8 +50,10 @@ async function openProject(project: ProjectInfo) {
 
 async function edit(name: string) {
 	const projectInfo = await ProjectManager.getProjectInfo(join('/projects', name))
+
 	if(!projectInfo) throw new Error("Failed to get project info!")
-	Windows.open(new EditProjectWindow(projectInfo))
+	
+	EditProjectWindow.open(projectInfo)
 }
 
 const bridgeFolderUnloaded = useBridgeFolderUnloaded()
