@@ -50,7 +50,7 @@ defineExpose({
 		class="bg-background-secondary overflow-hidden transition-[height] duration-100 ease-out"
 		:style="`height: ${expanded ? size : '2.5rem'};`"
 	>
-		<div class="h-auto" ref="sizing">
+		<div class="min-h-max" ref="sizing">
 			<div class="h-10 flex items-center p-3 justify-between cursor-pointer group" @click="() => (expanded = !expanded)">
 				<span class="group-hover:text-primary transition-colors duration-100 ease-out select-none font-theme font-medium">{{
 					name
