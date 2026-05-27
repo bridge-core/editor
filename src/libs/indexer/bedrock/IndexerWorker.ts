@@ -142,7 +142,11 @@ async function handleJsonInstructions(filePath: string, fileType: any, json: any
 			await Promise.all(promises)
 		}
 
-		data[cacheKey] = foundData
+		if (data[cacheKey]) {
+			data[cacheKey] = data[cacheKey].concat(foundData)
+		} else {
+			data[cacheKey] = foundData
+		}
 	}
 
 	index[filePath] = {
