@@ -2,78 +2,53 @@
 	"build": {
 		"beforeBuildCommand": "npm run build",
 		"beforeDevCommand": "npm run dev",
-		"devPath": "http://localhost:8080",
-		"distDir": "../dist",
-		"withGlobalTauri": true
+		"frontendDist": "../dist",
+		"devUrl": "http://localhost:8080"
 	},
-	"package": {
-		"productName": "bridge",
-		"version": "3.0.2"
-	},
-	"tauri": {
-		"allowlist": {
-			"all": true,
-			"fs": {
-				"scope": {
-					"allow": [
-						"**/*"
-					],
-					"requireLiteralLeadingDot": false
-				}
-			},
-			"clipboard": {
-				"all": true,
-				"readText": true,
-				"writeText": true
+	"bundle": {
+		"active": true,
+		"category": "DeveloperTool",
+		"copyright": "",
+		"targets": "all",
+		"externalBin": [],
+		"icon": ["icons/32x32.png", "icons/128x128.png", "icons/128x128@2x.png", "icons/icon.icns", "icons/icon.ico"],
+		"windows": {
+			"certificateThumbprint": null,
+			"digestAlgorithm": "sha256",
+			"timestampUrl": "",
+			"wix": {
+				"enableElevatedUpdateTask": false
 			}
 		},
-		"bundle": {
-			"active": true,
-			"category": "DeveloperTool",
-			"copyright": "",
+		"longDescription": "",
+		"macOS": {
+			"entitlements": null,
+			"exceptionDomain": "",
+			"frameworks": [],
+			"providerShortName": null,
+			"signingIdentity": "-"
+		},
+		"resources": [],
+		"shortDescription": "bridge",
+		"linux": {
 			"deb": {
 				"depends": []
-			},
-			"externalBin": [],
-			"icon": [
-				"icons/32x32.png",
-				"icons/128x128.png",
-				"icons/128x128@2x.png",
-				"icons/icon.icns",
-				"icons/icon.ico"
-			],
-			"identifier": "com.bridge.dev",
-			"longDescription": "",
-			"macOS": {
-				"entitlements": null,
-				"exceptionDomain": "",
-				"frameworks": [],
-				"providerShortName": null,
-				"signingIdentity": "-"
-			},
-			"resources": [],
-			"shortDescription": "bridge",
-			"targets": "all",
-			"windows": {
-				"certificateThumbprint": null,
-				"digestAlgorithm": "sha256",
-				"timestampUrl": "",
-				"wix": {
-					"enableElevatedUpdateTask": false
-				}
 			}
 		},
-		"security": {
-			"csp": null
-		},
+		"createUpdaterArtifacts": "v1Compatible"
+	},
+	"productName": "bridge",
+	"mainBinaryName": "bridge",
+	"version": "3.0.2",
+	"identifier": "com.bridge.dev",
+	"plugins": {
 		"updater": {
-			"active": true,
-			"dialog": false,
-			"endpoints": [
-				"https://github.com/bridge-core/editor/releases/latest/download/latest.json"
-			],
+			"endpoints": ["https://github.com/bridge-core/editor/releases/latest/download/latest.json"],
 			"pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDJFQkNGOUQ2REIzMUU5MDQKUldRRTZUSGIxdm04TGtiQzFEaE1GdVBPbUJYUjJDc25rQjg3RjlyKzdya2RUZVN1RkZ1azVBVmcK"
-		},
+		}
+	},
+	"app": {
+		"withGlobalTauri": true,
 		"windows": [
 			{
 				"label": "main",
@@ -85,9 +60,13 @@
 				"width": 1200,
 				"title": "",
 				"titleBarStyle": "Overlay",
-				"fileDropEnabled": false,
-				"acceptFirstMouse": true
+				"dragDropEnabled": false,
+				"acceptFirstMouse": true,
+				"useHttpsScheme": true
 			}
-		]
+		],
+		"security": {
+			"csp": null
+		}
 	}
 }

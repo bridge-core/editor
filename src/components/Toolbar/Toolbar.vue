@@ -8,12 +8,13 @@ import { Windows } from '@/components/Windows/Windows'
 import { AboutWindow } from '@/components/Windows/About/AboutWindow'
 import { appVersion } from '@/libs/app/AppEnv'
 import { useTranslate } from '@/libs/locales/Locales'
-import { appWindow } from '@tauri-apps/api/window'
+import { getCurrentWebviewWindow } from '@tauri-apps/api/webviewWindow'
 import { tauriBuild } from '@/libs/tauri/Tauri'
 import { DropdownItem, Toolbar, ToolbarItem } from './Toolbar'
 import { ActionManager } from '@/libs/actions/ActionManager'
 import { useIsMobile } from '@/libs/Mobile'
 import { onMounted, Ref, ref, watch } from 'vue'
+const appWindow = getCurrentWebviewWindow()
 
 const t = useTranslate()
 
