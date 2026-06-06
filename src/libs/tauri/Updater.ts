@@ -1,25 +1,24 @@
-import { checkUpdate, installUpdate } from '@tauri-apps/api/updater'
+import { check, type Update } from '@tauri-apps/plugin-updater'
+import { relaunch } from '@tauri-apps/plugin-process'
 import { NotificationSystem } from '@/components/Notifications/NotificationSystem'
 
-async function installTauriUpdate() {
-	// Task to indicate background progress
+async function installTauriUpdate(update: Update) {
+    // Task to indicate background progress
 	// TODO: Make tasks with undetermined time
 	NotificationSystem.addProgressNotification('upgrade', 0, 100, undefined)
 
-	// Install the update. This relaunches the application
-	await installUpdate()
+	await update.downloadAndInstall()
+	await relaunch()
 }
 
-checkUpdate()
+check()
 	.then(async (update) => {
-		if (!update.shouldUpdate) return
+		if (!update) return
 
 		NotificationSystem.addNotification('upgrade', async () => {
-			await installTauriUpdate()
+			await installTauriUpdate(update)
 		})
 	})
 	.catch((err: any) => {
 		console.error(`[TauriUpdater] ${err}`)
-
-		return null
 	})

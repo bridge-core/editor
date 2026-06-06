@@ -6,8 +6,8 @@ import { get, set } from 'idb-keyval'
 import { LocalFileSystem } from './LocalFileSystem'
 import { onMounted, onUnmounted, shallowRef, ShallowRef } from 'vue'
 import { Disposable } from '@/libs/disposeable/Disposeable'
-import { open } from '@tauri-apps/api/dialog'
-import { readBinaryFile } from '@tauri-apps/api/fs'
+import { open } from '@tauri-apps/plugin-dialog'
+import { readFile } from '@tauri-apps/plugin-fs'
 import { basename, resolve } from 'pathe'
 import { MemoryFileSystem } from './MemoryFileSystem'
 
@@ -183,7 +183,7 @@ export async function pickFile(
 
 		const file = Array.isArray(files) ? files[0] : files
 
-		return new ImportedFileEntry(file, (await readBinaryFile(file)).buffer as ArrayBuffer)
+		return new ImportedFileEntry(file, (await readFile(file)).buffer as ArrayBuffer)
 	} else if (window.showOpenFilePicker) {
 		let handles = null
 
@@ -289,9 +289,7 @@ export async function pickFiles(
 		const fileArray = Array.isArray(files) ? files : [files]
 
 		// @ts-ignore TS being weird about buffers
-		return await Promise.all(
-			fileArray.map(async (file) => new ImportedFileEntry(file, (await readBinaryFile(file)).buffer as ArrayBuffer))
-		)
+		return await Promise.all(fileArray.map(async (file) => new ImportedFileEntry(file, (await readFile(file)).buffer as ArrayBuffer)))
 	} else if (window.showOpenFilePicker) {
 		let handles = null
 
