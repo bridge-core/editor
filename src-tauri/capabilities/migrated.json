@@ -12,11 +12,15 @@
 		"fs:allow-mkdir",
 		"fs:allow-remove",
 		"fs:allow-rename",
-		"fs:allow-exists",
-		{
-			"identifier": "fs:scope",
-			"allow": ["**/*"]
-		},
+        "fs:allow-exists",
+        {
+            "identifier": "fs:allow-exists",
+            "allow": [{ "path": "**/*" }]
+        },
+        {
+            "identifier": "fs:scope",
+            "allow": [{ "path": "**/*" }]
+        },
 		"core:window:allow-create",
 		"core:window:allow-center",
 		"core:window:allow-request-user-attention",

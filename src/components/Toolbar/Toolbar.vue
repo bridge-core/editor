@@ -14,6 +14,7 @@ import { DropdownItem, Toolbar, ToolbarItem } from './Toolbar'
 import { ActionManager } from '@/libs/actions/ActionManager'
 import { useIsMobile } from '@/libs/Mobile'
 import { onMounted, Ref, ref, watch } from 'vue'
+
 const appWindow = getCurrentWebviewWindow()
 
 const t = useTranslate()
