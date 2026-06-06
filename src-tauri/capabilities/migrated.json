@@ -15,11 +15,11 @@
         "fs:allow-exists",
         {
             "identifier": "fs:allow-exists",
-            "allow": [{ "path": "**/*" }]
+            "allow": [{ "path": "**" }]
         },
         {
             "identifier": "fs:scope",
-            "allow": [{ "path": "**/*" }]
+            "allow": [{ "path": "**" }]
         },
 		"core:window:allow-create",
 		"core:window:allow-center",
