@@ -34,7 +34,7 @@
 		"monaco-editor": "^0.44.0",
 		"pathe": "^1.1.2",
 		"three": "^0.173.0",
-		"uuid": "^9.0.1",
+		"uuid": "^14.0.0",
 		"vue": "^3.4.31"
 	},
 	"devDependencies": {
