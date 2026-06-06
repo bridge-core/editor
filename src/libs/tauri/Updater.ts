@@ -3,6 +3,8 @@ import { relaunch } from '@tauri-apps/plugin-process'
 import { NotificationSystem } from '@/components/Notifications/NotificationSystem'
 
 async function installTauriUpdate(update: Update) {
+    // Task to indicate background progress
+	// TODO: Make tasks with undetermined time
 	NotificationSystem.addProgressNotification('upgrade', 0, 100, undefined)
 
 	await update.downloadAndInstall()
