@@ -38,7 +38,13 @@ const props = defineProps({
 	},
 })
 
-function dragStart() {
+function dragStart(event: DragEvent) {
+	// WebKitGTK (and Firefox) cancel a drag immediately unless data is set on the transfer in dragstart.
+	if (event.dataTransfer) {
+		event.dataTransfer.effectAllowed = 'move'
+		event.dataTransfer.setData('text/plain', props.path)
+	}
+
 	requestAnimationFrame(() => {
 		FileExplorer.draggedItem.value = new BaseEntry(props.path, 'file')
 	})
@@ -71,6 +77,7 @@ onMounted(() => {
 			class="flex items-center gap-2 cursor-pointer transition-colors duration-100 ease-out rounded pl-1"
 			:class="{
 				'hover:bg-background-tertiary': !FileExplorer.draggedItem.value,
+				'opacity-50': preview,
 			}"
 			@click="click"
 			@contextmenu.prevent.stop="contextMenu?.open"
