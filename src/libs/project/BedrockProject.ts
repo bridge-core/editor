@@ -82,4 +82,23 @@ export class BedrockProject extends Project {
 	public async build() {
 		await this.dashService.build()
 	}
+
+	/**
+	 * Resolves the pack a file path belongs to. Uses the longest matching pack root so nested packs resolve correctly.
+	 */
+	public getPackFromPath(path: string): IPackType | null {
+		let bestPackId: string | null = null
+		let bestLength = -1
+
+		for (const [packId, packPath] of Object.entries(this.packs)) {
+			if ((path === packPath || path.startsWith(packPath + '/')) && packPath.length > bestLength) {
+				bestPackId = packId
+				bestLength = packPath.length
+			}
+		}
+
+		if (bestPackId === null) return null
+
+		return this.packDefinitions.find((packDefinition) => packDefinition.id === bestPackId) ?? null
+	}
 }

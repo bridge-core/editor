@@ -55,6 +55,13 @@ const contextMenu: Ref<typeof FreeContextMenu | null> = ref(null)
 const contextMenuTab: ShallowRef<Tab | null> = shallowRef(null)
 const contextMenuTabActions: Ref<string[]> = ref([])
 
+function tabColor(tab: Tab): string {
+	if (!(tab instanceof FileTab)) return 'text'
+	if (!(ProjectManager.currentProject instanceof BedrockProject)) return 'text'
+
+	return ProjectManager.currentProject.getPackFromPath(tab.path)?.color ?? 'text'
+}
+
 function getTabFromTarget(target: HTMLElement): HTMLElement | null {
 	if (target.dataset.tab === 'tab') return target
 
@@ -204,8 +211,9 @@ function dragEnd(event: DragEvent) {
 					<div class="relative">
 						<div
 							v-if="tab instanceof FileTab && tab.modified.value"
-							class="bg-behaviorPack border-2 border-[var(--border-color)] w-3 h-3 rounded-full absolute right-[-0.25rem] top-1"
+							class="border-2 border-[var(--border-color)] w-3 h-3 rounded-full absolute right-[-0.25rem] top-1"
 							:style="{
+								backgroundColor: `var(--theme-color-${tabColor(tab)})`,
 								'--border-color':
 									instance.selectedTab.value == tab
 										? 'var(--theme-color-backgroundSecondary)'
@@ -213,7 +221,7 @@ function dragEnd(event: DragEvent) {
 							}"
 						></div>
 
-						<Icon v-if="tab.icon" :icon="tab.icon.value ?? 'help'" class="text-base text-behaviorPack" />
+						<Icon v-if="tab.icon" :icon="tab.icon.value ?? 'help'" :color="tabColor(tab)" class="text-base" />
 					</div>
 
 					<p
