@@ -5,33 +5,31 @@ use std::sync::{Arc, Mutex};
 
 use notify::RecommendedWatcher;
 use tauri::Manager;
-use window_shadows::set_shadow;
 
-mod watch;
 mod fs_extra;
+mod watch;
 
 fn main() {
     let watcher_mutex: Arc<Mutex<Option<RecommendedWatcher>>> = Arc::new(Mutex::new(None));
 
     let app_watcher_mutex = watcher_mutex.clone();
     tauri::Builder::default()
+        .plugin(tauri_plugin_updater::Builder::new().build())
+        .plugin(tauri_plugin_process::init())
+        .plugin(tauri_plugin_fs::init())
+        .plugin(tauri_plugin_dialog::init())
         .manage(watcher_mutex)
-        .invoke_handler(tauri::generate_handler![watch::watch, watch::unwatch, fs_extra::reveal_in_file_explorer,])
+        .invoke_handler(tauri::generate_handler![
+            watch::watch,
+            watch::unwatch,
+            fs_extra::reveal_in_file_explorer,
+        ])
         .setup(move |app| {
-            let window = app.get_window("main").unwrap();
-
-            #[cfg(debug_assertions)] // only include this code on debug builds
-            {
-                window.open_devtools();
-                // window.close_devtools();
-            }
-
-            if cfg!(target_os = "windows") {
-                set_shadow(&window, true).expect("Unable to set window shadow");
-            }
+            #[cfg(debug_assertions)]
+            app.get_webview_window("main").unwrap().open_devtools();
 
             let mut watcher = app_watcher_mutex.lock().unwrap();
-            *watcher = watch::setup_watcher(app.handle());
+            *watcher = watch::setup_watcher(app.handle().clone());
 
             Ok(())
         })

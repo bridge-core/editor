@@ -4,7 +4,7 @@ use std::{
 };
 
 use notify::{RecommendedWatcher, RecursiveMode, Watcher};
-use tauri::Manager;
+use tauri::Emitter;
 
 pub fn setup_watcher(app_handle: tauri::AppHandle) -> Option<RecommendedWatcher> {
     return match notify::recommended_watcher(move |res: Result<notify::Event, _>| match res {
@@ -15,7 +15,7 @@ pub fn setup_watcher(app_handle: tauri::AppHandle) -> Option<RecommendedWatcher>
                 .map(|path| path.to_str().unwrap().replace("\\", "/"))
                 .collect();
 
-            app_handle.emit_all("watch_event", paths).unwrap();
+            app_handle.emit("watch_event", paths).unwrap();
         }
         Err(e) => println!("watch error: {:?}", e),
     }) {

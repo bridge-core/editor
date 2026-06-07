@@ -1,9 +1,8 @@
-import { createDir, exists, readBinaryFile, readDir, readTextFile, removeDir, removeFile, writeBinaryFile } from '@tauri-apps/api/fs'
+import { exists, mkdir, readDir, readFile, readTextFile, remove, writeFile } from '@tauri-apps/plugin-fs'
 import { BaseEntry, BaseFileSystem, StreamableLike } from './BaseFileSystem'
 import { dirname, join, resolve } from 'pathe'
-import { sep } from '@tauri-apps/api/path'
 import { listen } from '@tauri-apps/api/event'
-import { invoke } from '@tauri-apps/api'
+import { invoke } from '@tauri-apps/api/core'
 import * as JSONC from 'jsonc-parser'
 
 export class TauriFileSystem extends BaseFileSystem {
@@ -34,7 +33,7 @@ export class TauriFileSystem extends BaseFileSystem {
 
 		try {
 			//@ts-ignore
-			return (await readBinaryFile(join(this.basePath, path))).buffer
+			return (await readFile(join(this.basePath, path))).buffer
 		} catch (error) {
 			console.error(`Failed to read "${path}"`)
 
@@ -58,7 +57,7 @@ export class TauriFileSystem extends BaseFileSystem {
 		if (this.basePath === null) throw new Error('Base path not set!')
 
 		try {
-			const content = await readBinaryFile(join(this.basePath, path))
+			const content = await readFile(join(this.basePath, path))
 
 			const reader = new FileReader()
 
@@ -118,7 +117,7 @@ export class TauriFileSystem extends BaseFileSystem {
 		if (!writeableContent) throw new Error('Can not convert content to writeable content!')
 
 		try {
-			await writeBinaryFile(join(this.basePath, path), writeableContent)
+			await writeFile(join(this.basePath, path), new Uint8Array(writeableContent))
 		} catch (error) {
 			console.error(`Failed to write "${path}"`)
 
@@ -156,7 +155,7 @@ export class TauriFileSystem extends BaseFileSystem {
 		}
 
 		try {
-			await writeBinaryFile(join(this.basePath, path), content)
+			await writeFile(join(this.basePath, path), content)
 		} catch (error) {
 			console.error(`Failed to write "${path}"`)
 
@@ -168,7 +167,7 @@ export class TauriFileSystem extends BaseFileSystem {
 		if (this.basePath === null) throw new Error('Base path not set!')
 
 		try {
-			await removeFile(join(this.basePath, path))
+			await remove(join(this.basePath, path))
 		} catch (error) {
 			console.error(`Failed to remove "${path}"`)
 
@@ -188,7 +187,7 @@ export class TauriFileSystem extends BaseFileSystem {
 		try {
 			if (await this.exists(path)) return
 
-			await createDir(join(this.basePath, path))
+			await mkdir(join(this.basePath, path))
 		} catch (error) {
 			console.error(`Failed to make directory "${path}"`)
 
@@ -204,7 +203,7 @@ export class TauriFileSystem extends BaseFileSystem {
 		if (await exists(join(this.basePath, directoryPath))) return
 
 		try {
-			await createDir(join(this.basePath, directoryPath), { recursive: true })
+			await mkdir(join(this.basePath, directoryPath), { recursive: true })
 		} catch (error) {
 			console.error(`Failed to ensure directory "${path}"`)
 
@@ -218,7 +217,7 @@ export class TauriFileSystem extends BaseFileSystem {
 		try {
 			if (!(await this.exists(path))) return
 
-			await removeDir(join(this.basePath, path), { recursive: true })
+			await remove(join(this.basePath, path), { recursive: true })
 		} catch (error) {
 			console.error(`Failed to remove directory "${path}"`)
 
@@ -232,10 +231,7 @@ export class TauriFileSystem extends BaseFileSystem {
 		try {
 			return (await readDir(join(this.basePath, path))).map(
 				(entry) =>
-					new BaseEntry(
-						resolve('/', entry.path.substring(this.basePath?.length ?? 0).replaceAll(sep, '/')),
-						(entry.children !== undefined ? 'directory' : 'file') as 'directory' | 'file'
-					)
+					new BaseEntry(resolve('/', join(path, entry.name)), (entry.isDirectory ? 'directory' : 'file') as 'directory' | 'file')
 			)
 		} catch (error) {
 			console.error(`Failed to read directory "${path}"`)
