@@ -15,20 +15,34 @@ onMounted(() => {
 	setup()
 })
 
-async function drop(event: DragEvent) {
+function drop(event: DragEvent) {
 	const items = event.dataTransfer?.items
 
 	if (!items) return
 
-	const promises: Promise<FileSystemHandle | null>[] = []
+	// DataTransferItem entries are only valid synchronously inside the event handler, so collect everything
+	// before awaiting. Chromium/web exposes the File System Access API; WebKitGTK (the native build) does not,
+	// so we fall back to plain File objects there.
+	const handlePromises: Promise<FileSystemHandle | null>[] = []
+	const files: File[] = []
 
 	for (const item of items) {
-		if (item.kind === 'file') {
-			promises.push(<any>item.getAsFileSystemHandle())
+		if (item.kind !== 'file') continue
+
+		if (typeof (item as any).getAsFileSystemHandle === 'function') {
+			handlePromises.push((item as any).getAsFileSystemHandle())
+		} else {
+			const file = item.getAsFile()
+
+			if (file) files.push(file)
 		}
 	}
 
-	const handles = (await Promise.all(promises)).filter((file) => file !== null)
+	importDropped(handlePromises, files)
+}
+
+async function importDropped(handlePromises: Promise<FileSystemHandle | null>[], files: File[]) {
+	const handles = (await Promise.all(handlePromises)).filter((handle) => handle !== null)
 
 	for (const handle of handles) {
 		if (handle.kind === 'file') {
@@ -36,10 +50,14 @@ async function drop(event: DragEvent) {
 		} else {
 			const entry = await ImportedDirectoryEntry.fromHandle(handle as FileSystemDirectoryHandle)
 
-			if (!entry) return
+			if (!entry) continue
 
 			await ImporterManager.importDirectory(entry)
 		}
+	}
+
+	for (const file of files) {
+		await ImporterManager.importFile(new ImportedFileEntry('/' + file.name, await file.arrayBuffer()))
 	}
 }
 </script>
