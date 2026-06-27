@@ -13,12 +13,13 @@ import { FileTab } from './FileTab'
 import { Settings } from '@/libs/settings/Settings'
 import { TabManager } from './TabManager'
 import { computed, ComputedRef, Ref, ref, ShallowRef, shallowRef } from 'vue'
-import { ProjectManager } from '@/libs/project/ProjectManager'
+import { ProjectManager, useCurrentProject } from '@/libs/project/ProjectManager'
 import { BedrockProject } from '@/libs/project/BedrockProject'
 import { useTabActions } from '@/libs/actions/tab/TabActionManager'
 import { ActionManager } from '@/libs/actions/ActionManager'
 import { useTranslate } from '@/libs/locales/Locales'
 import { Tab } from './Tab'
+import { IPackType } from 'mc-project-core'
 
 const props = defineProps({
 	instance: {
@@ -137,6 +138,30 @@ function dragEnd(event: DragEvent) {
 	TabSystem.draggingTab.value = null
 	dragLevel = 0
 }
+
+const currentProject = useCurrentProject()
+
+const currentProjectPackDefinitions: Ref<IPackType[]> = computed(() => {
+	if (!currentProject.value) return []
+	if (!(currentProject.value instanceof BedrockProject)) return []
+
+	return currentProject.value.packDefinitions.filter((pack: IPackType) => {
+		if (!currentProject.value) return false
+		if (!currentProject.value.config) return false
+
+		return Object.keys(currentProject.value.config.packs).includes(pack.id)
+	})
+})
+
+function useTabColor(path: string | null) {
+    return computed(() => {
+        if(!currentProject.value) return 'text'
+
+        const packId = currentProject.value.getPackFromPath(path)
+
+        return currentProjectPackDefinitions.value.find(pack => pack.id === packId)?.color ?? 'text'
+    })
+}
 </script>
 
 <template>
@@ -204,8 +229,9 @@ function dragEnd(event: DragEvent) {
 					<div class="relative">
 						<div
 							v-if="tab instanceof FileTab && tab.modified.value"
-							class="bg-behaviorPack border-2 border-[var(--border-color)] w-3 h-3 rounded-full absolute right-[-0.25rem] top-1"
+							class="border-2 border-[var(--border-color)] w-3 h-3 rounded-full absolute right-[-0.25rem] top-1"
 							:style="{
+								backgroundColor: `var(--theme-color-${useTabColor(tab.path).value})`,
 								'--border-color':
 									instance.selectedTab.value == tab
 										? 'var(--theme-color-backgroundSecondary)'
@@ -213,7 +239,7 @@ function dragEnd(event: DragEvent) {
 							}"
 						></div>
 
-						<Icon v-if="tab.icon" :icon="tab.icon.value ?? 'help'" class="text-base text-behaviorPack" />
+						<Icon v-if="tab.icon" :icon="tab.icon.value ?? 'help'" :color="useTabColor(tab instanceof FileTab ? tab.path : null).value" class="text-base" />
 					</div>
 
 					<p
