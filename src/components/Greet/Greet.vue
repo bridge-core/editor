@@ -49,10 +49,14 @@ async function openProject(project: ProjectInfo) {
 }
 
 async function edit(name: string) {
+	if (fileSystem instanceof PWAFileSystem && !fileSystem.setup) await loadBridgeFolder()
+	// second check for permissions
+	if (fileSystem instanceof PWAFileSystem && !fileSystem.setup) return
+
 	const projectInfo = await ProjectManager.getProjectInfo(join('/projects', name))
 
 	if(!projectInfo) throw new Error("Failed to get project info!")
-	
+
 	EditProjectWindow.open(projectInfo)
 }
 
