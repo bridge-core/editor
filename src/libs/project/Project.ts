@@ -94,6 +94,18 @@ export class Project implements AsyncDisposable {
 		return join(this.path ?? '', (<any>this.config.packs)[packId], path)
 	}
 
+    public getPackFromPath(path: string | null): string | null {
+        if(!path) return null
+
+		for(const pack of Object.keys(this.packs)) {
+            const packPath = this.packs[pack]
+            
+            if(path.startsWith(packPath)) return pack
+        }
+
+        return null
+	}
+
 	public async saveTabManagerState(state: any) {
 		await set(`tabManagerState-${this.name}`, JSON.stringify(state))
 	}

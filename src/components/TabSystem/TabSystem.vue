@@ -13,12 +13,13 @@ import { FileTab } from './FileTab'
 import { Settings } from '@/libs/settings/Settings'
 import { TabManager } from './TabManager'
 import { computed, ComputedRef, Ref, ref, ShallowRef, shallowRef } from 'vue'
-import { ProjectManager } from '@/libs/project/ProjectManager'
+import { ProjectManager, useCurrentProject } from '@/libs/project/ProjectManager'
 import { BedrockProject } from '@/libs/project/BedrockProject'
 import { useTabActions } from '@/libs/actions/tab/TabActionManager'
 import { ActionManager } from '@/libs/actions/ActionManager'
 import { useTranslate } from '@/libs/locales/Locales'
 import { Tab } from './Tab'
+import { IPackType } from 'mc-project-core'
 
 const props = defineProps({
 	instance: {
@@ -54,13 +55,6 @@ const currentTabActions: ComputedRef<string[]> = computed(() => {
 const contextMenu: Ref<typeof FreeContextMenu | null> = ref(null)
 const contextMenuTab: ShallowRef<Tab | null> = shallowRef(null)
 const contextMenuTabActions: Ref<string[]> = ref([])
-
-function tabColor(tab: Tab): string {
-	if (!(tab instanceof FileTab)) return 'text'
-	if (!(ProjectManager.currentProject instanceof BedrockProject)) return 'text'
-
-	return ProjectManager.currentProject.getPackFromPath(tab.path)?.color ?? 'text'
-}
 
 function getTabFromTarget(target: HTMLElement): HTMLElement | null {
 	if (target.dataset.tab === 'tab') return target
@@ -144,6 +138,30 @@ function dragEnd(event: DragEvent) {
 	TabSystem.draggingTab.value = null
 	dragLevel = 0
 }
+
+const currentProject = useCurrentProject()
+
+const currentProjectPackDefinitions: Ref<IPackType[]> = computed(() => {
+	if (!currentProject.value) return []
+	if (!(currentProject.value instanceof BedrockProject)) return []
+
+	return currentProject.value.packDefinitions.filter((pack: IPackType) => {
+		if (!currentProject.value) return false
+		if (!currentProject.value.config) return false
+
+		return Object.keys(currentProject.value.config.packs).includes(pack.id)
+	})
+})
+
+function useTabColor(path: string | null) {
+    return computed(() => {
+        if(!currentProject.value) return 'text'
+
+        const packId = currentProject.value.getPackFromPath(path)
+
+        return currentProjectPackDefinitions.value.find(pack => pack.id === packId)?.color ?? 'text'
+    })
+}
 </script>
 
 <template>
@@ -213,7 +231,7 @@ function dragEnd(event: DragEvent) {
 							v-if="tab instanceof FileTab && tab.modified.value"
 							class="border-2 border-[var(--border-color)] w-3 h-3 rounded-full absolute right-[-0.25rem] top-1"
 							:style="{
-								backgroundColor: `var(--theme-color-${tabColor(tab)})`,
+								backgroundColor: `var(--theme-color-${useTabColor(tab.path).value})`,
 								'--border-color':
 									instance.selectedTab.value == tab
 										? 'var(--theme-color-backgroundSecondary)'
@@ -221,7 +239,7 @@ function dragEnd(event: DragEvent) {
 							}"
 						></div>
 
-						<Icon v-if="tab.icon" :icon="tab.icon.value ?? 'help'" :color="tabColor(tab)" class="text-base" />
+						<Icon v-if="tab.icon" :icon="tab.icon.value ?? 'help'" :color="useTabColor(tab instanceof FileTab ? tab.path : null).value" class="text-base" />
 					</div>
 
 					<p
