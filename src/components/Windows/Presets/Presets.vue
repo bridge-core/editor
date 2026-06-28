@@ -76,6 +76,32 @@ const validationError: ComputedRef<string | null> = computed(() => {
 	return null
 })
 
+function openFileInput(fieldId: string) {
+	const input = document.getElementById(`preset-file-input-${fieldId}`)
+
+	if (input instanceof HTMLInputElement) input.click()
+}
+
+async function onFileInputChange(event: Event, fieldId: string) {
+	const input = <HTMLInputElement>event.target
+
+	const file = input.files?.[0]
+
+	if (!file) return
+
+	const content = new Uint8Array(await file.arrayBuffer())
+
+	// Store a fake file handle matching the shape that preset scripts (and loadPresetFile) expect:
+	// `name` + `content` (binary, read by createFile) + `text()` (read by e.g. the Block Model script).
+	createPresetOptions.value[fieldId] = {
+		name: file.name,
+		content,
+		async text() {
+			return new TextDecoder().decode(content)
+		},
+	}
+}
+
 async function create() {
 	if (validationError.value !== null) return
 
@@ -214,15 +240,22 @@ watch(filteredCategories, () => {
 								class="mb-6 flex bg-background"
 								v-slot="{ focus, blur }"
 							>
-								<input type="file" class="hidden" />
+								<input
+									:id="`preset-file-input-${fieldId}`"
+									type="file"
+									class="hidden"
+									:accept="fieldOptions.accept"
+									@change="(event: Event) => onFileInputChange(event, fieldId)"
+								/>
 
 								<button
 									class="flex align-center gap-2 text-text-secondary font-theme placeholder:text-text-secondary"
 									@mouseenter="focus"
 									@mouseleave="blur"
+									@click="openFileInput(fieldId)"
 								>
 									<Icon icon="image" class="no-fill" color="text-text-secondary" />
-									{{ fieldName }}
+									{{ createPresetOptions[fieldId]?.name ?? fieldName }}
 								</button>
 							</LabeledInput>
 
