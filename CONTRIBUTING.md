@@ -1,5 +1,7 @@
 Thank you for considering to contribute to **"bridge."**
 
+**Other Languages:** **English** | [日本語](./CONTRIBUTING_jp.md)
+
 ## Starting development
 
 We recommend Visual Studio Code to edit our code base.
