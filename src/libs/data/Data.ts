@@ -51,6 +51,8 @@ export class Data {
 		let packagesUrl = 'https://raw.githubusercontent.com/bridge-core/editor-packages/release/packages.zip'
 
 		if (Settings.get('dataDeveloperMode')) {
+			console.warn('[Data] Clearing hash because data developer mode is enabled!')
+
 			if (await Data.fileSystem.exists('hash')) await Data.fileSystem.removeFile('hash')
 
 			hash = undefined
