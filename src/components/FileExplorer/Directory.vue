@@ -79,7 +79,13 @@ const draggingOver = computed(() => draggingCount.value > 0)
 const draggingLocation: Ref<'inside' | 'above' | 'below'> = ref('inside')
 let expandTimeout: number | null = null
 
-function dragStart() {
+function dragStart(event: DragEvent) {
+	// WebKitGTK (and Firefox) cancel a drag immediately unless data is set on the transfer in dragstart.
+	if (event.dataTransfer) {
+		event.dataTransfer.effectAllowed = 'move'
+		event.dataTransfer.setData('text/plain', props.path)
+	}
+
 	requestAnimationFrame(() => {
 		FileExplorer.draggedItem.value = new BaseEntry(props.path, 'directory')
 	})
@@ -143,7 +149,8 @@ function dragOver(event: DragEvent) {
 
 	if (y < minY + height / 2) {
 		draggingLocation.value = 'above'
-	} else if (y > minY + height / 2 && y < containerMinY + cotnainerHeight - 20) {
+	} else if (entries.value.length === 0 || y < containerMinY + cotnainerHeight - 20) {
+		// Empty folders have no children rows, so the "inside" zone would otherwise collapse to nothing.
 		draggingLocation.value = 'inside'
 	} else {
 		draggingLocation.value = 'below'
@@ -190,6 +197,7 @@ function drop(event: DragEvent) {
 				class="flex items-center gap-2 cursor-pointer transition-colors duration-100 ease-out rounded pl-1"
 				:class="{
 					'hover:bg-background-tertiary': !FileExplorer.draggedItem.value,
+					'opacity-50': preview,
 				}"
 				@click="expanded = !expanded"
 				@contextmenu.prevent.stop="contextMenu?.open"
@@ -211,7 +219,7 @@ function drop(event: DragEvent) {
 					'pl-3': get('fileExplorerIndentation') === 'large',
 					'pl-6': get('fileExplorerIndentation') === 'x-large',
 				}"
-				v-if="expanded && entries.length > 0"
+				v-if="(expanded && entries.length > 0) || (draggingOver && draggingLocation === 'inside')"
 			>
 				<div v-for="entry in orderedEntries" :key="entry.path">
 					<File
