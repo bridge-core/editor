@@ -1,10 +1,13 @@
-import { MarkerSeverity, editor, languages } from 'monaco-editor'
+import { CancellationToken, MarkerSeverity, Position, editor, languages } from 'monaco-editor'
 import { CustomMolang } from '@bridge-editor/molang'
+import { ProjectManager } from '@/libs/project/ProjectManager'
+import { BedrockProject } from '@/libs/project/BedrockProject'
+import { provideCompletionItems, provideInlineJsonCompletionItems } from './Molang/Completions'
 
 export function setupMolang() {
 	languages.register({ id: 'molang', extensions: ['.molang'], aliases: ['molang'] })
 
-	languages.setLanguageConfiguration('lang', {
+	languages.setLanguageConfiguration('molang', {
 		comments: {
 			lineComment: '#',
 		},
@@ -33,35 +36,19 @@ export function setupMolang() {
 		],
 	})
 
-	languages.setMonarchTokensProvider('lang', {
-		ignoreCase: true,
-		brackets: [
-			{ open: '(', close: ')', token: 'delimiter.parenthesis' },
-			{ open: '[', close: ']', token: 'delimiter.square' },
-			{ open: '{', close: '}', token: 'delimiter.curly' },
-		],
-		keywords: ['return', 'loop', 'for_each', 'break', 'continue', 'this', 'function'],
-		identifiers: ['v', 't', 'c', 'q', 'f', 'a', 'arg', 'variable', 'temp', 'context', 'query'],
-		tokenizer: {
-			root: [
-				[/#.*/, 'comment'],
-				[/'[^']'/, 'string'],
-				[/[0-9]+(\.[0-9]+)?/, 'number'],
-				[/true|false/, 'number'],
-				[/\=|\,|\!|%=|\*=|\+=|-=|\/=|<|=|>|<>/, 'definition'],
-				[
-					/[a-z_$][\w$]*/,
-					{
-						cases: {
-							'@keywords': 'keyword',
-							'@identifiers': 'type.identifier',
-							'@default': 'identifier',
-						},
-					},
-				],
-			],
-		},
+	languages.registerCompletionItemProvider('molang', {
+		triggerCharacters: ['.', '(', ',', "'"],
+		provideCompletionItems,
 	})
+
+	languages.registerCompletionItemProvider('json', {
+		triggerCharacters: ['.', '(', ',', "'"],
+		provideCompletionItems: provideInlineJsonCompletionItems,
+	})
+
+	// Keep syntax highlighting in sync with the Molang values available in the current project
+	ProjectManager.updatedCurrentProject.on(() => updateTokensProviderForCurrentProject())
+	updateTokensProviderForCurrentProject()
 
 	const molang = new CustomMolang({})
 
@@ -87,5 +74,49 @@ export function setupMolang() {
 				])
 			}
 		})
+	})
+}
+
+function updateTokensProviderForCurrentProject() {
+	if (!(ProjectManager.currentProject instanceof BedrockProject)) {
+		updateTokensProvider([])
+
+		return
+	}
+
+	updateTokensProvider(ProjectManager.currentProject.molangData.getAllValueNames())
+}
+
+function updateTokensProvider(valueNames: string[]) {
+	languages.setMonarchTokensProvider('molang', {
+		ignoreCase: true,
+		brackets: [
+			{ open: '(', close: ')', token: 'delimiter.parenthesis' },
+			{ open: '[', close: ']', token: 'delimiter.square' },
+			{ open: '{', close: '}', token: 'delimiter.curly' },
+		],
+		keywords: ['return', 'loop', 'for_each', 'break', 'continue', 'this', 'function'],
+		identifiers: ['v', 't', 'c', 'q', 'f', 'a', 'arg', 'variable', 'temp', 'context', 'query', 'math'],
+		values: valueNames,
+		tokenizer: {
+			root: [
+				[/#.*/, 'comment'],
+				[/'[^']'/, 'string'],
+				[/[0-9]+(\.[0-9]+)?/, 'number'],
+				[/true|false/, 'number'],
+				[/\=|\,|\!|%=|\*=|\+=|-=|\/=|<|=|>|<>/, 'definition'],
+				[
+					/[a-z_$][\w$]*/,
+					{
+						cases: {
+							'@keywords': 'keyword',
+							'@identifiers': 'type.identifier',
+							'@values': 'variable',
+							'@default': 'identifier',
+						},
+					},
+				],
+			],
+		},
 	})
 }
