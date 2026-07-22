@@ -6,6 +6,7 @@ import { get, set } from 'idb-keyval'
 import { Event } from '@/libs/event/Event'
 import { Disposable } from '@/libs/disposeable/Disposeable'
 import { Extensions } from '@/libs/extensions/Extensions'
+import { Data } from '@/libs/data/Data'
 
 export enum ThemeSettings {
 	ColorScheme = 'colorScheme',
@@ -69,13 +70,18 @@ export class ThemeManager {
 
 			let themeId = Settings.get(ThemeSettings.DarkTheme)
 
-			if (colorScheme === 'light' || (colorScheme === 'auto' && !ThemeManager.prefersDarkMode())) themeId = Settings.get(ThemeSettings.LightTheme)
+			if (colorScheme === 'light' || (colorScheme === 'auto' && !ThemeManager.prefersDarkMode()))
+				themeId = Settings.get(ThemeSettings.LightTheme)
 
 			ThemeManager.applyTheme(themeId as string)
 		})
 
-		Extensions.updated.on((event) => {
-			this.reloadThemes()
+		Extensions.updated.on(async (event) => {
+			await this.reloadThemes()
+		})
+
+		Data.loaded.on(async (event) => {
+			await this.reloadThemes()
 		})
 	}
 
@@ -84,7 +90,7 @@ export class ThemeManager {
 			this.previouslyUsedTheme = JSON.parse((await get('lastUsedTheme')) as string)
 		} catch {}
 
-		this.reloadThemes()
+		await this.reloadThemes()
 		this.applyTheme(this.previouslyUsedTheme.id)
 	}
 
@@ -100,11 +106,31 @@ export class ThemeManager {
 		this.themesUpdated.dispatch()
 	}
 
-	private static reloadThemes() {
+	private static async reloadThemes() {
 		this.themes = []
 
 		this.addTheme(dark)
 		this.addTheme(light)
+
+		if (Data.isLoaded) {
+			const dataThemes = await Data.get('packages/common/themes.json')
+
+			for (const theme of dataThemes) {
+				const base = theme.colorScheme === 'dark' ? dark : light
+
+				theme.colors.menuAlternate = theme.colors.sidebarNavigation
+				theme.colors.backgroundSecondary = theme.colors.sidebarNavigation
+				theme.colors.backgroundTertiary = theme.colors.expandedSidebar
+				theme.colors.accent = base.colors.text
+
+				theme.colors = {
+					...base.colors,
+					...theme.colors,
+				}
+
+				this.addTheme(theme)
+			}
+		}
 
 		for (const theme of Extensions.themes) {
 			this.addTheme(theme)

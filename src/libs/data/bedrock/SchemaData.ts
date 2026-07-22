@@ -176,7 +176,11 @@ export class SchemaData implements Disposable {
 
 					references.push(this.resolveSchemaPath(schemaPath, reference).split('#')[0])
 
-					reference = join(resolve('/', basePath), this.resolveSchemaPath(schemaPath, reference.split('#')[0]))
+					if(reference.includes('#')) {
+						reference = join(resolve('/', basePath), this.resolveSchemaPath(schemaPath, reference.split('#')[0])) + '#' + reference.split('#')[1]
+					} else {
+						reference = join(resolve('/', basePath), this.resolveSchemaPath(schemaPath, reference.split('#')[0]))	
+					}
 
 					schemaPart[key] = reference
 

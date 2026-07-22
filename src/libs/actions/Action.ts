@@ -12,6 +12,7 @@ interface ActionConfig {
 	requiresContext?: boolean
 	visible?: boolean
 	category?: string
+	special?: boolean
 }
 
 export class Action {
@@ -24,6 +25,7 @@ export class Action {
 	public description?: string
 	public requiresContext: boolean
 	public category: string
+	public special: boolean // Used for built in actions like copy and paste to control prevent default
 
 	public visible: boolean = true
 
@@ -52,6 +54,7 @@ export class Action {
 		this.requiresContext = config.requiresContext ?? false
 		this.category = config.category ?? 'actions.misc.name'
 		this.visible = config.visible ?? true
+		this.special = config.special ?? false
 
 		if (this.keyBinding) {
 			this.ctrlModifier = this.keyBinding.includes('Ctrl')
@@ -72,9 +75,13 @@ export class Action {
 
 			if (event.key.toUpperCase() !== this.key && event.key !== this.key) return
 
-			event.preventDefault()
+			if (this.special) {
+				this.trigger(event)
+			} else {
+				event.preventDefault()
 
-			this.trigger(undefined)
+				this.trigger(undefined)
+			}
 		})
 	}
 
@@ -100,7 +107,12 @@ export class Action {
 		this.shiftModifier = shiftModifier
 		this.altModifier = altModifier
 
-		this.keyBinding = [ctrlModifier ? 'Ctrl' : undefined, altModifier ? 'Alt' : undefined, shiftModifier ? 'Shift' : undefined, key.toUpperCase()]
+		this.keyBinding = [
+			ctrlModifier ? 'Ctrl' : undefined,
+			altModifier ? 'Alt' : undefined,
+			shiftModifier ? 'Shift' : undefined,
+			key.toUpperCase(),
+		]
 			.filter((item) => item !== undefined)
 			.join(' + ')
 
