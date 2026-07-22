@@ -9,7 +9,7 @@ import Switch from '@/components/Common/Switch.vue'
 import Dropdown from '@/components/Common/Legacy/LegacyDropdown.vue'
 
 import { useTranslate } from '@/libs/locales/Locales'
-import { ComputedRef, Ref, computed, ref, watch } from 'vue'
+import { ComponentPublicInstance, ComputedRef, Ref, computed, ref, watch } from 'vue'
 import { BedrockProject } from '@/libs/project/BedrockProject'
 import { ProjectManager } from '@/libs/project/ProjectManager'
 import { Windows } from '../Windows'
@@ -76,10 +76,18 @@ const validationError: ComputedRef<string | null> = computed(() => {
 	return null
 })
 
-function openFileInput(fieldId: string) {
-	const input = document.getElementById(`preset-file-input-${fieldId}`)
+const fileInputs: { [key: string]: HTMLInputElement } = {}
 
-	if (input instanceof HTMLInputElement) input.click()
+function setFileInput(fieldId: string, element: Element | ComponentPublicInstance | null) {
+	if (element instanceof HTMLInputElement) {
+		fileInputs[fieldId] = element
+	} else {
+		delete fileInputs[fieldId]
+	}
+}
+
+function openFileInput(fieldId: string) {
+	fileInputs[fieldId]?.click()
 }
 
 async function onFileInputChange(event: Event, fieldId: string) {
@@ -241,7 +249,7 @@ watch(filteredCategories, () => {
 								v-slot="{ focus, blur }"
 							>
 								<input
-									:id="`preset-file-input-${fieldId}`"
+									:ref="(element) => setFileInput(fieldId, element)"
 									type="file"
 									class="hidden"
 									:accept="fieldOptions.accept"
