@@ -173,7 +173,14 @@ export class LocalFileSystem extends BaseFileSystem {
 
 		path = resolve('/', path)
 
-		await del(`localFileSystem/${this.rootName}${path}`)
+		// Remove the directory entry itself as well as every file and subdirectory nested inside of it.
+		// idb-keyval has no concept of folders, so deleting only the directory key would orphan its children.
+		const directoryKey = `localFileSystem/${this.rootName}${path}`
+		const childPrefix = `${directoryKey}/`
+
+		const childKeys = (await keys()).filter((key) => key.toString().startsWith(childPrefix))
+
+		await Promise.all([del(directoryKey), ...childKeys.map((key) => del(key))])
 
 		if (
 			this.pathsToWatch.find((watchPath) => path.startsWith(watchPath)) !== undefined &&

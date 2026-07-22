@@ -82,7 +82,16 @@ export async function setup() {
 
 	if (fileSystem instanceof TauriFileSystem) await setupTauriFileSystem()
 
-	if (fileSystem instanceof LocalFileSystem) fileSystem.setRootName('fileSystemPolyfill')
+	if (fileSystem instanceof LocalFileSystem) {
+		fileSystem.setRootName('fileSystemPolyfill')
+
+		// On browsers without the File System Access API (e.g. Safari, Firefox, Android Chrome) the
+		// entire project lives in IndexedDB. Request persistent storage so the browser doesn't evict
+		// it, which otherwise causes saved files to silently disappear.
+		if (navigator.storage?.persist) {
+			navigator.storage.persist().catch(() => {})
+		}
+	}
 
 	setupTypescript()
 	setupLang()
