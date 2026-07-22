@@ -71,10 +71,7 @@ export class DashService implements AsyncDisposable {
 		await sendAndWait(
 			{
 				action: 'setup',
-				// Pass a plain, structured-clone-safe copy of the config. Safari's structured clone
-				// is stricter than Chromium's and throws DataCloneError on non-plain objects, which
-				// broke .mcaddon exports (the only export path that hands data to the Dash worker).
-				config: this.project.config ? JSON.parse(JSON.stringify(this.project.config)) : this.project.config,
+				config: this.project.config,
 				mode,
 				configPath: join(this.project.path, 'config.json'),
 				compilerConfigPath,
