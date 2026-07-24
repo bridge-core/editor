@@ -39,7 +39,7 @@
 	},
 	"productName": "bridge",
 	"mainBinaryName": "bridge",
-	"version": "3.0.2",
+	"version": "3.0.3",
 	"identifier": "com.bridge.dev",
 	"plugins": {
 		"updater": {
