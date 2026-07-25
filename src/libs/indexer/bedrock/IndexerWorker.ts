@@ -38,7 +38,7 @@ async function getFileType(path: string): Promise<any> {
 	).fileType
 }
 
-let index: { [key: string]: { fileType: string; data?: any } } = {}
+let index: { [key: string]: { fileType: string; data?: any; packPath?: string } } = {}
 
 function resolvePackPath(packId: string, path: string) {
 	if (!config) return ''
@@ -149,9 +149,21 @@ async function handleJsonInstructions(filePath: string, fileType: any, json: any
 		}
 	}
 
+	let filePackPath: undefined | string = undefined
+	if (config) {
+		for (const [packId, packPath] of Object.entries(config.packs)) {
+			if (filePath.startsWith(packPath)) {
+				filePackPath = packPath
+
+				break
+			}
+		}
+	}
+
 	index[filePath] = {
 		fileType: fileType ? fileType.id : 'unknown',
 		data,
+		packPath: filePackPath,
 	}
 }
 
@@ -175,9 +187,21 @@ async function handleScriptInstructions(path: string, fileType: any, text: strin
 			resolvePackPath,
 		})
 
+	let filePackPath: undefined | string = undefined
+	if (config) {
+		for (const [packId, packPath] of Object.entries(config.packs)) {
+			if (path.startsWith(packPath)) {
+				filePackPath = packPath
+
+				break
+			}
+		}
+	}
+
 	index[path] = {
 		fileType: fileType ? fileType.id : 'unknown',
 		data,
+		packPath: filePackPath,
 	}
 }
 
@@ -215,9 +239,21 @@ async function indexFile(path: string) {
 		}
 	}
 
+	let filePackPath: undefined | string = undefined
+	if (config) {
+		for (const [packId, packPath] of Object.entries(config.packs)) {
+			if (path.startsWith(packPath)) {
+				filePackPath = packPath
+
+				break
+			}
+		}
+	}
+
 	index[path] = {
 		fileType: fileType ? fileType.id : 'unknown',
 		data,
+		packPath: filePackPath,
 	}
 }
 

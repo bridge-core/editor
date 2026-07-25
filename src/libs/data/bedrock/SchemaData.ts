@@ -176,10 +176,13 @@ export class SchemaData implements Disposable {
 
 					references.push(this.resolveSchemaPath(schemaPath, reference).split('#')[0])
 
-					if(reference.includes('#')) {
-						reference = join(resolve('/', basePath), this.resolveSchemaPath(schemaPath, reference.split('#')[0])) + '#' + reference.split('#')[1]
+					if (reference.includes('#')) {
+						reference =
+							join(resolve('/', basePath), this.resolveSchemaPath(schemaPath, reference.split('#')[0])) +
+							'#' +
+							reference.split('#')[1]
 					} else {
-						reference = join(resolve('/', basePath), this.resolveSchemaPath(schemaPath, reference.split('#')[0]))	
+						reference = join(resolve('/', basePath), this.resolveSchemaPath(schemaPath, reference.split('#')[0]))
 					}
 
 					schemaPart[key] = reference
@@ -558,7 +561,11 @@ export class SchemaData implements Disposable {
 
 							if (!(ProjectManager.currentProject instanceof BedrockProject)) return Promise.resolve([])
 
-							return Promise.resolve(ProjectManager.currentProject.indexerService.getIndexedFiles())
+							const paths = Object.values(ProjectManager.currentProject.indexerService.index)
+								.filter((entry) => entry.fileType === fileType)
+								.map((entry) => entry.packPath)
+
+							return Promise.resolve(sort ? paths.toSorted() : paths)
 						},
 						failedCurrentFileLoad: undefined,
 					},
