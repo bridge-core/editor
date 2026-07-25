@@ -39,13 +39,11 @@ watch(selectedPreset, () => {
 
 let availablePresets: Ref<{ [key: string]: any }> = ref({})
 
-onMounted(() => {
-	if (ProjectManager.currentProject && ProjectManager.currentProject instanceof BedrockProject) {
-		availablePresets = ProjectManager.currentProject.presetData.useAvailablePresets()
+if (ProjectManager.currentProject && ProjectManager.currentProject instanceof BedrockProject) {
+	availablePresets = ProjectManager.currentProject.presetData.useAvailablePresets()
 
-		selectedPresetPath.value = Object.keys(availablePresets.value)[0] ?? null
-	}
-})
+	selectedPresetPath.value = Object.keys(availablePresets.value)[0] ?? null
+}
 
 const categories: ComputedRef<{ [key: string]: string[] }> = computed(() => {
 	const categories: { [key: string]: string[] } = {}
@@ -60,18 +58,18 @@ const categories: ComputedRef<{ [key: string]: string[] }> = computed(() => {
 })
 
 const validationError: ComputedRef<string | null> = computed(() => {
-	if(!selectedPreset.value) return null
+	if (!selectedPreset.value) return null
 
-	for(const [fieldName, fieldId, fieldOptions] of selectedPreset.value.fields) {
-		if(!fieldOptions.validate) continue
+	for (const [fieldName, fieldId, fieldOptions] of selectedPreset.value.fields) {
+		if (!fieldOptions.validate) continue
 
-		for(const rule of fieldOptions.validate) {
+		for (const rule of fieldOptions.validate) {
 			const validate = PresetsWindow.validationRules[rule]
 			const value = createPresetOptions.value[fieldId] ?? ''
-			
+
 			const result = validate(value)
 
-			if(result) return result 
+			if (result) return result
 		}
 	}
 
