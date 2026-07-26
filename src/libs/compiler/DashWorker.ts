@@ -77,45 +77,81 @@ async function setup(config: any, mode: 'development' | 'production', configPath
 		})
 	})
 
-	await dash.setup({
-		fileTypes: await getJsonData('packages/minecraftBedrock/fileDefinitions.json'),
-		packTypes: await getJsonData('packages/minecraftBedrock/packDefinitions.json'),
-	})
+	try {
+		await dash.setup({
+			fileTypes: await getJsonData('packages/minecraftBedrock/fileDefinitions.json'),
+			packTypes: await getJsonData('packages/minecraftBedrock/packDefinitions.json'),
+		})
 
-	postMessage({
-		action: 'setupComplete',
-		id: actionId,
-	})
+		postMessage({
+			action: 'setupComplete',
+			id: actionId,
+		})
+	} catch (error: any) {
+		postMessage({
+			action: 'setupComplete',
+			id: actionId,
+			error: error?.message ?? String(error),
+		})
+	}
 }
 
 async function build(actionId: string) {
 	if (!dash) {
 		console.warn('Tried building but Dash is not setup yet!')
 
+		postMessage({
+			action: 'buildComplete',
+			id: actionId,
+			error: 'Tried building but Dash is not setup yet!',
+		})
+
 		return
 	}
 
-	await dash.build()
+	try {
+		await dash.build()
 
-	postMessage({
-		action: 'buildComplete',
-		id: actionId,
-	})
+		postMessage({
+			action: 'buildComplete',
+			id: actionId,
+		})
+	} catch (error: any) {
+		postMessage({
+			action: 'buildComplete',
+			id: actionId,
+			error: error?.message ?? String(error),
+		})
+	}
 }
 
 async function compileFiles(actionId: string, paths: string[]) {
 	if (!dash) {
 		console.warn('Tried compiling files but Dash is not setup yet!')
 
+		postMessage({
+			action: 'compileFilesComplete',
+			id: actionId,
+			error: 'Tried compiling files but Dash is not setup yet!',
+		})
+
 		return
 	}
 
-	await dash.updateFiles(paths)
+	try {
+		await dash.updateFiles(paths)
 
-	postMessage({
-		action: 'compileFilesComplete',
-		id: actionId,
-	})
+		postMessage({
+			action: 'compileFilesComplete',
+			id: actionId,
+		})
+	} catch (error: any) {
+		postMessage({
+			action: 'compileFilesComplete',
+			id: actionId,
+			error: error?.message ?? String(error),
+		})
+	}
 }
 
 onmessage = (event: any) => {
