@@ -10,7 +10,8 @@ import { Event } from '@/libs/event/Event'
 export class IndexerService implements Disposable {
 	public updated: Event<undefined> = new Event()
 
-	private index: { [key: string]: { fileType: string; data?: any } } = {}
+	public index: { [key: string]: { fileType: string; data?: any; packPath?: string } } = {}
+
 	private instructions: { [key: string]: any } = {}
 	private worker = new IndexerWorker()
 	private workerFileSystem = new WorkerFileSystemEntryPoint(this.worker, fileSystem)

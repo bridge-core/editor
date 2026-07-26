@@ -526,13 +526,14 @@ function setupTextEditorActions() {
 	const copy = ActionManager.addAction(
 		new Action({
 			id: 'textEditor.copy',
-			trigger: () => {
+			trigger: (event: any) => {
 				const focusedTab = TabManager.getFocusedTab()
 
 				if (focusedTab === null) return
 
 				if (!(focusedTab instanceof TextTab)) return
 
+				event.preventDefault()
 				focusedTab.copy()
 			},
 			keyBinding: 'Ctrl + C',
@@ -541,19 +542,21 @@ function setupTextEditorActions() {
 			icon: 'content_copy',
 			visible: false,
 			category: 'actions.textEditor.name',
+			special: true,
 		})
 	)
 
 	const paste = ActionManager.addAction(
 		new Action({
 			id: 'textEditor.paste',
-			trigger: () => {
+			trigger: (event: any) => {
 				const focusedTab = TabManager.getFocusedTab()
 
 				if (focusedTab === null) return
 
 				if (!(focusedTab instanceof TextTab)) return
 
+				event.preventDefault()
 				focusedTab.paste()
 			},
 			keyBinding: 'Ctrl + V',
@@ -562,6 +565,7 @@ function setupTextEditorActions() {
 			icon: 'content_paste',
 			visible: false,
 			category: 'actions.textEditor.name',
+			special: true,
 		})
 	)
 
@@ -867,7 +871,6 @@ function setupFileSystemActions() {
 
 				setClipboard(await fileSystem.getEntry(path))
 			},
-			keyBinding: 'Ctrl + C',
 			name: 'actions.files.copy.name',
 			description: 'actions.files.copy.description',
 			icon: 'file_copy',
@@ -909,7 +912,6 @@ function setupFileSystemActions() {
 					await fileSystem.copyFile(clipboardEntry.path, newPath)
 				}
 			},
-			keyBinding: 'Ctrl + V',
 			name: 'actions.files.paste.name',
 			description: 'actions.files.paste.description',
 			icon: 'content_paste',
@@ -1105,13 +1107,14 @@ function setupJsonTreeActions() {
 	const copy = ActionManager.addAction(
 		new Action({
 			id: 'treeEditor.copy',
-			trigger: () => {
+			trigger: (event: any) => {
 				const focusedTab = TabManager.getFocusedTab()
 
 				if (focusedTab === null) return
 
 				if (!(focusedTab instanceof TreeEditorTab)) return
 
+				event.preventDefault()
 				focusedTab.copy()
 			},
 			keyBinding: 'Ctrl + C',
@@ -1120,19 +1123,21 @@ function setupJsonTreeActions() {
 			icon: 'content_copy',
 			visible: false,
 			category: 'actions.treeEditor.name',
+			special: true,
 		})
 	)
 
 	const paste = ActionManager.addAction(
 		new Action({
 			id: 'treeEditor.paste',
-			trigger: () => {
+			trigger: (event: any) => {
 				const focusedTab = TabManager.getFocusedTab()
 
 				if (focusedTab === null) return
 
 				if (!(focusedTab instanceof TreeEditorTab)) return
 
+				event.preventDefault()
 				focusedTab.paste()
 			},
 			keyBinding: 'Ctrl + V',
@@ -1141,19 +1146,21 @@ function setupJsonTreeActions() {
 			icon: 'content_paste',
 			visible: false,
 			category: 'actions.treeEditor.name',
+			special: true,
 		})
 	)
 
 	const cut = ActionManager.addAction(
 		new Action({
 			id: 'treeEditor.cut',
-			trigger: () => {
+			trigger: (event: any) => {
 				const focusedTab = TabManager.getFocusedTab()
 
 				if (focusedTab === null) return
 
 				if (!(focusedTab instanceof TreeEditorTab)) return
 
+				event.preventDefault()
 				focusedTab.cut()
 			},
 			keyBinding: 'Ctrl + X',
@@ -1162,6 +1169,7 @@ function setupJsonTreeActions() {
 			icon: 'content_cut',
 			visible: false,
 			category: 'actions.treeEditor.name',
+			special: true,
 		})
 	)
 

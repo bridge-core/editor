@@ -9,7 +9,7 @@ import Switch from '@/components/Common/Switch.vue'
 import Dropdown from '@/components/Common/Legacy/LegacyDropdown.vue'
 
 import { useTranslate } from '@/libs/locales/Locales'
-import { ComputedRef, Ref, computed, ref, watch } from 'vue'
+import { ComponentPublicInstance, ComputedRef, Ref, computed, onMounted, ref, watch } from 'vue'
 import { BedrockProject } from '@/libs/project/BedrockProject'
 import { ProjectManager } from '@/libs/project/ProjectManager'
 import { Windows } from '../Windows'
@@ -58,23 +58,57 @@ const categories: ComputedRef<{ [key: string]: string[] }> = computed(() => {
 })
 
 const validationError: ComputedRef<string | null> = computed(() => {
-	if(!selectedPreset.value) return null
+	if (!selectedPreset.value) return null
 
-	for(const [fieldName, fieldId, fieldOptions] of selectedPreset.value.fields) {
-		if(!fieldOptions.validate) continue
+	for (const [fieldName, fieldId, fieldOptions] of selectedPreset.value.fields) {
+		if (!fieldOptions.validate) continue
 
-		for(const rule of fieldOptions.validate) {
+		for (const rule of fieldOptions.validate) {
 			const validate = PresetsWindow.validationRules[rule]
 			const value = createPresetOptions.value[fieldId] ?? ''
-			
+
 			const result = validate(value)
 
-			if(result) return result 
+			if (result) return result
 		}
 	}
 
 	return null
 })
+
+const fileInputs: { [key: string]: HTMLInputElement } = {}
+
+function setFileInput(fieldId: string, element: Element | ComponentPublicInstance | null) {
+	if (element instanceof HTMLInputElement) {
+		fileInputs[fieldId] = element
+	} else {
+		delete fileInputs[fieldId]
+	}
+}
+
+function openFileInput(fieldId: string) {
+	fileInputs[fieldId]?.click()
+}
+
+async function onFileInputChange(event: Event, fieldId: string) {
+	const input = <HTMLInputElement>event.target
+
+	const file = input.files?.[0]
+
+	if (!file) return
+
+	const content = new Uint8Array(await file.arrayBuffer())
+
+	// Store a fake file handle matching the shape that preset scripts (and loadPresetFile) expect:
+	// `name` + `content` (binary, read by createFile) + `text()` (read by e.g. the Block Model script).
+	createPresetOptions.value[fieldId] = {
+		name: file.name,
+		content,
+		async text() {
+			return new TextDecoder().decode(content)
+		},
+	}
+}
 
 async function create() {
 	if (validationError.value !== null) return
@@ -214,12 +248,19 @@ watch(filteredCategories, () => {
 								class="mb-6 flex bg-background"
 								v-slot="{ focus, blur }"
 							>
-								<input type="file" class="hidden" />
+								<input
+									:ref="(element) => setFileInput(fieldId, element)"
+									type="file"
+									class="hidden"
+									:accept="fieldOptions.accept"
+									@change="(event: Event) => onFileInputChange(event, fieldId)"
+								/>
 
 								<button
 									class="flex align-center gap-2 text-text-secondary font-theme placeholder:text-text-secondary"
 									@mouseenter="focus"
 									@mouseleave="blur"
+									@click="openFileInput(fieldId)"
 								>
 									<Icon icon="image" class="no-fill" color="text-text-secondary" />
 									{{ fieldName }}

@@ -8,6 +8,7 @@ import { Windows } from '@/components/Windows/Windows'
 import { AlertWindow } from '@/components/Windows/Alert/AlertWindow'
 import { Settings } from '@/libs/settings/Settings'
 import { NotificationSystem } from '@/components/Notifications/NotificationSystem'
+import { BaseEntry } from '@/libs/fileSystem/BaseFileSystem'
 
 export interface FormatVersionDefinitions {
 	currentStable: string
@@ -28,6 +29,7 @@ export interface ExperimentalToggle {
  */
 export class Data {
 	public static loaded: Event<undefined> = new Event()
+	public static isLoaded: boolean = false
 
 	private static fileSystem = new LocalFileSystem()
 
@@ -49,6 +51,8 @@ export class Data {
 		let packagesUrl = 'https://raw.githubusercontent.com/bridge-core/editor-packages/release/packages.zip'
 
 		if (Settings.get('dataDeveloperMode')) {
+			console.warn('[Data] Clearing hash because data developer mode is enabled!')
+
 			if (await Data.fileSystem.exists('hash')) await Data.fileSystem.removeFile('hash')
 
 			hash = undefined
@@ -58,6 +62,7 @@ export class Data {
 			if (await Data.fileSystem.exists('hash')) {
 				console.log('[Data] Failed to fetch hash but cache exists')
 
+				Data.isLoaded = true
 				Data.loaded.dispatch()
 
 				return
@@ -79,6 +84,7 @@ export class Data {
 		if ((await Data.fileSystem.exists('hash')) && (await Data.fileSystem.readFileText('hash')) === hash) {
 			console.log('[Data] Skipped fetching data because hash matches')
 
+			Data.isLoaded = true
 			Data.loaded.dispatch()
 
 			return
@@ -116,6 +122,7 @@ export class Data {
 
 		await Data.fileSystem.writeFile('hash', hash)
 
+		Data.isLoaded = true
 		Data.loaded.dispatch()
 	}
 
