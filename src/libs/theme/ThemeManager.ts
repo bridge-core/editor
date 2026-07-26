@@ -113,7 +113,7 @@ export class ThemeManager {
 		if (Extensions.loaded) {
 			if (!this.hasTheme(Settings.get('darkTheme'))) Settings.set('darkTheme', dark.id)
 			if (!this.hasTheme(Settings.get('lightTheme'))) Settings.set('lightTheme', light.id)
-		} else {
+		} else if (!this.hasTheme(this.previouslyUsedTheme.id)) {
 			this.addTheme(this.previouslyUsedTheme)
 		}
 
@@ -135,8 +135,11 @@ export class ThemeManager {
 
 		const root = <HTMLElement>document.querySelector(':root')
 
+		// themes that omit colors will cause problems as undeifned is passed and it will silently break
+		const base: Record<string, string> = theme.colorScheme === 'light' ? light.colors : dark.colors
+
 		for (const name of colorNames) {
-			root.style.setProperty(`--theme-color-${name}`, theme.colors[name])
+			root.style.setProperty(`--theme-color-${name}`, theme.colors[name] ?? base[name])
 		}
 
 		root.style.setProperty('--theme-font', Settings.get(ThemeSettings.Font))
