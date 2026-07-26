@@ -242,6 +242,7 @@ function drop(event: DragEvent) {
 				@contextmenu.prevent="contextMenu?.open"
 				@dragenter="dragEnter"
 				@dragleave="dragLeave"
+				@dragover.prevent
 				@drop="drop"
 			>
 				<div v-for="entry in orderedEntries" :key="entry.path">
