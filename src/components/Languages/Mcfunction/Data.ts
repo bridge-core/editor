@@ -523,24 +523,8 @@ export class CommandData extends Signal<void> {
 	): Promise<ICompletionItem[]> {
 		const { languages } = await useMonaco()
 
-		// Test whether argument type is defined
-		if (!commandArgument.type) {
-			// If additionalData is defined, return its values
-			if (commandArgument.additionalData?.values)
-				return this.toCompletionItem(
-					commandArgument.additionalData?.values
-				)
-			else if (commandArgument.additionalData?.schemaReference)
-				return this.toCompletionItem(
-					<string[]>(
-						this.resolveDynamicReference(
-							commandArgument.additionalData.schemaReference
-						).map(({ value }) => value)
-					)
-				)
-
-			return []
-		}
+		// If argument type isn't defined, set it to "string" to use "additonalData" property
+		commandArgument.type ??= 'string'
 
 		switch (commandArgument.type) {
 			case 'command':
@@ -573,23 +557,26 @@ export class CommandData extends Signal<void> {
 					languages.CompletionItemKind.Operator
 				)
 			case 'string': {
+				let values: string[] = []
 				if (commandArgument.additionalData?.values)
-					return this.toCompletionItem(
-						commandArgument.additionalData.values,
-						commandArgument.description,
-						languages.CompletionItemKind.Constant
+					values = values.concat(
+						commandArgument.additionalData.values
 					)
-				else if (commandArgument.additionalData?.schemaReference)
-					return this.toCompletionItem(
+				if (commandArgument.additionalData?.schemaReference)
+					values = values.concat(
 						<string[]>(
 							this.resolveDynamicReference(
 								commandArgument.additionalData.schemaReference
 							).map(({ value }) => value)
-						),
-						commandArgument.description,
-						languages.CompletionItemKind.Constant
+						)
 					)
-				else return []
+
+				if (values.length === 0) return []
+				return this.toCompletionItem(
+					values,
+					commandArgument.description,
+					languages.CompletionItemKind.Constant
+				)
 			}
 			case 'jsonData':
 				return this.toCompletionItem(
