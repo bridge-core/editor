@@ -1,0 +1,57 @@
+name: Close unfilled issues
+
+on:
+  issues:
+    types: [opened]
+
+permissions:
+  issues: write
+  contents: read
+
+jobs:
+  check-template:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: .github
+
+      - uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const path = require('path');
+
+            // Ignore whitespace and line-ending differences
+            const normalize = (s) => (s || '')
+              .replace(/\r\n/g, '\n')
+              .replace(/\s+/g, ' ')
+              .trim();
+
+            // Load every markdown template, minus its YAML front matter
+            const templates = [];
+            const dir = '.github/ISSUE_TEMPLATE';
+            if (fs.existsSync(dir)) {
+              for (const f of fs.readdirSync(dir).filter(f => f.endsWith('.md'))) {
+                const raw = fs.readFileSync(path.join(dir, f), 'utf8');
+                templates.push(raw.replace(/^---[\s\S]*?---\s*/, ''));
+              }
+            }
+            if (fs.existsSync('.github/ISSUE_TEMPLATE.md')) {
+              templates.push(fs.readFileSync('.github/ISSUE_TEMPLATE.md', 'utf8'));
+            }
+
+            const body = normalize(context.payload.issue.body);
+            const unchanged = body === '' || templates.some(t => normalize(t) === body);
+            if (!unchanged) return;
+
+            const { owner, repo } = context.repo;
+            const issue_number = context.payload.issue.number;
+
+            await github.rest.issues.createComment({
+              owner, repo, issue_number,
+              body: 'This issue was closed automatically because the template was left unfilled. Please open a new issue with the template filled out.'
+            });
+            await github.rest.issues.update({
+              owner, repo, issue_number, state: 'closed', state_reason: 'not_planned'
+            });
