@@ -11,6 +11,7 @@ import { RequirementsMatcher } from '@/libs/data/bedrock/RequirementsMatcher'
 import { Data } from '@/libs/data/Data'
 import { LangData } from '@/libs/data/bedrock/LangData'
 import { CommandData } from '@/libs/data/bedrock/CommandData'
+import { MolangData } from '@/libs/data/bedrock/MolangData'
 import { SnippetManager } from '@/libs/snippets/SnippetManager'
 import { fileSystem } from '@/libs/fileSystem/FileSystem'
 import { join } from 'pathe'
@@ -23,6 +24,7 @@ export class BedrockProject extends Project {
 	public scriptTypeData = new ScriptTypeData(this)
 	public langData = new LangData(this)
 	public commandData = new CommandData(this)
+	public molangData = new MolangData(this)
 	public indexerService = new IndexerService(this)
 	public dashService = new DashService(this)
 	public requirementsMatcher = new RequirementsMatcher(this)
@@ -53,6 +55,8 @@ export class BedrockProject extends Project {
 		await this.schemaData.load()
 
 		await this.requirementsMatcher.setup()
+
+		await this.molangData.setup()
 
 		this.dashService.build()
 	}
