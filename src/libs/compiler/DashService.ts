@@ -35,8 +35,30 @@ export class DashService implements AsyncDisposable {
 
 	constructor(public project: BedrockProject, fileSystem?: BaseFileSystem) {
 		this.worker.onmessage = this.onWorkerMessage.bind(this)
+		this.worker.onerror = this.onWorkerError.bind(this)
 
 		this.outputFileSystem = new WorkerFileSystemEntryPoint(this.worker, fileSystem ?? project.outputFileSystem, 'outputFileSystem')
+	}
+
+	/**
+	 * Backstop for a hard worker crash. The pending request cannot be resolved here (the error event carries no
+	 * request id), but we at least clear the stuck progress notification and reset the building flag so the UI
+	 * does not stay in a permanent loading state.
+	 */
+	private onWorkerError(event: ErrorEvent) {
+		console.error('Dash worker error:', event.message)
+
+		this.clearProgressNotification()
+
+		this.building = false
+	}
+
+	private clearProgressNotification() {
+		if (this.progressNotification === null) return
+
+		NotificationSystem.clearNotification(this.progressNotification)
+
+		this.progressNotification = null
 	}
 
 	private async onWorkerMessage(event: MessageEvent) {
@@ -68,7 +90,7 @@ export class DashService implements AsyncDisposable {
 	public async setup(mode: 'development' | 'production', compilerConfigPath?: string) {
 		this.mode = mode
 
-		await sendAndWait(
+		const response = await sendAndWait(
 			{
 				action: 'setup',
 				config: this.project.config,
@@ -78,6 +100,8 @@ export class DashService implements AsyncDisposable {
 			},
 			this.worker
 		)
+
+		if (response?.error) throw new Error(response.error)
 
 		this.isSetup = true
 	}
@@ -125,36 +149,44 @@ export class DashService implements AsyncDisposable {
 
 		this.progressNotification = NotificationSystem.addProgressNotification('manufacturing', 0, 1, undefined, undefined)
 
-		await sendAndWait(
-			{
-				action: 'build',
-			},
-			this.worker
-		)
+		try {
+			const response = await sendAndWait(
+				{
+					action: 'build',
+				},
+				this.worker
+			)
 
-		NotificationSystem.clearNotification(this.progressNotification)
+			if (response?.error) throw new Error(response.error)
+		} finally {
+			this.clearProgressNotification()
 
-		this.building = false
+			this.building = false
 
-		if (this.inFlightBuildRequest) {
-			this.inFlightBuildRequest = false
+			if (this.inFlightBuildRequest) {
+				this.inFlightBuildRequest = false
 
-			this.build()
+				this.build()
+			}
 		}
 	}
 
 	public async compileFiles(paths: string[]) {
 		this.progressNotification = NotificationSystem.addProgressNotification('manufacturing', 0, 1, undefined, undefined)
 
-		await sendAndWait(
-			{
-				action: 'compileFiles',
-				paths,
-			},
-			this.worker
-		)
+		try {
+			const response = await sendAndWait(
+				{
+					action: 'compileFiles',
+					paths,
+				},
+				this.worker
+			)
 
-		NotificationSystem.clearNotification(this.progressNotification)
+			if (response?.error) throw new Error(response.error)
+		} finally {
+			this.clearProgressNotification()
+		}
 	}
 
 	private async setupCompileActions() {

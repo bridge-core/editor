@@ -10,6 +10,7 @@ import { Data } from '@/libs/data/Data'
 import { Windows } from '@/components/Windows/Windows'
 import { DropdownWindow } from '@/components/Windows/Dropdown/DropdownWindow'
 import { Settings } from '@/libs/settings/Settings'
+import { ReportErrorWindow } from '@/components/Windows/ReportError/ReportErrorWindow'
 
 export async function exportAsTemplate(asMcworld = false) {
 	if (!ProjectManager.currentProject) return
@@ -21,9 +22,19 @@ export async function exportAsTemplate(asMcworld = false) {
 	const projectPath = ProjectManager.currentProject.path
 
 	const dash = new DashService(ProjectManager.currentProject, fileSystem)
-	await dash.setup('production')
-	await dash.build()
-	await dash.dispose()
+
+	try {
+		await dash.setup('production')
+		await dash.build()
+	} catch (err) {
+		console.error(err)
+
+		ReportErrorWindow.openErrorWindow(err instanceof Error ? err : new Error(String(err)))
+
+		return
+	} finally {
+		await dash.dispose()
+	}
 
 	let baseWorlds: string[] = []
 
