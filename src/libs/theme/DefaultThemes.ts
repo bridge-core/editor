@@ -73,15 +73,17 @@ export const light = {
 	colorScheme: 'light',
 	colors: {
 		primary: '#0073FF',
-		secondary: '#0073FF',
+		accent: '#000000',
+		accentSecondary: '#fafafa',
+
 		error: '#ff5252',
 		info: '#2196f3',
 		warning: '#fb8c00',
 		success: '#4caf50',
-		accent: '#ffffff',
 
 		text: '#000000',
 		textSecondary: '#000000AA',
+
 		background: '#fafafa',
 		backgroundSecondary: '#e8e8e8',
 		backgroundTertiary: '#e0e0e0',
@@ -91,7 +93,7 @@ export const light = {
 		skinPack: '#fb8c00',
 		worldTemplate: '#4caf50',
 
-		toolbar: '#fafafa',
+		toolbar: '#e8e8e8',
 		lineHighlightBackground: '#e0e0e0',
 	},
 	highlighter: {
@@ -125,6 +127,6 @@ export const light = {
 		comment: {
 			color: '#0080FF',
 		},
-		...colorCodes('#fff'),
+		...colorCodes('#000'),
 	},
 } as const
